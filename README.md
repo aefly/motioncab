@@ -212,7 +212,7 @@ Bug reports, feature requests, and pull requests are welcome — see
 [CONTRIBUTE.md](./CONTRIBUTE.md) for build instructions, coding
 standards, and how to submit a change.
 
-### License
+## License
 
 This project is licensed under the [GPL-3.0](./LICENSE).
 
