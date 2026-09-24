@@ -1,0 +1,28 @@
+name: Feature Request
+description: Suggest a new effect, setting, or improvement
+labels: ["feature request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe it as concretely as you can.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type of request
+      options:
+        - New effect
+        - New setting on an existing effect
+        - UI / Quick Settings window improvement
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Describe the feature you'd like
+      description: How would you like it to work?
+    validations:
+      required: true

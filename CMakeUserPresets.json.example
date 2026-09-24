@@ -1,0 +1,84 @@
+{
+  "version": 11,
+  "$schema": "https://cmake.org/cmake/help/latest/_downloads/3e2d73bff478d88a7de0de736ba5e361/schema.json",
+
+  "$comment": [
+    "User-specific CMake presets.",
+    "",
+    "Copy this file to `CMakeUserPresets.json` (git-ignored) and edit the",
+    "environment variables in `base-user-env` below to set your game path",
+    "and RC compiler paths.",
+    "",
+    "To add a new user preset, inherit from `base-user-env` and any",
+    "configurePreset from CMakePresets.json, then add it to the list."
+  ],
+
+  "configurePresets": [
+    {
+      "$comment": "=== Hidden base: user environment (edit paths here) ===",
+      "name": "base-user-env",
+      "hidden": true,
+      "environment": {
+        "ATS_PLUGINS_DIR": "",
+        "ETS2_PLUGINS_DIR": "",
+        "CMAKE_RC_COMPILER": "x86_64-w64-mingw32-windres"
+      }
+    },
+
+    {
+      "$comment": "=== Linux: MinGW cross-compile (Unix Makefiles) ===",
+      "name": "user-mingw-make-release",
+      "inherits": ["base-user-env", "mingw-make-release"],
+      "displayName": "✔ USER: MinGW (Make) · Release",
+      "description": "MinGW + Unix Makefiles Release with game deploy path and RC compiler",
+      "cacheVariables": {
+        "CMAKE_RC_COMPILER": "$env{CMAKE_RC_COMPILER}",
+        "ATS_PLUGINS_DIR": "$env{ATS_PLUGINS_DIR}",
+        "ETS2_PLUGINS_DIR": "$env{ETS2_PLUGINS_DIR}"
+      }
+    },
+    {
+      "name": "user-mingw-make-debug",
+      "inherits": ["base-user-env", "mingw-make-debug"],
+      "displayName": "  · USER: MinGW (Make) · Debug",
+      "description": "MinGW + Unix Makefiles Debug with game deploy path and RC compiler",
+      "cacheVariables": {
+        "CMAKE_RC_COMPILER": "$env{CMAKE_RC_COMPILER}",
+        "ATS_PLUGINS_DIR": "$env{ATS_PLUGINS_DIR}",
+        "ETS2_PLUGINS_DIR": "$env{ETS2_PLUGINS_DIR}"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "user-mingw-make-release",
+      "configurePreset": "user-mingw-make-release",
+      "displayName": "✔ Build: USER MinGW (Make) · Release"
+    },
+    {
+      "name": "user-mingw-make-debug",
+      "configurePreset": "user-mingw-make-debug",
+      "displayName": "  · Build: USER MinGW (Make) · Debug"
+    }
+  ],
+
+  "workflowPresets": [
+    {
+      "name": "user-mingw-make-release",
+      "displayName": "Workflow: USER MinGW (Make) · Release",
+      "steps": [
+        { "type": "configure", "name": "user-mingw-make-release" },
+        { "type": "build", "name": "user-mingw-make-release" }
+      ]
+    },
+    {
+      "name": "user-mingw-make-debug",
+      "displayName": "Workflow: USER MinGW (Make) · Debug",
+      "steps": [
+        { "type": "configure", "name": "user-mingw-make-debug" },
+        { "type": "build", "name": "user-mingw-make-debug" }
+      ]
+    }
+  ]
+}

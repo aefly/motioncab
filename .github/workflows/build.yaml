@@ -1,0 +1,164 @@
+name: Build & Release
+
+on:
+  push:
+    branches: ["main"]
+    tags: ["v*"]
+    paths-ignore:
+      - ".editorconfig"
+      - ".gitignore"
+      - ".img/**"
+      - "LICENSE"
+      - "CMakeUserPresets.json.example"
+      - ".github/dependabot.yaml"
+      - ".github/ISSUE_TEMPLATE/**"
+  pull_request:
+    branches: ["**"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ !startsWith(github.ref, 'refs/tags/') }}
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    outputs:
+      code: ${{ steps.changes.outputs.code }}
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Lint Markdown
+        shell: bash
+        run: |
+          set -e
+          files="$(git ls-files '*.md')"
+          if [ -n "$files" ]; then
+            npx --yes markdownlint-cli2 $files
+          fi
+
+      - name: Detect non-Markdown changes
+        id: changes
+        shell: bash
+        run: |
+          set -e
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+          else
+            base="${{ github.event.before }}"
+          fi
+          if [ -z "$base" ] || [ "$base" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$base" 2>/dev/null; then
+            code=true
+          else
+            non_md="$(git diff --name-only "$base" "${{ github.sha }}" | grep -v '\.md$' || true)"
+            if [ -n "$non_md" ]; then code=true; else code=false; fi
+          fi
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: lint
+    if: needs.lint.outputs.code == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Validate version tag
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          tag="${GITHUB_REF#refs/tags/}"
+          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]; then
+            echo "Tag '$tag' is not a valid version tag (expected vX.Y.Z or vX.Y.Z-suffix)."
+            exit 1
+          fi
+
+      - name: Allow apt cache access
+        run: |
+          sudo mkdir -p /var/cache/apt/archives
+          sudo chown -R "$(id -u):$(id -g)" /var/cache/apt/archives
+
+      - uses: actions/cache@v6
+        with:
+          path: /var/cache/apt/archives/*.deb
+          key: mingw-${{ runner.os }}
+
+      - name: Install MinGW-w64
+        run: sudo apt-get update && sudo apt-get install -y mingw-w64
+
+      - name: Install CMake
+        uses: lukka/get-cmake@v4.4.2
+        with:
+          cmakeVersion: "~4.4.0"
+          useCloudCache: true
+          useLocalCache: false
+
+      - name: Build DLL
+        shell: bash
+        run: |
+          set -e
+          trap 'echo "Build failed at $(date)."; exit 1' ERR
+          # Inject version from tag into CMakeLists.txt on tag pushes.
+          # version.rc.in and Manifest.cpp both derive from
+          # project(VERSION ...) so this is the single edit point.
+          # Format already validated by the "Validate version tag" step.
+          if [[ "${{ github.ref }}" =~ ^refs/tags/v ]]; then
+            tag="${GITHUB_REF#refs/tags/v}"
+            numeric="${tag%%-*}"
+            sed -i "s/project(MotionCab VERSION [0-9.]\+/project(MotionCab VERSION $numeric/" CMakeLists.txt
+            grep -q "project(MotionCab VERSION $numeric" CMakeLists.txt || { echo "Version injection failed."; exit 1; }
+          fi
+          # Uses the base (non-"user-") preset — no CMakeUserPresets.json
+          # game paths needed, deploy steps just skip on CI.
+          cmake --preset mingw-make-release
+          cmake --build --preset mingw-make-release
+
+      - name: Upload DLL artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: motioncab-dll
+          path: build/mingw-make-release/plugins/MotionCab/motioncab.dll
+          retention-days: 7
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Download DLL
+        uses: actions/download-artifact@v8
+        with:
+          name: motioncab-dll
+
+      - name: Package .zip
+        run: |
+          version="${GITHUB_REF#refs/tags/v}"
+          dir="plugins/spfPlugins/MotionCab"
+          mkdir -p "$dir"
+          cp motioncab.dll "$dir/"
+          # Runtime assets (About tab logo) live next to the DLL.
+          cp -r data "$dir/"
+          zip -r "motioncab-$version.zip" "plugins"
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          version="${GITHUB_REF#refs/tags/v}"
+          flags=""
+          if [[ "$version" == *-* ]]; then flags="--prerelease"; fi
+          gh release create "v$version" "motioncab-$version.zip" \
+            --repo "${{ github.repository }}" \
+            --title "v$version" \
+            --generate-notes \
+            $flags

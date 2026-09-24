@@ -1,0 +1,20 @@
+# Auto-detect text files and normalize line endings to LF in the repo.
+* text=auto eol=lf
+
+# Explicit text types
+*.cpp text
+*.hpp text
+*.h text
+*.cmake text
+*.in text
+*.md text
+*.json text
+*.jsonc text
+*.yaml text
+*.txt text
+.editorconfig text
+.gitattributes text
+.gitignore text
+
+# Binary files
+*.png binary
