@@ -40,8 +40,8 @@ body = """
 ### 📦 Installation
 {% if spf %}
 > [!IMPORTANT]
-> Requires **SPF Framework {{ spf }}** or newer. Update the framework \
-first, or MotionCab won't load.
+> Requires **SPF Framework {{ spf }}** or newer. Install or update the framework \
+first.
 {% endif %}
 
 1. Install or update the \
