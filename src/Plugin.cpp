@@ -314,21 +314,30 @@ void OnUpdate() {
 
   // Detect the native "recenter camera" hotkey: it snaps rotation straight
   // to the raw default with no event to hook, so infer it heuristically
-  // instead (our last contribution was non-trivial, yet rotation now lands
-  // exactly on default) and resync like a fresh cabin entry.
+  // instead (our contribution is non-trivial, and rotation jumps away from
+  // what we wrote to land exactly on default) and resync like a fresh
+  // cabin entry. Landing on default alone isn't enough: free-look sweeping
+  // through the default while an effect is active (e.g. steering camera)
+  // passes within epsilon of it, and a false positive re-bases the pose,
+  // snapping the player's own look back to center.
   float default_yaw_deg, default_pitch_deg;
-  if (ctx.core->camera->Cam_GetInteriorRotationDefaults(&default_yaw_deg,
+  if (ctx.has_last_written_rot &&
+      ctx.core->camera->Cam_GetInteriorRotationDefaults(&default_yaw_deg,
                                                         &default_pitch_deg)) {
-    constexpr float kEpsilonDeg = 0.05f;
+    constexpr float kEpsilonDeg = 0.01f;
     constexpr float kMeaningfulOffsetDeg = 0.5f;
-    const float live_yaw_deg = yaw_rad / kDegToRad;
-    const float live_pitch_deg = pitch_rad / kDegToRad;
+    auto was_reset = [&](float live_deg, float default_deg, float written_deg,
+                         float offset_deg) {
+      return std::fabs(offset_deg) > kMeaningfulOffsetDeg &&
+             std::fabs(live_deg - written_deg) > kMeaningfulOffsetDeg &&
+             std::fabs(live_deg - default_deg) < kEpsilonDeg;
+    };
     const bool yaw_was_reset =
-        std::fabs(ctx.last_applied_offset.yaw) > kMeaningfulOffsetDeg &&
-        std::fabs(live_yaw_deg - default_yaw_deg) < kEpsilonDeg;
+        was_reset(yaw_rad / kDegToRad, default_yaw_deg,
+                  ctx.last_written_yaw_deg, ctx.last_applied_offset.yaw);
     const bool pitch_was_reset =
-        std::fabs(ctx.last_applied_offset.pitch) > kMeaningfulOffsetDeg &&
-        std::fabs(live_pitch_deg - default_pitch_deg) < kEpsilonDeg;
+        was_reset(pitch_rad / kDegToRad, default_pitch_deg,
+                  ctx.last_written_pitch_deg, ctx.last_applied_offset.pitch);
     if (yaw_was_reset || pitch_was_reset) {
       ctx.effects.ResetAll();
       ctx.last_applied_offset.yaw = 0.0f;
@@ -351,9 +360,12 @@ void OnUpdate() {
   const float base_yaw_rad = yaw_rad - ctx.last_applied_offset.yaw * kDegToRad;
   const float base_pitch_rad =
       pitch_rad - ctx.last_applied_offset.pitch * kDegToRad;
-  ctx.core->camera->Cam_SetInteriorHeadRot(
-      base_yaw_rad + offset.yaw * kDegToRad,
-      base_pitch_rad + offset.pitch * kDegToRad);
+  const float new_yaw_rad = base_yaw_rad + offset.yaw * kDegToRad;
+  const float new_pitch_rad = base_pitch_rad + offset.pitch * kDegToRad;
+  ctx.core->camera->Cam_SetInteriorHeadRot(new_yaw_rad, new_pitch_rad);
+  ctx.last_written_yaw_deg = new_yaw_rad / kDegToRad;
+  ctx.last_written_pitch_deg = new_pitch_rad / kDegToRad;
+  ctx.has_last_written_rot = true;
 
   float roll_deg = 0.0f;
   if (ctx.core->camera->Cam_GetInteriorRoll(&roll_deg)) {

@@ -50,6 +50,10 @@ struct PluginContext {
   // Plugin.cpp).
   HeadOffset last_applied_offset{};
   bool was_interior_last_frame = false;
+  // Head rotation we wrote last frame (degrees), to tell the native
+  // recenter's snap apart from free-look passing through the default.
+  float last_written_yaw_deg = 0.0f, last_written_pitch_deg = 0.0f;
+  bool has_last_written_rot = false;
 
   std::chrono::steady_clock::time_point last_update_time{};
   bool has_last_update_time = false;
