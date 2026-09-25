@@ -10,6 +10,7 @@ on:
       - ".img/**"
       - "LICENSE"
       - "CMakeUserPresets.json.example"
+      - "cliff.toml"
       - ".github/dependabot.yaml"
       - ".github/ISSUE_TEMPLATE/**"
   pull_request:
