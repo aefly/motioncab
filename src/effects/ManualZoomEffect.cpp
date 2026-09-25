@@ -1,7 +1,5 @@
 #include "ManualZoomEffect.hpp"
 
-#include "compat/FovSettingFallback.hpp"
-
 #include <algorithm>
 #include <cmath>
 
@@ -111,28 +109,12 @@ void ManualZoomEffect::RestoreDynamicFov() {
   dynamic_blend_ = 1.0f;
 }
 
-// TEMPORARY: falls back to compat::fov_fallback while the installed SPF
-// can't find the interior FOV offsets on game 1.61.1.1s. Drop the fallback
-// branches once an SPF release includes
-// https://github.com/TrackAndTruckDevs/SPF-Framework/pull/11.
 bool ManualZoomEffect::GetFov(float *out_fov) {
-  if (!camera_api_)
-    return false;
-  if (camera_api_->Cam_GetInteriorFov(out_fov)) {
-    use_fov_fallback_ = false;
-    return true;
-  }
-  // Keep the base estimate fixed while our FOV is applied, so restoring
-  // lands exactly on the player's own setting.
-  use_fov_fallback_ =
-      compat::fov_fallback::GetFov(camera_api_, !fov_overridden_, out_fov);
-  return use_fov_fallback_;
+  return camera_api_ && camera_api_->Cam_GetInteriorFov(out_fov);
 }
 
 void ManualZoomEffect::SetFov(float fov) {
-  if (use_fov_fallback_)
-    compat::fov_fallback::SetFov(fov);
-  else if (camera_api_)
+  if (camera_api_)
     camera_api_->Cam_SetInteriorFov(fov);
 }
 

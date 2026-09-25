@@ -73,8 +73,6 @@ set(PLUGIN_SOURCES
     "src/effects/BodyDynamicsEffect.cpp"
     "src/effects/EngineStartStopEffect.cpp"
     "src/effects/ManualZoomEffect.cpp"
-    # TEMPORARY until an SPF release includes SPF-Framework PR #11
-    "src/compat/FovSettingFallback.cpp"
     "src/ui/SettingsWindow.cpp"
     "src/ui/OpenUrl.cpp"
 )

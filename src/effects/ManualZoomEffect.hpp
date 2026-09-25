@@ -61,11 +61,9 @@ private:
   float dynamic_blend_ = 1.0f;           // 1 = player's factor, 0 = factor 1
   SPF_Camera_API *camera_api_ = nullptr; // last seen, for restoring
 
-  // Cam_GetInteriorFov/Cam_SetInteriorFov, or the TEMPORARY
-  // compat::fov_fallback when the installed SPF can't resolve them.
+  // Cam_GetInteriorFov/Cam_SetInteriorFov on camera_api_, null-checked.
   bool GetFov(float *out_fov);
   void SetFov(float fov);
-  bool use_fov_fallback_ = false; // last GetFov() went through the fallback
 };
 
 } // namespace motioncab
