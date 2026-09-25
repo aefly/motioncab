@@ -1,0 +1,94 @@
+# git-cliff configuration: builds the GitHub release notes from the commits
+# between the previous tag and the current one. https://git-cliff.org/docs
+
+[changelog]
+body = """
+{%- set gh = "https://github.com/" ~ remote.github.owner ~ "/" ~ remote.github.repo -%}
+{%- set semver = version | trim_start_matches(pat="v") -%}
+{%- set spf = get_env(name="SPF_MIN_VERSION", default="") -%}
+{%- set dll_sha = get_env(name="DLL_SHA256", default="") -%}
+{%- set zip = gh ~ "/releases/download/" ~ version ~ "/motioncab-" ~ semver ~ ".zip" -%}
+<p align="center">
+  <img src="{{ gh }}/blob/main/.img/release-banner.png?raw=true" alt="What's new in MotionCab" width="100%" />
+</p>
+
+
+{% for group, commits in commits | group_by(attribute="group") %}
+### {{ group | striptags | trim }}
+{% for commit in commits %}
+- {{ commit.message | split(pat="\n") | first | trim | upper_first }}\
+  {% if commit.remote.pr_author or commit.remote.username %} \
+    by @{{ commit.remote.pr_author | default(value=commit.remote.username) }}\
+  {% endif %}\
+  {% if commit.remote.pr_number %} \
+    in [#{{ commit.remote.pr_number }}]({{ gh }}/pull/{{ commit.remote.pr_number }})\
+  {% else %} \
+    in [`{{ commit.id | truncate(length=7, end="") }}`]({{ gh }}/commit/{{ commit.id }})\
+  {% endif %}
+{%- endfor %}
+{% endfor %}
+{%- set newcomers = github.contributors | filter(attribute="is_first_time", value=true) -%}
+{% if newcomers | length > 0 %}
+### 🎉 New Contributors
+{% for c in newcomers %}
+- @{{ c.username }} made their first contribution\
+  {% if c.pr_number %} in [#{{ c.pr_number }}]({{ gh }}/pull/{{ c.pr_number }}){% endif %}
+{%- endfor %}
+{% endif %}
+---
+
+### 📦 Installation
+{% if spf %}
+> [!IMPORTANT]
+> Requires **SPF Framework {{ spf }}** or newer. Update the framework \
+first, or MotionCab won't load.
+{% endif %}
+
+1. Install or update the \
+[SPF Framework](https://github.com/TrackAndTruckDevs/SPF-Framework/releases/latest)\
+{% if spf %} ({{ spf }}+){% endif %} in your game's `bin/win_x64/plugins/` folder.
+2. Download [`motioncab-{{ semver }}.zip`]({{ zip }}) and extract it into \
+your game's `bin/win_x64/` folder.
+3. Start your game and enable **MotionCab** in SPF's plugin manager.
+{% if dll_sha %}
+### 🔒 Verification
+
+| File | SHA-256 |
+| --- | --- |
+| motioncab.dll | {{ dll_sha }} |
+
+Check it in PowerShell with `Get-FileHash motioncab.dll`.
+{% endif %}
+
+
+{% if previous.version %}
+---
+
+<p align="center"><sub>
+  <b>Full Changelog</b>: <a href="{{ gh }}/compare/{{ previous.version }}...{{ version }}">{{ previous.version }}...{{ version }}</a>
+</sub></p>
+{% endif %}
+"""
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+commit_preprocessors = [
+  # Drop the "(#N)" GitHub appends to squash-merged PR titles.
+  { pattern = '\s*\(#[0-9]+\)$', replace = "" },
+]
+# Non-conventional commits are dropped by filter_unconventional above.
+# The HTML comments only order the groups; striptags hides them.
+commit_parsers = [
+  { message = "^feat", group = "<!-- 0 -->✨ Added" },
+  { message = "^(refactor|perf)", group = "<!-- 1 -->🔧 Changed" },
+  { message = "^fix", group = "<!-- 2 -->🐛 Fixed" },
+  { message = "^docs", group = "<!-- 3 -->📝 Documentation" },
+  { message = "^(chore|ci|build|style|test)", group = "<!-- 4 -->⚙️ Maintenance" },
+  { message = "^revert", group = "<!-- 5 -->⏪ Reverted" },
+  { message = ".*", group = "<!-- 6 -->🔹 Other" },
+]
+filter_commits = false
+tag_pattern = "v[0-9].*"
+sort_commits = "oldest"

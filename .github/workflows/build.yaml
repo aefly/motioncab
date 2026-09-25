@@ -131,9 +131,12 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: read
 
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Download DLL
         uses: actions/download-artifact@v8
@@ -149,6 +152,24 @@ jobs:
           # Runtime assets (About tab logo) live next to the DLL.
           cp -r data "$dir/"
           zip -r "motioncab-$version.zip" "plugins"
+          echo "DLL_SHA256=$(sha256sum motioncab.dll | cut -d' ' -f1)" >> "$GITHUB_ENV"
+
+      - name: Read minimum SPF version
+        run: |
+          spf="$(grep -oP 'Info_SetMinFrameworkVersion\(h, "\K[^"]+' src/Manifest.cpp)"
+          if [ -z "$spf" ]; then
+            echo "Could not read the minimum SPF version from src/Manifest.cpp."
+            exit 1
+          fi
+          echo "SPF_MIN_VERSION=$spf" >> "$GITHUB_ENV"
+
+      - name: Build release notes
+        uses: orhun/git-cliff-action@v4
+        with:
+          args: --latest
+        env:
+          GITHUB_REPO: ${{ github.repository }}
+          OUTPUT: release-notes.md
 
       - name: Create release
         env:
@@ -160,5 +181,5 @@ jobs:
           gh release create "v$version" "motioncab-$version.zip" \
             --repo "${{ github.repository }}" \
             --title "v$version" \
-            --generate-notes \
+            --notes-file release-notes.md \
             $flags
