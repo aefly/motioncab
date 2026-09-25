@@ -302,7 +302,8 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
       h, "road.road_irregularity", "Road Irregularity",
       "Textured chatter based on the ground material under the wheels "
       "(gravel, cobblestone, dirt vs. smooth asphalt), separate from real "
-      "suspension bumps.",
+      "suspension bumps. Uneven ground like dirt or grass also rocks your "
+      "head from side to side.",
       nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "road.road_irregularity.enabled",
                              "Enable Road Irregularity", tip::kEnabled, nullptr,

@@ -15,6 +15,10 @@ namespace motioncab {
 // texture rather than shape. Distinct from SuspensionEffect, which reacts
 // to actual suspension travel instead.
 //
+// Off-road (dirt, grass, soft ground) it also rocks the head from side to
+// side (roll), a slower motion than the chatter, since that ground is
+// uneven and not just rough. Asphalt, even coarse, only chatters.
+//
 // SPF_API only exposes each surface as a name string (SPF_CommonData
 // substances[]), no numeric roughness value, so material names are
 // heuristically classified into a rough/smooth scale, with unknown/modded
@@ -36,22 +40,32 @@ public:
   void OnCommonDataChanged(const SPF_CommonData &data) override;
 
 private:
-  static float ClassifyRoughness(const char *substance_name);
+  struct SurfaceTraits {
+    float roughness = 0.0f;  // 0..1, fine chatter
+    float unevenness = 0.0f; // 0..1, side-to-side rocking (roll)
+  };
+  static SurfaceTraits ClassifySurface(const char *substance_name);
 
   SPF_Config_API *config_api_;
   SPF_Config_Handle *config_handle_;
 
   bool enabled_ = true;
-  float intensity_ = 1.0f;
+  float intensity_ = 1.0f;   // scales both the chatter and the rocking
   float reactivity_ = 0.05f; // seconds, noise low-pass time constant
 
   uint32_t wheel_count_ = 0;
-  std::array<float, SPF_TELEMETRY_SUBSTANCE_MAX_COUNT> substance_roughness_{};
+  std::array<SurfaceTraits, SPF_TELEMETRY_SUBSTANCE_MAX_COUNT>
+      substance_traits_{};
   uint32_t substance_count_ = 0;
 
   std::minstd_rand rng_;
   math::SpringDamper1D noise_x_;
   math::SpringDamper1D noise_y_;
+
+  uint32_t roll_seed_;
+  float roll_phase_ = 0.0f; // noise-domain time, not reset
+  // Fades the rocking in/out when the ground changes.
+  math::SpringDamper1D unevenness_;
 };
 
 } // namespace motioncab

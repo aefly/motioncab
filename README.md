@@ -46,7 +46,7 @@ camera control, keybind rebinding, and the in-game settings UI.
 - **Mirror Check** — looks toward the mirror on turn signal
 - **Manual Look** — smooth look-left/look-right
 - **Road Irregularity** — chatter based on the ground material under the
-  wheels
+  wheels, plus side-to-side rocking on uneven ground (dirt, grass)
 - **Speed Shake** — speed-driven body sway with slow, bounce, and fine
   vibration bands
 - **Body Dynamics** — head leans outward in corners and nods forward when
@@ -119,7 +119,7 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                            |
 | `toggle_mode`                | false   | On: press once to look, press again to look back. Off: look while held, let go to look back.                                         |
 | **Road Irregularity**        |         |                                                                                                                                      |
-| `intensity`                  | 1.0     | How strong the shake from rough road texture feels.                                                                                  |
+| `intensity`                  | 1.0     | How strong the road-texture shake and off-road rocking feel.                                                                         |
 | `reactivity`                 | 0.05    | How sharp and buzzy the road-texture shake feels. Lower = sharper.                                                                   |
 | **Speed Shake**              |         |                                                                                                                                      |
 | `intensity`                  | 1.0     | Overall strength of the shake you feel from driving fast.                                                                            |

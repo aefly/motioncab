@@ -70,7 +70,7 @@ constexpr const char *kManualLookToggleMode =
     "held, let go to look back.";
 
 constexpr const char *kRoadIrregularityIntensity =
-    "How strong the shake from rough road texture feels.";
+    "How strong the road-texture shake and off-road rocking feel.";
 constexpr const char *kRoadIrregularityReactivity =
     "How sharp and buzzy the road-texture shake feels. Lower = sharper.";
 
