@@ -139,6 +139,8 @@ void OnActivated(const SPF_Core_API *core_api) {
   ctx.core = core_api;
   ctx.logger_handle =
       core_api->logger->Log_GetContext(PluginContext::kPluginName);
+  ctx.LogFmt(SPF_LOG_INFO, "Version: %s", PLUGIN_VERSION);
+  ctx.Log(SPF_LOG_INFO, "Starting...");
   ctx.config_handle =
       core_api->config->Cfg_GetContext(PluginContext::kPluginName);
 
@@ -151,6 +153,7 @@ void OnActivated(const SPF_Core_API *core_api) {
       core_api->environment->Env_GetContext(PluginContext::kPluginName);
   ctx.localization_handle =
       core_api->localization->Loc_GetContext(PluginContext::kPluginName);
+  profiles::MigrateLegacySettings(ctx);
   profiles::EnsureDefaultExists(ctx);
   profiles::ResolveUnknownActiveProfile(ctx);
 
@@ -222,7 +225,6 @@ void OnActivated(const SPF_Core_API *core_api) {
                                        OnToggleSettingsWindow);
   }
 
-  ctx.LogFmt(SPF_LOG_INFO, "Version: %s", PLUGIN_VERSION);
   ctx.Log(SPF_LOG_INFO, "Plugin is running!");
 }
 
