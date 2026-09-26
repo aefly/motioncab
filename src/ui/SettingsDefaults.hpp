@@ -57,4 +57,11 @@ constexpr float kEngineStartStopDuration = 1.0f;
 constexpr float kManualZoomZoomLevel = 40.0f;
 constexpr float kManualZoomSmoothing = 0.25f;
 
+// The Quick Settings window's size on first launch (Manifest.cpp's
+// Defaults_AddWindow). SettingsWindow.cpp then snaps the width to the tab
+// titles, and falls back to this height on a language switch before
+// fitting it to the new text.
+constexpr int kWindowWidth = 476;
+constexpr int kWindowHeight = 640;
+
 } // namespace motioncab::defaults

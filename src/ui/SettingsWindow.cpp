@@ -9,9 +9,11 @@
 #include "ui/SettingsDefaults.hpp"
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <cmath>
 #include <cstdio>
+#include <iterator>
 #include <string>
 #include <string_view>
 
@@ -148,14 +150,47 @@ bool EffectHeader(SPF_UI_API *ui, const char *icon, const char *prefix) {
   return ui->UI_CollapsingHeader(label.c_str(), SPF_TREE_NODE_FLAG_NONE);
 }
 
+// Width of the settings tables' label column, set by DrawSettingsWindow
+// every frame from LabelColumnWidth().
+float g_label_column_w = 160.0f;
+
+// The widest label any settings table can show in the active language, so
+// none runs into its slider and every table's columns line up. Table rows
+// are the profile-covered settings (bar the effects' "enabled" toggles,
+// drawn above the table) and the keybind rows.
+float LabelColumnWidth(SPF_UI_API *ui) {
+  static const char *const kKeybindTitles[] = {
+      "keybinds.look_left.title",
+      "keybinds.look_right.title",
+      "keybinds.zoom.title",
+  };
+  static const std::vector<const char *> kSettingKeys =
+      profiles::AllSettingKeys();
+
+  float widest = 0.0f;
+  auto measure = [&](const char *text) {
+    float w = 0.0f, h = 0.0f;
+    ui->UI_CalcTextSize(text, &w, &h);
+    widest = std::max(widest, w);
+  };
+  for (const char *key : kSettingKeys) {
+    const std::string_view k(key);
+    if (!k.ends_with(".enabled"))
+      measure(SettingTitle(key));
+  }
+  for (const char *key : kKeybindTitles)
+    measure(loc::Tr(key));
+  return widest;
+}
+
 // Begins the label|value table shared by every effect's settings body.
 // Only one column ("Value") gets a header-style stretch; the label
-// column is sized to fit its own content.
+// column is as wide as the widest label (see LabelColumnWidth).
 bool BeginSettingsTable(SPF_UI_API *ui, const char *id) {
   if (!ui->UI_BeginTable(id, 2, SPF_TABLE_FLAG_NONE, 0.0f, 0.0f, 0.0f))
     return false;
-  ui->UI_TableSetupColumn("Label", SPF_TABLE_COLUMN_FLAG_WIDTH_FIXED, 160.0f,
-                          0);
+  ui->UI_TableSetupColumn("Label", SPF_TABLE_COLUMN_FLAG_WIDTH_FIXED,
+                          g_label_column_w, 0);
   ui->UI_TableSetupColumn("Value", SPF_TABLE_COLUMN_FLAG_WIDTH_STRETCH, 0.0f,
                           0);
   return true;
@@ -187,10 +222,13 @@ void DrawBool(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
 }
 
 // One label|slider row. Right-click the slider to reset it to default.
+// `display_scale` shows the value (and `min`/`max`) multiplied by it, e.g.
+// to show a setting stored in km/h in mph; the stored value doesn't change.
 void DrawFloat(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
                const char *key, float min, float max, const char *format,
-               float default_value) {
-  float value = static_cast<float>(cfg->Cfg_GetFloat(h, key, default_value));
+               float default_value, float display_scale = 1.0f) {
+  float value = static_cast<float>(cfg->Cfg_GetFloat(h, key, default_value)) *
+                display_scale;
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableSetColumnIndex(0);
   ui->UI_Text(SettingTitle(key));
@@ -198,12 +236,31 @@ void DrawFloat(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   char hidden_label[112];
   std::snprintf(hidden_label, sizeof(hidden_label), "##%s", key);
   ui->UI_SetNextItemWidth(-1.0f);
-  if (ui->UI_SliderFloat(hidden_label, &value, min, max, format,
-                         SPF_SLIDER_FLAG_NONE))
-    cfg->Cfg_SetFloat(h, key, value);
+  if (ui->UI_SliderFloat(hidden_label, &value, min * display_scale,
+                         max * display_scale, format, SPF_SLIDER_FLAG_NONE))
+    cfg->Cfg_SetFloat(h, key, value / display_scale);
   if (ui->UI_IsItemClicked(SPF_MOUSE_BUTTON_RIGHT))
     cfg->Cfg_SetFloat(h, key, default_value);
   ui->UI_SetItemTooltip(SettingDesc(key));
+}
+
+// A slider row for a speed setting, stored in km/h but shown in the
+// active language's unit ("ui.units.speed_system": mph for "imperial",
+// e.g. English, since British and American players drive in mph).
+void DrawSpeed(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
+               const char *key, float min_kmh, float max_kmh,
+               float default_kmh) {
+  constexpr float kMphPerKmh = 0.621371f;
+  const bool imperial =
+      std::string_view(loc::Tr("ui.units.speed_system")) == "imperial";
+  // The unit comes from a translation, so escape any '%' before it goes
+  // into a printf-style format.
+  std::string format = "%.0f ";
+  for (const char *c = loc::Tr(imperial ? "ui.units.mph" : "ui.units.kmh");
+       *c; ++c)
+    format += *c == '%' ? std::string("%%") : std::string(1, *c);
+  DrawFloat(ui, cfg, h, key, min_kmh, max_kmh, format.c_str(), default_kmh,
+            imperial ? kMphPerKmh : 1.0f);
 }
 
 // --- Per-effect defaults, reused by the tab-level and global reset
@@ -386,10 +443,10 @@ void DrawIdleBreathing(SPF_UI_API *ui, SPF_Config_API *cfg,
               0.0f, 1.5f, "%.2f deg", defaults::kIdleBreathingHeadNodAmount);
     DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.breathing_rate_bpm",
               10.0f, 20.0f, "%.0f bpm", defaults::kIdleBreathingRate);
-    DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.fade_start_kmh", 0.0f,
-              100.0f, "%.0f km/h", defaults::kIdleBreathingFadeStart);
-    DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.fade_end_kmh", 0.0f,
-              100.0f, "%.0f km/h", defaults::kIdleBreathingFadeEnd);
+    DrawSpeed(ui, cfg, h, "settings.cabin.idle_breathing.fade_start_kmh", 0.0f,
+              100.0f, defaults::kIdleBreathingFadeStart);
+    DrawSpeed(ui, cfg, h, "settings.cabin.idle_breathing.fade_end_kmh", 0.0f,
+              100.0f, defaults::kIdleBreathingFadeEnd);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
@@ -683,7 +740,9 @@ constexpr const char *kOverwritePopupId = "###confirm_overwrite_profile";
 constexpr const char *kDeletePopupId = "###confirm_delete_profile";
 constexpr const char *kResetPopupId = "###confirm_reset_all";
 
-void DrawProfilesSection(SPF_UI_API *ui) {
+// `field_w`: width of the name field and the profile dropdown, which the
+// buttons next to them follow.
+void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
   PluginContext &ctx = Context();
 
   DrawSectionTitle(ui, loc::Tr("ui.profiles.section"));
@@ -704,7 +763,7 @@ void DrawProfilesSection(SPF_UI_API *ui) {
     return false;
   };
 
-  ui->UI_SetNextItemWidth(180.0f);
+  ui->UI_SetNextItemWidth(field_w);
   ui->UI_InputTextWithHint("##profile_name", loc::Tr("ui.profiles.name_hint"),
                            profile_name_buf, sizeof(profile_name_buf),
                            SPF_INPUT_TEXT_FLAG_NONE);
@@ -789,7 +848,7 @@ void DrawProfilesSection(SPF_UI_API *ui) {
     const char *preview = selected_profile >= 0
                               ? profile_names[selected_profile].c_str()
                               : loc::Tr("ui.unsaved_changes");
-    ui->UI_SetNextItemWidth(180.0f);
+    ui->UI_SetNextItemWidth(field_w);
     ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_POPUP_BORDERSIZE, 1.0f);
     const bool combo_open =
         ui->UI_BeginCombo("##profile_select", preview, SPF_COMBO_FLAG_NONE);
@@ -1098,25 +1157,224 @@ void DrawAboutTab(SPF_UI_API *ui) {
 void DrawSettingsTab(SPF_UI_API *ui, SPF_Config_API *cfg,
                      SPF_Config_Handle *h) {
   DrawSectionTitle(ui, loc::Tr("ui.keybind.section"));
-  // 180 px input/combo width + 8 px gap: where "Save as Profile" and "Save"
-  // start in the profiles section, so the keybind button lines up with them.
-  constexpr float kProfileButtonX = 180.0f + 8.0f;
-  DrawKeybindRowAt(ui, "UI.toggle", loc::Tr("ui.keybind.toggle_window"),
-                   kProfileButtonX);
+  // The keybind button and the profiles section's buttons all start at
+  // the same x, just past the profile name field (180 px, or wider when
+  // the translated keybind label needs the room).
+  constexpr float kGap = 8.0f;
+  const char *toggle_label = loc::Tr("ui.keybind.toggle_window");
+  float label_w = 0.0f, label_h = 0.0f;
+  ui->UI_CalcTextSize(toggle_label, &label_w, &label_h);
+  const float field_w = std::max(180.0f, label_w);
+  DrawKeybindRowAt(ui, "UI.toggle", toggle_label, field_w + kGap);
 
   ui->UI_Spacing();
-  DrawProfilesSection(ui);
+  DrawProfilesSection(ui, field_w);
 
   ui->UI_Spacing();
   DrawResetSection(ui, cfg, h);
 }
 
-// Tab whose "###" ID keeps it selected across a language switch.
-bool BeginTab(SPF_UI_API *ui, const char *icon, const char *title_key,
-              const char *id) {
-  const std::string label =
-      WithIcon(icon, loc::Tr(title_key)) + "###tab_" + id;
-  return ui->UI_BeginTabItem(label.c_str(), nullptr, SPF_TAB_ITEM_FLAG_NONE);
+struct TabInfo {
+  const char *icon;
+  const char *title_key;
+  const char *id;
+};
+
+// The window's tabs, in display order.
+constexpr TabInfo kTabs[] = {
+    {ICON_FA_VIDEO, "settings.driving.title", "driving"},
+    {ICON_FA_ROAD, "settings.road.title", "road"},
+    {ICON_FA_TRUCK, "settings.cabin.title", "cabin"},
+    {ICON_FA_HAND, "settings.manual.title", "manual"},
+    {ICON_FA_GEAR, "ui.tabs.settings", "settings"},
+    {ICON_FA_CIRCLE_INFO, "ui.tabs.about", "about"},
+};
+
+constexpr size_t kTabCount = std::size(kTabs);
+
+std::string TabTitle(const TabInfo &tab) {
+  return WithIcon(tab.icon, loc::Tr(tab.title_key));
+}
+
+// Mirrors ImGui's TabBarLayout(): each tab's own width is its title
+// (rounded up to a whole pixel) + FramePadding on both sides + 1 px, and
+// tabs are ItemInnerSpacing apart. Everything is whole pixels.
+struct TabMetrics {
+  float width[kTabCount];
+  float gap;
+  float frame_pad_y;
+  float total; // all tabs and the gaps between them
+};
+
+TabMetrics MeasureTabs(SPF_UI_API *ui) {
+  SPF_Style_Handle *style = ui->UI_GetStyle();
+  float pad_x = 0.0f, pad_y = 0.0f, spacing_x = 0.0f, spacing_y = 0.0f;
+  ui->UI_Style_GetFramePadding(style, &pad_x, &pad_y);
+  ui->UI_Style_GetItemSpacing(style, &spacing_x, &spacing_y);
+
+  TabMetrics m{};
+  // The gap is ItemInnerSpacing.x, which the SDK can't read; SPF's style
+  // sets it to the same 4 px as ItemSpacing.y, scaled and truncated the
+  // same way at every UI scale.
+  m.gap = spacing_y;
+  m.frame_pad_y = pad_y;
+  m.total = m.gap * static_cast<float>(kTabCount - 1);
+  for (size_t i = 0; i < kTabCount; ++i) {
+    float text_w = 0.0f, text_h = 0.0f;
+    ui->UI_CalcTextSize(TabTitle(kTabs[i]).c_str(), &text_w, &text_h);
+    m.width[i] = text_w + pad_x * 2.0f + 1.0f;
+    m.total += m.width[i];
+  }
+  return m;
+}
+
+// Widths that make the tabs fill the whole tab bar, spreading the spare
+// room evenly (whole pixels, the leftover ones going to the first tabs).
+// All 0 when the tabs don't even fit at their own width: ImGui then
+// shrinks them itself, for the frame until FitWindowToTabs widens the
+// window. Call right before UI_BeginTabBar.
+std::array<float, kTabCount> StretchTabs(SPF_UI_API *ui,
+                                         const TabMetrics &m) {
+  std::array<float, kTabCount> widths{};
+  float avail_x = 0.0f, avail_y = 0.0f;
+  ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
+  const int spare = static_cast<int>(std::floor(avail_x - m.total));
+  if (spare < 0)
+    return widths;
+  const int count = static_cast<int>(kTabCount);
+  for (int i = 0; i < count; ++i)
+    widths[i] = m.width[i] + static_cast<float>(spare / count +
+                                                 (i < spare % count ? 1 : 0));
+  return widths;
+}
+
+// Tab whose "###" ID keeps it selected across a language switch. With a
+// `width`, the tab is stretched to it and its title drawn centered, since
+// ImGui always left-aligns tab titles.
+bool BeginTab(SPF_UI_API *ui, const TabInfo &tab, float width,
+              const TabMetrics &m) {
+  const std::string title = TabTitle(tab);
+  if (width <= 0.0f) {
+    const std::string label = title + "###tab_" + tab.id;
+    return ui->UI_BeginTabItem(label.c_str(), nullptr,
+                               SPF_TAB_ITEM_FLAG_NONE);
+  }
+
+  const std::string label = std::string("###tab_") + tab.id;
+  ui->UI_SetNextItemWidth(width);
+  const bool open =
+      ui->UI_BeginTabItem(label.c_str(), nullptr, SPF_TAB_ITEM_FLAG_NONE);
+
+  float min_x = 0.0f, min_y = 0.0f, max_x = 0.0f, max_y = 0.0f;
+  float text_w = 0.0f, text_h = 0.0f;
+  float r = 1.0f, g = 1.0f, b = 1.0f, a = 1.0f;
+  ui->UI_GetItemRectMin(&min_x, &min_y);
+  ui->UI_GetItemRectMax(&max_x, &max_y);
+  ui->UI_CalcTextSize(title.c_str(), &text_w, &text_h);
+  ui->UI_GetStyleColor(SPF_COLOR_TEXT, &r, &g, &b, &a);
+  // Same vertical placement as ImGui's own tab titles.
+  ui->UI_DrawList_AddText(ui->UI_GetWindowDrawList(),
+                          std::floor(min_x + (max_x - min_x - text_w) * 0.5f),
+                          min_y + m.frame_pad_y,
+                          ui->UI_ColorConvertFloat4ToU32(r, g, b, a),
+                          title.c_str());
+  return open;
+}
+
+// True on the first frame after a language switch. `seen` must start at
+// the count from the window's first frame, so the language SPF starts with
+// doesn't count as a switch (that would undo the size the player left the
+// window at last session).
+bool LanguageSwitched(unsigned &seen) {
+  const unsigned now = loc::LanguageChangeCount();
+  const bool switched = now != seen;
+  seen = now;
+  return switched;
+}
+
+// Keeps the window exactly wide enough for the tab titles, so none gets
+// cut with "..." (many translations are longer than English): on the
+// first launch and on a language switch it snaps to that width, 1 px
+// narrower would cut a tab. In between, the player can widen it freely
+// but not narrow it past that limit. SPF saves the size like any manual
+// resize.
+void FitWindowToTabs(SPF_UI_API *ui, const TabMetrics &m) {
+  static unsigned s_seen_lang = loc::LanguageChangeCount();
+  static bool s_first_frame = true;
+
+  float win_pad_x = 0.0f, win_pad_y = 0.0f;
+  ui->UI_Style_GetWindowPadding(ui->UI_GetStyle(), &win_pad_x, &win_pad_y);
+  // ImGui only shrinks tabs once they overflow the window's width minus
+  // WindowPadding on both sides by 1 px or more, and everything is whole
+  // pixels, so this is the exact limit (without the vertical scrollbar,
+  // which FitWindowToContent keeps hidden).
+  const float required = std::round(m.total + win_pad_x * 2.0f);
+
+  float win_w = 0.0f, win_h = 0.0f;
+  ui->UI_GetWindowSize(&win_w, &win_h);
+
+  // The first launch ever is the window still at its manifest default;
+  // later launches keep whatever width the player left it at.
+  const bool first_launch =
+      s_first_frame &&
+      std::fabs(win_w - static_cast<float>(defaults::kWindowWidth)) < 0.5f;
+  s_first_frame = false;
+  const bool snap = LanguageSwitched(s_seen_lang) || first_launch;
+
+  if (snap ? std::fabs(win_w - required) < 0.5f : win_w >= required)
+    return;
+  ui->UI_SetWindowSize(required, win_h, SPF_COND_ALWAYS);
+}
+
+// Grows the window to its content's height so it never needs a vertical
+// scrollbar (e.g. after expanding a section or switching tabs), and shrinks
+// it back to the player's own height when the content gets shorter. A
+// language switch resets that height to the default, like FitWindowToTabs.
+// Never goes past the bottom of the screen. Call after drawing all the
+// content.
+void FitWindowToContent(SPF_UI_API *ui) {
+  // The player's own height, and the height we forced on top of it (0
+  // when the window is at the player's height).
+  static float s_user_h = 0.0f;
+  static float s_auto_h = 0.0f;
+  static unsigned s_seen_lang = loc::LanguageChangeCount();
+
+  SPF_Style_Handle *style = ui->UI_GetStyle();
+  float pad_x = 0.0f, pad_y = 0.0f, spacing_x = 0.0f, spacing_y = 0.0f;
+  ui->UI_Style_GetWindowPadding(style, &pad_x, &pad_y);
+  ui->UI_Style_GetItemSpacing(style, &spacing_x, &spacing_y);
+
+  float win_w = 0.0f, win_h = 0.0f;
+  ui->UI_GetWindowSize(&win_w, &win_h);
+
+  // Any height we didn't set ourselves is the player's choice, until the
+  // next language switch.
+  if (s_auto_h == 0.0f || std::fabs(win_h - s_auto_h) > 0.5f) {
+    s_user_h = win_h;
+    s_auto_h = 0.0f;
+  }
+  if (LanguageSwitched(s_seen_lang))
+    s_user_h = static_cast<float>(defaults::kWindowHeight);
+
+  // The cursor sits one ItemSpacing below the last item, in window-local
+  // coordinates that already include the title bar and top padding.
+  float required = std::ceil(ui->UI_GetCursorPosY() - spacing_y + pad_y);
+
+  float win_x = 0.0f, win_y = 0.0f, vp_x = 0.0f, vp_y = 0.0f, vp_w = 0.0f,
+        vp_h = 0.0f;
+  ui->UI_GetWindowPos(&win_x, &win_y);
+  ui->UI_GetMainViewportPos(&vp_x, &vp_y);
+  ui->UI_GetMainViewportSize(&vp_w, &vp_h);
+  const float max_h = vp_y + vp_h - win_y;
+  if (max_h > 0.0f)
+    required = std::min(required, max_h);
+
+  const float target = std::max(s_user_h, required);
+  if (std::fabs(target - win_h) <= 0.5f)
+    return;
+
+  ui->UI_SetWindowSize(win_w, target, SPF_COND_ALWAYS);
+  s_auto_h = target > s_user_h + 0.5f ? target : 0.0f;
 }
 
 } // namespace
@@ -1130,6 +1388,7 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   SPF_Config_Handle *h = ctx.config_handle;
 
   loc::Sync();
+  g_label_column_w = LabelColumnWidth(ui);
 
   const int pushed_colors = PushBrandColors(ui);
   const int pushed_vars = PushBrandRounding(ui);
@@ -1149,27 +1408,31 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   }
   ui->UI_Spacing();
 
+  const TabMetrics tab_metrics = MeasureTabs(ui);
+  FitWindowToTabs(ui, tab_metrics);
+  const std::array<float, kTabCount> tab_widths =
+      StretchTabs(ui, tab_metrics);
   if (!ui->UI_BeginTabBar("MotionCabTabs", SPF_TAB_BAR_FLAG_NONE)) {
     ui->UI_PopStyleVar(pushed_vars);
     ui->UI_PopStyleColor(pushed_colors);
     return;
   }
 
-  if (BeginTab(ui, ICON_FA_VIDEO, "settings.driving.title", "driving")) {
+  if (BeginTab(ui, kTabs[0], tab_widths[0], tab_metrics)) {
     DrawHeadMotion(ui, cfg, h);
     DrawBodyDynamics(ui, cfg, h);
     DrawSteeringCamera(ui, cfg, h);
     ui->UI_EndTabItem();
   }
 
-  if (BeginTab(ui, ICON_FA_ROAD, "settings.road.title", "road")) {
+  if (BeginTab(ui, kTabs[1], tab_widths[1], tab_metrics)) {
     DrawSuspension(ui, cfg, h);
     DrawRoadIrregularity(ui, cfg, h);
     DrawSpeedShake(ui, cfg, h);
     ui->UI_EndTabItem();
   }
 
-  if (BeginTab(ui, ICON_FA_TRUCK, "settings.cabin.title", "cabin")) {
+  if (BeginTab(ui, kTabs[2], tab_widths[2], tab_metrics)) {
     DrawIdleBreathing(ui, cfg, h);
     DrawEngineVibration(ui, cfg, h);
     DrawEngineStartStop(ui, cfg, h);
@@ -1177,7 +1440,7 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   }
 
   const bool manual_tab_open =
-      BeginTab(ui, ICON_FA_HAND, "settings.manual.title", "manual");
+      BeginTab(ui, kTabs[3], tab_widths[3], tab_metrics);
   if (manual_tab_open) {
     DrawMirrorCheck(ui, cfg, h);
     DrawManualLook(ui, cfg, h);
@@ -1186,14 +1449,14 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   }
 
   const bool settings_tab_open =
-      BeginTab(ui, ICON_FA_GEAR, "ui.tabs.settings", "settings");
+      BeginTab(ui, kTabs[4], tab_widths[4], tab_metrics);
   if (settings_tab_open) {
     DrawSettingsTab(ui, cfg, h);
     ui->UI_EndTabItem();
   }
 
   const bool about_tab_open =
-      BeginTab(ui, ICON_FA_CIRCLE_INFO, "ui.tabs.about", "about");
+      BeginTab(ui, kTabs[5], tab_widths[5], tab_metrics);
   if (about_tab_open) {
     DrawAboutTab(ui);
     ui->UI_EndTabItem();
@@ -1204,6 +1467,8 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   if (!settings_tab_open && !about_tab_open)
     ui->UI_TextDisabled(
         WithIcon(ICON_FA_CIRCLE_INFO, loc::Tr("ui.slider_reset_hint")).c_str());
+
+  FitWindowToContent(ui);
 
   ui->UI_PopStyleVar(pushed_vars);
   ui->UI_PopStyleColor(pushed_colors);
