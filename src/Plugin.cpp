@@ -7,6 +7,7 @@
 #include "SPF_Telemetry_API.h"
 #include "SPF_UI_API.h"
 
+#include "Localization.hpp"
 #include "Manifest.hpp"
 #include "PluginContext.hpp"
 #include "ProfileManager.hpp"
@@ -112,6 +113,7 @@ void OnUnload() {
   // through the UI API that SPF doesn't free on its own.
   if (Context().core && Context().core->ui)
     ReleaseLogoTexture(Context().core->ui);
+  loc::Reset();
   // All API pointers become invalid after this returns; handles besides
   // the logo texture above are owned by the framework.
 }
@@ -147,6 +149,8 @@ void OnActivated(const SPF_Core_API *core_api) {
       core_api->keybinds->Kbind_GetContext(PluginContext::kPluginName);
   ctx.environment_handle =
       core_api->environment->Env_GetContext(PluginContext::kPluginName);
+  ctx.localization_handle =
+      core_api->localization->Loc_GetContext(PluginContext::kPluginName);
   profiles::EnsureDefaultExists(ctx);
   profiles::ResolveUnknownActiveProfile(ctx);
 

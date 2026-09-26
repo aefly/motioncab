@@ -1,0 +1,376 @@
+{
+  "language": {
+    "en": "English",
+    "uk": "Ukrainian    [Українська]",
+    "de": "German    [Deutsch]",
+    "fr": "French    [Français]",
+    "es": "Spanish    [Español]",
+    "pl": "Polish    [Polski]",
+    "ru": "Russian    [Русский]",
+    "pt_br": "Brazilian Portuguese    [Português (Brasil)]",
+    "it": "Italian    [Italiano]",
+    "nl": "Dutch    [Nederlands]",
+    "tr": "Turkish    [Türkçe]",
+    "cs": "Czech    [Čeština]",
+    "zh": "Chinese (Simplified)    [简体中文]",
+    "ja": "Japanese    [日本語]",
+    "ko": "Korean    [한국어]"
+  },
+  "plugin": {
+    "description": "Dynamic Head-Motion for ETS2 and ATS"
+  },
+  "window": {
+    "title": "MotionCab Quick Settings",
+    "desc": "Quick access to every effect's settings, as an alternative to the Custom Settings tab."
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "Toggle Settings Window",
+      "desc": "Shows or hides the MotionCab Quick Settings window."
+    },
+    "look_left": {
+      "title": "Look Left",
+      "desc": "Smoothly looks toward the left window/mirror."
+    },
+    "look_right": {
+      "title": "Look Right",
+      "desc": "Smoothly looks toward the right window/mirror."
+    },
+    "zoom": {
+      "title": "Zoom",
+      "desc": "Hold to smoothly zoom in; release to ease back to normal."
+    }
+  },
+  "settings": {
+    "enabled_desc": "Turn this effect on or off.",
+    "driving": {
+      "title": "Driving",
+      "desc": "Head and camera reactions to how the truck moves and steers.",
+      "head_motion": {
+        "title": "Head Motion",
+        "desc": "Dynamic head-motion effect settings.",
+        "enabled": {
+          "title": "Enable Head Motion"
+        },
+        "sway_strength": {
+          "title": "Sway Strength",
+          "desc": "How much your head gets pushed around when you speed up, brake, or take a turn."
+        },
+        "tilt_strength": {
+          "title": "Tilt Strength",
+          "desc": "How much your head tilts when the cab leans or rocks."
+        },
+        "smoothing_time": {
+          "title": "Smoothing",
+          "desc": "How quickly your head settles into place. Higher = slower and smoother, lower = snappier."
+        }
+      },
+      "body_dynamics": {
+        "title": "Body Dynamics",
+        "desc": "Head leans toward the outside of corners and nods forward when braking, like a driver's body reacting to the truck's motion.",
+        "enabled": {
+          "title": "Enable Body Dynamics"
+        },
+        "lean_strength": {
+          "title": "Lean Strength",
+          "desc": "How much your head leans toward the outside of a turn."
+        },
+        "nod_strength": {
+          "title": "Nod Strength",
+          "desc": "How much your head dips forward when braking and pulls back when accelerating."
+        },
+        "smoothing_time": {
+          "title": "Smoothing",
+          "desc": "How quickly the lean and nod settle. Lower = snappier."
+        }
+      },
+      "steering_camera": {
+        "title": "Steering Camera",
+        "desc": "Smoothed camera rotation following the steering wheel.",
+        "enabled": {
+          "title": "Enable Steering Camera"
+        },
+        "rotation_factor_deg": {
+          "title": "Rotation Amount",
+          "desc": "How far the camera turns when you crank the wheel all the way."
+        },
+        "smoothing_time": {
+          "title": "Smoothing",
+          "desc": "How smooth the camera turn feels once it gets going. Higher = smoother and slower."
+        },
+        "delay_seconds": {
+          "title": "Reaction Delay",
+          "desc": "How long the camera waits after you turn the wheel before it starts moving."
+        }
+      }
+    },
+    "road": {
+      "title": "Road",
+      "desc": "Effects driven by the road surface, suspension and speed.",
+      "suspension": {
+        "title": "Suspension",
+        "desc": "Camera follows the road surface vertically, like a seat riding the truck's suspension.",
+        "enabled": {
+          "title": "Enable Suspension"
+        },
+        "vertical_strength": {
+          "title": "Vertical Strength",
+          "desc": "How much bumps in the road bounce your head up and down."
+        },
+        "reactivity": {
+          "title": "Reactivity",
+          "desc": "How quickly your head catches up after a bump. Lower = snappier."
+        },
+        "grade_strength": {
+          "title": "Grade Follow",
+          "desc": "Tilts your head up on downhill stretches and down on uphill ones."
+        }
+      },
+      "road_irregularity": {
+        "title": "Road Irregularity",
+        "desc": "Textured chatter based on the ground material under the wheels (gravel, cobblestone, dirt vs. smooth asphalt), separate from real suspension bumps. Uneven ground like dirt or grass also rocks your head from side to side.",
+        "enabled": {
+          "title": "Enable Road Irregularity"
+        },
+        "intensity": {
+          "title": "Intensity",
+          "desc": "How strong the road-texture shake and off-road rocking feel."
+        },
+        "reactivity": {
+          "title": "Reactivity",
+          "desc": "How sharp and buzzy the road-texture shake feels. Lower = sharper."
+        }
+      },
+      "speed_shake": {
+        "title": "Speed Shake",
+        "desc": "Realistic head sway while driving, growing with truck speed.",
+        "enabled": {
+          "title": "Enable Speed Shake"
+        },
+        "intensity": {
+          "title": "Intensity",
+          "desc": "Overall strength of the shake you feel from driving fast."
+        },
+        "smoothing_time": {
+          "title": "Smoothing",
+          "desc": "How the shake feels over time. Higher = slower and smoother, lower = jumpier and more nervous."
+        },
+        "rotation": {
+          "title": "Rotation",
+          "desc": "How much your view tilts/turns as part of the shake, versus just moving side to side. Set to 0 to keep only the side-to-side motion."
+        },
+        "vertical": {
+          "title": "Vertical",
+          "desc": "How much up-and-down bounce is mixed into the shake."
+        },
+        "roughness": {
+          "title": "Roughness",
+          "desc": "How uneven the shake feels over time. 0 keeps it constant; higher gives bursts of calm and rough stretches."
+        }
+      }
+    },
+    "cabin": {
+      "title": "Cabin",
+      "desc": "Effects from the driver and the engine inside the cabin.",
+      "idle_breathing": {
+        "title": "Idle Breathing",
+        "desc": "Subtle idle breathing motion that fades out as speed increases.",
+        "enabled": {
+          "title": "Enable Idle Breathing"
+        },
+        "vertical_amplitude": {
+          "title": "Vertical Amount",
+          "desc": "How far the camera rises and falls with each breath."
+        },
+        "pitch_amplitude_deg": {
+          "title": "Head Nod Amount",
+          "desc": "How much your head tips forward/back with each breath."
+        },
+        "breathing_rate_bpm": {
+          "title": "Breathing Rate",
+          "desc": "How fast the breathing happens."
+        },
+        "fade_start_kmh": {
+          "title": "Fade Start Speed",
+          "desc": "The speed at which this effect starts fading away as you speed up."
+        },
+        "fade_end_kmh": {
+          "title": "Fade End Speed",
+          "desc": "The speed at which this effect has completely faded away."
+        }
+      },
+      "engine_vibration": {
+        "title": "Engine Vibration",
+        "desc": "Fine engine vibration scaled by RPM. Automatically disabled on electric trucks.",
+        "enabled": {
+          "title": "Enable Engine Vibration"
+        },
+        "intensity": {
+          "title": "Intensity",
+          "desc": "How strong the engine rumble feels."
+        }
+      },
+      "engine_start_stop": {
+        "title": "Engine Start/Stop",
+        "desc": "A short mechanical shudder when the engine starts or dies. Automatically disabled on electric trucks.",
+        "enabled": {
+          "title": "Enable Engine Start/Stop"
+        },
+        "intensity": {
+          "title": "Intensity",
+          "desc": "How strong the shudder feels when the engine starts or stops."
+        },
+        "duration": {
+          "title": "Duration",
+          "desc": "How long the start-up shudder lasts. The stop shudder is shorter and gentler than this."
+        }
+      }
+    },
+    "manual": {
+      "title": "Manual",
+      "desc": "Look and zoom effects you trigger yourself.",
+      "mirror_check": {
+        "title": "Mirror Check",
+        "desc": "Looks toward the corresponding mirror while a turn signal is on, and recenters when it's off.",
+        "hint": "Requires the game's native \"Left-Turn Indicator\" and \"Right-Turn Indicator\" keys to be assigned.",
+        "enabled": {
+          "title": "Enable Mirror Check"
+        },
+        "look_angle_deg": {
+          "title": "Look Angle",
+          "desc": "How far your head turns to check the mirror."
+        },
+        "pitch_offset_deg": {
+          "title": "Pitch Offset",
+          "desc": "How much your head tilts down while checking the mirror."
+        },
+        "smoothing_time": {
+          "title": "Smoothing",
+          "desc": "How smooth the look-and-return motion is."
+        },
+        "require_stationary": {
+          "title": "Only When Stationary",
+          "desc": "Only check the mirror when the truck is stopped."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Ignore While Moving",
+          "desc": "Don't check the mirror for a turn signal you switched on while already driving, even after you stop."
+        }
+      },
+      "manual_look": {
+        "title": "Manual Look",
+        "desc": "Smooth manual look-left/look-right glances bound to two keys.",
+        "hint": "These keys are separate from the game's native controls.",
+        "enabled": {
+          "title": "Enable Manual Look"
+        },
+        "look_angle_deg": {
+          "title": "Look Angle",
+          "desc": "How far your head turns when you look left or right."
+        },
+        "smoothing_time": {
+          "title": "Smoothing",
+          "desc": "How smooth the look-and-return motion is."
+        },
+        "toggle_mode": {
+          "title": "Toggle Mode",
+          "desc": "On: press once to look, press again to look back. Off: look while held, let go to look back."
+        }
+      },
+      "manual_zoom": {
+        "title": "Manual Zoom",
+        "desc": "Smooth zoom on a single dedicated key, like the native zoom key: hold to zoom in, release to ease back to normal. Independent of the native zoom keys, which jump the FOV in fixed steps and can't be smoothed directly.",
+        "hint": "This key is separate from the game's native \"Zoom Interior Camera\" key.",
+        "enabled": {
+          "title": "Enable Manual Zoom"
+        },
+        "zoom_fov_deg": {
+          "title": "Zoom Level",
+          "desc": "How zoomed in the view gets while holding the zoom key. Lower = more zoomed in."
+        },
+        "smoothing_time": {
+          "title": "Smoothing",
+          "desc": "How smooth the zoom in/out feels."
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "Enabled",
+    "cancel": "Cancel",
+    "slider_reset_hint": "Right-click a slider to reset it to default.",
+    "profile_badge": "Profile: {name}",
+    "unsaved_changes": "(Unsaved changes)",
+    "tabs": {
+      "settings": "Settings",
+      "about": "About"
+    },
+    "keybind": {
+      "section": "Keybinds",
+      "toggle_window": "Toggle Window",
+      "unbound": "(unbound)",
+      "rebind_tip": "Click to rebind.",
+      "options_tip": "Binding options (hold/toggle, deadzone, ...).",
+      "add_tip": "Add another binding."
+    },
+    "profiles": {
+      "section": "Profiles",
+      "name_hint": "Profile name...",
+      "save_as": "Save as Profile",
+      "save_as_tip": "Saves every current effect setting under this profile name.",
+      "invalid_name": "Enter a valid profile name first.",
+      "saved_toast": "Saved profile \"{name}\".",
+      "save_failed": "Failed to save profile, check MotionCab.log.",
+      "overwrite_title": "Confirm Overwrite",
+      "overwrite_message": "A profile named \"{name}\" already exists. Overwrite it?",
+      "overwrite_confirm": "Yes, Overwrite",
+      "none": "No saved profiles yet.",
+      "select_tip": "Selecting a profile loads it immediately.",
+      "load_failed": "Failed to load profile \"{name}\", check MotionCab.log.",
+      "no_match": "No profile matches the current settings. Pick one to load, or save these as a new profile above.",
+      "save": "Save",
+      "saved": "Saved",
+      "save_tip": "Overwrites the selected profile with the current settings.",
+      "delete": "Delete",
+      "delete_tip": "Delete the selected profile.",
+      "delete_title": "Confirm Delete",
+      "delete_message": "Delete profile \"{name}\"? This cannot be undone.",
+      "delete_confirm": "Yes, Delete",
+      "delete_failed": "Failed to delete profile \"{name}\", check MotionCab.log.",
+      "deleted_toast": "Deleted profile \"{name}\".",
+      "fallback_failed": "Deleted, but failed to load \"{name}\", check MotionCab.log."
+    },
+    "reset": {
+      "section": "Danger Zone",
+      "button": "Reset All Settings",
+      "title": "Confirm Reset",
+      "message": "Reset every MotionCab setting to its default value?",
+      "confirm": "Yes, Reset Everything",
+      "done_toast": "Reset every MotionCab setting to its default value."
+    },
+    "about": {
+      "details": "Details",
+      "version": "Version: **{version}**",
+      "developer": "Developer: **{author}**",
+      "links": "Links",
+      "website": "Website",
+      "website_desc": "Documentation",
+      "discord": "Discord",
+      "discord_desc": "Community and support",
+      "github": "GitHub",
+      "github_desc": "Releases and bug reports",
+      "youtube": "YouTube",
+      "youtube_desc": "Videos and showcases",
+      "support": "Support",
+      "support_text": "If you enjoy MotionCab, you can support its development.",
+      "donate": "Donate with PayPal",
+      "donate_desc": "Support MotionCab on PayPal",
+      "tips": "Tips",
+      "tip_reset": "Right-click any slider to reset it to its default value.",
+      "tip_profiles": "Save your tuning as a profile in the {settings_tab} tab.",
+      "tip_interior": "Every effect works in the interior camera only.",
+      "credits": "Credits",
+      "credits_text": "SPF Framework and contributors."
+    }
+  }
+}

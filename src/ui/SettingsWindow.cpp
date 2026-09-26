@@ -1,18 +1,19 @@
 #include "SettingsWindow.hpp"
 
 #include "Links.hpp"
+#include "Localization.hpp"
 #include "PluginContext.hpp"
 #include "ProfileManager.hpp"
 #include "SPF_Icons.h"
 #include "ui/OpenUrl.hpp"
 #include "ui/SettingsDefaults.hpp"
-#include "ui/SettingsText.hpp"
 
 #include <algorithm>
 #include <chrono>
 #include <cmath>
 #include <cstdio>
-#include <cstring>
+#include <string>
+#include <string_view>
 
 namespace motioncab {
 
@@ -87,65 +88,24 @@ bool MutedButton(SPF_UI_API *ui, const char *label, float width = 0.0f) {
   return clicked;
 }
 
-// Draws the visible part of a "Label##id" string only (ImGui's ID-hiding
-// convention isn't parsed by UI_Text, so we truncate it ourselves).
-void DrawVisibleLabel(SPF_UI_API *ui, const char *id_and_label) {
-  const char *hash = std::strstr(id_and_label, "##");
-  if (!hash) {
-    ui->UI_Text(id_and_label);
-    return;
-  }
-  char buffer[64];
-  size_t len = static_cast<size_t>(hash - id_and_label);
-  if (len >= sizeof(buffer))
-    len = sizeof(buffer) - 1;
-  std::memcpy(buffer, id_and_label, len);
-  buffer[len] = '\0';
-  ui->UI_Text(buffer);
+// "<icon> <text>", for the icon-prefixed labels used all over the window.
+std::string WithIcon(const char *icon, std::string_view text) {
+  return std::string(icon) + " " + std::string(text);
 }
 
-// Toggle switch
-bool DrawToggle(SPF_UI_API *ui, const char *id_and_label, bool *value,
-                const char *tooltip) {
-  // The icon is the only visible text; everything after "##" here (the
-  // full original id_and_label, including its own "##suffix") becomes
-  // the widget's unique ID. Using just the caller's suffix would collide
-  // whenever an effect has more than one toggle (e.g. mirror_check's
-  // "Enabled" and "Only When Stationary" both end in "##mirror_check").
-  char button_id[128];
-  std::snprintf(button_id, sizeof(button_id), "%s##%s",
-                *value ? ICON_FA_TOGGLE_ON : ICON_FA_TOGGLE_OFF, id_and_label);
-
-  ui->UI_PushStyleColor(SPF_COLOR_BUTTON, 0.0f, 0.0f, 0.0f, 0.0f);
-  ui->UI_PushStyleColor(SPF_COLOR_BUTTON_HOVERED, 0.0f, 0.0f, 0.0f, 0.0f);
-  ui->UI_PushStyleColor(SPF_COLOR_BUTTON_ACTIVE, 0.0f, 0.0f, 0.0f, 0.0f);
-  if (*value)
-    ui->UI_PushStyleColor(SPF_COLOR_TEXT, kAccentR, kAccentG, kAccentB, 1.0f);
-  else
-    ui->UI_PushStyleColor(SPF_COLOR_TEXT, 0.5f, 0.5f, 0.5f, 1.0f);
-
-  const bool clicked = ui->UI_Button(button_id, 0.0f, 0.0f);
-  ui->UI_PopStyleColor(4);
-  if (clicked)
-    *value = !*value;
-  ui->UI_SetItemTooltip(tooltip);
-
-  ui->UI_SameLine(0.0f, 8.0f);
-  DrawVisibleLabel(ui, id_and_label);
-  return clicked;
+// A setting's title and description live under its own config key (see
+// the UI Metadata comment in Manifest.cpp), shared with the native UI.
+const char *SettingTitle(const char *key) {
+  return loc::Tr(std::string(key) + ".title");
 }
 
-bool DrawEnabled(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
-                 const char *key, const char *label, const char *tooltip,
-                 bool default_value) {
-  bool value = cfg->Cfg_GetBool(h, key, default_value);
-  if (DrawToggle(ui, label, &value, tooltip))
-    cfg->Cfg_SetBool(h, key, value);
-  return value;
+const char *SettingDesc(const char *key) {
+  return loc::Tr(std::string(key) + ".desc");
 }
 
-// Toggle switch with no trailing label, used for the value column of a
-// settings table row, where the label already lives in its own column.
+// Toggle switch drawn as a bare icon button, e.g. for the value column of a
+// settings table row, where the label already lives in its own column. The
+// config key doubles as the button's ID so it stays unique.
 bool DrawToggleCell(SPF_UI_API *ui, const char *key, bool *value,
                     const char *tooltip) {
   char button_id[128];
@@ -166,6 +126,26 @@ bool DrawToggleCell(SPF_UI_API *ui, const char *key, bool *value,
     *value = !*value;
   ui->UI_SetItemTooltip(tooltip);
   return clicked;
+}
+
+// An effect's "Enabled" toggle, with its label after the switch.
+bool DrawEnabled(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
+                 const char *key, bool default_value) {
+  bool value = cfg->Cfg_GetBool(h, key, default_value);
+  if (DrawToggleCell(ui, key, &value, loc::Tr("settings.enabled_desc")))
+    cfg->Cfg_SetBool(h, key, value);
+  ui->UI_SameLine(0.0f, 8.0f);
+  ui->UI_Text(loc::Tr("ui.enabled"));
+  return value;
+}
+
+// Collapsing header of the effect whose settings live under `prefix`
+// ("settings.<group>.<effect>"). The "###" ID keeps its open/closed state
+// across a language switch.
+bool EffectHeader(SPF_UI_API *ui, const char *icon, const char *prefix) {
+  const std::string label =
+      WithIcon(icon, SettingTitle(prefix)) + "###" + prefix;
+  return ui->UI_CollapsingHeader(label.c_str(), SPF_TREE_NODE_FLAG_NONE);
 }
 
 // Begins the label|value table shared by every effect's settings body.
@@ -196,25 +176,24 @@ void ShowToast(SPF_UI_API *ui, SPF_NotificationType type,
 
 // One label|toggle row.
 void DrawBool(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
-              const char *key, const char *label, const char *tooltip,
-              bool default_value) {
+              const char *key, bool default_value) {
   bool value = cfg->Cfg_GetBool(h, key, default_value);
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableSetColumnIndex(0);
-  DrawVisibleLabel(ui, label);
+  ui->UI_Text(SettingTitle(key));
   ui->UI_TableSetColumnIndex(1);
-  if (DrawToggleCell(ui, key, &value, tooltip))
+  if (DrawToggleCell(ui, key, &value, SettingDesc(key)))
     cfg->Cfg_SetBool(h, key, value);
 }
 
 // One label|slider row. Right-click the slider to reset it to default.
 void DrawFloat(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
-               const char *key, const char *label, float min, float max,
-               const char *format, const char *tooltip, float default_value) {
+               const char *key, float min, float max, const char *format,
+               float default_value) {
   float value = static_cast<float>(cfg->Cfg_GetFloat(h, key, default_value));
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableSetColumnIndex(0);
-  DrawVisibleLabel(ui, label);
+  ui->UI_Text(SettingTitle(key));
   ui->UI_TableSetColumnIndex(1);
   char hidden_label[112];
   std::snprintf(hidden_label, sizeof(hidden_label), "##%s", key);
@@ -224,7 +203,7 @@ void DrawFloat(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
     cfg->Cfg_SetFloat(h, key, value);
   if (ui->UI_IsItemClicked(SPF_MOUSE_BUTTON_RIGHT))
     cfg->Cfg_SetFloat(h, key, default_value);
-  ui->UI_SetItemTooltip(tooltip);
+  ui->UI_SetItemTooltip(SettingDesc(key));
 }
 
 // --- Per-effect defaults, reused by the tab-level and global reset
@@ -355,23 +334,19 @@ void ResetManualZoom(SPF_Config_API *cfg, SPF_Config_Handle *h) {
 // --- Per-effect draw functions ---
 
 void DrawHeadMotion(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT " Head Motion",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT,
+                    "settings.driving.head_motion"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.driving.head_motion.enabled",
-                  "Enabled##head_motion", tip::kEnabled, true);
+      DrawEnabled(ui, cfg, h, "settings.driving.head_motion.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "head_motion_table")) {
-    DrawFloat(ui, cfg, h, "settings.driving.head_motion.sway_strength",
-              "Sway Strength##head_motion", 0.0f, 0.6f, "%.2f",
-              tip::kHeadMotionSwayStrength, defaults::kHeadMotionSwayStrength);
-    DrawFloat(ui, cfg, h, "settings.driving.head_motion.tilt_strength",
-              "Tilt Strength##head_motion", 0.0f, 0.6f, "%.2f",
-              tip::kHeadMotionTiltStrength, defaults::kHeadMotionTiltStrength);
-    DrawFloat(ui, cfg, h, "settings.driving.head_motion.smoothing_time",
-              "Smoothing##head_motion", 0.02f, 0.5f, "%.2f s",
-              tip::kHeadMotionSmoothing, defaults::kHeadMotionSmoothing);
+    DrawFloat(ui, cfg, h, "settings.driving.head_motion.sway_strength", 0.0f,
+              0.6f, "%.2f", defaults::kHeadMotionSwayStrength);
+    DrawFloat(ui, cfg, h, "settings.driving.head_motion.tilt_strength", 0.0f,
+              0.6f, "%.2f", defaults::kHeadMotionTiltStrength);
+    DrawFloat(ui, cfg, h, "settings.driving.head_motion.smoothing_time", 0.02f,
+              0.5f, "%.2f s", defaults::kHeadMotionSmoothing);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
@@ -379,27 +354,19 @@ void DrawHeadMotion(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
 
 void DrawSteeringCamera(SPF_UI_API *ui, SPF_Config_API *cfg,
                         SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_ROTATE " Steering Camera",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_ROTATE, "settings.driving.steering_camera"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.driving.steering_camera.enabled",
-                  "Enabled##steering_camera", tip::kEnabled, true);
+      DrawEnabled(ui, cfg, h, "settings.driving.steering_camera.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "steering_camera_table")) {
     DrawFloat(ui, cfg, h,
-              "settings.driving.steering_camera.rotation_factor_deg",
-              "Rotation Amount##steering_camera", 20.0f, 60.0f, "%.1f deg",
-              tip::kSteeringCameraRotationAmount,
-              defaults::kSteeringCameraRotationAmount);
+              "settings.driving.steering_camera.rotation_factor_deg", 20.0f,
+              60.0f, "%.1f deg", defaults::kSteeringCameraRotationAmount);
     DrawFloat(ui, cfg, h, "settings.driving.steering_camera.smoothing_time",
-              "Smoothing##steering_camera", 0.02f, 1.0f, "%.2f s",
-              tip::kSteeringCameraSmoothing,
-              defaults::kSteeringCameraSmoothing);
+              0.02f, 1.0f, "%.2f s", defaults::kSteeringCameraSmoothing);
     DrawFloat(ui, cfg, h, "settings.driving.steering_camera.delay_seconds",
-              "Reaction Delay##steering_camera", 0.0f, 0.3f, "%.2f s",
-              tip::kSteeringCameraReactionDelay,
-              defaults::kSteeringCameraReactionDelay);
+              0.0f, 0.3f, "%.2f s", defaults::kSteeringCameraReactionDelay);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
@@ -407,85 +374,62 @@ void DrawSteeringCamera(SPF_UI_API *ui, SPF_Config_API *cfg,
 
 void DrawIdleBreathing(SPF_UI_API *ui, SPF_Config_API *cfg,
                        SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_LUNGS " Idle Breathing",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_LUNGS, "settings.cabin.idle_breathing"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.cabin.idle_breathing.enabled",
-                  "Enabled##idle_breathing", tip::kEnabled, true);
+      DrawEnabled(ui, cfg, h, "settings.cabin.idle_breathing.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "idle_breathing_table")) {
     DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.vertical_amplitude",
-              "Vertical Amount##idle_breathing", 0.0f, 0.01f, "%.3f m",
-              tip::kIdleBreathingVerticalAmount,
-              defaults::kIdleBreathingVerticalAmount);
+              0.0f, 0.01f, "%.3f m", defaults::kIdleBreathingVerticalAmount);
     DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.pitch_amplitude_deg",
-              "Head Nod Amount##idle_breathing", 0.0f, 1.5f, "%.2f deg",
-              tip::kIdleBreathingHeadNodAmount,
-              defaults::kIdleBreathingHeadNodAmount);
+              0.0f, 1.5f, "%.2f deg", defaults::kIdleBreathingHeadNodAmount);
     DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.breathing_rate_bpm",
-              "Breathing Rate##idle_breathing", 10.0f, 20.0f, "%.0f bpm",
-              tip::kIdleBreathingRate, defaults::kIdleBreathingRate);
-    DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.fade_start_kmh",
-              "Fade Start Speed##idle_breathing", 0.0f, 100.0f, "%.0f km/h",
-              tip::kIdleBreathingFadeStart, defaults::kIdleBreathingFadeStart);
-    DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.fade_end_kmh",
-              "Fade End Speed##idle_breathing", 0.0f, 100.0f, "%.0f km/h",
-              tip::kIdleBreathingFadeEnd, defaults::kIdleBreathingFadeEnd);
+              10.0f, 20.0f, "%.0f bpm", defaults::kIdleBreathingRate);
+    DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.fade_start_kmh", 0.0f,
+              100.0f, "%.0f km/h", defaults::kIdleBreathingFadeStart);
+    DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.fade_end_kmh", 0.0f,
+              100.0f, "%.0f km/h", defaults::kIdleBreathingFadeEnd);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
 }
 
 void DrawSuspension(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_ARROWS_UP_DOWN " Suspension",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_ARROWS_UP_DOWN, "settings.road.suspension"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.road.suspension.enabled",
-                  "Enabled##suspension", tip::kEnabled, true);
+      DrawEnabled(ui, cfg, h, "settings.road.suspension.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "suspension_table")) {
-    DrawFloat(ui, cfg, h, "settings.road.suspension.vertical_strength",
-              "Vertical Strength##suspension", 0.0f, 2.0f, "%.2f",
-              tip::kSuspensionVerticalStrength,
-              defaults::kSuspensionVerticalStrength);
-    DrawFloat(ui, cfg, h, "settings.road.suspension.reactivity",
-              "Reactivity##suspension", 0.02f, 0.3f, "%.2f s",
-              tip::kSuspensionReactivity, defaults::kSuspensionReactivity);
-    DrawFloat(ui, cfg, h, "settings.road.suspension.grade_strength",
-              "Grade Follow##suspension", 0.0f, 1.0f, "%.2f",
-              tip::kSuspensionGradeStrength,
-              defaults::kSuspensionGradeStrength);
+    DrawFloat(ui, cfg, h, "settings.road.suspension.vertical_strength", 0.0f,
+              2.0f, "%.2f", defaults::kSuspensionVerticalStrength);
+    DrawFloat(ui, cfg, h, "settings.road.suspension.reactivity", 0.02f, 0.3f,
+              "%.2f s", defaults::kSuspensionReactivity);
+    DrawFloat(ui, cfg, h, "settings.road.suspension.grade_strength", 0.0f, 1.0f,
+              "%.2f", defaults::kSuspensionGradeStrength);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
 }
 
 void DrawSpeedShake(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_TRUCK " Speed Shake",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_TRUCK, "settings.road.speed_shake"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.road.speed_shake.enabled",
-                  "Enabled##speed_shake", tip::kEnabled, true);
+      DrawEnabled(ui, cfg, h, "settings.road.speed_shake.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "speed_shake_table")) {
-    DrawFloat(ui, cfg, h, "settings.road.speed_shake.intensity",
-              "Intensity##speed_shake", 0.0f, 2.0f, "%.2f",
-              tip::kSpeedShakeIntensity, defaults::kSpeedShakeIntensity);
-    DrawFloat(ui, cfg, h, "settings.road.speed_shake.smoothing_time",
-              "Smoothing##speed_shake", 0.1f, 1.0f, "%.2f s",
-              tip::kSpeedShakeSmoothing, defaults::kSpeedShakeSmoothing);
-    DrawFloat(ui, cfg, h, "settings.road.speed_shake.rotation",
-              "Rotation##speed_shake", 0.0f, 2.0f, "%.2f",
-              tip::kSpeedShakeRotation, defaults::kSpeedShakeRotation);
-    DrawFloat(ui, cfg, h, "settings.road.speed_shake.vertical",
-              "Vertical##speed_shake", 0.0f, 2.0f, "%.2f",
-              tip::kSpeedShakeVertical, defaults::kSpeedShakeVertical);
-    DrawFloat(ui, cfg, h, "settings.road.speed_shake.roughness",
-              "Roughness##speed_shake", 0.0f, 1.0f, "%.2f",
-              tip::kSpeedShakeRoughness, defaults::kSpeedShakeRoughness);
+    DrawFloat(ui, cfg, h, "settings.road.speed_shake.intensity", 0.0f, 2.0f,
+              "%.2f", defaults::kSpeedShakeIntensity);
+    DrawFloat(ui, cfg, h, "settings.road.speed_shake.smoothing_time", 0.1f,
+              1.0f, "%.2f s", defaults::kSpeedShakeSmoothing);
+    DrawFloat(ui, cfg, h, "settings.road.speed_shake.rotation", 0.0f, 2.0f,
+              "%.2f", defaults::kSpeedShakeRotation);
+    DrawFloat(ui, cfg, h, "settings.road.speed_shake.vertical", 0.0f, 2.0f,
+              "%.2f", defaults::kSpeedShakeVertical);
+    DrawFloat(ui, cfg, h, "settings.road.speed_shake.roughness", 0.0f, 1.0f,
+              "%.2f", defaults::kSpeedShakeRoughness);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
@@ -493,25 +437,18 @@ void DrawSpeedShake(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
 
 void DrawBodyDynamics(SPF_UI_API *ui, SPF_Config_API *cfg,
                       SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_PERSON " Body Dynamics",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_PERSON, "settings.driving.body_dynamics"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.driving.body_dynamics.enabled",
-                  "Enabled##body_dynamics", tip::kEnabled, true);
+      DrawEnabled(ui, cfg, h, "settings.driving.body_dynamics.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "body_dynamics_table")) {
-    DrawFloat(ui, cfg, h, "settings.driving.body_dynamics.lean_strength",
-              "Lean Strength##body_dynamics", 0.0f, 2.0f, "%.2f",
-              tip::kBodyDynamicsLeanStrength,
-              defaults::kBodyDynamicsLeanStrength);
-    DrawFloat(ui, cfg, h, "settings.driving.body_dynamics.nod_strength",
-              "Nod Strength##body_dynamics", 0.0f, 2.0f, "%.2f",
-              tip::kBodyDynamicsNodStrength,
-              defaults::kBodyDynamicsNodStrength);
+    DrawFloat(ui, cfg, h, "settings.driving.body_dynamics.lean_strength", 0.0f,
+              2.0f, "%.2f", defaults::kBodyDynamicsLeanStrength);
+    DrawFloat(ui, cfg, h, "settings.driving.body_dynamics.nod_strength", 0.0f,
+              2.0f, "%.2f", defaults::kBodyDynamicsNodStrength);
     DrawFloat(ui, cfg, h, "settings.driving.body_dynamics.smoothing_time",
-              "Smoothing##body_dynamics", 0.05f, 0.6f, "%.2f s",
-              tip::kBodyDynamicsSmoothing, defaults::kBodyDynamicsSmoothing);
+              0.05f, 0.6f, "%.2f s", defaults::kBodyDynamicsSmoothing);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
@@ -519,22 +456,16 @@ void DrawBodyDynamics(SPF_UI_API *ui, SPF_Config_API *cfg,
 
 void DrawRoadIrregularity(SPF_UI_API *ui, SPF_Config_API *cfg,
                           SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_ROAD " Road Irregularity",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_ROAD, "settings.road.road_irregularity"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.road.road_irregularity.enabled",
-                  "Enabled##road_irregularity", tip::kEnabled, true);
+      DrawEnabled(ui, cfg, h, "settings.road.road_irregularity.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "road_irregularity_table")) {
-    DrawFloat(ui, cfg, h, "settings.road.road_irregularity.intensity",
-              "Intensity##road_irregularity", 0.0f, 2.0f, "%.2f",
-              tip::kRoadIrregularityIntensity,
-              defaults::kRoadIrregularityIntensity);
-    DrawFloat(ui, cfg, h, "settings.road.road_irregularity.reactivity",
-              "Reactivity##road_irregularity", 0.02f, 0.2f, "%.2f s",
-              tip::kRoadIrregularityReactivity,
-              defaults::kRoadIrregularityReactivity);
+    DrawFloat(ui, cfg, h, "settings.road.road_irregularity.intensity", 0.0f,
+              2.0f, "%.2f", defaults::kRoadIrregularityIntensity);
+    DrawFloat(ui, cfg, h, "settings.road.road_irregularity.reactivity", 0.02f,
+              0.2f, "%.2f s", defaults::kRoadIrregularityReactivity);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
@@ -542,18 +473,14 @@ void DrawRoadIrregularity(SPF_UI_API *ui, SPF_Config_API *cfg,
 
 void DrawEngineVibration(SPF_UI_API *ui, SPF_Config_API *cfg,
                          SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_WAVE_SQUARE " Engine Vibration",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_WAVE_SQUARE, "settings.cabin.engine_vibration"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.cabin.engine_vibration.enabled",
-                  "Enabled##engine_vibration", tip::kEnabled, true);
+      DrawEnabled(ui, cfg, h, "settings.cabin.engine_vibration.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "engine_vibration_table")) {
-    DrawFloat(ui, cfg, h, "settings.cabin.engine_vibration.intensity",
-              "Intensity##engine_vibration", 0.0f, 2.0f, "%.2f",
-              tip::kEngineVibrationIntensity,
-              defaults::kEngineVibrationIntensity);
+    DrawFloat(ui, cfg, h, "settings.cabin.engine_vibration.intensity", 0.0f,
+              2.0f, "%.2f", defaults::kEngineVibrationIntensity);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
@@ -561,32 +488,27 @@ void DrawEngineVibration(SPF_UI_API *ui, SPF_Config_API *cfg,
 
 void DrawEngineStartStop(SPF_UI_API *ui, SPF_Config_API *cfg,
                          SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_POWER_OFF " Engine Start/Stop",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_POWER_OFF, "settings.cabin.engine_start_stop"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.cabin.engine_start_stop.enabled",
-                  "Enabled##engine_start_stop", tip::kEnabled, true);
+      DrawEnabled(ui, cfg, h, "settings.cabin.engine_start_stop.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "engine_start_stop_table")) {
-    DrawFloat(ui, cfg, h, "settings.cabin.engine_start_stop.intensity",
-              "Intensity##engine_start_stop", 0.0f, 0.3f, "%.2f",
-              tip::kEngineStartStopIntensity,
-              defaults::kEngineStartStopIntensity);
-    DrawFloat(ui, cfg, h, "settings.cabin.engine_start_stop.duration",
-              "Duration##engine_start_stop", 0.3f, 2.0f, "%.2f s",
-              tip::kEngineStartStopDuration,
-              defaults::kEngineStartStopDuration);
+    DrawFloat(ui, cfg, h, "settings.cabin.engine_start_stop.intensity", 0.0f,
+              0.3f, "%.2f", defaults::kEngineStartStopIntensity);
+    DrawFloat(ui, cfg, h, "settings.cabin.engine_start_stop.duration", 0.3f,
+              2.0f, "%.2f s", defaults::kEngineStartStopDuration);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
 }
 
-// Small muted, word-wrapped note. Wraps at the window edge instead of
-// running off it, unlike a plain UI_Text/UI_TextDisabled call.
+// Small muted, word-wrapped note with an info icon. Wraps at the window
+// edge instead of running off it, unlike a plain UI_Text/UI_TextDisabled
+// call.
 void DrawWrappedHint(SPF_UI_API *ui, const char *text) {
   ui->UI_PushStyleColor(SPF_COLOR_TEXT, 0.6f, 0.6f, 0.6f, 1.0f);
-  ui->UI_TextWrapped(text);
+  ui->UI_TextWrapped(WithIcon(ICON_FA_CIRCLE_INFO, text).c_str());
   ui->UI_PopStyleColor(1);
 }
 
@@ -613,19 +535,20 @@ void DrawKeybindButtons(SPF_UI_API *ui, const char *action) {
     char name[128] = {};
     kb->Kbind_GetBindingDisplayName(ctx.keybinds_handle, action, i, name,
                                     sizeof(name));
-    if (ui->UI_Button(name[0] ? name : "(unbound)", 0.0f, 0.0f))
+    if (ui->UI_Button(name[0] ? name : loc::Tr("ui.keybind.unbound"), 0.0f,
+                      0.0f))
       kb->Kbind_OpenRebindPopup(ctx.keybinds_handle, action, i);
-    ui->UI_SetItemTooltip("Click to rebind.");
+    ui->UI_SetItemTooltip(loc::Tr("ui.keybind.rebind_tip"));
     ui->UI_SameLine(0.0f, 4.0f);
     if (ui->UI_Button(ICON_FA_GEAR, 0.0f, 0.0f))
       kb->Kbind_OpenBindingDetailsPopup(ctx.keybinds_handle, action, i);
-    ui->UI_SetItemTooltip("Binding options (hold/toggle, deadzone, ...).");
+    ui->UI_SetItemTooltip(loc::Tr("ui.keybind.options_tip"));
     ui->UI_SameLine(0.0f, 12.0f);
     ui->UI_PopID();
   }
   if (ui->UI_Button(ICON_FA_PLUS "##add", 0.0f, 0.0f))
     kb->Kbind_OpenRebindPopup(ctx.keybinds_handle, action, -1);
-  ui->UI_SetItemTooltip("Add another binding.");
+  ui->UI_SetItemTooltip(loc::Tr("ui.keybind.add_tip"));
   ui->UI_PopID();
   ui->UI_PopStyleColor(3);
 }
@@ -647,7 +570,7 @@ void DrawKeybindRow(SPF_UI_API *ui, const char *action, const char *label) {
 
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableSetColumnIndex(0);
-  DrawVisibleLabel(ui, label);
+  ui->UI_Text(label);
   ui->UI_TableSetColumnIndex(1);
   DrawKeybindButtons(ui, action);
 }
@@ -662,42 +585,30 @@ void DrawKeybindRowAt(SPF_UI_API *ui, const char *action, const char *label,
 
   const float start_x = ui->UI_GetCursorPosX();
   ui->UI_AlignTextToFramePadding();
-  DrawVisibleLabel(ui, label);
+  ui->UI_Text(label);
   ui->UI_SameLine(start_x + button_x, 0.0f);
   DrawKeybindButtons(ui, action);
 }
 
 void DrawMirrorCheck(SPF_UI_API *ui, SPF_Config_API *cfg,
                      SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_EYE " Mirror Check",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_EYE, "settings.manual.mirror_check"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.manual.mirror_check.enabled",
-                  "Enabled##mirror_check", tip::kEnabled, true);
-  DrawWrappedHint(ui, ICON_FA_CIRCLE_INFO " Requires the game's native "
-                                          "\"Left-Turn Indicator\" and "
-                                          "\"Right-Turn Indicator\" keys to be "
-                                          "assigned.");
+      DrawEnabled(ui, cfg, h, "settings.manual.mirror_check.enabled", true);
+  DrawWrappedHint(ui, loc::Tr("settings.manual.mirror_check.hint"));
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "mirror_check_table")) {
-    DrawFloat(ui, cfg, h, "settings.manual.mirror_check.look_angle_deg",
-              "Look Angle##mirror_check", 15.0f, 50.0f, "%.0f deg",
-              tip::kMirrorCheckLookAngle, defaults::kMirrorCheckLookAngle);
-    DrawFloat(ui, cfg, h, "settings.manual.mirror_check.pitch_offset_deg",
-              "Pitch Offset##mirror_check", 0.0f, 10.0f, "%.0f deg",
-              tip::kMirrorCheckPitchOffset, defaults::kMirrorCheckPitchOffset);
-    DrawFloat(ui, cfg, h, "settings.manual.mirror_check.smoothing_time",
-              "Smoothing##mirror_check", 0.0f, 0.7f, "%.2f s",
-              tip::kMirrorCheckSmoothing, defaults::kMirrorCheckSmoothing);
+    DrawFloat(ui, cfg, h, "settings.manual.mirror_check.look_angle_deg", 15.0f,
+              50.0f, "%.0f deg", defaults::kMirrorCheckLookAngle);
+    DrawFloat(ui, cfg, h, "settings.manual.mirror_check.pitch_offset_deg", 0.0f,
+              10.0f, "%.0f deg", defaults::kMirrorCheckPitchOffset);
+    DrawFloat(ui, cfg, h, "settings.manual.mirror_check.smoothing_time", 0.0f,
+              0.7f, "%.2f s", defaults::kMirrorCheckSmoothing);
     DrawBool(ui, cfg, h, "settings.manual.mirror_check.require_stationary",
-             "Only When Stationary##mirror_check",
-             tip::kMirrorCheckRequireStationary,
              defaults::kMirrorCheckRequireStationary);
     DrawBool(ui, cfg, h,
              "settings.manual.mirror_check.ignore_after_moving_signal",
-             "Ignore While Moving##mirror_check",
-             tip::kMirrorCheckIgnoreAfterMovingSignal,
              defaults::kMirrorCheckIgnoreAfterMovingSignal);
     EndSettingsTable(ui);
   }
@@ -705,26 +616,23 @@ void DrawMirrorCheck(SPF_UI_API *ui, SPF_Config_API *cfg,
 }
 
 void DrawManualLook(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_ARROWS_LEFT_RIGHT " Manual Look",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_ARROWS_LEFT_RIGHT,
+                    "settings.manual.manual_look"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.manual.manual_look.enabled",
-                  "Enabled##manual_look", tip::kEnabled, true);
-  DrawWrappedHint(ui, ICON_FA_CIRCLE_INFO " These keys are separate from the "
-                                          "game's native controls.");
+      DrawEnabled(ui, cfg, h, "settings.manual.manual_look.enabled", true);
+  DrawWrappedHint(ui, loc::Tr("settings.manual.manual_look.hint"));
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "manual_look_table")) {
-    DrawKeybindRow(ui, "ManualLook.look_left", "Look Left");
-    DrawKeybindRow(ui, "ManualLook.look_right", "Look Right");
-    DrawFloat(ui, cfg, h, "settings.manual.manual_look.look_angle_deg",
-              "Look Angle##manual_look", 20.0f, 90.0f, "%.0f deg",
-              tip::kManualLookLookAngle, defaults::kManualLookLookAngle);
-    DrawFloat(ui, cfg, h, "settings.manual.manual_look.smoothing_time",
-              "Smoothing##manual_look", 0.0f, 0.7f, "%.2f s",
-              tip::kManualLookSmoothing, defaults::kManualLookSmoothing);
+    DrawKeybindRow(ui, "ManualLook.look_left",
+                   loc::Tr("keybinds.look_left.title"));
+    DrawKeybindRow(ui, "ManualLook.look_right",
+                   loc::Tr("keybinds.look_right.title"));
+    DrawFloat(ui, cfg, h, "settings.manual.manual_look.look_angle_deg", 20.0f,
+              90.0f, "%.0f deg", defaults::kManualLookLookAngle);
+    DrawFloat(ui, cfg, h, "settings.manual.manual_look.smoothing_time", 0.0f,
+              0.7f, "%.2f s", defaults::kManualLookSmoothing);
     DrawBool(ui, cfg, h, "settings.manual.manual_look.toggle_mode",
-             "Toggle Mode##manual_look", tip::kManualLookToggleMode,
              defaults::kManualLookToggleMode);
     EndSettingsTable(ui);
   }
@@ -732,24 +640,19 @@ void DrawManualLook(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
 }
 
 void DrawManualZoom(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  if (!ui->UI_CollapsingHeader(ICON_FA_MAGNIFYING_GLASS_PLUS " Manual Zoom",
-                               SPF_TREE_NODE_FLAG_NONE))
+  if (!EffectHeader(ui, ICON_FA_MAGNIFYING_GLASS_PLUS,
+                    "settings.manual.manual_zoom"))
     return;
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.manual.manual_zoom.enabled",
-                  "Enabled##manual_zoom", tip::kEnabled, true);
-  DrawWrappedHint(ui, ICON_FA_CIRCLE_INFO " This key is separate from the "
-                                          "game's native \"Zoom Interior "
-                                          "Camera\" key.");
+      DrawEnabled(ui, cfg, h, "settings.manual.manual_zoom.enabled", true);
+  DrawWrappedHint(ui, loc::Tr("settings.manual.manual_zoom.hint"));
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "manual_zoom_table")) {
-    DrawKeybindRow(ui, "ManualZoom.zoom", "Zoom");
-    DrawFloat(ui, cfg, h, "settings.manual.manual_zoom.zoom_fov_deg",
-              "Zoom Level##manual_zoom", 5.0f, 60.0f, "%.0f deg",
-              tip::kManualZoomZoomLevel, defaults::kManualZoomZoomLevel);
-    DrawFloat(ui, cfg, h, "settings.manual.manual_zoom.smoothing_time",
-              "Smoothing##manual_zoom", 0.02f, 0.5f, "%.2f s",
-              tip::kManualZoomSmoothing, defaults::kManualZoomSmoothing);
+    DrawKeybindRow(ui, "ManualZoom.zoom", loc::Tr("keybinds.zoom.title"));
+    DrawFloat(ui, cfg, h, "settings.manual.manual_zoom.zoom_fov_deg", 5.0f,
+              60.0f, "%.0f deg", defaults::kManualZoomZoomLevel);
+    DrawFloat(ui, cfg, h, "settings.manual.manual_zoom.smoothing_time", 0.02f,
+              0.5f, "%.2f s", defaults::kManualZoomSmoothing);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
@@ -774,10 +677,16 @@ void DrawSectionTitle(SPF_UI_API *ui, const char *title) {
                           start_x + avail_x, y, kRuleColor, 1.0f);
 }
 
+// "###" IDs of the confirmation popups: their visible title is translated,
+// and OpenPopup/BeginPopupModal must still agree on the same ID.
+constexpr const char *kOverwritePopupId = "###confirm_overwrite_profile";
+constexpr const char *kDeletePopupId = "###confirm_delete_profile";
+constexpr const char *kResetPopupId = "###confirm_reset_all";
+
 void DrawProfilesSection(SPF_UI_API *ui) {
   PluginContext &ctx = Context();
 
-  DrawSectionTitle(ui, "Profiles");
+  DrawSectionTitle(ui, loc::Tr("ui.profiles.section"));
 
   static char profile_name_buf[64] = "";
   static std::string pending_select;
@@ -788,27 +697,26 @@ void DrawProfilesSection(SPF_UI_API *ui) {
       profile_name_buf[0] = '\0';
       pending_select = saved_name;
       ShowToast(ui, SPF_NOTIFICATION_SUCCESS,
-                "Saved profile \"" + saved_name + "\".");
+                loc::Tr("ui.profiles.saved_toast", {{"name", saved_name}}));
       return true;
     }
-    ShowToast(ui, SPF_NOTIFICATION_ERROR,
-              "Failed to save profile, check MotionCab.log.");
+    ShowToast(ui, SPF_NOTIFICATION_ERROR, loc::Tr("ui.profiles.save_failed"));
     return false;
   };
 
   ui->UI_SetNextItemWidth(180.0f);
-  ui->UI_InputTextWithHint("##profile_name", "Profile name...",
+  ui->UI_InputTextWithHint("##profile_name", loc::Tr("ui.profiles.name_hint"),
                            profile_name_buf, sizeof(profile_name_buf),
                            SPF_INPUT_TEXT_FLAG_NONE);
   ui->UI_SameLine(0.0f, 8.0f);
-  char save_label[48];
-  std::snprintf(save_label, sizeof(save_label), "%s Save as Profile",
-                ICON_FA_FLOPPY_DISK);
-  if (MutedButton(ui, save_label)) {
+  const std::string save_label =
+      WithIcon(ICON_FA_FLOPPY_DISK, loc::Tr("ui.profiles.save_as")) +
+      "###save_as";
+  if (MutedButton(ui, save_label.c_str())) {
     const std::string sanitized = profiles::Sanitize(profile_name_buf);
     if (sanitized.empty()) {
       ShowToast(ui, SPF_NOTIFICATION_WARNING,
-                "Enter a valid profile name first.");
+                loc::Tr("ui.profiles.invalid_name"));
     } else {
       const std::vector<std::string> existing = profiles::List(ctx);
       // Case-insensitive: on Windows "default" is the same file as
@@ -817,30 +725,28 @@ void DrawProfilesSection(SPF_UI_API *ui) {
       const std::string *match = profiles::FindIgnoreCase(existing, sanitized);
       if (match) {
         pending_overwrite = *match;
-        ui->UI_OpenPopup("Confirm Overwrite##confirm_overwrite_profile",
-                         SPF_POPUP_FLAG_NONE);
+        ui->UI_OpenPopup(kOverwritePopupId, SPF_POPUP_FLAG_NONE);
       } else {
         do_save(sanitized);
       }
     }
   }
-  ui->UI_SetItemTooltip(
-      "Saves every current effect setting under this profile name.");
+  ui->UI_SetItemTooltip(loc::Tr("ui.profiles.save_as_tip"));
 
-  if (ui->UI_BeginPopupModal("Confirm Overwrite##confirm_overwrite_profile",
-                             nullptr, SPF_WINDOW_FLAG_NONE)) {
-    char message[128];
-    std::snprintf(message, sizeof(message),
-                  "A profile named \"%s\" already exists. Overwrite it?",
-                  pending_overwrite.c_str());
-    ui->UI_TextUnformatted(message);
+  const std::string overwrite_title =
+      loc::Tr("ui.profiles.overwrite_title") + std::string(kOverwritePopupId);
+  if (ui->UI_BeginPopupModal(overwrite_title.c_str(), nullptr,
+                             SPF_WINDOW_FLAG_NONE)) {
+    ui->UI_TextUnformatted(
+        loc::Tr("ui.profiles.overwrite_message", {{"name", pending_overwrite}})
+            .c_str());
     ui->UI_Spacing();
-    if (MutedButton(ui, "Yes, Overwrite")) {
+    if (MutedButton(ui, loc::Tr("ui.profiles.overwrite_confirm"))) {
       do_save(pending_overwrite);
       ui->UI_CloseCurrentPopup();
     }
     ui->UI_SameLine(0.0f, 8.0f);
-    if (MutedButton(ui, "Cancel"))
+    if (MutedButton(ui, loc::Tr("ui.cancel")))
       ui->UI_CloseCurrentPopup();
     ui->UI_EndPopup();
   }
@@ -848,7 +754,7 @@ void DrawProfilesSection(SPF_UI_API *ui) {
   ui->UI_Spacing();
   const std::vector<std::string> profile_names = profiles::List(ctx);
   if (profile_names.empty()) {
-    ui->UI_TextDisabled("No saved profiles yet.");
+    ui->UI_TextDisabled(loc::Tr("ui.profiles.none"));
   } else {
     // -1 means "no profile matches the current live settings", e.g. a
     // manual edit was made since the last Load()/Save(). Shown as its own
@@ -882,7 +788,7 @@ void DrawProfilesSection(SPF_UI_API *ui) {
 
     const char *preview = selected_profile >= 0
                               ? profile_names[selected_profile].c_str()
-                              : "(Unsaved changes)";
+                              : loc::Tr("ui.unsaved_changes");
     ui->UI_SetNextItemWidth(180.0f);
     ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_POPUP_BORDERSIZE, 1.0f);
     const bool combo_open =
@@ -896,20 +802,18 @@ void DrawProfilesSection(SPF_UI_API *ui) {
             selected_profile = static_cast<int>(i);
           } else {
             ShowToast(ui, SPF_NOTIFICATION_ERROR,
-                      "Failed to load profile \"" + profile_names[i] +
-                          "\", check MotionCab.log.");
+                      loc::Tr("ui.profiles.load_failed",
+                              {{"name", profile_names[i]}}));
           }
         }
       }
       ui->UI_EndCombo();
     }
     ui->UI_PopStyleVar(1);
-    ui->UI_SetItemTooltip("Selecting a profile loads it immediately.");
+    ui->UI_SetItemTooltip(loc::Tr("ui.profiles.select_tip"));
 
     if (selected_profile < 0) {
-      ui->UI_TextDisabled(
-          "No profile matches the current settings. Pick one to load, "
-          "or save these as a new profile above.");
+      ui->UI_TextDisabled(loc::Tr("ui.profiles.no_match"));
       return;
     }
 
@@ -919,43 +823,43 @@ void DrawProfilesSection(SPF_UI_API *ui) {
     static std::chrono::steady_clock::time_point save_confirm_until{};
     const bool save_confirmed =
         std::chrono::steady_clock::now() < save_confirm_until;
-    const char *update_label = save_confirmed ? ICON_FA_CHECK " Saved##save"
-                                              : ICON_FA_FLOPPY_DISK
-                                   " Save##save";
-    if (MutedButton(ui, update_label) && do_save(selected_name))
+    const std::string update_label =
+        (save_confirmed
+             ? WithIcon(ICON_FA_CHECK, loc::Tr("ui.profiles.saved"))
+             : WithIcon(ICON_FA_FLOPPY_DISK, loc::Tr("ui.profiles.save"))) +
+        "###save";
+    if (MutedButton(ui, update_label.c_str()) && do_save(selected_name))
       save_confirm_until =
           std::chrono::steady_clock::now() + std::chrono::seconds(2);
-    ui->UI_SetItemTooltip(
-        "Overwrites the selected profile with the current settings.");
+    ui->UI_SetItemTooltip(loc::Tr("ui.profiles.save_tip"));
 
     ui->UI_SameLine(0.0f, 4.0f);
-    char delete_label[48];
-    std::snprintf(delete_label, sizeof(delete_label), "%s Delete",
-                  ICON_FA_TRASH);
+    const std::string delete_label =
+        WithIcon(ICON_FA_TRASH, loc::Tr("ui.profiles.delete")) + "###delete";
     static std::string pending_delete;
-    if (MutedButton(ui, delete_label)) {
+    if (MutedButton(ui, delete_label.c_str())) {
       pending_delete = selected_name;
-      ui->UI_OpenPopup("Confirm Delete##confirm_delete_profile",
-                       SPF_POPUP_FLAG_NONE);
+      ui->UI_OpenPopup(kDeletePopupId, SPF_POPUP_FLAG_NONE);
     }
-    ui->UI_SetItemTooltip("Delete the selected profile.");
+    ui->UI_SetItemTooltip(loc::Tr("ui.profiles.delete_tip"));
 
-    if (ui->UI_BeginPopupModal("Confirm Delete##confirm_delete_profile",
-                               nullptr, SPF_WINDOW_FLAG_NONE)) {
-      char message[128];
-      std::snprintf(message, sizeof(message),
-                    "Delete profile \"%s\"? This cannot be undone.",
-                    pending_delete.c_str());
-      ui->UI_TextUnformatted(message);
+    const std::string delete_title =
+        loc::Tr("ui.profiles.delete_title") + std::string(kDeletePopupId);
+    if (ui->UI_BeginPopupModal(delete_title.c_str(), nullptr,
+                               SPF_WINDOW_FLAG_NONE)) {
+      ui->UI_TextUnformatted(
+          loc::Tr("ui.profiles.delete_message", {{"name", pending_delete}})
+              .c_str());
       ui->UI_Spacing();
-      if (MutedButton(ui, "Yes, Delete")) {
+      if (MutedButton(ui, loc::Tr("ui.profiles.delete_confirm"))) {
         if (!profiles::Delete(ctx, pending_delete)) {
           ShowToast(ui, SPF_NOTIFICATION_ERROR,
-                    "Failed to delete profile \"" + pending_delete +
-                        "\", check MotionCab.log.");
+                    loc::Tr("ui.profiles.delete_failed",
+                            {{"name", pending_delete}}));
         } else {
           ShowToast(ui, SPF_NOTIFICATION_SUCCESS,
-                    "Deleted profile \"" + pending_delete + "\".");
+                    loc::Tr("ui.profiles.deleted_toast",
+                            {{"name", pending_delete}}));
           // Deleting the active profile shouldn't leave its values loaded,
           // so fall back to "Default", recreating it first if it's what
           // just got deleted.
@@ -969,14 +873,14 @@ void DrawProfilesSection(SPF_UI_API *ui) {
                                    : -1;
           } else {
             ShowToast(ui, SPF_NOTIFICATION_ERROR,
-                      "Deleted, but failed to load \"Default\", check "
-                      "MotionCab.log.");
+                      loc::Tr("ui.profiles.fallback_failed",
+                              {{"name", profiles::kDefaultProfileName}}));
           }
         }
         ui->UI_CloseCurrentPopup();
       }
       ui->UI_SameLine(0.0f, 8.0f);
-      if (MutedButton(ui, "Cancel"))
+      if (MutedButton(ui, loc::Tr("ui.cancel")))
         ui->UI_CloseCurrentPopup();
       ui->UI_EndPopup();
     }
@@ -989,20 +893,20 @@ void DrawResetSection(SPF_UI_API *ui, SPF_Config_API *cfg,
                       SPF_Config_Handle *h) {
   PluginContext &ctx = Context();
 
-  DrawSectionTitle(ui, "Danger Zone");
-  char reset_label[48];
-  std::snprintf(reset_label, sizeof(reset_label), "%s Reset All Settings",
-                ICON_FA_ARROW_ROTATE_LEFT);
-  if (MutedButton(ui, reset_label))
-    ui->UI_OpenPopup("Confirm Reset##confirm_reset_all", SPF_POPUP_FLAG_NONE);
+  DrawSectionTitle(ui, loc::Tr("ui.reset.section"));
+  const std::string reset_label =
+      WithIcon(ICON_FA_ARROW_ROTATE_LEFT, loc::Tr("ui.reset.button")) +
+      "###reset_all";
+  if (MutedButton(ui, reset_label.c_str()))
+    ui->UI_OpenPopup(kResetPopupId, SPF_POPUP_FLAG_NONE);
 
-  if (ui->UI_BeginPopupModal("Confirm Reset##confirm_reset_all", nullptr,
-                             SPF_WINDOW_FLAG_NONE)) {
+  const std::string title =
+      loc::Tr("ui.reset.title") + std::string(kResetPopupId);
+  if (ui->UI_BeginPopupModal(title.c_str(), nullptr, SPF_WINDOW_FLAG_NONE)) {
     const std::string active_profile = profiles::LastUsedName(ctx);
-    ui->UI_TextUnformatted(
-        "Reset every MotionCab setting to its default value?");
+    ui->UI_TextUnformatted(loc::Tr("ui.reset.message"));
     ui->UI_Spacing();
-    if (MutedButton(ui, "Yes, Reset Everything")) {
+    if (MutedButton(ui, loc::Tr("ui.reset.confirm"))) {
       ResetHeadMotion(cfg, h);
       ResetSteeringCamera(cfg, h);
       ResetIdleBreathing(cfg, h);
@@ -1017,12 +921,11 @@ void DrawResetSection(SPF_UI_API *ui, SPF_Config_API *cfg,
       ResetManualZoom(cfg, h);
       if (!active_profile.empty())
         profiles::Save(ctx, active_profile);
-      ShowToast(ui, SPF_NOTIFICATION_SUCCESS,
-                "Reset every MotionCab setting to its default value.");
+      ShowToast(ui, SPF_NOTIFICATION_SUCCESS, loc::Tr("ui.reset.done_toast"));
       ui->UI_CloseCurrentPopup();
     }
     ui->UI_SameLine(0.0f, 8.0f);
-    if (MutedButton(ui, "Cancel"))
+    if (MutedButton(ui, loc::Tr("ui.cancel")))
       ui->UI_CloseCurrentPopup();
     ui->UI_EndPopup();
   }
@@ -1033,9 +936,9 @@ void DrawResetSection(SPF_UI_API *ui, SPF_Config_API *cfg,
 // Button in the UI's brand red (the README badges' #B82728) that opens `url`
 // in the browser; the description and the address are shown in its tooltip.
 // `width` 0 sizes it to its label.
-void LinkButton(SPF_UI_API *ui, const char *label, float width, const char *url,
-                const char *description) {
-  const bool clicked = MutedButton(ui, label, width);
+void LinkButton(SPF_UI_API *ui, const std::string &label, float width,
+                const char *url, const char *description) {
+  const bool clicked = MutedButton(ui, label.c_str(), width);
 
   char tooltip[256];
   std::snprintf(tooltip, sizeof(tooltip), "%s\n%s", description, url);
@@ -1125,25 +1028,25 @@ void DrawAboutTab(SPF_UI_API *ui) {
   SPF_TextStyle_Handle tagline_style = ui->UI_Style_Create();
   ui->UI_Style_SetColor(tagline_style, 0.63f, 0.63f, 0.63f, 1.0f);
   ui->UI_Style_SetAlign(tagline_style, SPF_TEXT_ALIGN_CENTER);
-  ui->UI_TextStyled(tagline_style, "%s", PLUGIN_DESCRIPTION);
+  ui->UI_TextStyled(tagline_style, "%s", loc::Tr("plugin.description"));
   ui->UI_Style_Destroy(tagline_style);
 
   ui->UI_Spacing();
   ui->UI_Spacing();
-  DrawSectionTitle(ui, "Details");
+  DrawSectionTitle(ui, loc::Tr("ui.about.details"));
   ui->UI_Spacing();
 
   // Version and developer, left-aligned.
-  char intro[256];
-  std::snprintf(intro, sizeof(intro),
-                ICON_FA_TAG "  Version: **%s**\n\n" ICON_FA_USER_PEN
-                            "  Developer: **%s**",
-                PLUGIN_VERSION, PLUGIN_AUTHOR);
-  ui->UI_RenderMarkdown(intro, nullptr);
+  const std::string intro =
+      std::string(ICON_FA_TAG "  ") +
+      loc::Tr("ui.about.version", {{"version", PLUGIN_VERSION}}) +
+      "\n\n" ICON_FA_USER_PEN "  " +
+      loc::Tr("ui.about.developer", {{"author", PLUGIN_AUTHOR}});
+  ui->UI_RenderMarkdown(intro.c_str(), nullptr);
 
   ui->UI_Spacing();
   ui->UI_Spacing();
-  DrawSectionTitle(ui, "Links");
+  DrawSectionTitle(ui, loc::Tr("ui.about.links"));
   ui->UI_Spacing();
 
   // Two equal-width buttons per row, filling the tab's width.
@@ -1152,58 +1055,68 @@ void DrawAboutTab(SPF_UI_API *ui) {
   ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
   const float button_w = (avail_x - kButtonGap) * 0.5f;
 
-  LinkButton(ui, ICON_FA_GLOBE " Website", button_w, links::kWebsite,
-             "Documentation");
+  LinkButton(ui, WithIcon(ICON_FA_GLOBE, loc::Tr("ui.about.website")),
+             button_w, links::kWebsite, loc::Tr("ui.about.website_desc"));
   ui->UI_SameLine(0.0f, kButtonGap);
-  LinkButton(ui, ICON_FA_DISCORD " Discord", button_w, links::kDiscord,
-             "Community and support");
-  LinkButton(ui, ICON_FA_GITHUB " GitHub", button_w, links::kGithub,
-             "Releases and bug reports");
+  LinkButton(ui, WithIcon(ICON_FA_DISCORD, loc::Tr("ui.about.discord")),
+             button_w, links::kDiscord, loc::Tr("ui.about.discord_desc"));
+  LinkButton(ui, WithIcon(ICON_FA_GITHUB, loc::Tr("ui.about.github")),
+             button_w, links::kGithub, loc::Tr("ui.about.github_desc"));
   ui->UI_SameLine(0.0f, kButtonGap);
-  LinkButton(ui, ICON_FA_YOUTUBE " YouTube", button_w, links::kYoutube,
-             "Videos and showcases");
+  LinkButton(ui, WithIcon(ICON_FA_YOUTUBE, loc::Tr("ui.about.youtube")),
+             button_w, links::kYoutube, loc::Tr("ui.about.youtube_desc"));
 
   ui->UI_Spacing();
   ui->UI_Spacing();
-  DrawSectionTitle(ui, "Support");
+  DrawSectionTitle(ui, loc::Tr("ui.about.support"));
   ui->UI_Spacing();
-  ui->UI_RenderMarkdown(
-      "If you enjoy MotionCab, you can support its development.", nullptr);
+  ui->UI_RenderMarkdown(loc::Tr("ui.about.support_text"), nullptr);
   ui->UI_Spacing();
-  LinkButton(ui, ICON_FA_PAYPAL " Donate with PayPal", 0.0f, links::kPaypal,
-             "Support MotionCab on PayPal");
+  LinkButton(ui, WithIcon(ICON_FA_PAYPAL, loc::Tr("ui.about.donate")), 0.0f,
+             links::kPaypal, loc::Tr("ui.about.donate_desc"));
 
   ui->UI_Spacing();
   ui->UI_Spacing();
-  DrawSectionTitle(ui, "Tips");
+  DrawSectionTitle(ui, loc::Tr("ui.about.tips"));
   ui->UI_Spacing();
-  ui->UI_RenderMarkdown(
-      "- Right-click any slider to reset it to its default value.\n"
-      "- Save your tuning as a profile in the " ICON_FA_GEAR
-      " **Settings** tab.\n"
-      "- Every effect works in the interior camera only.",
-      nullptr);
+  const std::string settings_tab =
+      WithIcon(ICON_FA_GEAR, "**" + std::string(loc::Tr("ui.tabs.settings")) +
+                                 "**");
+  const std::string tips =
+      "- " + std::string(loc::Tr("ui.about.tip_reset")) + "\n- " +
+      loc::Tr("ui.about.tip_profiles", {{"settings_tab", settings_tab}}) +
+      "\n- " + loc::Tr("ui.about.tip_interior");
+  ui->UI_RenderMarkdown(tips.c_str(), nullptr);
 
   ui->UI_Spacing();
   ui->UI_Spacing();
-  DrawSectionTitle(ui, "Credits");
+  DrawSectionTitle(ui, loc::Tr("ui.about.credits"));
   ui->UI_Spacing();
-  ui->UI_RenderMarkdown("SPF Framework and contributors.", nullptr);
+  ui->UI_RenderMarkdown(loc::Tr("ui.about.credits_text"), nullptr);
 }
 
 void DrawSettingsTab(SPF_UI_API *ui, SPF_Config_API *cfg,
                      SPF_Config_Handle *h) {
-  DrawSectionTitle(ui, "Keybinds");
+  DrawSectionTitle(ui, loc::Tr("ui.keybind.section"));
   // 180 px input/combo width + 8 px gap: where "Save as Profile" and "Save"
   // start in the profiles section, so the keybind button lines up with them.
   constexpr float kProfileButtonX = 180.0f + 8.0f;
-  DrawKeybindRowAt(ui, "UI.toggle", "Toggle Window", kProfileButtonX);
+  DrawKeybindRowAt(ui, "UI.toggle", loc::Tr("ui.keybind.toggle_window"),
+                   kProfileButtonX);
 
   ui->UI_Spacing();
   DrawProfilesSection(ui);
 
   ui->UI_Spacing();
   DrawResetSection(ui, cfg, h);
+}
+
+// Tab whose "###" ID keeps it selected across a language switch.
+bool BeginTab(SPF_UI_API *ui, const char *icon, const char *title_key,
+              const char *id) {
+  const std::string label =
+      WithIcon(icon, loc::Tr(title_key)) + "###tab_" + id;
+  return ui->UI_BeginTabItem(label.c_str(), nullptr, SPF_TAB_ITEM_FLAG_NONE);
 }
 
 } // namespace
@@ -1216,16 +1129,19 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   SPF_Config_API *cfg = ctx.core->config;
   SPF_Config_Handle *h = ctx.config_handle;
 
+  loc::Sync();
+
   const int pushed_colors = PushBrandColors(ui);
   const int pushed_vars = PushBrandRounding(ui);
 
   const std::string active_profile = profiles::LastUsedName(ctx);
-  if (active_profile.empty()) {
-    ui->UI_TextDisabled(ICON_FA_USER " Profile: (Unsaved changes)");
-  } else {
-    const std::string badge =
-        std::string(ICON_FA_USER " Profile: ") + active_profile;
-    ui->UI_TextDisabled(badge.c_str());
+  const std::string badge = WithIcon(
+      ICON_FA_USER,
+      loc::Tr("ui.profile_badge",
+              {{"name", active_profile.empty() ? loc::Tr("ui.unsaved_changes")
+                                               : active_profile}}));
+  ui->UI_TextDisabled(badge.c_str());
+  if (!active_profile.empty()) {
     if (!profiles::Matches(ctx, active_profile)) {
       ui->UI_SameLine(0.0f, 4.0f);
       ui->UI_TextColored(1.0f, 0.6f, 0.0f, 1.0f, "*");
@@ -1239,32 +1155,29 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
     return;
   }
 
-  if (ui->UI_BeginTabItem(ICON_FA_VIDEO " Driving", nullptr,
-                          SPF_TAB_ITEM_FLAG_NONE)) {
+  if (BeginTab(ui, ICON_FA_VIDEO, "settings.driving.title", "driving")) {
     DrawHeadMotion(ui, cfg, h);
     DrawBodyDynamics(ui, cfg, h);
     DrawSteeringCamera(ui, cfg, h);
     ui->UI_EndTabItem();
   }
 
-  if (ui->UI_BeginTabItem(ICON_FA_ROAD " Road", nullptr,
-                          SPF_TAB_ITEM_FLAG_NONE)) {
+  if (BeginTab(ui, ICON_FA_ROAD, "settings.road.title", "road")) {
     DrawSuspension(ui, cfg, h);
     DrawRoadIrregularity(ui, cfg, h);
     DrawSpeedShake(ui, cfg, h);
     ui->UI_EndTabItem();
   }
 
-  if (ui->UI_BeginTabItem(ICON_FA_TRUCK " Cabin", nullptr,
-                          SPF_TAB_ITEM_FLAG_NONE)) {
+  if (BeginTab(ui, ICON_FA_TRUCK, "settings.cabin.title", "cabin")) {
     DrawIdleBreathing(ui, cfg, h);
     DrawEngineVibration(ui, cfg, h);
     DrawEngineStartStop(ui, cfg, h);
     ui->UI_EndTabItem();
   }
 
-  const bool manual_tab_open = ui->UI_BeginTabItem(
-      ICON_FA_HAND " Manual", nullptr, SPF_TAB_ITEM_FLAG_NONE);
+  const bool manual_tab_open =
+      BeginTab(ui, ICON_FA_HAND, "settings.manual.title", "manual");
   if (manual_tab_open) {
     DrawMirrorCheck(ui, cfg, h);
     DrawManualLook(ui, cfg, h);
@@ -1272,15 +1185,15 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
     ui->UI_EndTabItem();
   }
 
-  const bool settings_tab_open = ui->UI_BeginTabItem(
-      ICON_FA_GEAR " Settings", nullptr, SPF_TAB_ITEM_FLAG_NONE);
+  const bool settings_tab_open =
+      BeginTab(ui, ICON_FA_GEAR, "ui.tabs.settings", "settings");
   if (settings_tab_open) {
     DrawSettingsTab(ui, cfg, h);
     ui->UI_EndTabItem();
   }
 
-  const bool about_tab_open = ui->UI_BeginTabItem(
-      ICON_FA_CIRCLE_INFO " About", nullptr, SPF_TAB_ITEM_FLAG_NONE);
+  const bool about_tab_open =
+      BeginTab(ui, ICON_FA_CIRCLE_INFO, "ui.tabs.about", "about");
   if (about_tab_open) {
     DrawAboutTab(ui);
     ui->UI_EndTabItem();
@@ -1289,8 +1202,8 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   ui->UI_EndTabBar();
 
   if (!settings_tab_open && !about_tab_open)
-    ui->UI_TextDisabled(ICON_FA_CIRCLE_INFO
-                        " Right-click a slider to reset it to default.");
+    ui->UI_TextDisabled(
+        WithIcon(ICON_FA_CIRCLE_INFO, loc::Tr("ui.slider_reset_hint")).c_str());
 
   ui->UI_PopStyleVar(pushed_vars);
   ui->UI_PopStyleColor(pushed_colors);

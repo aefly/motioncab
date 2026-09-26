@@ -70,6 +70,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+      - name: Check translation keys
+        run: python3 .github/scripts/check-localization.py
+
       - name: Validate version tag
         if: startsWith(github.ref, 'refs/tags/')
         run: |
@@ -104,18 +107,12 @@ jobs:
         run: |
           set -e
           trap 'echo "Build failed at $(date)."; exit 1' ERR
-          # Inject version from tag into CMakeLists.txt on tag pushes.
-          # version.rc.in and Manifest.cpp both derive from
-          # project(VERSION ...) so this is the single edit point.
-          # Format already validated by the "Validate version tag" step.
           if [[ "${{ github.ref }}" =~ ^refs/tags/v ]]; then
             tag="${GITHUB_REF#refs/tags/v}"
             numeric="${tag%%-*}"
             sed -i "s/project(MotionCab VERSION [0-9.]\+/project(MotionCab VERSION $numeric/" CMakeLists.txt
             grep -q "project(MotionCab VERSION $numeric" CMakeLists.txt || { echo "Version injection failed."; exit 1; }
           fi
-          # Uses the base (non-"user-") preset — no CMakeUserPresets.json
-          # game paths needed, deploy steps just skip on CI.
           cmake --preset mingw-make-release
           cmake --build --preset mingw-make-release
 
@@ -150,8 +147,7 @@ jobs:
           dir="plugins/spfPlugins/MotionCab"
           mkdir -p "$dir"
           cp motioncab.dll "$dir/"
-          # Runtime assets (About tab logo) live next to the DLL.
-          cp -r data "$dir/"
+          cp -r data localization "$dir/"
           zip -r "motioncab-$version.zip" "plugins"
           echo "DLL_SHA256=$(sha256sum motioncab.dll | cut -d' ' -f1)" >> "$GITHUB_ENV"
 
