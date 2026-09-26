@@ -14,11 +14,18 @@ namespace motioncab {
 // while also reacting to the native key fought its internal animation
 // (doubled animation, camera stuck mid-zoom). Not a HeadOffset effect
 // (drives FOV, not head pose), so it isn't part of EffectManager.
+//
+// Works on the FOV without the HeadOffset effects' own additive FOV offset
+// (e.g. BlindspotViewerEffect's), which Plugin.cpp layers on top every frame:
+// its reads subtract `*extra_fov_deg`, the offset currently in the live
+// FOV, and its writes add it back. Otherwise a zoom started mid-peek would
+// take the peek's offset as the player's own FOV and return to it.
 class ManualZoomEffect {
 public:
   ManualZoomEffect(SPF_Config_API *config_api, SPF_Config_Handle *config_handle,
                    SPF_KeyBinds_API *keybinds_api,
-                   SPF_KeyBinds_Handle *keybinds_handle);
+                   SPF_KeyBinds_Handle *keybinds_handle,
+                   const float *extra_fov_deg);
 
   bool IsEnabled() const { return enabled_; }
   void SetEnabled(bool enabled) { enabled_ = enabled; }
@@ -39,6 +46,7 @@ private:
   SPF_Config_Handle *config_handle_;
   SPF_KeyBinds_API *keybinds_api_;
   SPF_KeyBinds_Handle *keybinds_handle_;
+  const float *extra_fov_deg_; // see class comment
 
   bool enabled_ = true;
   float zoom_fov_deg_ =
@@ -61,7 +69,8 @@ private:
   float dynamic_blend_ = 1.0f;           // 1 = player's factor, 0 = factor 1
   SPF_Camera_API *camera_api_ = nullptr; // last seen, for restoring
 
-  // Cam_GetInteriorFov/Cam_SetInteriorFov on camera_api_, null-checked.
+  // Cam_GetInteriorFov/Cam_SetInteriorFov on camera_api_, null-checked,
+  // minus/plus *extra_fov_deg_.
   bool GetFov(float *out_fov);
   void SetFov(float fov);
 };

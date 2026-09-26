@@ -39,6 +39,10 @@
     "zoom": {
       "title": "Zoom",
       "desc": "Hold to smoothly zoom in; release to ease back to normal."
+    },
+    "blindspot_viewer": {
+      "title": "Blindspot Viewer",
+      "desc": "Smoothly leans forward to see past the windshield pillar."
     }
   },
   "settings": {
@@ -299,6 +303,49 @@
         "smoothing_time": {
           "title": "Smoothing",
           "desc": "How smooth the zoom in/out feels."
+        }
+      },
+      "blindspot_viewer": {
+        "title": "Blindspot Viewer",
+        "desc": "Leans forward on a key press to see traffic lights hidden by the windshield pillar.",
+        "enabled": {
+          "title": "Enable Blindspot Viewer"
+        },
+        "pos_x": {
+          "title": "Sideways Lean",
+          "desc": "How far your head moves left or right while peeking."
+        },
+        "pos_y": {
+          "title": "Height",
+          "desc": "How far your head moves up or down while peeking."
+        },
+        "pos_z": {
+          "title": "Forward Lean",
+          "desc": "How far your head moves forward while peeking. Negative = forward."
+        },
+        "yaw_deg": {
+          "title": "Turn",
+          "desc": "How far your head turns left or right while peeking."
+        },
+        "pitch_deg": {
+          "title": "Tilt",
+          "desc": "How far your head tilts up or down while peeking."
+        },
+        "roll_deg": {
+          "title": "Roll",
+          "desc": "How far your head tilts to the side while peeking."
+        },
+        "fov_offset_deg": {
+          "title": "FOV Change",
+          "desc": "How much the field of view widens while peeking. Negative = narrower."
+        },
+        "smoothing_time": {
+          "title": "Smoothing",
+          "desc": "How smooth the lean-and-return motion is."
+        },
+        "toggle_mode": {
+          "title": "Toggle Mode",
+          "desc": "On: press once to peek, press again to sit back. Off: peek while held, let go to sit back."
         }
       }
     }

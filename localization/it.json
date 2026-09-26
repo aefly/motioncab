@@ -39,6 +39,10 @@
     "zoom": {
       "title": "Zoom",
       "desc": "Tieni premuto per ingrandire dolcemente; rilascia per tornare gradualmente alla vista normale."
+    },
+    "blindspot_viewer": {
+      "title": "Visuale angolo cieco",
+      "desc": "Si sporge dolcemente per vedere dietro il montante del parabrezza."
     }
   },
   "settings": {
@@ -299,6 +303,49 @@
         "smoothing_time": {
           "title": "Smorzamento",
           "desc": "Quanto è morbido l'ingrandimento e il ritorno dello zoom."
+        }
+      },
+      "blindspot_viewer": {
+        "title": "Visuale angolo cieco",
+        "desc": "Si sporge alla pressione di un tasto per vedere i semafori nascosti dal montante del parabrezza.",
+        "enabled": {
+          "title": "Attiva visuale angolo cieco"
+        },
+        "pos_x": {
+          "title": "Spostamento laterale",
+          "desc": "Quanto si sposta la testa a sinistra o a destra durante la sbirciata."
+        },
+        "pos_y": {
+          "title": "Altezza",
+          "desc": "Quanto si sposta la testa in alto o in basso durante la sbirciata."
+        },
+        "pos_z": {
+          "title": "Sporgenza in avanti",
+          "desc": "Quanto si sposta la testa in avanti durante la sbirciata. Negativo = in avanti."
+        },
+        "yaw_deg": {
+          "title": "Rotazione",
+          "desc": "Quanto ruota la testa a sinistra o a destra durante la sbirciata."
+        },
+        "pitch_deg": {
+          "title": "Inclinazione",
+          "desc": "Quanto si inclina la testa in alto o in basso durante la sbirciata."
+        },
+        "roll_deg": {
+          "title": "Rollio",
+          "desc": "Quanto si inclina la testa di lato durante la sbirciata."
+        },
+        "fov_offset_deg": {
+          "title": "Variazione FOV",
+          "desc": "Quanto si allarga il campo visivo durante la sbirciata. Negativo = più stretto."
+        },
+        "smoothing_time": {
+          "title": "Smorzamento",
+          "desc": "Quanto è morbido il movimento di andata e ritorno della sporgenza."
+        },
+        "toggle_mode": {
+          "title": "Modalità alternata",
+          "desc": "Attiva: premi una volta per sporgerti, di nuovo per tornare. Disattiva: sporgiti finché tieni premuto, rilascia per tornare."
         }
       }
     }

@@ -39,6 +39,10 @@
     "zoom": {
       "title": "Zoom",
       "desc": "Maintenir pour zoomer en douceur ; relâcher pour revenir progressivement à la normale."
+    },
+    "blindspot_viewer": {
+      "title": "Vue angle mort",
+      "desc": "Se penche doucement pour voir derrière le montant de pare-brise."
     }
   },
   "settings": {
@@ -299,6 +303,49 @@
         "smoothing_time": {
           "title": "Lissage",
           "desc": "Douceur de l'entrée et de la sortie du zoom."
+        }
+      },
+      "blindspot_viewer": {
+        "title": "Vue angle mort",
+        "desc": "Se penche en avant d'une touche pour voir les feux cachés par le montant de pare-brise.",
+        "enabled": {
+          "title": "Activer la vue angle mort"
+        },
+        "pos_x": {
+          "title": "Décalage latéral",
+          "desc": "De combien votre tête se déplace vers la gauche ou la droite pendant le coup d'œil."
+        },
+        "pos_y": {
+          "title": "Hauteur",
+          "desc": "De combien votre tête monte ou descend pendant le coup d'œil."
+        },
+        "pos_z": {
+          "title": "Avancée",
+          "desc": "De combien votre tête avance pendant le coup d'œil. Négatif = vers l'avant."
+        },
+        "yaw_deg": {
+          "title": "Rotation",
+          "desc": "De combien votre tête tourne à gauche ou à droite pendant le coup d'œil."
+        },
+        "pitch_deg": {
+          "title": "Inclinaison",
+          "desc": "De combien votre tête s'incline vers le haut ou le bas pendant le coup d'œil."
+        },
+        "roll_deg": {
+          "title": "Roulis",
+          "desc": "De combien votre tête penche sur le côté pendant le coup d'œil."
+        },
+        "fov_offset_deg": {
+          "title": "Variation du FOV",
+          "desc": "De combien le champ de vision s'élargit pendant le coup d'œil. Négatif = plus étroit."
+        },
+        "smoothing_time": {
+          "title": "Lissage",
+          "desc": "Douceur du mouvement aller-retour du penché."
+        },
+        "toggle_mode": {
+          "title": "Mode bascule",
+          "desc": "Activé : appuyer une fois pour se pencher, une seconde fois pour revenir. Désactivé : se pencher tant que la touche est maintenue, relâcher pour revenir."
         }
       }
     }

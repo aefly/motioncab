@@ -8,9 +8,11 @@ namespace motioncab {
 ManualZoomEffect::ManualZoomEffect(SPF_Config_API *config_api,
                                    SPF_Config_Handle *config_handle,
                                    SPF_KeyBinds_API *keybinds_api,
-                                   SPF_KeyBinds_Handle *keybinds_handle)
+                                   SPF_KeyBinds_Handle *keybinds_handle,
+                                   const float *extra_fov_deg)
     : config_api_(config_api), config_handle_(config_handle),
-      keybinds_api_(keybinds_api), keybinds_handle_(keybinds_handle) {}
+      keybinds_api_(keybinds_api), keybinds_handle_(keybinds_handle),
+      extra_fov_deg_(extra_fov_deg) {}
 
 void ManualZoomEffect::LoadConfig() {
   if (!config_api_ || !config_handle_)
@@ -110,12 +112,17 @@ void ManualZoomEffect::RestoreDynamicFov() {
 }
 
 bool ManualZoomEffect::GetFov(float *out_fov) {
-  return camera_api_ && camera_api_->Cam_GetInteriorFov(out_fov);
+  if (!camera_api_ || !camera_api_->Cam_GetInteriorFov(out_fov))
+    return false;
+  if (extra_fov_deg_)
+    *out_fov -= *extra_fov_deg_;
+  return true;
 }
 
 void ManualZoomEffect::SetFov(float fov) {
   if (camera_api_)
-    camera_api_->Cam_SetInteriorFov(fov);
+    camera_api_->Cam_SetInteriorFov(fov +
+                                    (extra_fov_deg_ ? *extra_fov_deg_ : 0.0f));
 }
 
 void ManualZoomEffect::Update(float dt, SPF_Camera_API *camera_api) {
@@ -162,8 +169,15 @@ void ManualZoomEffect::Update(float dt, SPF_Camera_API *camera_api) {
   // fighting any FOV change made elsewhere (e.g. the game's own F4 slider).
   constexpr float kSettledEpsilonDeg = 0.05f;
   if (!zoom_held && std::fabs(smoothed - base_fov_deg_) < kSettledEpsilonDeg) {
-    if (GetFov(&base_fov_deg_))
+    if (fov_overridden_) {
+      // Just settled: land exactly on the player's FOV before letting go.
+      // The last write stopped up to kSettledEpsilonDeg short of it, and
+      // re-syncing from that would shift the base a little on every zoom.
+      SetFov(base_fov_deg_);
       fov_spring_.Reset(base_fov_deg_);
+    } else if (GetFov(&base_fov_deg_)) {
+      fov_spring_.Reset(base_fov_deg_);
+    }
     UpdateDynamicFov(dt, false);
     fov_overridden_ = false;
     return;
