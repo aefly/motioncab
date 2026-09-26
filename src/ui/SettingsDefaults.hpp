@@ -59,6 +59,16 @@ constexpr float kEngineStartStopDuration = 1.0f;
 constexpr float kManualZoomZoomLevel = 40.0f;
 constexpr float kManualZoomSmoothing = 0.25f;
 
+constexpr float kBlindspotViewerPosX = -0.06f;
+constexpr float kBlindspotViewerPosY = -0.10f;
+constexpr float kBlindspotViewerPosZ = -0.88f;
+constexpr float kBlindspotViewerYaw = -1.7f;
+constexpr float kBlindspotViewerPitch = 33.0f;
+constexpr float kBlindspotViewerRoll = 3.0f;
+constexpr float kBlindspotViewerFovOffset = 10.0f;
+constexpr float kBlindspotViewerSmoothing = 0.6f;
+constexpr bool kBlindspotViewerToggleMode = true;
+
 // The Quick Settings window's size on first launch (Manifest.cpp's
 // Defaults_AddWindow). SettingsWindow.cpp then snaps the width to the tab
 // titles, and falls back to this height on a language switch before

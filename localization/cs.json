@@ -39,6 +39,10 @@
     "zoom": {
       "title": "Přiblížení",
       "desc": "Podržením plynule přiblížíte; uvolněním se pohled postupně vrátí do normálu."
+    },
+    "blindspot_viewer": {
+      "title": "Pohled do mrtvého úhlu",
+      "desc": "Plynule se nakloní, aby bylo vidět za sloupek čelního skla."
     }
   },
   "settings": {
@@ -299,6 +303,49 @@
         "smoothing_time": {
           "title": "Vyhlazení",
           "desc": "Jak plynulé je přibližování a oddalování."
+        }
+      },
+      "blindspot_viewer": {
+        "title": "Pohled do mrtvého úhlu",
+        "desc": "Stiskem klávesy se nakloní, aby byly vidět semafory schované za sloupkem čelního skla.",
+        "enabled": {
+          "title": "Zapnout pohled do mrtvého úhlu"
+        },
+        "pos_x": {
+          "title": "Posun do strany",
+          "desc": "Jak daleko se hlava při náklonu posune doleva nebo doprava."
+        },
+        "pos_y": {
+          "title": "Výška",
+          "desc": "Jak daleko se hlava při náklonu posune nahoru nebo dolů."
+        },
+        "pos_z": {
+          "title": "Náklon dopředu",
+          "desc": "Jak daleko se hlava při náklonu posune dopředu. Záporné = dopředu."
+        },
+        "yaw_deg": {
+          "title": "Otočení",
+          "desc": "Jak moc se hlava při náklonu otočí doleva nebo doprava."
+        },
+        "pitch_deg": {
+          "title": "Sklon",
+          "desc": "Jak moc se hlava při náklonu skloní nahoru nebo dolů."
+        },
+        "roll_deg": {
+          "title": "Náklon do strany",
+          "desc": "Jak moc se hlava při náklonu nakloní do strany."
+        },
+        "fov_offset_deg": {
+          "title": "Změna FOV",
+          "desc": "O kolik se při náklonu rozšíří zorné pole. Záporné = užší."
+        },
+        "smoothing_time": {
+          "title": "Vyhlazení",
+          "desc": "Jak plynulý je pohyb náklonu tam a zpět."
+        },
+        "toggle_mode": {
+          "title": "Režim přepínání",
+          "desc": "Zapnuto: jedním stiskem se nakloníte, dalším se vrátíte. Vypnuto: nakloníte se, dokud klávesu držíte, uvolněním se vrátíte."
         }
       }
     }

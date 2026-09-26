@@ -39,6 +39,10 @@
     "zoom": {
       "title": "Przybliżenie",
       "desc": "Przytrzymaj, aby płynnie przybliżyć; puść, aby stopniowo wrócić do normalnego widoku."
+    },
+    "blindspot_viewer": {
+      "title": "Podgląd martwego pola",
+      "desc": "Płynnie pochyla się, aby zajrzeć za słupek szyby."
     }
   },
   "settings": {
@@ -299,6 +303,49 @@
         "smoothing_time": {
           "title": "Wygładzanie",
           "desc": "Jak płynne jest przybliżanie i oddalanie."
+        }
+      },
+      "blindspot_viewer": {
+        "title": "Podgląd martwego pola",
+        "desc": "Po naciśnięciu klawisza pochyla się, aby zobaczyć sygnalizację zasłoniętą przez słupek szyby.",
+        "enabled": {
+          "title": "Włącz podgląd martwego pola"
+        },
+        "pos_x": {
+          "title": "Przesunięcie w bok",
+          "desc": "Jak daleko głowa przesuwa się w lewo lub w prawo podczas zerknięcia."
+        },
+        "pos_y": {
+          "title": "Wysokość",
+          "desc": "Jak daleko głowa przesuwa się w górę lub w dół podczas zerknięcia."
+        },
+        "pos_z": {
+          "title": "Pochylenie do przodu",
+          "desc": "Jak daleko głowa przesuwa się do przodu podczas zerknięcia. Ujemne = do przodu."
+        },
+        "yaw_deg": {
+          "title": "Obrót",
+          "desc": "Jak bardzo głowa obraca się w lewo lub w prawo podczas zerknięcia."
+        },
+        "pitch_deg": {
+          "title": "Nachylenie",
+          "desc": "Jak bardzo głowa odchyla się w górę lub w dół podczas zerknięcia."
+        },
+        "roll_deg": {
+          "title": "Przechył",
+          "desc": "Jak bardzo głowa przechyla się na bok podczas zerknięcia."
+        },
+        "fov_offset_deg": {
+          "title": "Zmiana FOV",
+          "desc": "Jak bardzo poszerza się pole widzenia podczas zerknięcia. Ujemne = węższe."
+        },
+        "smoothing_time": {
+          "title": "Wygładzanie",
+          "desc": "Jak płynny jest ruch pochylenia i powrotu."
+        },
+        "toggle_mode": {
+          "title": "Tryb przełączania",
+          "desc": "Wł.: naciśnij raz, aby się pochylić, i ponownie, aby wrócić. Wył.: pochylaj się, dopóki trzymasz klawisz, puść, aby wrócić."
         }
       }
     }

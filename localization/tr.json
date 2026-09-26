@@ -39,6 +39,10 @@
     "zoom": {
       "title": "Yakınlaştırma",
       "desc": "Yumuşakça yakınlaştırmak için basılı tutun; yavaşça normale dönmek için bırakın."
+    },
+    "blindspot_viewer": {
+      "title": "Kör nokta görüşü",
+      "desc": "Ön cam direğinin arkasını görmek için yumuşak bir şekilde öne eğilir."
     }
   },
   "settings": {
@@ -299,6 +303,49 @@
         "smoothing_time": {
           "title": "Yumuşatma",
           "desc": "Yakınlaştırma ve uzaklaştırmanın ne kadar yumuşak hissettirdiği."
+        }
+      },
+      "blindspot_viewer": {
+        "title": "Kör nokta görüşü",
+        "desc": "Bir tuşla, ön cam direğinin gizlediği trafik ışıklarını görmek için öne eğilir.",
+        "enabled": {
+          "title": "Kör nokta görüşünü etkinleştir"
+        },
+        "pos_x": {
+          "title": "Yana kayma",
+          "desc": "Bakış sırasında başınızın sola veya sağa ne kadar kaydığı."
+        },
+        "pos_y": {
+          "title": "Yükseklik",
+          "desc": "Bakış sırasında başınızın yukarı veya aşağı ne kadar hareket ettiği."
+        },
+        "pos_z": {
+          "title": "Öne eğilme",
+          "desc": "Bakış sırasında başınızın öne ne kadar hareket ettiği. Negatif = öne."
+        },
+        "yaw_deg": {
+          "title": "Dönüş",
+          "desc": "Bakış sırasında başınızın sola veya sağa ne kadar döndüğü."
+        },
+        "pitch_deg": {
+          "title": "Eğim",
+          "desc": "Bakış sırasında başınızın yukarı veya aşağı ne kadar eğildiği."
+        },
+        "roll_deg": {
+          "title": "Yatma",
+          "desc": "Bakış sırasında başınızın yana ne kadar yattığı."
+        },
+        "fov_offset_deg": {
+          "title": "FOV değişimi",
+          "desc": "Bakış sırasında görüş alanının ne kadar genişlediği. Negatif = daha dar."
+        },
+        "smoothing_time": {
+          "title": "Yumuşatma",
+          "desc": "Öne eğilip geri dönme hareketinin ne kadar yumuşak olduğu."
+        },
+        "toggle_mode": {
+          "title": "Geçiş modu",
+          "desc": "Açık: eğilmek için bir kez, geri dönmek için tekrar basın. Kapalı: basılı tuttuğunuz sürece eğilin, geri dönmek için bırakın."
         }
       }
     }

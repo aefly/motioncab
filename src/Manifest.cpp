@@ -110,6 +110,18 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
         "enabled": true,
         "zoom_fov_deg": 40.0,
         "smoothing_time": 0.25
+      },
+      "blindspot_viewer": {
+        "enabled": true,
+        "pos_x": -0.06,
+        "pos_y": -0.1,
+        "pos_z": -0.88,
+        "yaw_deg": -1.7,
+        "pitch_deg": 33.0,
+        "roll_deg": 3.0,
+        "fov_offset_deg": 10.0,
+        "smoothing_time": 0.6,
+        "toggle_mode": true
       }
     }
   }
@@ -126,6 +138,8 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
   api->Defaults_AddKeybind(h, "ManualLook", "look_right", "keyboard",
                            "KEY_MULTIPLY", "always");
   api->Defaults_AddKeybind(h, "ManualZoom", "zoom", "keyboard", "KEY_SUBTRACT",
+                           "always");
+  api->Defaults_AddKeybind(h, "BlindspotViewer", "peek", "keyboard", "KEY_F10",
                            "always");
   api->Defaults_AddKeybind(h, "UI", "toggle", "keyboard", "KEY_F9", "always");
   // isVisible=true here only decides the very first launch ever
@@ -439,6 +453,62 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
 
   api->Meta_AddKeybind(h, "ManualZoom", "zoom", "keybinds.zoom.title",
                        "keybinds.zoom.desc");
+
+  api->Meta_AddCustomSetting(
+      h, "manual.blindspot_viewer", "settings.manual.blindspot_viewer.title",
+      "settings.manual.blindspot_viewer.desc", nullptr, nullptr, false);
+  api->Meta_AddCustomSetting(h, "manual.blindspot_viewer.enabled",
+                             "settings.manual.blindspot_viewer.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
+  api->Meta_AddCustomSetting(
+      h, "manual.blindspot_viewer.pos_x",
+      "settings.manual.blindspot_viewer.pos_x.title",
+      "settings.manual.blindspot_viewer.pos_x.desc", "slider",
+      R"({ "min": -0.5, "max": 0.5, "format": "%.2f m" })", false);
+  api->Meta_AddCustomSetting(
+      h, "manual.blindspot_viewer.pos_y",
+      "settings.manual.blindspot_viewer.pos_y.title",
+      "settings.manual.blindspot_viewer.pos_y.desc", "slider",
+      R"({ "min": -0.5, "max": 0.5, "format": "%.2f m" })", false);
+  api->Meta_AddCustomSetting(
+      h, "manual.blindspot_viewer.pos_z",
+      "settings.manual.blindspot_viewer.pos_z.title",
+      "settings.manual.blindspot_viewer.pos_z.desc", "slider",
+      R"({ "min": -1.5, "max": 0.5, "format": "%.2f m" })", false);
+  api->Meta_AddCustomSetting(
+      h, "manual.blindspot_viewer.yaw_deg",
+      "settings.manual.blindspot_viewer.yaw_deg.title",
+      "settings.manual.blindspot_viewer.yaw_deg.desc", "slider",
+      R"({ "min": -45.0, "max": 45.0, "format": "%.1f deg" })", false);
+  api->Meta_AddCustomSetting(
+      h, "manual.blindspot_viewer.pitch_deg",
+      "settings.manual.blindspot_viewer.pitch_deg.title",
+      "settings.manual.blindspot_viewer.pitch_deg.desc", "slider",
+      R"({ "min": -60.0, "max": 60.0, "format": "%.1f deg" })", false);
+  api->Meta_AddCustomSetting(
+      h, "manual.blindspot_viewer.roll_deg",
+      "settings.manual.blindspot_viewer.roll_deg.title",
+      "settings.manual.blindspot_viewer.roll_deg.desc", "slider",
+      R"({ "min": -15.0, "max": 15.0, "format": "%.1f deg" })", false);
+  api->Meta_AddCustomSetting(
+      h, "manual.blindspot_viewer.fov_offset_deg",
+      "settings.manual.blindspot_viewer.fov_offset_deg.title",
+      "settings.manual.blindspot_viewer.fov_offset_deg.desc", "slider",
+      R"({ "min": -30.0, "max": 30.0, "format": "%.0f deg" })", false);
+  api->Meta_AddCustomSetting(
+      h, "manual.blindspot_viewer.smoothing_time",
+      "settings.manual.blindspot_viewer.smoothing_time.title",
+      "settings.manual.blindspot_viewer.smoothing_time.desc", "slider",
+      R"({ "min": 0.2, "max": 1.5, "format": "%.2f s" })", false);
+  api->Meta_AddCustomSetting(
+      h, "manual.blindspot_viewer.toggle_mode",
+      "settings.manual.blindspot_viewer.toggle_mode.title",
+      "settings.manual.blindspot_viewer.toggle_mode.desc", nullptr, nullptr,
+      false);
+
+  api->Meta_AddKeybind(h, "BlindspotViewer", "peek",
+                       "keybinds.blindspot_viewer.title",
+                       "keybinds.blindspot_viewer.desc");
 }
 
 } // namespace motioncab

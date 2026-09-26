@@ -39,6 +39,10 @@
     "zoom": {
       "title": "Zoom",
       "desc": "Segure para aproximar suavemente; solte para voltar aos poucos à visão normal."
+    },
+    "blindspot_viewer": {
+      "title": "Visão do ponto cego",
+      "desc": "Inclina-se suavemente para ver atrás da coluna do para-brisa."
     }
   },
   "settings": {
@@ -299,6 +303,49 @@
         "smoothing_time": {
           "title": "Suavização",
           "desc": "Quão suave é a entrada e a saída do zoom."
+        }
+      },
+      "blindspot_viewer": {
+        "title": "Visão do ponto cego",
+        "desc": "Inclina-se ao apertar uma tecla para ver semáforos escondidos pela coluna do para-brisa.",
+        "enabled": {
+          "title": "Ativar visão do ponto cego"
+        },
+        "pos_x": {
+          "title": "Deslocamento lateral",
+          "desc": "Quanto a cabeça se move para a esquerda ou direita durante a espiada."
+        },
+        "pos_y": {
+          "title": "Altura",
+          "desc": "Quanto a cabeça se move para cima ou para baixo durante a espiada."
+        },
+        "pos_z": {
+          "title": "Inclinação para frente",
+          "desc": "Quanto a cabeça se move para frente durante a espiada. Negativo = para frente."
+        },
+        "yaw_deg": {
+          "title": "Giro",
+          "desc": "Quanto a cabeça gira para a esquerda ou direita durante a espiada."
+        },
+        "pitch_deg": {
+          "title": "Inclinação",
+          "desc": "Quanto a cabeça se inclina para cima ou para baixo durante a espiada."
+        },
+        "roll_deg": {
+          "title": "Rolagem",
+          "desc": "Quanto a cabeça tomba para o lado durante a espiada."
+        },
+        "fov_offset_deg": {
+          "title": "Variação do FOV",
+          "desc": "Quanto o campo de visão se amplia durante a espiada. Negativo = mais estreito."
+        },
+        "smoothing_time": {
+          "title": "Suavização",
+          "desc": "Quão suave é o movimento de ida e volta ao se inclinar."
+        },
+        "toggle_mode": {
+          "title": "Modo alternar",
+          "desc": "Ligado: pressione uma vez para se inclinar e de novo para voltar. Desligado: inclina-se enquanto a tecla estiver pressionada, solte para voltar."
         }
       }
     }

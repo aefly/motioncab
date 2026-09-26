@@ -39,6 +39,10 @@
     "zoom": {
       "title": "Zoom",
       "desc": "Mantén pulsado para acercar suavemente; suelta para volver poco a poco a la vista normal."
+    },
+    "blindspot_viewer": {
+      "title": "Visor de ángulo muerto",
+      "desc": "Se inclina suavemente para ver detrás del pilar del parabrisas."
     }
   },
   "settings": {
@@ -299,6 +303,49 @@
         "smoothing_time": {
           "title": "Suavizado",
           "desc": "Lo suave que se siente la entrada y salida del zoom."
+        }
+      },
+      "blindspot_viewer": {
+        "title": "Visor de ángulo muerto",
+        "desc": "Se inclina al pulsar una tecla para ver semáforos tapados por el pilar del parabrisas.",
+        "enabled": {
+          "title": "Activar visor de ángulo muerto"
+        },
+        "pos_x": {
+          "title": "Desplazamiento lateral",
+          "desc": "Cuánto se mueve tu cabeza a izquierda o derecha durante el vistazo."
+        },
+        "pos_y": {
+          "title": "Altura",
+          "desc": "Cuánto se mueve tu cabeza hacia arriba o abajo durante el vistazo."
+        },
+        "pos_z": {
+          "title": "Inclinación hacia delante",
+          "desc": "Cuánto se mueve tu cabeza hacia delante durante el vistazo. Negativo = hacia delante."
+        },
+        "yaw_deg": {
+          "title": "Giro",
+          "desc": "Cuánto gira tu cabeza a izquierda o derecha durante el vistazo."
+        },
+        "pitch_deg": {
+          "title": "Inclinación",
+          "desc": "Cuánto se inclina tu cabeza hacia arriba o abajo durante el vistazo."
+        },
+        "roll_deg": {
+          "title": "Alabeo",
+          "desc": "Cuánto se ladea tu cabeza hacia un lado durante el vistazo."
+        },
+        "fov_offset_deg": {
+          "title": "Cambio de FOV",
+          "desc": "Cuánto se amplía el campo de visión durante el vistazo. Negativo = más estrecho."
+        },
+        "smoothing_time": {
+          "title": "Suavizado",
+          "desc": "Lo suave que es el movimiento de ida y vuelta al inclinarse."
+        },
+        "toggle_mode": {
+          "title": "Modo alternar",
+          "desc": "Activado: pulsa una vez para inclinarte y otra vez para volver. Desactivado: te inclinas mientras mantienes pulsado y sueltas para volver."
         }
       }
     }

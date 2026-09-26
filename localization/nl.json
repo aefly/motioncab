@@ -39,6 +39,10 @@
     "zoom": {
       "title": "Zoom",
       "desc": "Ingedrukt houden om vloeiend in te zoomen; loslaten om geleidelijk terug te keren naar normaal."
+    },
+    "blindspot_viewer": {
+      "title": "Dode-hoekzicht",
+      "desc": "Leunt vloeiend naar voren om achter de raamstijl te kijken."
     }
   },
   "settings": {
@@ -299,6 +303,49 @@
         "smoothing_time": {
           "title": "Demping",
           "desc": "Hoe vloeiend het in- en uitzoomen aanvoelt."
+        }
+      },
+      "blindspot_viewer": {
+        "title": "Dode-hoekzicht",
+        "desc": "Leunt met één toets naar voren om verkeerslichten achter de raamstijl te zien.",
+        "enabled": {
+          "title": "Dode-hoekzicht inschakelen"
+        },
+        "pos_x": {
+          "title": "Zijwaarts",
+          "desc": "Hoe ver je hoofd naar links of rechts beweegt tijdens het kijken."
+        },
+        "pos_y": {
+          "title": "Hoogte",
+          "desc": "Hoe ver je hoofd omhoog of omlaag beweegt tijdens het kijken."
+        },
+        "pos_z": {
+          "title": "Vooroverleunen",
+          "desc": "Hoe ver je hoofd naar voren beweegt tijdens het kijken. Negatief = naar voren."
+        },
+        "yaw_deg": {
+          "title": "Draaiing",
+          "desc": "Hoe ver je hoofd naar links of rechts draait tijdens het kijken."
+        },
+        "pitch_deg": {
+          "title": "Kanteling",
+          "desc": "Hoe ver je hoofd omhoog of omlaag kantelt tijdens het kijken."
+        },
+        "roll_deg": {
+          "title": "Rollen",
+          "desc": "Hoe ver je hoofd opzij kantelt tijdens het kijken."
+        },
+        "fov_offset_deg": {
+          "title": "FOV-wijziging",
+          "desc": "Hoeveel breder het gezichtsveld wordt tijdens het kijken. Negatief = smaller."
+        },
+        "smoothing_time": {
+          "title": "Demping",
+          "desc": "Hoe vloeiend de leun- en terugbeweging is."
+        },
+        "toggle_mode": {
+          "title": "Schakelmodus",
+          "desc": "Aan: één keer drukken om naar voren te leunen, nogmaals om terug te gaan. Uit: naar voren leunen zolang de toets ingedrukt is, loslaten om terug te gaan."
         }
       }
     }

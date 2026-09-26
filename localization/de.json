@@ -39,6 +39,10 @@
     "zoom": {
       "title": "Zoom",
       "desc": "Gedrückt halten, um sanft heranzuzoomen; loslassen, um langsam zur Normalansicht zurückzukehren."
+    },
+    "blindspot_viewer": {
+      "title": "Toter-Winkel-Sicht",
+      "desc": "Beugt sich sanft vor, um hinter die Scheibensäule zu sehen."
     }
   },
   "settings": {
@@ -299,6 +303,49 @@
         "smoothing_time": {
           "title": "Glättung",
           "desc": "Wie weich sich das Ein- und Auszoomen anfühlt."
+        }
+      },
+      "blindspot_viewer": {
+        "title": "Toter-Winkel-Sicht",
+        "desc": "Beugt sich auf Tastendruck vor, um von der Scheibensäule verdeckte Ampeln zu sehen.",
+        "enabled": {
+          "title": "Toter-Winkel-Sicht aktivieren"
+        },
+        "pos_x": {
+          "title": "Seitlich",
+          "desc": "Wie weit sich dein Kopf beim Vorbeugen nach links oder rechts bewegt."
+        },
+        "pos_y": {
+          "title": "Höhe",
+          "desc": "Wie weit sich dein Kopf beim Vorbeugen nach oben oder unten bewegt."
+        },
+        "pos_z": {
+          "title": "Vorbeugen",
+          "desc": "Wie weit sich dein Kopf beim Vorbeugen nach vorne bewegt. Negativ = nach vorne."
+        },
+        "yaw_deg": {
+          "title": "Drehung",
+          "desc": "Wie weit sich dein Kopf beim Vorbeugen nach links oder rechts dreht."
+        },
+        "pitch_deg": {
+          "title": "Neigung",
+          "desc": "Wie weit sich dein Kopf beim Vorbeugen nach oben oder unten neigt."
+        },
+        "roll_deg": {
+          "title": "Rollen",
+          "desc": "Wie weit sich dein Kopf beim Vorbeugen zur Seite neigt."
+        },
+        "fov_offset_deg": {
+          "title": "Sichtfeld-Änderung",
+          "desc": "Wie stark sich das Sichtfeld beim Vorbeugen weitet. Negativ = enger."
+        },
+        "smoothing_time": {
+          "title": "Glättung",
+          "desc": "Wie weich die Vor- und Zurückbewegung ist."
+        },
+        "toggle_mode": {
+          "title": "Umschaltmodus",
+          "desc": "An: einmal drücken zum Vorbeugen, erneut drücken zum Zurücklehnen. Aus: vorbeugen, solange die Taste gehalten wird, loslassen zum Zurücklehnen."
         }
       }
     }

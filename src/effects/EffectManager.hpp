@@ -9,14 +9,23 @@ namespace motioncab {
 
 // Owns and drives all MotionCab head-motion effects. Add new effects here
 // as they're implemented; each stays independently toggleable/configurable.
+//
+// Toggling an effect fades its contribution in or out over kFadeSeconds
+// instead of cutting it: an effect switched off mid-motion (e.g. Steering
+// Camera in a turn) would otherwise snap the camera. A disabled effect
+// keeps being updated until it has faded out, then is Reset() so it starts
+// from rest once re-enabled.
 class EffectManager {
 public:
   void Register(std::unique_ptr<Effect> effect);
 
   void LoadAllConfig();
+  // Also settles every fade instantly (in for enabled effects, out for
+  // disabled ones), since the camera is being resynced anyway.
   void ResetAll();
 
-  // Advances every enabled effect and returns the summed offset to apply.
+  // Advances every enabled (or still fading out) effect and returns the
+  // summed, fade-weighted offset to apply.
   HeadOffset UpdateAndAccumulate(float dt, const SPF_TruckData &truck,
                                  const SPF_Controls &controls);
 
@@ -32,7 +41,13 @@ public:
   void NotifyTrailers(const SPF_Trailer *trailers, uint32_t count);
 
 private:
-  std::vector<std::unique_ptr<Effect>> effects_;
+  static constexpr float kFadeSeconds = 0.5f;
+
+  struct Slot {
+    std::unique_ptr<Effect> effect;
+    float fade = 1.0f; // 0 = contributes nothing, 1 = full contribution
+  };
+  std::vector<Slot> effects_;
 };
 
 } // namespace motioncab

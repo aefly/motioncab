@@ -53,6 +53,9 @@ constexpr BoolKey kBoolKeys[] = {
      defaults::kManualLookToggleMode},
     {"settings.driving.steering_camera.disable_in_reverse",
      defaults::kSteeringCameraDisableInReverse},
+    {"settings.manual.blindspot_viewer.enabled", true},
+    {"settings.manual.blindspot_viewer.toggle_mode",
+     defaults::kBlindspotViewerToggleMode},
 };
 
 constexpr FloatKey kFloatKeys[] = {
@@ -121,6 +124,18 @@ constexpr FloatKey kFloatKeys[] = {
      defaults::kManualZoomZoomLevel},
     {"settings.manual.manual_zoom.smoothing_time",
      defaults::kManualZoomSmoothing},
+    {"settings.manual.blindspot_viewer.pos_x", defaults::kBlindspotViewerPosX},
+    {"settings.manual.blindspot_viewer.pos_y", defaults::kBlindspotViewerPosY},
+    {"settings.manual.blindspot_viewer.pos_z", defaults::kBlindspotViewerPosZ},
+    {"settings.manual.blindspot_viewer.yaw_deg", defaults::kBlindspotViewerYaw},
+    {"settings.manual.blindspot_viewer.pitch_deg",
+     defaults::kBlindspotViewerPitch},
+    {"settings.manual.blindspot_viewer.roll_deg",
+     defaults::kBlindspotViewerRoll},
+    {"settings.manual.blindspot_viewer.fov_offset_deg",
+     defaults::kBlindspotViewerFovOffset},
+    {"settings.manual.blindspot_viewer.smoothing_time",
+     defaults::kBlindspotViewerSmoothing},
 };
 
 // Float settings renamed/split since a released version: the old key's value

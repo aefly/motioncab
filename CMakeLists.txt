@@ -74,6 +74,7 @@ set(PLUGIN_SOURCES
     "src/effects/BodyDynamicsEffect.cpp"
     "src/effects/EngineStartStopEffect.cpp"
     "src/effects/ManualZoomEffect.cpp"
+    "src/effects/BlindspotViewerEffect.cpp"
     "src/ui/SettingsWindow.cpp"
     "src/ui/OpenUrl.cpp"
 )

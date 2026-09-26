@@ -11,6 +11,7 @@
 #include "Manifest.hpp"
 #include "PluginContext.hpp"
 #include "ProfileManager.hpp"
+#include "effects/BlindspotViewerEffect.hpp"
 #include "effects/BodyDynamicsEffect.hpp"
 #include "effects/EngineStartStopEffect.hpp"
 #include "effects/EngineVibrationEffect.hpp"
@@ -70,12 +71,13 @@ void OnTrailersUpdate(const SPF_Trailer *trailers, uint32_t count,
   Context().effects.NotifyTrailers(trailers, count);
 }
 
-// ManualLookEffect/ManualZoomEffect poll these actions via
-// Kbind_GetActionValue instead. Registering is still required though, an
+// ManualLookEffect/ManualZoomEffect/BlindspotViewerEffect poll these actions
+// via Kbind_GetActionValue instead. Registering is still required though, an
 // unregistered action stays stuck at 0.0 even with a valid manifest binding.
 void OnManualLookLeftTriggered() {}
 void OnManualLookRightTriggered() {}
 void OnManualZoomTriggered() {}
+void OnBlindspotViewerTriggered() {}
 
 float ComputeDeltaTimeSeconds(PluginContext &ctx) {
   const auto now = std::chrono::steady_clock::now();
@@ -108,6 +110,32 @@ void OnUnload() {
   if (Context().manual_zoom) {
     Context().manual_zoom->RestoreFov();
     Context().manual_zoom->RestoreDynamicFov();
+  }
+  // Take our offset back out of the interior pose, which the engine keeps
+  // after we're gone. A reloaded plugin starts from a zero
+  // last_applied_offset and could never subtract it, so e.g. unloading
+  // mid blindspot viewer would leave the seat leaned forward for good.
+  PluginContext &ctx = Context();
+  if (ctx.core && ctx.core->camera) {
+    SPF_Camera_API *camera = ctx.core->camera;
+    const HeadOffset &applied = ctx.last_applied_offset;
+    constexpr float kDegToRad = std::numbers::pi_v<float> / 180.0f;
+    float x, y, z;
+    if (camera->Cam_GetInteriorSeatPos(&x, &y, &z))
+      camera->Cam_SetInteriorSeatPos(x - applied.pos_x, y - applied.pos_y,
+                                     z - applied.pos_z);
+    float yaw_rad, pitch_rad;
+    if (camera->Cam_GetInteriorHeadRot(&yaw_rad, &pitch_rad))
+      camera->Cam_SetInteriorHeadRot(yaw_rad - applied.yaw * kDegToRad,
+                                     pitch_rad - applied.pitch * kDegToRad);
+    float roll_deg;
+    if (camera->Cam_GetInteriorRoll(&roll_deg))
+      camera->Cam_SetInteriorRoll(roll_deg - applied.roll);
+    // After ManualZoomEffect's RestoreFov above, which adds this back on.
+    float fov_deg;
+    if (applied.fov != 0.0f && camera->Cam_GetInteriorFov(&fov_deg))
+      camera->Cam_SetInteriorFov(fov_deg - applied.fov);
+    ctx.last_applied_offset = {};
   }
   // The About tab's logo texture is the one thing this plugin allocates
   // through the UI API that SPF doesn't free on its own.
@@ -180,11 +208,14 @@ void OnActivated(const SPF_Core_API *core_api) {
       core_api->config, ctx.config_handle));
   ctx.effects.Register(std::make_unique<BodyDynamicsEffect>(core_api->config,
                                                             ctx.config_handle));
+  ctx.effects.Register(std::make_unique<BlindspotViewerEffect>(
+      core_api->config, ctx.config_handle, core_api->keybinds,
+      ctx.keybinds_handle));
   ctx.effects.LoadAllConfig();
 
   ctx.manual_zoom = std::make_unique<ManualZoomEffect>(
       core_api->config, ctx.config_handle, core_api->keybinds,
-      ctx.keybinds_handle);
+      ctx.keybinds_handle, &ctx.last_applied_offset.fov);
   ctx.manual_zoom->LoadConfig();
 
   ctx.telemetry_handle =
@@ -221,6 +252,9 @@ void OnActivated(const SPF_Core_API *core_api) {
                                        OnManualLookRightTriggered);
     core_api->keybinds->Kbind_Register(ctx.keybinds_handle, "ManualZoom.zoom",
                                        OnManualZoomTriggered);
+    core_api->keybinds->Kbind_Register(ctx.keybinds_handle,
+                                       "BlindspotViewer.peek",
+                                       OnBlindspotViewerTriggered);
     core_api->keybinds->Kbind_Register(ctx.keybinds_handle, "UI.toggle",
                                        OnToggleSettingsWindow);
   }
@@ -378,6 +412,19 @@ void OnUpdate() {
     const float base_roll_deg = roll_deg - ctx.last_applied_offset.roll;
     ctx.core->camera->Cam_SetInteriorRoll(base_roll_deg + offset.roll);
     ctx.last_applied_offset.roll = offset.roll;
+  }
+
+  // FOV gets the same differential write. ManualZoomEffect wrote this
+  // frame's FOV (if zooming) with last_applied_offset.fov already added,
+  // so subtracting it still recovers the right base. Skipped when neither
+  // frame has an offset, to leave the FOV alone for the game's F4 slider.
+  if (offset.fov != 0.0f || ctx.last_applied_offset.fov != 0.0f) {
+    float fov_deg = 0.0f;
+    if (ctx.core->camera->Cam_GetInteriorFov(&fov_deg)) {
+      const float base_fov_deg = fov_deg - ctx.last_applied_offset.fov;
+      ctx.core->camera->Cam_SetInteriorFov(base_fov_deg + offset.fov);
+      ctx.last_applied_offset.fov = offset.fov;
+    }
   }
 
   ctx.last_applied_offset.pos_x = offset.pos_x;
