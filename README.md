@@ -54,6 +54,7 @@ camera control, keybind rebinding, and the in-game settings UI.
 - **Engine Start/Stop** — mechanical shudder when the engine catches or
   dies
 - **Manual Zoom** — smooth zoom effect
+- **Blindspot Viewer** — leans forward to see traffic lights hidden by the cab
 - **Profiles** — create, save, and switch between named presets
 - **Localized** — available in 15 languages
 
@@ -70,12 +71,13 @@ active while in the interior (cabin) camera view.
 
 ## Controls
 
-| Action        | Default key | Behavior                                                   |
-| ------------- | ----------- | ---------------------------------------------------------- |
-| Look Left     | Numpad /    | Manual Look — hold or toggle to look left                  |
-| Look Right    | Numpad *    | Manual Look — hold or toggle to look right                 |
-| Zoom          | Numpad -    | Manual Zoom — hold to zoom in, release to return to normal |
-| Toggle Window | F9          | Shows/hides the MotionCab Quick Settings window            |
+| Action           | Default key | Behavior                                                   |
+| ---------------- | ----------- | ---------------------------------------------------------- |
+| Look Left        | Numpad /    | Manual Look — hold or toggle to look left                  |
+| Look Right       | Numpad *    | Manual Look — hold or toggle to look right                 |
+| Zoom             | Numpad -    | Manual Zoom — hold to zoom in, release to return to normal |
+| Blindspot Viewer | F10         | Toggle or hold to lean forward and look up                 |
+| Toggle Window    | F9          | Shows/hides the MotionCab Quick Settings window            |
 
 All keys are fully rebindable in SPF's in-game Keybinds drawer.
 
@@ -140,6 +142,16 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | **Manual Zoom**              |         |                                                                                                                                      |
 | `zoom_fov_deg`               | 40.0    | How zoomed in the view gets while holding the zoom key. Lower = more zoomed in.                                                      |
 | `smoothing_time`             | 0.25    | How smooth the zoom in/out feels.                                                                                                    |
+| **Blindspot Viewer**         |         |                                                                                                                                      |
+| `pos_x`                      | -0.06   | How far your head moves left or right while peeking.                                                                                 |
+| `pos_y`                      | -0.1    | How far your head moves up or down while peeking.                                                                                    |
+| `pos_z`                      | -0.88   | How far your head moves forward while peeking. Negative = forward.                                                                   |
+| `yaw_deg`                    | -1.7    | How far your head turns left or right while peeking.                                                                                 |
+| `pitch_deg`                  | 33.0    | How far your head tilts up or down while peeking.                                                                                    |
+| `roll_deg`                   | 3.0     | How far your head tilts to the side while peeking.                                                                                   |
+| `fov_offset_deg`             | 10.0    | How much the field of view widens while peeking. Negative = narrower.                                                                |
+| `smoothing_time`             | 0.6     | How smooth the lean-and-return motion is.                                                                                            |
+| `toggle_mode`                | true    | On: press once to peek, press again to sit back. Off: peek while held, let go to sit back.                                           |
 
 Every effect also has its own `enabled` toggle, defaulting to on.
 
@@ -188,7 +200,8 @@ game's `plugins/spfPlugins/MotionCab/`.
 │       ├── EngineStartStopEffect.*
 │       ├── MirrorCheckEffect.*
 │       ├── ManualLookEffect.*
-│       └── ManualZoomEffect.*
+│       ├── ManualZoomEffect.*
+│       └── BlindspotViewerEffect.*
 │   ├── ui/
 │   │   ├── SettingsWindow.cpp / .hpp   MotionCab Quick Settings window
 │   │   ├── OpenUrl.cpp / .hpp          Opens a URL in the system browser
