@@ -44,7 +44,8 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
       },
       "steering_camera": {
         "enabled": true,
-        "rotation_factor_deg": 30.0,
+        "rotation_left_deg": 30.0,
+        "rotation_right_deg": 30.0,
         "smoothing_time": 0.5,
         "delay_seconds": 0.2
       }
@@ -172,9 +173,14 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
                              "settings.driving.steering_camera.enabled.title",
                              "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "driving.steering_camera.rotation_factor_deg",
-      "settings.driving.steering_camera.rotation_factor_deg.title",
-      "settings.driving.steering_camera.rotation_factor_deg.desc", "slider",
+      h, "driving.steering_camera.rotation_left_deg",
+      "settings.driving.steering_camera.rotation_left_deg.title",
+      "settings.driving.steering_camera.rotation_left_deg.desc", "slider",
+      R"({ "min": 20.0, "max": 60.0, "format": "%.1f deg" })", false);
+  api->Meta_AddCustomSetting(
+      h, "driving.steering_camera.rotation_right_deg",
+      "settings.driving.steering_camera.rotation_right_deg.title",
+      "settings.driving.steering_camera.rotation_right_deg.desc", "slider",
       R"({ "min": 20.0, "max": 60.0, "format": "%.1f deg" })", false);
   api->Meta_AddCustomSetting(
       h, "driving.steering_camera.smoothing_time",
@@ -228,9 +234,9 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
   api->Meta_AddCustomSetting(
       h, "road.suspension", "settings.road.suspension.title",
       "settings.road.suspension.desc", nullptr, nullptr, false);
-  api->Meta_AddCustomSetting(
-      h, "road.suspension.enabled", "settings.road.suspension.enabled.title",
-      "settings.enabled_desc", nullptr, nullptr, false);
+  api->Meta_AddCustomSetting(h, "road.suspension.enabled",
+                             "settings.road.suspension.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
       h, "road.suspension.vertical_strength",
       "settings.road.suspension.vertical_strength.title",
@@ -310,10 +316,10 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
       "settings.manual.manual_look.smoothing_time.title",
       "settings.manual.manual_look.smoothing_time.desc", "slider",
       R"({ "min": 0.0, "max": 0.7, "format": "%.2f s" })", false);
-  api->Meta_AddCustomSetting(
-      h, "manual.manual_look.toggle_mode",
-      "settings.manual.manual_look.toggle_mode.title",
-      "settings.manual.manual_look.toggle_mode.desc", nullptr, nullptr, false);
+  api->Meta_AddCustomSetting(h, "manual.manual_look.toggle_mode",
+                             "settings.manual.manual_look.toggle_mode.title",
+                             "settings.manual.manual_look.toggle_mode.desc",
+                             nullptr, nullptr, false);
 
   api->Meta_AddKeybind(h, "ManualLook", "look_left", "keybinds.look_left.title",
                        "keybinds.look_left.desc");
@@ -340,9 +346,9 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
   api->Meta_AddCustomSetting(
       h, "road.speed_shake", "settings.road.speed_shake.title",
       "settings.road.speed_shake.desc", nullptr, nullptr, false);
-  api->Meta_AddCustomSetting(
-      h, "road.speed_shake.enabled", "settings.road.speed_shake.enabled.title",
-      "settings.enabled_desc", nullptr, nullptr, false);
+  api->Meta_AddCustomSetting(h, "road.speed_shake.enabled",
+                             "settings.road.speed_shake.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
       h, "road.speed_shake.intensity",
       "settings.road.speed_shake.intensity.title",
