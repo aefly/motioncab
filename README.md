@@ -94,7 +94,8 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `tilt_strength`              | 0.15    | How much your head tilts when the cab leans or rocks.                                                                                |
 | `smoothing_time`             | 0.2     | How quickly your head settles into place. Higher = slower and smoother, lower = snappier.                                            |
 | **Steering Camera**          |         |                                                                                                                                      |
-| `rotation_factor_deg`        | 30.0    | How far the camera turns when you crank the wheel all the way.                                                                       |
+| `rotation_left_deg`          | 30.0    | How far the camera turns when you crank the wheel all the way to the left.                                                           |
+| `rotation_right_deg`         | 30.0    | How far the camera turns when you crank the wheel all the way to the right.                                                          |
 | `smoothing_time`             | 0.5     | How smooth the camera turn feels once it gets going. Higher = smoother and slower.                                                   |
 | `delay_seconds`              | 0.2     | How long the camera waits after you turn the wheel before it starts moving.                                                          |
 | **Idle Breathing**           |         |                                                                                                                                      |
