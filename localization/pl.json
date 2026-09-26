@@ -1,0 +1,376 @@
+{
+  "language": {
+    "en": "Angielski    [English]",
+    "uk": "Ukraiński    [Українська]",
+    "de": "Niemiecki    [Deutsch]",
+    "fr": "Francuski    [Français]",
+    "es": "Hiszpański    [Español]",
+    "pl": "Polski",
+    "ru": "Rosyjski    [Русский]",
+    "pt_br": "Portugalski (Brazylia)    [Português (Brasil)]",
+    "it": "Włoski    [Italiano]",
+    "nl": "Holenderski    [Nederlands]",
+    "tr": "Turecki    [Türkçe]",
+    "cs": "Czeski    [Čeština]",
+    "zh": "Chiński (uproszczony)    [简体中文]",
+    "ja": "Japoński    [日本語]",
+    "ko": "Koreański    [한국어]"
+  },
+  "plugin": {
+    "description": "Dynamiczny ruch głowy dla ETS2 i ATS"
+  },
+  "window": {
+    "title": "Szybkie ustawienia MotionCab",
+    "desc": "Szybki dostęp do ustawień każdego efektu, jako alternatywa dla karty Ustawienia niestandardowe."
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "Pokaż/ukryj okno ustawień",
+      "desc": "Pokazuje lub ukrywa okno szybkich ustawień MotionCab."
+    },
+    "look_left": {
+      "title": "Spójrz w lewo",
+      "desc": "Płynnie spogląda w stronę lewej szyby/lusterka."
+    },
+    "look_right": {
+      "title": "Spójrz w prawo",
+      "desc": "Płynnie spogląda w stronę prawej szyby/lusterka."
+    },
+    "zoom": {
+      "title": "Przybliżenie",
+      "desc": "Przytrzymaj, aby płynnie przybliżyć; puść, aby stopniowo wrócić do normalnego widoku."
+    }
+  },
+  "settings": {
+    "enabled_desc": "Włącza lub wyłącza ten efekt.",
+    "driving": {
+      "title": "Jazda",
+      "desc": "Reakcje głowy i kamery na to, jak ciężarówka się porusza i skręca.",
+      "head_motion": {
+        "title": "Ruch głowy",
+        "desc": "Ustawienia efektu dynamicznego ruchu głowy.",
+        "enabled": {
+          "title": "Włącz ruch głowy"
+        },
+        "sway_strength": {
+          "title": "Siła kołysania",
+          "desc": "Jak mocno głowa jest popychana przy przyspieszaniu, hamowaniu lub na zakręcie."
+        },
+        "tilt_strength": {
+          "title": "Siła przechyłu",
+          "desc": "Jak mocno głowa się przechyla, gdy kabina się pochyla lub kołysze."
+        },
+        "smoothing_time": {
+          "title": "Wygładzanie",
+          "desc": "Jak szybko głowa się stabilizuje. Wyżej = wolniej i płynniej, niżej = szybciej."
+        }
+      },
+      "body_dynamics": {
+        "title": "Dynamika ciała",
+        "desc": "Głowa przechyla się na zewnątrz zakrętów i pochyla do przodu przy hamowaniu, jak ciało kierowcy reagujące na ruch ciężarówki.",
+        "enabled": {
+          "title": "Włącz dynamikę ciała"
+        },
+        "lean_strength": {
+          "title": "Siła wychylenia",
+          "desc": "Jak mocno głowa wychyla się na zewnątrz zakrętu."
+        },
+        "nod_strength": {
+          "title": "Siła pochylenia",
+          "desc": "Jak mocno głowa pochyla się do przodu przy hamowaniu i cofa przy przyspieszaniu."
+        },
+        "smoothing_time": {
+          "title": "Wygładzanie",
+          "desc": "Jak szybko wychylenie i pochylenie się uspokajają. Niżej = szybciej."
+        }
+      },
+      "steering_camera": {
+        "title": "Kamera kierownicy",
+        "desc": "Wygładzony obrót kamery podążający za kierownicą.",
+        "enabled": {
+          "title": "Włącz kamerę kierownicy"
+        },
+        "rotation_factor_deg": {
+          "title": "Zakres obrotu",
+          "desc": "Jak daleko obraca się kamera, gdy skręcisz kierownicę do oporu."
+        },
+        "smoothing_time": {
+          "title": "Wygładzanie",
+          "desc": "Jak płynny jest obrót kamery, gdy już ruszy. Wyżej = płynniej i wolniej."
+        },
+        "delay_seconds": {
+          "title": "Opóźnienie reakcji",
+          "desc": "Jak długo kamera czeka po skręceniu kierownicy, zanim zacznie się ruszać."
+        }
+      }
+    },
+    "road": {
+      "title": "Droga",
+      "desc": "Efekty wywołane nawierzchnią, zawieszeniem i prędkością.",
+      "suspension": {
+        "title": "Zawieszenie",
+        "desc": "Kamera podąża pionowo za nawierzchnią drogi, jak fotel na zawieszeniu ciężarówki.",
+        "enabled": {
+          "title": "Włącz zawieszenie"
+        },
+        "vertical_strength": {
+          "title": "Siła pionowa",
+          "desc": "Jak mocno nierówności drogi podrzucają głowę w górę i w dół."
+        },
+        "reactivity": {
+          "title": "Reaktywność",
+          "desc": "Jak szybko głowa wraca po nierówności. Niżej = szybciej."
+        },
+        "grade_strength": {
+          "title": "Podążanie za nachyleniem",
+          "desc": "Unosi głowę na zjazdach i opuszcza ją na podjazdach."
+        }
+      },
+      "road_irregularity": {
+        "title": "Nierówności drogi",
+        "desc": "Drgania zależne od podłoża pod kołami (żwir, kocie łby, ziemia lub gładki asfalt), niezależne od prawdziwych wstrząsów zawieszenia. Nierówny teren, jak ziemia czy trawa, dodatkowo kołysze głową na boki.",
+        "enabled": {
+          "title": "Włącz nierówności drogi"
+        },
+        "intensity": {
+          "title": "Intensywność",
+          "desc": "Jak silne są drgania nawierzchni i kołysanie w terenie."
+        },
+        "reactivity": {
+          "title": "Reaktywność",
+          "desc": "Jak ostre i brzęczące są drgania nawierzchni. Niżej = ostrzej."
+        }
+      },
+      "speed_shake": {
+        "title": "Drgania od prędkości",
+        "desc": "Realistyczne kołysanie głowy podczas jazdy, rosnące wraz z prędkością ciężarówki.",
+        "enabled": {
+          "title": "Włącz drgania od prędkości"
+        },
+        "intensity": {
+          "title": "Intensywność",
+          "desc": "Ogólna siła drgań odczuwanych przy szybkiej jeździe."
+        },
+        "smoothing_time": {
+          "title": "Wygładzanie",
+          "desc": "Jak drgania zmieniają się w czasie. Wyżej = wolniej i płynniej, niżej = bardziej skokowo i nerwowo."
+        },
+        "rotation": {
+          "title": "Obrót",
+          "desc": "Jak mocno widok przechyla się/obraca w ramach drgań, zamiast tylko przesuwać się na boki. Ustaw 0, aby zostawić tylko ruch na boki."
+        },
+        "vertical": {
+          "title": "Pion",
+          "desc": "Ile podskakiwania w pionie jest domieszane do drgań."
+        },
+        "roughness": {
+          "title": "Nieregularność",
+          "desc": "Jak nierówne są drgania w czasie. 0 utrzymuje je stałe; wyższe wartości dają naprzemiennie spokojne i niespokojne odcinki."
+        }
+      }
+    },
+    "cabin": {
+      "title": "Kabina",
+      "desc": "Efekty kierowcy i silnika wewnątrz kabiny.",
+      "idle_breathing": {
+        "title": "Oddech na postoju",
+        "desc": "Delikatny ruch oddechu na postoju, który zanika wraz ze wzrostem prędkości.",
+        "enabled": {
+          "title": "Włącz oddech na postoju"
+        },
+        "vertical_amplitude": {
+          "title": "Amplituda pionowa",
+          "desc": "Jak wysoko kamera unosi się i opada przy każdym oddechu."
+        },
+        "pitch_amplitude_deg": {
+          "title": "Amplituda pochylenia",
+          "desc": "Jak mocno głowa pochyla się do przodu/tyłu przy każdym oddechu."
+        },
+        "breathing_rate_bpm": {
+          "title": "Częstość oddechu",
+          "desc": "Jak szybko następuje oddychanie."
+        },
+        "fade_start_kmh": {
+          "title": "Prędkość początku zanikania",
+          "desc": "Prędkość, od której ten efekt zaczyna zanikać podczas przyspieszania."
+        },
+        "fade_end_kmh": {
+          "title": "Prędkość końca zanikania",
+          "desc": "Prędkość, przy której ten efekt całkowicie zanika."
+        }
+      },
+      "engine_vibration": {
+        "title": "Wibracje silnika",
+        "desc": "Delikatne wibracje silnika zależne od obrotów. Automatycznie wyłączone w ciężarówkach elektrycznych.",
+        "enabled": {
+          "title": "Włącz wibracje silnika"
+        },
+        "intensity": {
+          "title": "Intensywność",
+          "desc": "Jak silnie odczuwalne jest dudnienie silnika."
+        }
+      },
+      "engine_start_stop": {
+        "title": "Start/stop silnika",
+        "desc": "Krótkie mechaniczne szarpnięcie przy uruchamianiu lub gaśnięciu silnika. Automatycznie wyłączone w ciężarówkach elektrycznych.",
+        "enabled": {
+          "title": "Włącz start/stop silnika"
+        },
+        "intensity": {
+          "title": "Intensywność",
+          "desc": "Jak silne jest szarpnięcie przy uruchamianiu lub gaszeniu silnika."
+        },
+        "duration": {
+          "title": "Czas trwania",
+          "desc": "Jak długo trwa szarpnięcie przy starcie. Szarpnięcie przy gaszeniu jest krótsze i łagodniejsze."
+        }
+      }
+    },
+    "manual": {
+      "title": "Ręczne",
+      "desc": "Efekty spojrzenia i przybliżenia wywoływane przez ciebie.",
+      "mirror_check": {
+        "title": "Sprawdzanie lusterek",
+        "desc": "Spogląda w odpowiednie lusterko, gdy włączony jest kierunkowskaz, i wraca na środek po jego wyłączeniu.",
+        "hint": "Wymaga przypisania w grze klawiszy „Lewy kierunkowskaz” i „Prawy kierunkowskaz”.",
+        "enabled": {
+          "title": "Włącz sprawdzanie lusterek"
+        },
+        "look_angle_deg": {
+          "title": "Kąt spojrzenia",
+          "desc": "Jak daleko obraca się głowa, aby spojrzeć w lusterko."
+        },
+        "pitch_offset_deg": {
+          "title": "Pochylenie",
+          "desc": "Jak mocno głowa pochyla się w dół podczas patrzenia w lusterko."
+        },
+        "smoothing_time": {
+          "title": "Wygładzanie",
+          "desc": "Jak płynny jest ruch spojrzenia i powrotu."
+        },
+        "require_stationary": {
+          "title": "Tylko na postoju",
+          "desc": "Spoglądaj w lusterko tylko wtedy, gdy ciężarówka stoi."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Ignoruj podczas jazdy",
+          "desc": "Nie spoglądaj w lusterko dla kierunkowskazu włączonego w trakcie jazdy, nawet po zatrzymaniu."
+        }
+      },
+      "manual_look": {
+        "title": "Ręczne spojrzenie",
+        "desc": "Płynne spojrzenia w lewo/prawo przypisane do dwóch klawiszy.",
+        "hint": "Te klawisze są niezależne od sterowania w grze.",
+        "enabled": {
+          "title": "Włącz ręczne spojrzenie"
+        },
+        "look_angle_deg": {
+          "title": "Kąt spojrzenia",
+          "desc": "Jak daleko obraca się głowa, gdy patrzysz w lewo lub w prawo."
+        },
+        "smoothing_time": {
+          "title": "Wygładzanie",
+          "desc": "Jak płynny jest ruch spojrzenia i powrotu."
+        },
+        "toggle_mode": {
+          "title": "Tryb przełączania",
+          "desc": "Wł.: naciśnij raz, aby spojrzeć, i ponownie, aby wrócić. Wył.: patrz, dopóki trzymasz klawisz, puść, aby wrócić."
+        }
+      },
+      "manual_zoom": {
+        "title": "Ręczne przybliżenie",
+        "desc": "Płynne przybliżenie pod jednym osobnym klawiszem, jak natywny klawisz zoomu: przytrzymaj, aby przybliżyć, puść, aby stopniowo wrócić do normalnego widoku. Niezależne od natywnych klawiszy zoomu, które zmieniają pole widzenia skokowo i nie dają się bezpośrednio wygładzić.",
+        "hint": "Ten klawisz jest niezależny od klawisza gry „Przybliżenie kamery wewnętrznej”.",
+        "enabled": {
+          "title": "Włącz ręczne przybliżenie"
+        },
+        "zoom_fov_deg": {
+          "title": "Poziom przybliżenia",
+          "desc": "Jak bardzo przybliża się widok, gdy trzymasz klawisz zoomu. Niżej = większe przybliżenie."
+        },
+        "smoothing_time": {
+          "title": "Wygładzanie",
+          "desc": "Jak płynne jest przybliżanie i oddalanie."
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "Włączone",
+    "cancel": "Anuluj",
+    "slider_reset_hint": "Kliknij prawym przyciskiem suwak, aby go zresetować.",
+    "profile_badge": "Profil: {name}",
+    "unsaved_changes": "(Niezapisane zmiany)",
+    "tabs": {
+      "settings": "Ustawienia",
+      "about": "O wtyczce"
+    },
+    "keybind": {
+      "section": "Skróty klawiszowe",
+      "toggle_window": "Pokaż okno",
+      "unbound": "(nieprzypisany)",
+      "rebind_tip": "Kliknij, aby przypisać ponownie.",
+      "options_tip": "Opcje przypisania (przytrzymanie/przełączanie, martwa strefa, ...).",
+      "add_tip": "Dodaj kolejne przypisanie."
+    },
+    "profiles": {
+      "section": "Profile",
+      "name_hint": "Nazwa profilu...",
+      "save_as": "Zapisz jako profil",
+      "save_as_tip": "Zapisuje wszystkie bieżące ustawienia efektów pod tą nazwą profilu.",
+      "invalid_name": "Najpierw wpisz prawidłową nazwę profilu.",
+      "saved_toast": "Zapisano profil „{name}”.",
+      "save_failed": "Nie udało się zapisać profilu, sprawdź MotionCab.log.",
+      "overwrite_title": "Potwierdź nadpisanie",
+      "overwrite_message": "Profil o nazwie „{name}” już istnieje. Nadpisać go?",
+      "overwrite_confirm": "Tak, nadpisz",
+      "none": "Brak zapisanych profili.",
+      "select_tip": "Wybranie profilu natychmiast go wczytuje.",
+      "load_failed": "Nie udało się wczytać profilu „{name}”, sprawdź MotionCab.log.",
+      "no_match": "Żaden profil nie odpowiada bieżącym ustawieniom. Wybierz profil do wczytania lub zapisz je powyżej jako nowy profil.",
+      "save": "Zapisz",
+      "saved": "Zapisano",
+      "save_tip": "Nadpisuje wybrany profil bieżącymi ustawieniami.",
+      "delete": "Usuń",
+      "delete_tip": "Usuń wybrany profil.",
+      "delete_title": "Potwierdź usunięcie",
+      "delete_message": "Usunąć profil „{name}”? Tej operacji nie można cofnąć.",
+      "delete_confirm": "Tak, usuń",
+      "delete_failed": "Nie udało się usunąć profilu „{name}”, sprawdź MotionCab.log.",
+      "deleted_toast": "Usunięto profil „{name}”.",
+      "fallback_failed": "Usunięto, ale nie udało się wczytać „{name}”, sprawdź MotionCab.log."
+    },
+    "reset": {
+      "section": "Strefa zagrożenia",
+      "button": "Zresetuj wszystkie ustawienia",
+      "title": "Potwierdź reset",
+      "message": "Przywrócić wszystkie ustawienia MotionCab do wartości domyślnych?",
+      "confirm": "Tak, zresetuj wszystko",
+      "done_toast": "Przywrócono wszystkie ustawienia MotionCab do wartości domyślnych."
+    },
+    "about": {
+      "details": "Szczegóły",
+      "version": "Wersja: **{version}**",
+      "developer": "Twórca: **{author}**",
+      "links": "Linki",
+      "website": "Strona",
+      "website_desc": "Dokumentacja",
+      "discord": "Discord",
+      "discord_desc": "Społeczność i wsparcie",
+      "github": "GitHub",
+      "github_desc": "Wydania i zgłaszanie błędów",
+      "youtube": "YouTube",
+      "youtube_desc": "Filmy i prezentacje",
+      "support": "Wsparcie",
+      "support_text": "Jeśli podoba ci się MotionCab, możesz wesprzeć jego rozwój.",
+      "donate": "Wesprzyj przez PayPal",
+      "donate_desc": "Wesprzyj MotionCab w serwisie PayPal",
+      "tips": "Wskazówki",
+      "tip_reset": "Kliknij prawym przyciskiem dowolny suwak, aby przywrócić jego wartość domyślną.",
+      "tip_profiles": "Zapisz swoje ustawienia jako profil na karcie {settings_tab}.",
+      "tip_interior": "Wszystkie efekty działają tylko w kamerze wewnętrznej.",
+      "credits": "Podziękowania",
+      "credits_text": "SPF Framework i współtwórcy."
+    }
+  }
+}

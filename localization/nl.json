@@ -1,0 +1,376 @@
+{
+  "language": {
+    "en": "Engels    [English]",
+    "uk": "Oekraïens    [Українська]",
+    "de": "Duits    [Deutsch]",
+    "fr": "Frans    [Français]",
+    "es": "Spaans    [Español]",
+    "pl": "Pools    [Polski]",
+    "ru": "Russisch    [Русский]",
+    "pt_br": "Braziliaans Portugees    [Português (Brasil)]",
+    "it": "Italiaans    [Italiano]",
+    "nl": "Nederlands",
+    "tr": "Turks    [Türkçe]",
+    "cs": "Tsjechisch    [Čeština]",
+    "zh": "Chinees (vereenvoudigd)    [简体中文]",
+    "ja": "Japans    [日本語]",
+    "ko": "Koreaans    [한국어]"
+  },
+  "plugin": {
+    "description": "Dynamische hoofdbeweging voor ETS2 en ATS"
+  },
+  "window": {
+    "title": "MotionCab Snelle instellingen",
+    "desc": "Snelle toegang tot de instellingen van elk effect, als alternatief voor het tabblad Aangepaste instellingen."
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "Instellingenvenster tonen/verbergen",
+      "desc": "Toont of verbergt het venster Snelle instellingen van MotionCab."
+    },
+    "look_left": {
+      "title": "Naar links kijken",
+      "desc": "Kijkt vloeiend naar het linkerraam/de linkerspiegel."
+    },
+    "look_right": {
+      "title": "Naar rechts kijken",
+      "desc": "Kijkt vloeiend naar het rechterraam/de rechterspiegel."
+    },
+    "zoom": {
+      "title": "Zoom",
+      "desc": "Ingedrukt houden om vloeiend in te zoomen; loslaten om geleidelijk terug te keren naar normaal."
+    }
+  },
+  "settings": {
+    "enabled_desc": "Zet dit effect aan of uit.",
+    "driving": {
+      "title": "Rijden",
+      "desc": "Reacties van hoofd en camera op hoe de truck beweegt en stuurt.",
+      "head_motion": {
+        "title": "Hoofdbeweging",
+        "desc": "Instellingen voor het dynamische hoofdbewegingseffect.",
+        "enabled": {
+          "title": "Hoofdbeweging inschakelen"
+        },
+        "sway_strength": {
+          "title": "Zwaaisterkte",
+          "desc": "Hoeveel je hoofd heen en weer wordt geduwd bij optrekken, remmen of een bocht."
+        },
+        "tilt_strength": {
+          "title": "Kantelsterkte",
+          "desc": "Hoeveel je hoofd kantelt als de cabine overhelt of schommelt."
+        },
+        "smoothing_time": {
+          "title": "Demping",
+          "desc": "Hoe snel je hoofd weer tot rust komt. Hoger = trager en zachter, lager = directer."
+        }
+      },
+      "body_dynamics": {
+        "title": "Lichaamsdynamiek",
+        "desc": "Het hoofd leunt naar de buitenkant van bochten en knikt naar voren bij het remmen, zoals het lichaam van een chauffeur dat reageert op de bewegingen van de truck.",
+        "enabled": {
+          "title": "Lichaamsdynamiek inschakelen"
+        },
+        "lean_strength": {
+          "title": "Leunsterkte",
+          "desc": "Hoeveel je hoofd naar de buitenkant van een bocht leunt."
+        },
+        "nod_strength": {
+          "title": "Knikkracht",
+          "desc": "Hoeveel je hoofd naar voren zakt bij het remmen en terugwijkt bij het optrekken."
+        },
+        "smoothing_time": {
+          "title": "Demping",
+          "desc": "Hoe snel leunen en knikken tot rust komen. Lager = directer."
+        }
+      },
+      "steering_camera": {
+        "title": "Stuurcamera",
+        "desc": "Vloeiende camerarotatie die het stuur volgt.",
+        "enabled": {
+          "title": "Stuurcamera inschakelen"
+        },
+        "rotation_factor_deg": {
+          "title": "Draaihoek",
+          "desc": "Hoe ver de camera draait als je het stuur helemaal omdraait."
+        },
+        "smoothing_time": {
+          "title": "Demping",
+          "desc": "Hoe vloeiend de cameradraai aanvoelt zodra hij op gang is. Hoger = vloeiender en trager."
+        },
+        "delay_seconds": {
+          "title": "Reactievertraging",
+          "desc": "Hoe lang de camera wacht nadat je aan het stuur draait voordat hij begint te bewegen."
+        }
+      }
+    },
+    "road": {
+      "title": "Weg",
+      "desc": "Effecten door het wegdek, de vering en de snelheid.",
+      "suspension": {
+        "title": "Vering",
+        "desc": "De camera volgt het wegdek verticaal, als een stoel op de vering van de truck.",
+        "enabled": {
+          "title": "Vering inschakelen"
+        },
+        "vertical_strength": {
+          "title": "Verticale sterkte",
+          "desc": "Hoeveel oneffenheden in de weg je hoofd op en neer laten veren."
+        },
+        "reactivity": {
+          "title": "Reactiesnelheid",
+          "desc": "Hoe snel je hoofd zich herstelt na een hobbel. Lager = directer."
+        },
+        "grade_strength": {
+          "title": "Helling volgen",
+          "desc": "Tilt je hoofd op bij afdalingen en laat het zakken bij beklimmingen."
+        }
+      },
+      "road_irregularity": {
+        "title": "Wegoneffenheid",
+        "desc": "Getextureerd trillen afhankelijk van de ondergrond onder de wielen (grind, kinderkopjes, zand of glad asfalt), los van echte veringsschokken. Ongelijke ondergrond zoals zand of gras laat je hoofd ook zijwaarts schommelen.",
+        "enabled": {
+          "title": "Wegoneffenheid inschakelen"
+        },
+        "intensity": {
+          "title": "Intensiteit",
+          "desc": "Hoe sterk het trillen van het wegdek en het schommelen offroad aanvoelen."
+        },
+        "reactivity": {
+          "title": "Reactiesnelheid",
+          "desc": "Hoe scherp en zoemend het trillen van het wegdek aanvoelt. Lager = scherper."
+        }
+      },
+      "speed_shake": {
+        "title": "Snelheidstrilling",
+        "desc": "Realistisch hoofdschommelen tijdens het rijden, dat toeneemt met de snelheid van de truck.",
+        "enabled": {
+          "title": "Snelheidstrilling inschakelen"
+        },
+        "intensity": {
+          "title": "Intensiteit",
+          "desc": "Totale sterkte van de trilling die je voelt bij hard rijden."
+        },
+        "smoothing_time": {
+          "title": "Demping",
+          "desc": "Hoe de trilling in de tijd aanvoelt. Hoger = trager en zachter, lager = schokkeriger en nerveuzer."
+        },
+        "rotation": {
+          "title": "Rotatie",
+          "desc": "Hoeveel je zicht kantelt/draait als deel van de trilling, in plaats van alleen zijwaarts te bewegen. Zet op 0 om alleen de zijwaartse beweging te houden."
+        },
+        "vertical": {
+          "title": "Verticaal",
+          "desc": "Hoeveel op-en-neer veren door de trilling wordt gemengd."
+        },
+        "roughness": {
+          "title": "Onregelmatigheid",
+          "desc": "Hoe ongelijkmatig de trilling in de tijd aanvoelt. 0 houdt hem constant; hoger geeft afwisselend rustige en onrustige stukken."
+        }
+      }
+    },
+    "cabin": {
+      "title": "Cabine",
+      "desc": "Effecten van de chauffeur en de motor in de cabine.",
+      "idle_breathing": {
+        "title": "Ademhaling in stilstand",
+        "desc": "Subtiele ademhalingsbeweging in stilstand die vervaagt naarmate de snelheid toeneemt.",
+        "enabled": {
+          "title": "Ademhaling in stilstand inschakelen"
+        },
+        "vertical_amplitude": {
+          "title": "Verticale uitslag",
+          "desc": "Hoe ver de camera stijgt en daalt bij elke ademhaling."
+        },
+        "pitch_amplitude_deg": {
+          "title": "Knikuitslag",
+          "desc": "Hoeveel je hoofd naar voren/achteren kantelt bij elke ademhaling."
+        },
+        "breathing_rate_bpm": {
+          "title": "Ademfrequentie",
+          "desc": "Hoe snel er wordt geademd."
+        },
+        "fade_start_kmh": {
+          "title": "Snelheid begin vervagen",
+          "desc": "De snelheid waarbij dit effect begint te vervagen als je versnelt."
+        },
+        "fade_end_kmh": {
+          "title": "Snelheid einde vervagen",
+          "desc": "De snelheid waarbij dit effect volledig is verdwenen."
+        }
+      },
+      "engine_vibration": {
+        "title": "Motortrilling",
+        "desc": "Fijne motortrilling afhankelijk van het toerental. Automatisch uitgeschakeld bij elektrische trucks.",
+        "enabled": {
+          "title": "Motortrilling inschakelen"
+        },
+        "intensity": {
+          "title": "Intensiteit",
+          "desc": "Hoe sterk het motorgebrom aanvoelt."
+        }
+      },
+      "engine_start_stop": {
+        "title": "Motor start/stop",
+        "desc": "Een korte mechanische schok wanneer de motor start of afslaat. Automatisch uitgeschakeld bij elektrische trucks.",
+        "enabled": {
+          "title": "Motor start/stop inschakelen"
+        },
+        "intensity": {
+          "title": "Intensiteit",
+          "desc": "Hoe sterk de schok aanvoelt wanneer de motor start of stopt."
+        },
+        "duration": {
+          "title": "Duur",
+          "desc": "Hoe lang de startschok duurt. De stopschok is korter en zachter."
+        }
+      }
+    },
+    "manual": {
+      "title": "Handmatig",
+      "desc": "Kijk- en zoomeffecten die je zelf activeert.",
+      "mirror_check": {
+        "title": "Spiegelcontrole",
+        "desc": "Kijkt naar de bijbehorende spiegel zolang een richtingaanwijzer aan staat, en centreert weer als hij uit gaat.",
+        "hint": "Vereist dat de standaardtoetsen van het spel 'Richtingaanwijzer links' en 'Richtingaanwijzer rechts' zijn toegewezen.",
+        "enabled": {
+          "title": "Spiegelcontrole inschakelen"
+        },
+        "look_angle_deg": {
+          "title": "Kijkhoek",
+          "desc": "Hoe ver je hoofd draait om in de spiegel te kijken."
+        },
+        "pitch_offset_deg": {
+          "title": "Kantelhoek",
+          "desc": "Hoeveel je hoofd omlaag kantelt tijdens het kijken in de spiegel."
+        },
+        "smoothing_time": {
+          "title": "Demping",
+          "desc": "Hoe vloeiend de kijk- en terugbeweging is."
+        },
+        "require_stationary": {
+          "title": "Alleen in stilstand",
+          "desc": "Alleen in de spiegel kijken als de truck stilstaat."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Negeren tijdens het rijden",
+          "desc": "Niet in de spiegel kijken voor een richtingaanwijzer die tijdens het rijden is aangezet, ook niet na het stoppen."
+        }
+      },
+      "manual_look": {
+        "title": "Handmatig kijken",
+        "desc": "Vloeiende blikken naar links/rechts op twee toetsen.",
+        "hint": "Deze toetsen staan los van de standaardbediening van het spel.",
+        "enabled": {
+          "title": "Handmatig kijken inschakelen"
+        },
+        "look_angle_deg": {
+          "title": "Kijkhoek",
+          "desc": "Hoe ver je hoofd draait als je naar links of rechts kijkt."
+        },
+        "smoothing_time": {
+          "title": "Demping",
+          "desc": "Hoe vloeiend de kijk- en terugbeweging is."
+        },
+        "toggle_mode": {
+          "title": "Schakelmodus",
+          "desc": "Aan: één keer drukken om te kijken, nogmaals om terug te kijken. Uit: kijken zolang de toets ingedrukt is, loslaten om terug te kijken."
+        }
+      },
+      "manual_zoom": {
+        "title": "Handmatige zoom",
+        "desc": "Vloeiende zoom op één eigen toets, zoals de standaard zoomtoets: ingedrukt houden om in te zoomen, loslaten om geleidelijk terug te keren naar normaal. Los van de standaard zoomtoetsen, die het gezichtsveld in vaste stappen veranderen en niet direct vloeiend te maken zijn.",
+        "hint": "Deze toets staat los van de standaardtoets 'Binnencamera zoomen' van het spel.",
+        "enabled": {
+          "title": "Handmatige zoom inschakelen"
+        },
+        "zoom_fov_deg": {
+          "title": "Zoomniveau",
+          "desc": "Hoe ver het beeld inzoomt zolang je de zoomtoets vasthoudt. Lager = verder ingezoomd."
+        },
+        "smoothing_time": {
+          "title": "Demping",
+          "desc": "Hoe vloeiend het in- en uitzoomen aanvoelt."
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "Ingeschakeld",
+    "cancel": "Annuleren",
+    "slider_reset_hint": "Klik met rechts op een schuifregelaar om hem te resetten.",
+    "profile_badge": "Profiel: {name}",
+    "unsaved_changes": "(Niet-opgeslagen wijzigingen)",
+    "tabs": {
+      "settings": "Instellingen",
+      "about": "Over"
+    },
+    "keybind": {
+      "section": "Sneltoetsen",
+      "toggle_window": "Venster tonen",
+      "unbound": "(niet toegewezen)",
+      "rebind_tip": "Klik om opnieuw toe te wijzen.",
+      "options_tip": "Toewijzingsopties (vasthouden/schakelen, dode zone, ...).",
+      "add_tip": "Nog een toewijzing toevoegen."
+    },
+    "profiles": {
+      "section": "Profielen",
+      "name_hint": "Profielnaam...",
+      "save_as": "Opslaan als profiel",
+      "save_as_tip": "Slaat alle huidige effectinstellingen op onder deze profielnaam.",
+      "invalid_name": "Voer eerst een geldige profielnaam in.",
+      "saved_toast": "Profiel '{name}' opgeslagen.",
+      "save_failed": "Profiel opslaan mislukt, zie MotionCab.log.",
+      "overwrite_title": "Overschrijven bevestigen",
+      "overwrite_message": "Er bestaat al een profiel met de naam '{name}'. Overschrijven?",
+      "overwrite_confirm": "Ja, overschrijven",
+      "none": "Nog geen opgeslagen profielen.",
+      "select_tip": "Een profiel selecteren laadt het meteen.",
+      "load_failed": "Profiel '{name}' laden mislukt, zie MotionCab.log.",
+      "no_match": "Geen enkel profiel komt overeen met de huidige instellingen. Kies er een om te laden, of sla ze hierboven op als nieuw profiel.",
+      "save": "Opslaan",
+      "saved": "Opgeslagen",
+      "save_tip": "Overschrijft het geselecteerde profiel met de huidige instellingen.",
+      "delete": "Verwijderen",
+      "delete_tip": "Het geselecteerde profiel verwijderen.",
+      "delete_title": "Verwijderen bevestigen",
+      "delete_message": "Profiel '{name}' verwijderen? Dit kan niet ongedaan worden gemaakt.",
+      "delete_confirm": "Ja, verwijderen",
+      "delete_failed": "Profiel '{name}' verwijderen mislukt, zie MotionCab.log.",
+      "deleted_toast": "Profiel '{name}' verwijderd.",
+      "fallback_failed": "Verwijderd, maar '{name}' laden mislukt, zie MotionCab.log."
+    },
+    "reset": {
+      "section": "Gevarenzone",
+      "button": "Alle instellingen resetten",
+      "title": "Resetten bevestigen",
+      "message": "Alle MotionCab-instellingen terugzetten naar hun standaardwaarde?",
+      "confirm": "Ja, alles resetten",
+      "done_toast": "Alle MotionCab-instellingen zijn teruggezet naar hun standaardwaarde."
+    },
+    "about": {
+      "details": "Details",
+      "version": "Versie: **{version}**",
+      "developer": "Ontwikkelaar: **{author}**",
+      "links": "Links",
+      "website": "Website",
+      "website_desc": "Documentatie",
+      "discord": "Discord",
+      "discord_desc": "Community en ondersteuning",
+      "github": "GitHub",
+      "github_desc": "Releases en bugmeldingen",
+      "youtube": "YouTube",
+      "youtube_desc": "Video's en demonstraties",
+      "support": "Steunen",
+      "support_text": "Als je MotionCab leuk vindt, kun je de ontwikkeling steunen.",
+      "donate": "Doneren met PayPal",
+      "donate_desc": "MotionCab steunen via PayPal",
+      "tips": "Tips",
+      "tip_reset": "Klik met rechts op een schuifregelaar om hem terug te zetten naar de standaardwaarde.",
+      "tip_profiles": "Sla je instellingen op als profiel in het tabblad {settings_tab}.",
+      "tip_interior": "Alle effecten werken alleen in de binnencamera.",
+      "credits": "Credits",
+      "credits_text": "SPF Framework en bijdragers."
+    }
+  }
+}

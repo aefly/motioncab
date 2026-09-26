@@ -1,0 +1,376 @@
+{
+  "language": {
+    "en": "Englisch    [English]",
+    "uk": "Ukrainisch    [Українська]",
+    "de": "Deutsch",
+    "fr": "Französisch    [Français]",
+    "es": "Spanisch    [Español]",
+    "pl": "Polnisch    [Polski]",
+    "ru": "Russisch    [Русский]",
+    "pt_br": "Brasilianisches Portugiesisch    [Português (Brasil)]",
+    "it": "Italienisch    [Italiano]",
+    "nl": "Niederländisch    [Nederlands]",
+    "tr": "Türkisch    [Türkçe]",
+    "cs": "Tschechisch    [Čeština]",
+    "zh": "Chinesisch (vereinfacht)    [简体中文]",
+    "ja": "Japanisch    [日本語]",
+    "ko": "Koreanisch    [한국어]"
+  },
+  "plugin": {
+    "description": "Dynamische Kopfbewegung für ETS2 und ATS"
+  },
+  "window": {
+    "title": "MotionCab Schnelleinstellungen",
+    "desc": "Schneller Zugriff auf die Einstellungen aller Effekte, als Alternative zum Tab „Benutzerdefinierte Einstellungen“."
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "Einstellungsfenster ein-/ausblenden",
+      "desc": "Blendet das MotionCab-Schnelleinstellungsfenster ein oder aus."
+    },
+    "look_left": {
+      "title": "Nach links schauen",
+      "desc": "Schaut sanft zum linken Fenster/Spiegel."
+    },
+    "look_right": {
+      "title": "Nach rechts schauen",
+      "desc": "Schaut sanft zum rechten Fenster/Spiegel."
+    },
+    "zoom": {
+      "title": "Zoom",
+      "desc": "Gedrückt halten, um sanft heranzuzoomen; loslassen, um langsam zur Normalansicht zurückzukehren."
+    }
+  },
+  "settings": {
+    "enabled_desc": "Schaltet diesen Effekt ein oder aus.",
+    "driving": {
+      "title": "Fahren",
+      "desc": "Reaktionen von Kopf und Kamera darauf, wie sich der Lkw bewegt und lenkt.",
+      "head_motion": {
+        "title": "Kopfbewegung",
+        "desc": "Einstellungen für den dynamischen Kopfbewegungseffekt.",
+        "enabled": {
+          "title": "Kopfbewegung aktivieren"
+        },
+        "sway_strength": {
+          "title": "Schwankstärke",
+          "desc": "Wie stark dein Kopf beim Beschleunigen, Bremsen oder in Kurven hin und her geschoben wird."
+        },
+        "tilt_strength": {
+          "title": "Neigungsstärke",
+          "desc": "Wie stark sich dein Kopf neigt, wenn das Fahrerhaus kippt oder schaukelt."
+        },
+        "smoothing_time": {
+          "title": "Glättung",
+          "desc": "Wie schnell sich dein Kopf wieder beruhigt. Höher = langsamer und weicher, niedriger = direkter."
+        }
+      },
+      "body_dynamics": {
+        "title": "Körperdynamik",
+        "desc": "Der Kopf lehnt sich in Kurven nach außen und nickt beim Bremsen nach vorn, wie der Körper eines Fahrers, der auf die Bewegung des Lkw reagiert.",
+        "enabled": {
+          "title": "Körperdynamik aktivieren"
+        },
+        "lean_strength": {
+          "title": "Neigung in Kurven",
+          "desc": "Wie stark sich dein Kopf in einer Kurve nach außen lehnt."
+        },
+        "nod_strength": {
+          "title": "Nickstärke",
+          "desc": "Wie stark dein Kopf beim Bremsen nach vorn kippt und beim Beschleunigen zurückgeht."
+        },
+        "smoothing_time": {
+          "title": "Glättung",
+          "desc": "Wie schnell sich Neigen und Nicken beruhigen. Niedriger = direkter."
+        }
+      },
+      "steering_camera": {
+        "title": "Lenkkamera",
+        "desc": "Geglättete Kameradrehung, die dem Lenkrad folgt.",
+        "enabled": {
+          "title": "Lenkkamera aktivieren"
+        },
+        "rotation_factor_deg": {
+          "title": "Drehstärke",
+          "desc": "Wie weit sich die Kamera dreht, wenn du das Lenkrad voll einschlägst."
+        },
+        "smoothing_time": {
+          "title": "Glättung",
+          "desc": "Wie weich sich die Kameradrehung anfühlt, sobald sie einsetzt. Höher = weicher und langsamer."
+        },
+        "delay_seconds": {
+          "title": "Reaktionsverzögerung",
+          "desc": "Wie lange die Kamera nach dem Lenken wartet, bevor sie sich bewegt."
+        }
+      }
+    },
+    "road": {
+      "title": "Straße",
+      "desc": "Effekte durch Fahrbahnoberfläche, Federung und Geschwindigkeit.",
+      "suspension": {
+        "title": "Federung",
+        "desc": "Die Kamera folgt der Fahrbahn vertikal, wie ein Sitz auf der Federung des Lkw.",
+        "enabled": {
+          "title": "Federung aktivieren"
+        },
+        "vertical_strength": {
+          "title": "Vertikale Stärke",
+          "desc": "Wie stark Bodenwellen deinen Kopf auf und ab federn lassen."
+        },
+        "reactivity": {
+          "title": "Reaktionsfreude",
+          "desc": "Wie schnell dein Kopf nach einer Bodenwelle nachzieht. Niedriger = direkter."
+        },
+        "grade_strength": {
+          "title": "Steigung folgen",
+          "desc": "Hebt deinen Kopf bergab und senkt ihn bergauf."
+        }
+      },
+      "road_irregularity": {
+        "title": "Fahrbahnunebenheit",
+        "desc": "Strukturiertes Rütteln je nach Untergrund unter den Rädern (Schotter, Kopfsteinpflaster, Erde oder glatter Asphalt), getrennt von echten Federungsstößen. Unebener Boden wie Erde oder Gras schaukelt deinen Kopf außerdem seitlich hin und her.",
+        "enabled": {
+          "title": "Fahrbahnunebenheit aktivieren"
+        },
+        "intensity": {
+          "title": "Intensität",
+          "desc": "Wie stark sich das Rütteln der Fahrbahn und das Schaukeln im Gelände anfühlen."
+        },
+        "reactivity": {
+          "title": "Reaktionsfreude",
+          "desc": "Wie scharf und surrend sich das Rütteln der Fahrbahn anfühlt. Niedriger = schärfer."
+        }
+      },
+      "speed_shake": {
+        "title": "Geschwindigkeitswackeln",
+        "desc": "Realistisches Kopfschwanken während der Fahrt, das mit der Geschwindigkeit zunimmt.",
+        "enabled": {
+          "title": "Geschwindigkeitswackeln aktivieren"
+        },
+        "intensity": {
+          "title": "Intensität",
+          "desc": "Gesamtstärke des Wackelns bei schneller Fahrt."
+        },
+        "smoothing_time": {
+          "title": "Glättung",
+          "desc": "Wie sich das Wackeln über die Zeit anfühlt. Höher = langsamer und weicher, niedriger = sprunghafter und nervöser."
+        },
+        "rotation": {
+          "title": "Drehung",
+          "desc": "Wie stark sich deine Sicht beim Wackeln neigt/dreht, statt sich nur seitlich zu bewegen. Auf 0 setzen, um nur die Seitwärtsbewegung zu behalten."
+        },
+        "vertical": {
+          "title": "Vertikal",
+          "desc": "Wie viel Auf-und-ab-Federn dem Wackeln beigemischt wird."
+        },
+        "roughness": {
+          "title": "Unregelmäßigkeit",
+          "desc": "Wie ungleichmäßig sich das Wackeln über die Zeit anfühlt. 0 hält es konstant; höhere Werte erzeugen ruhige und unruhige Phasen."
+        }
+      }
+    },
+    "cabin": {
+      "title": "Fahrerhaus",
+      "desc": "Effekte von Fahrer und Motor im Fahrerhaus.",
+      "idle_breathing": {
+        "title": "Atmung im Stand",
+        "desc": "Dezente Atembewegung im Stand, die mit zunehmender Geschwindigkeit ausblendet.",
+        "enabled": {
+          "title": "Atmung im Stand aktivieren"
+        },
+        "vertical_amplitude": {
+          "title": "Vertikaler Ausschlag",
+          "desc": "Wie weit sich die Kamera mit jedem Atemzug hebt und senkt."
+        },
+        "pitch_amplitude_deg": {
+          "title": "Nickausschlag",
+          "desc": "Wie stark dein Kopf mit jedem Atemzug nach vorn/hinten kippt."
+        },
+        "breathing_rate_bpm": {
+          "title": "Atemfrequenz",
+          "desc": "Wie schnell geatmet wird."
+        },
+        "fade_start_kmh": {
+          "title": "Ausblendbeginn",
+          "desc": "Die Geschwindigkeit, ab der dieser Effekt beim Beschleunigen auszublenden beginnt."
+        },
+        "fade_end_kmh": {
+          "title": "Ausblendende",
+          "desc": "Die Geschwindigkeit, bei der dieser Effekt vollständig ausgeblendet ist."
+        }
+      },
+      "engine_vibration": {
+        "title": "Motorvibration",
+        "desc": "Feine Motorvibration abhängig von der Drehzahl. Bei Elektro-Lkw automatisch deaktiviert.",
+        "enabled": {
+          "title": "Motorvibration aktivieren"
+        },
+        "intensity": {
+          "title": "Intensität",
+          "desc": "Wie stark sich das Motorbrummen anfühlt."
+        }
+      },
+      "engine_start_stop": {
+        "title": "Motorstart/-stopp",
+        "desc": "Ein kurzes mechanisches Rütteln, wenn der Motor anspringt oder ausgeht. Bei Elektro-Lkw automatisch deaktiviert.",
+        "enabled": {
+          "title": "Motorstart/-stopp aktivieren"
+        },
+        "intensity": {
+          "title": "Intensität",
+          "desc": "Wie stark sich das Rütteln beim Starten oder Abstellen des Motors anfühlt."
+        },
+        "duration": {
+          "title": "Dauer",
+          "desc": "Wie lange das Rütteln beim Start dauert. Das Rütteln beim Abstellen ist kürzer und sanfter."
+        }
+      }
+    },
+    "manual": {
+      "title": "Manuell",
+      "desc": "Blick- und Zoomeffekte, die du selbst auslöst.",
+      "mirror_check": {
+        "title": "Spiegelblick",
+        "desc": "Schaut zum passenden Spiegel, solange ein Blinker an ist, und zentriert wieder, wenn er aus ist.",
+        "hint": "Erfordert, dass die spieleigenen Tasten „Blinker links“ und „Blinker rechts“ belegt sind.",
+        "enabled": {
+          "title": "Spiegelblick aktivieren"
+        },
+        "look_angle_deg": {
+          "title": "Blickwinkel",
+          "desc": "Wie weit sich dein Kopf zum Spiegel dreht."
+        },
+        "pitch_offset_deg": {
+          "title": "Neigungsversatz",
+          "desc": "Wie stark dein Kopf beim Spiegelblick nach unten kippt."
+        },
+        "smoothing_time": {
+          "title": "Glättung",
+          "desc": "Wie weich die Hin- und Rückbewegung des Blicks ist."
+        },
+        "require_stationary": {
+          "title": "Nur im Stand",
+          "desc": "Nur in den Spiegel schauen, wenn der Lkw steht."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Während der Fahrt ignorieren",
+          "desc": "Nicht in den Spiegel schauen, wenn der Blinker während der Fahrt gesetzt wurde, auch nicht nach dem Anhalten."
+        }
+      },
+      "manual_look": {
+        "title": "Manueller Blick",
+        "desc": "Sanfte Blicke nach links/rechts auf zwei eigenen Tasten.",
+        "hint": "Diese Tasten sind unabhängig von der Steuerung des Spiels.",
+        "enabled": {
+          "title": "Manuellen Blick aktivieren"
+        },
+        "look_angle_deg": {
+          "title": "Blickwinkel",
+          "desc": "Wie weit sich dein Kopf beim Blick nach links oder rechts dreht."
+        },
+        "smoothing_time": {
+          "title": "Glättung",
+          "desc": "Wie weich die Hin- und Rückbewegung des Blicks ist."
+        },
+        "toggle_mode": {
+          "title": "Umschaltmodus",
+          "desc": "An: einmal drücken zum Schauen, erneut drücken zum Zurückschauen. Aus: schauen, solange die Taste gehalten wird, loslassen zum Zurückschauen."
+        }
+      },
+      "manual_zoom": {
+        "title": "Manueller Zoom",
+        "desc": "Sanfter Zoom auf einer einzigen eigenen Taste, wie die Zoomtaste des Spiels: gedrückt halten zum Heranzoomen, loslassen zum langsamen Zurückkehren. Unabhängig von den Zoomtasten des Spiels, die das Sichtfeld in festen Schritten ändern und sich nicht direkt glätten lassen.",
+        "hint": "Diese Taste ist unabhängig von der spieleigenen Taste „Innenkamera zoomen“.",
+        "enabled": {
+          "title": "Manuellen Zoom aktivieren"
+        },
+        "zoom_fov_deg": {
+          "title": "Zoomstufe",
+          "desc": "Wie stark herangezoomt wird, solange die Zoomtaste gehalten wird. Niedriger = stärker gezoomt."
+        },
+        "smoothing_time": {
+          "title": "Glättung",
+          "desc": "Wie weich sich das Ein- und Auszoomen anfühlt."
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "Aktiviert",
+    "cancel": "Abbrechen",
+    "slider_reset_hint": "Rechtsklick auf einen Regler setzt ihn auf den Standardwert zurück.",
+    "profile_badge": "Profil: {name}",
+    "unsaved_changes": "(Ungespeicherte Änderungen)",
+    "tabs": {
+      "settings": "Einstellungen",
+      "about": "Über"
+    },
+    "keybind": {
+      "section": "Tastenbelegung",
+      "toggle_window": "Fenster umschalten",
+      "unbound": "(nicht belegt)",
+      "rebind_tip": "Klicken zum Neubelegen.",
+      "options_tip": "Belegungsoptionen (Halten/Umschalten, Totzone, ...).",
+      "add_tip": "Weitere Belegung hinzufügen."
+    },
+    "profiles": {
+      "section": "Profile",
+      "name_hint": "Profilname...",
+      "save_as": "Als Profil speichern",
+      "save_as_tip": "Speichert alle aktuellen Effekteinstellungen unter diesem Profilnamen.",
+      "invalid_name": "Gib zuerst einen gültigen Profilnamen ein.",
+      "saved_toast": "Profil „{name}“ gespeichert.",
+      "save_failed": "Profil konnte nicht gespeichert werden, siehe MotionCab.log.",
+      "overwrite_title": "Überschreiben bestätigen",
+      "overwrite_message": "Ein Profil namens „{name}“ existiert bereits. Überschreiben?",
+      "overwrite_confirm": "Ja, überschreiben",
+      "none": "Noch keine gespeicherten Profile.",
+      "select_tip": "Ein ausgewähltes Profil wird sofort geladen.",
+      "load_failed": "Profil „{name}“ konnte nicht geladen werden, siehe MotionCab.log.",
+      "no_match": "Kein Profil entspricht den aktuellen Einstellungen. Wähle eines zum Laden aus oder speichere sie oben als neues Profil.",
+      "save": "Speichern",
+      "saved": "Gespeichert",
+      "save_tip": "Überschreibt das ausgewählte Profil mit den aktuellen Einstellungen.",
+      "delete": "Löschen",
+      "delete_tip": "Das ausgewählte Profil löschen.",
+      "delete_title": "Löschen bestätigen",
+      "delete_message": "Profil „{name}“ löschen? Dies kann nicht rückgängig gemacht werden.",
+      "delete_confirm": "Ja, löschen",
+      "delete_failed": "Profil „{name}“ konnte nicht gelöscht werden, siehe MotionCab.log.",
+      "deleted_toast": "Profil „{name}“ gelöscht.",
+      "fallback_failed": "Gelöscht, aber „{name}“ konnte nicht geladen werden, siehe MotionCab.log."
+    },
+    "reset": {
+      "section": "Gefahrenzone",
+      "button": "Alle Einstellungen zurücksetzen",
+      "title": "Zurücksetzen bestätigen",
+      "message": "Alle MotionCab-Einstellungen auf ihre Standardwerte zurücksetzen?",
+      "confirm": "Ja, alles zurücksetzen",
+      "done_toast": "Alle MotionCab-Einstellungen wurden auf ihre Standardwerte zurückgesetzt."
+    },
+    "about": {
+      "details": "Details",
+      "version": "Version: **{version}**",
+      "developer": "Entwickler: **{author}**",
+      "links": "Links",
+      "website": "Website",
+      "website_desc": "Dokumentation",
+      "discord": "Discord",
+      "discord_desc": "Community und Support",
+      "github": "GitHub",
+      "github_desc": "Releases und Fehlerberichte",
+      "youtube": "YouTube",
+      "youtube_desc": "Videos und Vorführungen",
+      "support": "Unterstützen",
+      "support_text": "Wenn dir MotionCab gefällt, kannst du die Entwicklung unterstützen.",
+      "donate": "Mit PayPal spenden",
+      "donate_desc": "MotionCab auf PayPal unterstützen",
+      "tips": "Tipps",
+      "tip_reset": "Rechtsklick auf einen Regler setzt ihn auf seinen Standardwert zurück.",
+      "tip_profiles": "Speichere deine Einstellungen als Profil im Tab {settings_tab}.",
+      "tip_interior": "Alle Effekte funktionieren nur in der Innenkamera.",
+      "credits": "Danksagungen",
+      "credits_text": "SPF Framework und Mitwirkende."
+    }
+  }
+}

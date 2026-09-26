@@ -1,0 +1,376 @@
+{
+  "language": {
+    "en": "İngilizce    [English]",
+    "uk": "Ukraynaca    [Українська]",
+    "de": "Almanca    [Deutsch]",
+    "fr": "Fransızca    [Français]",
+    "es": "İspanyolca    [Español]",
+    "pl": "Lehçe    [Polski]",
+    "ru": "Rusça    [Русский]",
+    "pt_br": "Brezilya Portekizcesi    [Português (Brasil)]",
+    "it": "İtalyanca    [Italiano]",
+    "nl": "Hollandaca    [Nederlands]",
+    "tr": "Türkçe",
+    "cs": "Çekçe    [Čeština]",
+    "zh": "Çince (Basitleştirilmiş)    [简体中文]",
+    "ja": "Japonca    [日本語]",
+    "ko": "Korece    [한국어]"
+  },
+  "plugin": {
+    "description": "ETS2 ve ATS için dinamik kafa hareketi"
+  },
+  "window": {
+    "title": "MotionCab Hızlı Ayarlar",
+    "desc": "Özel Ayarlar sekmesine alternatif olarak her efektin ayarlarına hızlı erişim."
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "Ayarlar penceresini göster/gizle",
+      "desc": "MotionCab Hızlı Ayarlar penceresini gösterir veya gizler."
+    },
+    "look_left": {
+      "title": "Sola bak",
+      "desc": "Yumuşak bir şekilde sol cama/aynaya bakar."
+    },
+    "look_right": {
+      "title": "Sağa bak",
+      "desc": "Yumuşak bir şekilde sağ cama/aynaya bakar."
+    },
+    "zoom": {
+      "title": "Yakınlaştırma",
+      "desc": "Yumuşakça yakınlaştırmak için basılı tutun; yavaşça normale dönmek için bırakın."
+    }
+  },
+  "settings": {
+    "enabled_desc": "Bu efekti açar veya kapatır.",
+    "driving": {
+      "title": "Sürüş",
+      "desc": "Kafa ve kameranın, tırın hareketine ve direksiyonuna verdiği tepkiler.",
+      "head_motion": {
+        "title": "Kafa hareketi",
+        "desc": "Dinamik kafa hareketi efekti ayarları.",
+        "enabled": {
+          "title": "Kafa hareketini etkinleştir"
+        },
+        "sway_strength": {
+          "title": "Sallanma gücü",
+          "desc": "Hızlanırken, fren yaparken veya viraja girerken kafanızın ne kadar itildiği."
+        },
+        "tilt_strength": {
+          "title": "Eğilme gücü",
+          "desc": "Kabin yattığında veya sallandığında kafanızın ne kadar eğildiği."
+        },
+        "smoothing_time": {
+          "title": "Yumuşatma",
+          "desc": "Kafanızın ne kadar hızlı yerine oturduğu. Yüksek = daha yavaş ve yumuşak, düşük = daha çevik."
+        }
+      },
+      "body_dynamics": {
+        "title": "Vücut dinamikleri",
+        "desc": "Tırın hareketine tepki veren bir sürücü gövdesi gibi, kafa virajlarda dışa doğru yatar ve fren yaparken öne eğilir.",
+        "enabled": {
+          "title": "Vücut dinamiklerini etkinleştir"
+        },
+        "lean_strength": {
+          "title": "Yatma gücü",
+          "desc": "Kafanızın virajın dışına doğru ne kadar yattığı."
+        },
+        "nod_strength": {
+          "title": "Öne eğilme gücü",
+          "desc": "Fren yaparken kafanızın ne kadar öne düştüğü ve hızlanırken ne kadar geri çekildiği."
+        },
+        "smoothing_time": {
+          "title": "Yumuşatma",
+          "desc": "Yatma ve eğilmenin ne kadar hızlı durulduğu. Düşük = daha çevik."
+        }
+      },
+      "steering_camera": {
+        "title": "Direksiyon kamerası",
+        "desc": "Direksiyonu takip eden yumuşatılmış kamera dönüşü.",
+        "enabled": {
+          "title": "Direksiyon kamerasını etkinleştir"
+        },
+        "rotation_factor_deg": {
+          "title": "Dönüş miktarı",
+          "desc": "Direksiyonu sonuna kadar çevirdiğinizde kameranın ne kadar döndüğü."
+        },
+        "smoothing_time": {
+          "title": "Yumuşatma",
+          "desc": "Kamera dönüşünün başladıktan sonra ne kadar yumuşak hissettirdiği. Yüksek = daha yumuşak ve yavaş."
+        },
+        "delay_seconds": {
+          "title": "Tepki gecikmesi",
+          "desc": "Direksiyonu çevirdikten sonra kameranın hareket etmeden önce ne kadar beklediği."
+        }
+      }
+    },
+    "road": {
+      "title": "Yol",
+      "desc": "Yol yüzeyi, süspansiyon ve hızdan kaynaklanan efektler.",
+      "suspension": {
+        "title": "Süspansiyon",
+        "desc": "Kamera, tırın süspansiyonu üzerindeki bir koltuk gibi yol yüzeyini dikey olarak takip eder.",
+        "enabled": {
+          "title": "Süspansiyonu etkinleştir"
+        },
+        "vertical_strength": {
+          "title": "Dikey güç",
+          "desc": "Yoldaki tümseklerin kafanızı ne kadar aşağı yukarı zıplattığı."
+        },
+        "reactivity": {
+          "title": "Tepkisellik",
+          "desc": "Bir tümsekten sonra kafanızın ne kadar hızlı toparlandığı. Düşük = daha çevik."
+        },
+        "grade_strength": {
+          "title": "Eğimi takip et",
+          "desc": "Yokuş aşağı kafanızı kaldırır, yokuş yukarı indirir."
+        }
+      },
+      "road_irregularity": {
+        "title": "Yol pürüzlülüğü",
+        "desc": "Tekerleklerin altındaki zemin malzemesine göre dokulu titreşim (çakıl, parke taşı, toprak veya düz asfalt), gerçek süspansiyon darbelerinden ayrıdır. Toprak veya çim gibi engebeli zemin kafanızı ayrıca iki yana sallar.",
+        "enabled": {
+          "title": "Yol pürüzlülüğünü etkinleştir"
+        },
+        "intensity": {
+          "title": "Yoğunluk",
+          "desc": "Yol dokusu titreşiminin ve arazideki sallanmanın ne kadar güçlü hissettirdiği."
+        },
+        "reactivity": {
+          "title": "Tepkisellik",
+          "desc": "Yol dokusu titreşiminin ne kadar keskin ve vızıltılı hissettirdiği. Düşük = daha keskin."
+        }
+      },
+      "speed_shake": {
+        "title": "Hız sarsıntısı",
+        "desc": "Sürüş sırasında tırın hızıyla artan gerçekçi kafa sallanması.",
+        "enabled": {
+          "title": "Hız sarsıntısını etkinleştir"
+        },
+        "intensity": {
+          "title": "Yoğunluk",
+          "desc": "Hızlı sürerken hissettiğiniz sarsıntının genel gücü."
+        },
+        "smoothing_time": {
+          "title": "Yumuşatma",
+          "desc": "Sarsıntının zaman içinde nasıl hissettirdiği. Yüksek = daha yavaş ve yumuşak, düşük = daha kesik ve gergin."
+        },
+        "rotation": {
+          "title": "Dönme",
+          "desc": "Görüşünüzün sadece yana kaymak yerine sarsıntının bir parçası olarak ne kadar eğildiği/döndüğü. Sadece yana hareketi korumak için 0 yapın."
+        },
+        "vertical": {
+          "title": "Dikey",
+          "desc": "Sarsıntıya ne kadar aşağı yukarı zıplama karıştırıldığı."
+        },
+        "roughness": {
+          "title": "Düzensizlik",
+          "desc": "Sarsıntının zaman içinde ne kadar düzensiz hissettirdiği. 0 sabit tutar; yüksek değerler sakin ve hareketli bölümler oluşturur."
+        }
+      }
+    },
+    "cabin": {
+      "title": "Kabin",
+      "desc": "Kabin içindeki sürücü ve motor kaynaklı efektler.",
+      "idle_breathing": {
+        "title": "Beklerken nefes alma",
+        "desc": "Hız arttıkça kaybolan, beklerken hafif nefes alma hareketi.",
+        "enabled": {
+          "title": "Beklerken nefes almayı etkinleştir"
+        },
+        "vertical_amplitude": {
+          "title": "Dikey genlik",
+          "desc": "Kameranın her nefeste ne kadar yükselip alçaldığı."
+        },
+        "pitch_amplitude_deg": {
+          "title": "Baş eğme genliği",
+          "desc": "Kafanızın her nefeste ne kadar öne/arkaya eğildiği."
+        },
+        "breathing_rate_bpm": {
+          "title": "Nefes hızı",
+          "desc": "Nefes almanın ne kadar hızlı olduğu."
+        },
+        "fade_start_kmh": {
+          "title": "Solma başlangıç hızı",
+          "desc": "Hızlandıkça bu efektin kaybolmaya başladığı hız."
+        },
+        "fade_end_kmh": {
+          "title": "Solma bitiş hızı",
+          "desc": "Bu efektin tamamen kaybolduğu hız."
+        }
+      },
+      "engine_vibration": {
+        "title": "Motor titreşimi",
+        "desc": "Devire göre ölçeklenen ince motor titreşimi. Elektrikli tırlarda otomatik olarak devre dışıdır.",
+        "enabled": {
+          "title": "Motor titreşimini etkinleştir"
+        },
+        "intensity": {
+          "title": "Yoğunluk",
+          "desc": "Motor uğultusunun ne kadar güçlü hissettirdiği."
+        }
+      },
+      "engine_start_stop": {
+        "title": "Motor çalıştırma/durdurma",
+        "desc": "Motor çalıştığında veya stop ettiğinde kısa bir mekanik sarsıntı. Elektrikli tırlarda otomatik olarak devre dışıdır.",
+        "enabled": {
+          "title": "Motor çalıştırma/durdurmayı etkinleştir"
+        },
+        "intensity": {
+          "title": "Yoğunluk",
+          "desc": "Motor çalışırken veya dururken sarsıntının ne kadar güçlü hissettirdiği."
+        },
+        "duration": {
+          "title": "Süre",
+          "desc": "Çalıştırma sarsıntısının ne kadar sürdüğü. Durdurma sarsıntısı bundan daha kısa ve yumuşaktır."
+        }
+      }
+    },
+    "manual": {
+      "title": "Manuel",
+      "desc": "Kendiniz tetiklediğiniz bakış ve yakınlaştırma efektleri.",
+      "mirror_check": {
+        "title": "Ayna kontrolü",
+        "desc": "Sinyal açıkken ilgili aynaya bakar ve sinyal kapanınca merkeze döner.",
+        "hint": "Oyunun \"Sol sinyal\" ve \"Sağ sinyal\" tuşlarının atanmış olmasını gerektirir.",
+        "enabled": {
+          "title": "Ayna kontrolünü etkinleştir"
+        },
+        "look_angle_deg": {
+          "title": "Bakış açısı",
+          "desc": "Aynayı kontrol etmek için kafanızın ne kadar döndüğü."
+        },
+        "pitch_offset_deg": {
+          "title": "Eğim ofseti",
+          "desc": "Aynayı kontrol ederken kafanızın ne kadar aşağı eğildiği."
+        },
+        "smoothing_time": {
+          "title": "Yumuşatma",
+          "desc": "Bakıp geri dönme hareketinin ne kadar yumuşak olduğu."
+        },
+        "require_stationary": {
+          "title": "Sadece dururken",
+          "desc": "Aynaya yalnızca tır dururken bak."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Hareket halinde yok say",
+          "desc": "Sürüş sırasında açılan bir sinyal için, durduktan sonra bile aynaya bakma."
+        }
+      },
+      "manual_look": {
+        "title": "Manuel bakış",
+        "desc": "İki tuşa atanmış yumuşak sola/sağa bakışlar.",
+        "hint": "Bu tuşlar oyunun kendi kontrollerinden bağımsızdır.",
+        "enabled": {
+          "title": "Manuel bakışı etkinleştir"
+        },
+        "look_angle_deg": {
+          "title": "Bakış açısı",
+          "desc": "Sola veya sağa baktığınızda kafanızın ne kadar döndüğü."
+        },
+        "smoothing_time": {
+          "title": "Yumuşatma",
+          "desc": "Bakıp geri dönme hareketinin ne kadar yumuşak olduğu."
+        },
+        "toggle_mode": {
+          "title": "Geçiş modu",
+          "desc": "Açık: bakmak için bir kez, geri dönmek için tekrar basın. Kapalı: basılı tuttuğunuz sürece bakın, geri dönmek için bırakın."
+        }
+      },
+      "manual_zoom": {
+        "title": "Manuel yakınlaştırma",
+        "desc": "Oyunun yakınlaştırma tuşu gibi tek bir özel tuşta yumuşak yakınlaştırma: yakınlaştırmak için basılı tutun, yavaşça normale dönmek için bırakın. Görüş alanını sabit adımlarla değiştiren ve doğrudan yumuşatılamayan oyunun yakınlaştırma tuşlarından bağımsızdır.",
+        "hint": "Bu tuş, oyunun \"İç kamerayı yakınlaştır\" tuşundan bağımsızdır.",
+        "enabled": {
+          "title": "Manuel yakınlaştırmayı etkinleştir"
+        },
+        "zoom_fov_deg": {
+          "title": "Yakınlaştırma seviyesi",
+          "desc": "Yakınlaştırma tuşunu basılı tutarken görüntünün ne kadar yakınlaştığı. Düşük = daha fazla yakınlaştırma."
+        },
+        "smoothing_time": {
+          "title": "Yumuşatma",
+          "desc": "Yakınlaştırma ve uzaklaştırmanın ne kadar yumuşak hissettirdiği."
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "Etkin",
+    "cancel": "İptal",
+    "slider_reset_hint": "Sıfırlamak için bir kaydırıcıya sağ tıklayın.",
+    "profile_badge": "Profil: {name}",
+    "unsaved_changes": "(Kaydedilmemiş değişiklikler)",
+    "tabs": {
+      "settings": "Ayarlar",
+      "about": "Hakkında"
+    },
+    "keybind": {
+      "section": "Tuş atamaları",
+      "toggle_window": "Pencereyi göster",
+      "unbound": "(atanmamış)",
+      "rebind_tip": "Yeniden atamak için tıklayın.",
+      "options_tip": "Atama seçenekleri (basılı tut/geçiş, ölü bölge, ...).",
+      "add_tip": "Başka bir atama ekle."
+    },
+    "profiles": {
+      "section": "Profiller",
+      "name_hint": "Profil adı...",
+      "save_as": "Profil olarak kaydet",
+      "save_as_tip": "Tüm mevcut efekt ayarlarını bu profil adıyla kaydeder.",
+      "invalid_name": "Önce geçerli bir profil adı girin.",
+      "saved_toast": "\"{name}\" profili kaydedildi.",
+      "save_failed": "Profil kaydedilemedi, MotionCab.log dosyasını kontrol edin.",
+      "overwrite_title": "Üzerine yazmayı onayla",
+      "overwrite_message": "\"{name}\" adında bir profil zaten var. Üzerine yazılsın mı?",
+      "overwrite_confirm": "Evet, üzerine yaz",
+      "none": "Henüz kayıtlı profil yok.",
+      "select_tip": "Bir profil seçmek onu hemen yükler.",
+      "load_failed": "\"{name}\" profili yüklenemedi, MotionCab.log dosyasını kontrol edin.",
+      "no_match": "Mevcut ayarlarla eşleşen profil yok. Yüklemek için birini seçin veya bunları yukarıda yeni bir profil olarak kaydedin.",
+      "save": "Kaydet",
+      "saved": "Kaydedildi",
+      "save_tip": "Seçili profilin üzerine mevcut ayarları yazar.",
+      "delete": "Sil",
+      "delete_tip": "Seçili profili sil.",
+      "delete_title": "Silmeyi onayla",
+      "delete_message": "\"{name}\" profili silinsin mi? Bu işlem geri alınamaz.",
+      "delete_confirm": "Evet, sil",
+      "delete_failed": "\"{name}\" profili silinemedi, MotionCab.log dosyasını kontrol edin.",
+      "deleted_toast": "\"{name}\" profili silindi.",
+      "fallback_failed": "Silindi, ancak \"{name}\" yüklenemedi, MotionCab.log dosyasını kontrol edin."
+    },
+    "reset": {
+      "section": "Tehlikeli bölge",
+      "button": "Tüm ayarları sıfırla",
+      "title": "Sıfırlamayı onayla",
+      "message": "Tüm MotionCab ayarları varsayılan değerlerine sıfırlansın mı?",
+      "confirm": "Evet, her şeyi sıfırla",
+      "done_toast": "Tüm MotionCab ayarları varsayılan değerlerine sıfırlandı."
+    },
+    "about": {
+      "details": "Ayrıntılar",
+      "version": "Sürüm: **{version}**",
+      "developer": "Geliştirici: **{author}**",
+      "links": "Bağlantılar",
+      "website": "Web sitesi",
+      "website_desc": "Belgeler",
+      "discord": "Discord",
+      "discord_desc": "Topluluk ve destek",
+      "github": "GitHub",
+      "github_desc": "Sürümler ve hata bildirimleri",
+      "youtube": "YouTube",
+      "youtube_desc": "Videolar ve tanıtımlar",
+      "support": "Destek",
+      "support_text": "MotionCab'i beğendiyseniz geliştirilmesini destekleyebilirsiniz.",
+      "donate": "PayPal ile bağış yap",
+      "donate_desc": "MotionCab'i PayPal üzerinden destekle",
+      "tips": "İpuçları",
+      "tip_reset": "Varsayılan değerine sıfırlamak için herhangi bir kaydırıcıya sağ tıklayın.",
+      "tip_profiles": "Ayarlarınızı {settings_tab} sekmesinde profil olarak kaydedin.",
+      "tip_interior": "Tüm efektler yalnızca iç kamerada çalışır.",
+      "credits": "Emeği geçenler",
+      "credits_text": "SPF Framework ve katkıda bulunanlar."
+    }
+  }
+}
