@@ -22,6 +22,14 @@ namespace motioncab {
 // the camera starts moving at all (time-based delay line on the raw
 // signal, feeding the spring); `smoothing_time_` is the spring's own time
 // constant, how eased the motion is once it starts.
+//
+// The rotation amount is set per side: in a left-hand-drive cab the right
+// mirror is further away, so a right turn usually wants a wider pan. Near
+// center the wider side fades down to the narrower one, so small
+// corrections behave the same either way and the narrower side always gets
+// exactly its own value (see kSideBlendFullSteering). Smoothing stays shared
+// on purpose: changing the spring's time constant mid-turn makes it snap
+// up the lag built so far, which feels like a sudden head jerk.
 class SteeringCameraEffect final : public Effect {
 public:
   SteeringCameraEffect(SPF_Config_API *config_api,
@@ -53,9 +61,9 @@ private:
   SPF_Config_Handle *config_handle_;
 
   bool enabled_ = true;
-  float rotation_factor_deg_ =
-      defaults::kSteeringCameraRotationAmount; // max yaw at full steering
-                                               // lock, in degrees
+  // Max yaw at full steering lock, in degrees.
+  float rotation_left_deg_ = defaults::kSteeringCameraRotationLeft;
+  float rotation_right_deg_ = defaults::kSteeringCameraRotationRight;
   float smoothing_time_ =
       defaults::kSteeringCameraSmoothing; // seconds, spring time constant
   float delay_seconds_ =

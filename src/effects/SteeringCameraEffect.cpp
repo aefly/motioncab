@@ -1,6 +1,35 @@
 #include "SteeringCameraEffect.hpp"
 
+#include <algorithm>
+#include <cmath>
+
 namespace motioncab {
+
+namespace {
+
+// Steering input (fraction of full lock) from which the left/right rotation
+// amounts fully apply. Closer to center, the wider side fades down to the
+// narrower one, so small lane corrections don't pick up the wider setting.
+constexpr float kSideBlendFullSteering = 0.2f;
+
+// 0 at center, easing up to 1 at kSideBlendFullSteering (smoothstep). A
+// smooth ramp rather than a hard threshold, which would make the camera
+// jump when the wheel crosses it.
+float SideWeight(float steering) {
+  const float t = std::min(std::abs(steering) / kSideBlendFullSteering, 1.0f);
+  return t * t * (3.0f - 2.0f * t);
+}
+
+// `left` for positive steering, `right` for negative. The narrower side
+// always gets exactly its own value; the wider one starts from the
+// narrower value at center and ramps up to its own.
+float SideValue(float steering, float left, float right) {
+  const float narrower = std::min(left, right);
+  const float side = steering >= 0.0f ? left : right;
+  return narrower + (side - narrower) * SideWeight(steering);
+}
+
+} // namespace
 
 void SteeringCameraEffect::LoadConfig() {
   if (!config_api_ || !config_handle_)
@@ -8,9 +37,12 @@ void SteeringCameraEffect::LoadConfig() {
 
   enabled_ = config_api_->Cfg_GetBool(
       config_handle_, "settings.driving.steering_camera.enabled", enabled_);
-  rotation_factor_deg_ = static_cast<float>(config_api_->Cfg_GetFloat(
-      config_handle_, "settings.driving.steering_camera.rotation_factor_deg",
-      rotation_factor_deg_));
+  rotation_left_deg_ = static_cast<float>(config_api_->Cfg_GetFloat(
+      config_handle_, "settings.driving.steering_camera.rotation_left_deg",
+      rotation_left_deg_));
+  rotation_right_deg_ = static_cast<float>(config_api_->Cfg_GetFloat(
+      config_handle_, "settings.driving.steering_camera.rotation_right_deg",
+      rotation_right_deg_));
   smoothing_time_ = static_cast<float>(config_api_->Cfg_GetFloat(
       config_handle_, "settings.driving.steering_camera.smoothing_time",
       smoothing_time_));
@@ -76,7 +108,12 @@ HeadOffset SteeringCameraEffect::Update(float dt,
 
   const float delayed_steering =
       GetDelayedSteering(elapsed_time_s_ - delay_seconds_);
-  const float target_yaw_deg = delayed_steering * rotation_factor_deg_;
+  // Positive steering and positive yaw both mean left (counterclockwise),
+  // whatever SPF_ControlInput's comment says: steering times a single
+  // factor has always turned the camera toward the wheel in-game.
+  const float target_yaw_deg =
+      delayed_steering *
+      SideValue(delayed_steering, rotation_left_deg_, rotation_right_deg_);
 
   if (needs_resync_) {
     yaw_.Reset(target_yaw_deg);
