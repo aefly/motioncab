@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "Reactievertraging",
           "desc": "Hoe lang de camera wacht nadat je aan het stuur draait voordat hij begint te bewegen."
+        },
+        "disable_in_reverse": {
+          "title": "Uitschakelen in achteruit",
+          "desc": "Houdt de camera gecentreerd zolang de truck in de achteruit staat."
         }
       }
     },

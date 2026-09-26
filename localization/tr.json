@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "Tepki gecikmesi",
           "desc": "Direksiyonu çevirdikten sonra kameranın hareket etmeden önce ne kadar beklediği."
+        },
+        "disable_in_reverse": {
+          "title": "Geri viteste devre dışı bırak",
+          "desc": "Kamyon geri vitesteyken kamerayı ortada tutar."
         }
       }
     },

@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "反应延迟",
           "desc": "转动方向盘后镜头开始移动前的等待时间。"
+        },
+        "disable_in_reverse": {
+          "title": "倒车时禁用",
+          "desc": "卡车挂倒挡时保持镜头居中。"
         }
       }
     },

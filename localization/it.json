@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "Ritardo di reazione",
           "desc": "Quanto aspetta la telecamera dopo che giri il volante prima di iniziare a muoversi."
+        },
+        "disable_in_reverse": {
+          "title": "Disattiva in retromarcia",
+          "desc": "Mantiene la telecamera centrata quando il camion è in retromarcia."
         }
       }
     },

@@ -49,6 +49,9 @@ void SteeringCameraEffect::LoadConfig() {
   delay_seconds_ = static_cast<float>(config_api_->Cfg_GetFloat(
       config_handle_, "settings.driving.steering_camera.delay_seconds",
       delay_seconds_));
+  disable_in_reverse_ = config_api_->Cfg_GetBool(
+      config_handle_, "settings.driving.steering_camera.disable_in_reverse",
+      disable_in_reverse_);
 
   yaw_.SetTimeConstant(smoothing_time_);
 }
@@ -100,20 +103,25 @@ float SteeringCameraEffect::GetDelayedSteering(float target_time_s) const {
   return newer.steering;
 }
 
-HeadOffset SteeringCameraEffect::Update(float dt,
-                                        const SPF_TruckData & /*truck*/,
+HeadOffset SteeringCameraEffect::Update(float dt, const SPF_TruckData &truck,
                                         const SPF_Controls &controls) {
   elapsed_time_s_ += dt;
   PushSample(elapsed_time_s_, controls.effectiveInput.steering);
 
   const float delayed_steering =
       GetDelayedSteering(elapsed_time_s_ - delay_seconds_);
+  // In reverse the driver looks at the mirrors, not down the road, so
+  // following the wheel only gets in the way: aim back at center and let
+  // the spring ease there instead of snapping.
+  const bool reversing = disable_in_reverse_ && truck.gear < 0;
   // Positive steering and positive yaw both mean left (counterclockwise),
   // whatever SPF_ControlInput's comment says: steering times a single
   // factor has always turned the camera toward the wheel in-game.
   const float target_yaw_deg =
-      delayed_steering *
-      SideValue(delayed_steering, rotation_left_deg_, rotation_right_deg_);
+      reversing
+          ? 0.0f
+          : delayed_steering * SideValue(delayed_steering, rotation_left_deg_,
+                                         rotation_right_deg_);
 
   if (needs_resync_) {
     yaw_.Reset(target_yaw_deg);

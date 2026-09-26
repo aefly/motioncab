@@ -30,6 +30,9 @@ namespace motioncab {
 // exactly its own value (see kSideBlendFullSteering). Smoothing stays shared
 // on purpose: changing the spring's time constant mid-turn makes it snap
 // up the lag built so far, which feels like a sudden head jerk.
+//
+// With `disable_in_reverse_` on (the default), the camera eases back to
+// center while a reverse gear is selected (SPF_TruckData.gear < 0).
 class SteeringCameraEffect final : public Effect {
 public:
   SteeringCameraEffect(SPF_Config_API *config_api,
@@ -69,6 +72,7 @@ private:
   float delay_seconds_ =
       defaults::kSteeringCameraReactionDelay; // seconds, reaction delay
                                               // before motion starts
+  bool disable_in_reverse_ = defaults::kSteeringCameraDisableInReverse;
 
   math::SpringDamper1D yaw_;
   bool needs_resync_ = false;

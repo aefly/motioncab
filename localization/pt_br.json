@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "Atraso de reação",
           "desc": "Quanto tempo a câmera espera depois que você gira o volante antes de começar a se mover."
+        },
+        "disable_in_reverse": {
+          "title": "Desativar na marcha à ré",
+          "desc": "Mantém a câmera centralizada enquanto o caminhão está em marcha à ré."
         }
       }
     },

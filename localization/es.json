@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "Retardo de reacción",
           "desc": "Cuánto espera la cámara después de girar el volante antes de empezar a moverse."
+        },
+        "disable_in_reverse": {
+          "title": "Desactivar en marcha atrás",
+          "desc": "Mantiene la cámara centrada mientras el camión está en marcha atrás."
         }
       }
     },

@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "Délai de réaction",
           "desc": "Temps d'attente de la caméra après que vous tournez le volant avant qu'elle commence à bouger."
+        },
+        "disable_in_reverse": {
+          "title": "Désactiver en marche arrière",
+          "desc": "Garde la caméra centrée quand le camion est en marche arrière."
         }
       }
     },

@@ -16,6 +16,7 @@ constexpr float kSteeringCameraRotationLeft = 30.0f;
 constexpr float kSteeringCameraRotationRight = 30.0f;
 constexpr float kSteeringCameraSmoothing = 0.5f;
 constexpr float kSteeringCameraReactionDelay = 0.2f;
+constexpr bool kSteeringCameraDisableInReverse = true;
 
 constexpr float kIdleBreathingVerticalAmount = 0.002f;
 constexpr float kIdleBreathingHeadNodAmount = 0.15f;

@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "Reaction Delay",
           "desc": "How long the camera waits after you turn the wheel before it starts moving."
+        },
+        "disable_in_reverse": {
+          "title": "Disable in Reverse",
+          "desc": "Keep the camera centered while the truck is in reverse gear."
         }
       }
     },

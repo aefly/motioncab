@@ -51,6 +51,8 @@ constexpr BoolKey kBoolKeys[] = {
      defaults::kMirrorCheckIgnoreAfterMovingSignal},
     {"settings.manual.manual_look.toggle_mode",
      defaults::kManualLookToggleMode},
+    {"settings.driving.steering_camera.disable_in_reverse",
+     defaults::kSteeringCameraDisableInReverse},
 };
 
 constexpr FloatKey kFloatKeys[] = {

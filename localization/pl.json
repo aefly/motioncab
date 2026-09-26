@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "Opóźnienie reakcji",
           "desc": "Jak długo kamera czeka po skręceniu kierownicy, zanim zacznie się ruszać."
+        },
+        "disable_in_reverse": {
+          "title": "Wyłącz na biegu wstecznym",
+          "desc": "Utrzymuje kamerę na środku, gdy ciężarówka jest na biegu wstecznym."
         }
       }
     },

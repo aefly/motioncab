@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "Zpoždění reakce",
           "desc": "Jak dlouho kamera po otočení volantem čeká, než se začne pohybovat."
+        },
+        "disable_in_reverse": {
+          "title": "Vypnout při couvání",
+          "desc": "Udrží kameru uprostřed, když je zařazená zpátečka."
         }
       }
     },

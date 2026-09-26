@@ -105,6 +105,10 @@
         "delay_seconds": {
           "title": "Reaktionsverzögerung",
           "desc": "Wie lange die Kamera nach dem Lenken wartet, bevor sie sich bewegt."
+        },
+        "disable_in_reverse": {
+          "title": "Im Rückwärtsgang deaktivieren",
+          "desc": "Hält die Kamera mittig, solange der Rückwärtsgang eingelegt ist."
         }
       }
     },

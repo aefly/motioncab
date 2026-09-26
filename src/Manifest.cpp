@@ -47,7 +47,8 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
         "rotation_left_deg": 30.0,
         "rotation_right_deg": 30.0,
         "smoothing_time": 0.5,
-        "delay_seconds": 0.2
+        "delay_seconds": 0.2,
+        "disable_in_reverse": true
       }
     },
     "road": {
@@ -192,6 +193,11 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
       "settings.driving.steering_camera.delay_seconds.title",
       "settings.driving.steering_camera.delay_seconds.desc", "slider",
       R"({ "min": 0.0, "max": 0.3, "format": "%.2f s" })", false);
+  api->Meta_AddCustomSetting(
+      h, "driving.steering_camera.disable_in_reverse",
+      "settings.driving.steering_camera.disable_in_reverse.title",
+      "settings.driving.steering_camera.disable_in_reverse.desc", nullptr,
+      nullptr, false);
 
   api->Meta_AddCustomSetting(h, "cabin", "settings.cabin.title",
                              "settings.cabin.desc", nullptr, nullptr, false);
