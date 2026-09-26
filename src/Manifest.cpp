@@ -2,6 +2,7 @@
 
 #include "Links.hpp"
 #include "PluginContext.hpp"
+#include "ui/SettingsDefaults.hpp"
 
 namespace motioncab {
 
@@ -128,8 +129,9 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
                            "always");
   api->Defaults_AddKeybind(h, "UI", "toggle", "keyboard", "KEY_F9", "always");
   // isVisible=true here only decides the very first launch ever
-  api->Defaults_AddWindow(h, "MotionCab", true, true, 100, 100, 476, 640, false,
-                          true);
+  api->Defaults_AddWindow(h, "MotionCab", true, true, 100, 100,
+                          defaults::kWindowWidth, defaults::kWindowHeight,
+                          false, true);
 
   // --- UI Metadata ---
   // Titles and descriptions are keys into localization/<lang>.json. A
