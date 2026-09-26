@@ -371,6 +371,11 @@
       "tip_interior": "Tüm efektler yalnızca iç kamerada çalışır.",
       "credits": "Emeği geçenler",
       "credits_text": "SPF Framework ve katkıda bulunanlar."
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/sa",
+      "mph": "mil/sa"
     }
   }
 }

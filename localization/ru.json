@@ -371,6 +371,11 @@
       "tip_interior": "Все эффекты работают только в камере из кабины.",
       "credits": "Благодарности",
       "credits_text": "SPF Framework и участники."
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "км/ч",
+      "mph": "миль/ч"
     }
   }
 }

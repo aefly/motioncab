@@ -371,6 +371,11 @@
       "tip_interior": "Alle effecten werken alleen in de binnencamera.",
       "credits": "Credits",
       "credits_text": "SPF Framework en bijdragers."
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/u",
+      "mph": "mph"
     }
   }
 }

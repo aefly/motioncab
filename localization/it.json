@@ -371,6 +371,11 @@
       "tip_interior": "Tutti gli effetti funzionano solo con la telecamera interna.",
       "credits": "Riconoscimenti",
       "credits_text": "SPF Framework e i suoi collaboratori."
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/h",
+      "mph": "mph"
     }
   }
 }

@@ -371,6 +371,11 @@
       "tip_interior": "Every effect works in the interior camera only.",
       "credits": "Credits",
       "credits_text": "SPF Framework and contributors."
+    },
+    "units": {
+      "speed_system": "imperial",
+      "kmh": "km/h",
+      "mph": "mph"
     }
   }
 }

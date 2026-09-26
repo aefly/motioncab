@@ -371,6 +371,11 @@
       "tip_interior": "모든 효과는 실내 카메라에서만 작동합니다.",
       "credits": "크레딧",
       "credits_text": "SPF Framework 및 기여자 여러분."
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/h",
+      "mph": "mph"
     }
   }
 }

@@ -371,6 +371,11 @@
       "tip_interior": "Všechny efekty fungují pouze ve vnitřní kameře.",
       "credits": "Poděkování",
       "credits_text": "SPF Framework a přispěvatelé."
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/h",
+      "mph": "mph"
     }
   }
 }

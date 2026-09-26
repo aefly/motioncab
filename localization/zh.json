@@ -371,6 +371,11 @@
       "tip_interior": "所有效果仅在车内视角下生效。",
       "credits": "致谢",
       "credits_text": "SPF Framework 及其贡献者。"
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "公里/小时",
+      "mph": "英里/小时"
     }
   }
 }

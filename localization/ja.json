@@ -371,6 +371,11 @@
       "tip_interior": "すべてのエフェクトは車内カメラでのみ動作します。",
       "credits": "クレジット",
       "credits_text": "SPF Framework と貢献者の皆さま。"
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/h",
+      "mph": "mph"
     }
   }
 }
