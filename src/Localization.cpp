@@ -11,6 +11,7 @@ namespace {
 // Node-based, so a cached value's c_str() survives later insertions.
 std::unordered_map<std::string, std::string> g_cache;
 std::string g_language;
+unsigned g_language_changes = 0;
 
 std::string Lookup(const std::string &key) {
   PluginContext &ctx = Context();
@@ -52,7 +53,10 @@ void Sync() {
   // so only the cache needs dropping.
   g_language = lang;
   g_cache.clear();
+  ++g_language_changes;
 }
+
+unsigned LanguageChangeCount() { return g_language_changes; }
 
 const char *Tr(std::string_view key) {
   std::string k(key);

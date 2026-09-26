@@ -28,6 +28,10 @@ std::string Tr(
     std::string_view key,
     std::initializer_list<std::pair<std::string_view, std::string_view>> args);
 
+// Bumped every time Sync() picks up a new active language, the first one
+// included.
+unsigned LanguageChangeCount();
+
 // Drops the cache, so a plugin reload re-reads the translation files.
 void Reset();
 
