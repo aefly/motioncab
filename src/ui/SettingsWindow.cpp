@@ -163,6 +163,7 @@ float LabelColumnWidth(SPF_UI_API *ui) {
       "keybinds.look_left.title",
       "keybinds.look_right.title",
       "keybinds.zoom.title",
+      "keybinds.blindspot_viewer.title",
   };
   static const std::vector<const char *> kSettingKeys =
       profiles::AllSettingKeys();
@@ -390,6 +391,28 @@ void ResetManualZoom(SPF_Config_API *cfg, SPF_Config_Handle *h) {
                     defaults::kManualZoomZoomLevel);
   cfg->Cfg_SetFloat(h, "settings.manual.manual_zoom.smoothing_time",
                     defaults::kManualZoomSmoothing);
+}
+
+void ResetBlindspotViewer(SPF_Config_API *cfg, SPF_Config_Handle *h) {
+  cfg->Cfg_SetBool(h, "settings.manual.blindspot_viewer.enabled", true);
+  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.pos_x",
+                    defaults::kBlindspotViewerPosX);
+  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.pos_y",
+                    defaults::kBlindspotViewerPosY);
+  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.pos_z",
+                    defaults::kBlindspotViewerPosZ);
+  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.yaw_deg",
+                    defaults::kBlindspotViewerYaw);
+  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.pitch_deg",
+                    defaults::kBlindspotViewerPitch);
+  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.roll_deg",
+                    defaults::kBlindspotViewerRoll);
+  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.fov_offset_deg",
+                    defaults::kBlindspotViewerFovOffset);
+  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.smoothing_time",
+                    defaults::kBlindspotViewerSmoothing);
+  cfg->Cfg_SetBool(h, "settings.manual.blindspot_viewer.toggle_mode",
+                   defaults::kBlindspotViewerToggleMode);
 }
 
 // --- Per-effect draw functions ---
@@ -722,6 +745,40 @@ void DrawManualZoom(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
   ui->UI_EndDisabled();
 }
 
+void DrawBlindspotViewer(SPF_UI_API *ui, SPF_Config_API *cfg,
+                         SPF_Config_Handle *h) {
+  if (!EffectHeader(ui, ICON_FA_TRAFFIC_LIGHT,
+                    "settings.manual.blindspot_viewer"))
+    return;
+  const bool enabled =
+      DrawEnabled(ui, cfg, h, "settings.manual.blindspot_viewer.enabled", true);
+  ui->UI_BeginDisabled(!enabled);
+  if (BeginSettingsTable(ui, "blindspot_viewer_table")) {
+    DrawKeybindRow(ui, "BlindspotViewer.peek",
+                   loc::Tr("keybinds.blindspot_viewer.title"));
+    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.pos_x", -0.5f, 0.5f,
+              "%.2f m", defaults::kBlindspotViewerPosX);
+    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.pos_y", -0.5f, 0.5f,
+              "%.2f m", defaults::kBlindspotViewerPosY);
+    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.pos_z", -1.5f, 0.5f,
+              "%.2f m", defaults::kBlindspotViewerPosZ);
+    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.yaw_deg", -45.0f,
+              45.0f, "%.1f deg", defaults::kBlindspotViewerYaw);
+    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.pitch_deg", -60.0f,
+              60.0f, "%.1f deg", defaults::kBlindspotViewerPitch);
+    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.roll_deg", -15.0f,
+              15.0f, "%.1f deg", defaults::kBlindspotViewerRoll);
+    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.fov_offset_deg",
+              -30.0f, 30.0f, "%.0f deg", defaults::kBlindspotViewerFovOffset);
+    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.smoothing_time",
+              0.2f, 1.5f, "%.2f s", defaults::kBlindspotViewerSmoothing);
+    DrawBool(ui, cfg, h, "settings.manual.blindspot_viewer.toggle_mode",
+             defaults::kBlindspotViewerToggleMode);
+    EndSettingsTable(ui);
+  }
+  ui->UI_EndDisabled();
+}
+
 // Section title followed by a thin rule running to the window's right edge
 // ("Profiles ─────────"), lighter than UI_SeparatorText's full-width bar.
 void DrawSectionTitle(SPF_UI_API *ui, const char *title) {
@@ -985,6 +1042,7 @@ void DrawResetSection(SPF_UI_API *ui, SPF_Config_API *cfg,
       ResetMirrorCheck(cfg, h);
       ResetManualLook(cfg, h);
       ResetManualZoom(cfg, h);
+      ResetBlindspotViewer(cfg, h);
       if (!active_profile.empty())
         profiles::Save(ctx, active_profile);
       ShowToast(ui, SPF_NOTIFICATION_SUCCESS, loc::Tr("ui.reset.done_toast"));
@@ -1449,6 +1507,7 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
     DrawMirrorCheck(ui, cfg, h);
     DrawManualLook(ui, cfg, h);
     DrawManualZoom(ui, cfg, h);
+    DrawBlindspotViewer(ui, cfg, h);
     ui->UI_EndTabItem();
   }
 
