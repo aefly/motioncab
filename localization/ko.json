@@ -1,0 +1,381 @@
+{
+  "language": {
+    "en": "영어    [English]",
+    "uk": "우크라이나어    [Українська]",
+    "de": "독일어    [Deutsch]",
+    "fr": "프랑스어    [Français]",
+    "es": "스페인어    [Español]",
+    "pl": "폴란드어    [Polski]",
+    "ru": "러시아어    [Русский]",
+    "pt_br": "브라질 포르투갈어    [Português (Brasil)]",
+    "it": "이탈리아어    [Italiano]",
+    "nl": "네덜란드어    [Nederlands]",
+    "tr": "튀르키예어    [Türkçe]",
+    "cs": "체코어    [Čeština]",
+    "zh": "중국어(간체)    [简体中文]",
+    "ja": "일본어    [日本語]",
+    "ko": "한국어"
+  },
+  "plugin": {
+    "description": "ETS2 및 ATS용 동적 머리 움직임"
+  },
+  "window": {
+    "title": "MotionCab 빠른 설정",
+    "desc": "'사용자 지정 설정' 탭 대신 각 효과의 설정에 빠르게 접근할 수 있습니다."
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "설정 창 표시/숨기기",
+      "desc": "MotionCab 빠른 설정 창을 표시하거나 숨깁니다."
+    },
+    "look_left": {
+      "title": "왼쪽 보기",
+      "desc": "왼쪽 창문/미러 쪽을 부드럽게 바라봅니다."
+    },
+    "look_right": {
+      "title": "오른쪽 보기",
+      "desc": "오른쪽 창문/미러 쪽을 부드럽게 바라봅니다."
+    },
+    "zoom": {
+      "title": "확대",
+      "desc": "누르고 있으면 부드럽게 확대되고, 놓으면 서서히 원래 시야로 돌아갑니다."
+    }
+  },
+  "settings": {
+    "enabled_desc": "이 효과를 켜거나 끕니다.",
+    "driving": {
+      "title": "주행",
+      "desc": "트럭의 움직임과 조향에 대한 머리와 카메라의 반응입니다.",
+      "head_motion": {
+        "title": "머리 움직임",
+        "desc": "동적 머리 움직임 효과 설정입니다.",
+        "enabled": {
+          "title": "머리 움직임 사용"
+        },
+        "sway_strength": {
+          "title": "흔들림 강도",
+          "desc": "가속, 제동, 회전 시 머리가 밀리는 정도입니다."
+        },
+        "tilt_strength": {
+          "title": "기울기 강도",
+          "desc": "캐빈이 기울거나 흔들릴 때 머리가 기우는 정도입니다."
+        },
+        "smoothing_time": {
+          "title": "부드러움",
+          "desc": "머리가 제자리로 돌아오는 속도입니다. 높을수록 느리고 부드럽고, 낮을수록 민첩합니다."
+        }
+      },
+      "body_dynamics": {
+        "title": "신체 반응",
+        "desc": "트럭의 움직임에 반응하는 운전자의 몸처럼, 코너에서는 머리가 바깥쪽으로 기울고 제동 시에는 앞으로 숙여집니다.",
+        "enabled": {
+          "title": "신체 반응 사용"
+        },
+        "lean_strength": {
+          "title": "기울임 강도",
+          "desc": "회전 시 머리가 바깥쪽으로 기우는 정도입니다."
+        },
+        "nod_strength": {
+          "title": "끄덕임 강도",
+          "desc": "제동 시 머리가 앞으로 숙여지고 가속 시 뒤로 젖혀지는 정도입니다."
+        },
+        "smoothing_time": {
+          "title": "부드러움",
+          "desc": "기울임과 끄덕임이 안정되는 속도입니다. 낮을수록 민첩합니다."
+        }
+      },
+      "steering_camera": {
+        "title": "조향 카메라",
+        "desc": "핸들을 따라 부드럽게 회전하는 카메라입니다.",
+        "enabled": {
+          "title": "조향 카메라 사용"
+        },
+        "rotation_factor_deg": {
+          "title": "회전량",
+          "desc": "핸들을 끝까지 돌렸을 때 카메라가 회전하는 정도입니다."
+        },
+        "smoothing_time": {
+          "title": "부드러움",
+          "desc": "카메라 회전이 시작된 후의 부드러운 정도입니다. 높을수록 부드럽고 느립니다."
+        },
+        "delay_seconds": {
+          "title": "반응 지연",
+          "desc": "핸들을 돌린 후 카메라가 움직이기 시작할 때까지 기다리는 시간입니다."
+        }
+      }
+    },
+    "road": {
+      "title": "도로",
+      "desc": "노면, 서스펜션, 속도에 의한 효과입니다.",
+      "suspension": {
+        "title": "서스펜션",
+        "desc": "트럭 서스펜션 위의 시트처럼 카메라가 노면을 수직으로 따라갑니다.",
+        "enabled": {
+          "title": "서스펜션 사용"
+        },
+        "vertical_strength": {
+          "title": "수직 강도",
+          "desc": "도로의 요철이 머리를 위아래로 튀게 하는 정도입니다."
+        },
+        "reactivity": {
+          "title": "반응성",
+          "desc": "요철 이후 머리가 회복되는 속도입니다. 낮을수록 민첩합니다."
+        },
+        "grade_strength": {
+          "title": "경사 따라가기",
+          "desc": "내리막에서는 머리를 들고 오르막에서는 머리를 숙입니다."
+        }
+      },
+      "road_irregularity": {
+        "title": "노면 불규칙성",
+        "desc": "바퀴 아래 지면 재질(자갈, 돌길, 흙, 매끄러운 아스팔트)에 따른 질감 있는 진동으로, 실제 서스펜션 충격과는 별개입니다. 흙이나 풀밭 같은 울퉁불퉁한 지면에서는 머리가 좌우로도 흔들립니다.",
+        "enabled": {
+          "title": "노면 불규칙성 사용"
+        },
+        "intensity": {
+          "title": "강도",
+          "desc": "노면 진동과 오프로드 흔들림의 강도입니다."
+        },
+        "reactivity": {
+          "title": "반응성",
+          "desc": "노면 진동이 얼마나 날카롭고 잘게 느껴지는지입니다. 낮을수록 날카롭습니다."
+        }
+      },
+      "speed_shake": {
+        "title": "속도 흔들림",
+        "desc": "주행 중 트럭 속도에 따라 커지는 사실적인 머리 흔들림입니다.",
+        "enabled": {
+          "title": "속도 흔들림 사용"
+        },
+        "intensity": {
+          "title": "강도",
+          "desc": "빠르게 달릴 때 느껴지는 흔들림의 전체 강도입니다."
+        },
+        "smoothing_time": {
+          "title": "부드러움",
+          "desc": "시간에 따른 흔들림의 느낌입니다. 높을수록 느리고 부드럽고, 낮을수록 튀고 불안정합니다."
+        },
+        "rotation": {
+          "title": "회전",
+          "desc": "흔들림 중 시야가 좌우로 움직이는 것 외에 얼마나 기울거나 회전하는지입니다. 0으로 설정하면 좌우 움직임만 남습니다."
+        },
+        "vertical": {
+          "title": "수직",
+          "desc": "흔들림에 섞이는 위아래 튐의 양입니다."
+        },
+        "roughness": {
+          "title": "불규칙성",
+          "desc": "시간에 따른 흔들림의 불균일한 정도입니다. 0이면 일정하고, 높을수록 잔잔한 구간과 거친 구간이 번갈아 나타납니다."
+        }
+      }
+    },
+    "cabin": {
+      "title": "캐빈",
+      "desc": "캐빈 안의 운전자와 엔진에 의한 효과입니다.",
+      "idle_breathing": {
+        "title": "정차 중 호흡",
+        "desc": "정차 중의 은은한 호흡 움직임으로, 속도가 오르면 사라집니다.",
+        "enabled": {
+          "title": "정차 중 호흡 사용"
+        },
+        "vertical_amplitude": {
+          "title": "수직 진폭",
+          "desc": "호흡할 때마다 카메라가 오르내리는 정도입니다."
+        },
+        "pitch_amplitude_deg": {
+          "title": "끄덕임 진폭",
+          "desc": "호흡할 때마다 머리가 앞뒤로 기우는 정도입니다."
+        },
+        "breathing_rate_bpm": {
+          "title": "호흡 속도",
+          "desc": "호흡이 얼마나 빠른지입니다."
+        },
+        "fade_start_kmh": {
+          "title": "페이드 시작 속도",
+          "desc": "가속할 때 이 효과가 사라지기 시작하는 속도입니다."
+        },
+        "fade_end_kmh": {
+          "title": "페이드 종료 속도",
+          "desc": "이 효과가 완전히 사라지는 속도입니다."
+        }
+      },
+      "engine_vibration": {
+        "title": "엔진 진동",
+        "desc": "RPM에 따른 미세한 엔진 진동입니다. 전기 트럭에서는 자동으로 비활성화됩니다.",
+        "enabled": {
+          "title": "엔진 진동 사용"
+        },
+        "intensity": {
+          "title": "강도",
+          "desc": "엔진 울림이 얼마나 강하게 느껴지는지입니다."
+        }
+      },
+      "engine_start_stop": {
+        "title": "엔진 시동/정지",
+        "desc": "엔진이 켜지거나 꺼질 때의 짧은 기계적 떨림입니다. 전기 트럭에서는 자동으로 비활성화됩니다.",
+        "enabled": {
+          "title": "엔진 시동/정지 사용"
+        },
+        "intensity": {
+          "title": "강도",
+          "desc": "엔진 시동 또는 정지 시 떨림의 강도입니다."
+        },
+        "duration": {
+          "title": "지속 시간",
+          "desc": "시동 떨림이 지속되는 시간입니다. 정지 떨림은 이보다 짧고 부드럽습니다."
+        }
+      }
+    },
+    "manual": {
+      "title": "수동",
+      "desc": "직접 작동하는 시선 및 확대 효과입니다.",
+      "mirror_check": {
+        "title": "미러 확인",
+        "desc": "방향지시등이 켜져 있는 동안 해당 미러를 바라보고, 꺼지면 정면으로 돌아옵니다.",
+        "hint": "게임 기본 '왼쪽 방향지시등'과 '오른쪽 방향지시등' 키가 할당되어 있어야 합니다.",
+        "enabled": {
+          "title": "미러 확인 사용"
+        },
+        "look_angle_deg": {
+          "title": "시선 각도",
+          "desc": "미러를 확인할 때 머리가 돌아가는 정도입니다."
+        },
+        "pitch_offset_deg": {
+          "title": "숙임 각도",
+          "desc": "미러를 확인할 때 머리가 아래로 숙여지는 정도입니다."
+        },
+        "smoothing_time": {
+          "title": "부드러움",
+          "desc": "보고 돌아오는 움직임의 부드러운 정도입니다."
+        },
+        "require_stationary": {
+          "title": "정차 중에만",
+          "desc": "트럭이 멈춰 있을 때만 미러를 확인합니다."
+        },
+        "ignore_after_moving_signal": {
+          "title": "주행 중 무시",
+          "desc": "주행 중에 켠 방향지시등에는 정차한 후에도 미러를 확인하지 않습니다."
+        }
+      },
+      "manual_look": {
+        "title": "수동 시선",
+        "desc": "두 개의 키에 할당된 부드러운 좌우 시선 이동입니다.",
+        "hint": "이 키들은 게임 기본 조작과 별개입니다.",
+        "enabled": {
+          "title": "수동 시선 사용"
+        },
+        "look_angle_deg": {
+          "title": "시선 각도",
+          "desc": "왼쪽이나 오른쪽을 볼 때 머리가 돌아가는 정도입니다."
+        },
+        "smoothing_time": {
+          "title": "부드러움",
+          "desc": "보고 돌아오는 움직임의 부드러운 정도입니다."
+        },
+        "toggle_mode": {
+          "title": "토글 모드",
+          "desc": "켜짐: 한 번 누르면 보고, 다시 누르면 돌아옵니다. 꺼짐: 누르고 있는 동안 보고, 놓으면 돌아옵니다."
+        }
+      },
+      "manual_zoom": {
+        "title": "수동 확대",
+        "desc": "게임 기본 확대 키처럼 전용 키 하나로 부드럽게 확대합니다. 누르고 있으면 확대되고, 놓으면 서서히 원래대로 돌아옵니다. 시야를 고정 단계로 바꾸어 직접 부드럽게 만들 수 없는 게임 기본 확대 키와는 별개입니다.",
+        "hint": "이 키는 게임 기본 '실내 카메라 확대' 키와 별개입니다.",
+        "enabled": {
+          "title": "수동 확대 사용"
+        },
+        "zoom_fov_deg": {
+          "title": "확대 수준",
+          "desc": "확대 키를 누르고 있는 동안 시야가 확대되는 정도입니다. 낮을수록 더 확대됩니다."
+        },
+        "smoothing_time": {
+          "title": "부드러움",
+          "desc": "확대 및 축소가 얼마나 부드럽게 느껴지는지입니다."
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "사용",
+    "cancel": "취소",
+    "slider_reset_hint": "슬라이더를 마우스 오른쪽 버튼으로 클릭하면 기본값으로 초기화됩니다.",
+    "profile_badge": "프로필: {name}",
+    "unsaved_changes": "(저장되지 않은 변경 사항)",
+    "tabs": {
+      "settings": "설정",
+      "about": "정보"
+    },
+    "keybind": {
+      "section": "키 할당",
+      "toggle_window": "창 전환",
+      "unbound": "(할당 안 됨)",
+      "rebind_tip": "클릭하여 다시 할당합니다.",
+      "options_tip": "할당 옵션(누르고 있기/토글, 데드존 등).",
+      "add_tip": "다른 할당을 추가합니다."
+    },
+    "profiles": {
+      "section": "프로필",
+      "name_hint": "프로필 이름...",
+      "save_as": "프로필로 저장",
+      "save_as_tip": "현재 모든 효과 설정을 이 프로필 이름으로 저장합니다.",
+      "invalid_name": "먼저 올바른 프로필 이름을 입력하세요.",
+      "saved_toast": "프로필 '{name}'을(를) 저장했습니다.",
+      "save_failed": "프로필을 저장하지 못했습니다. MotionCab.log를 확인하세요.",
+      "overwrite_title": "덮어쓰기 확인",
+      "overwrite_message": "'{name}'(이)라는 프로필이 이미 있습니다. 덮어쓸까요?",
+      "overwrite_confirm": "예, 덮어쓰기",
+      "none": "저장된 프로필이 아직 없습니다.",
+      "select_tip": "프로필을 선택하면 바로 불러옵니다.",
+      "load_failed": "프로필 '{name}'을(를) 불러오지 못했습니다. MotionCab.log를 확인하세요.",
+      "no_match": "현재 설정과 일치하는 프로필이 없습니다. 불러올 프로필을 선택하거나 위에서 새 프로필로 저장하세요.",
+      "save": "저장",
+      "saved": "저장됨",
+      "save_tip": "선택한 프로필을 현재 설정으로 덮어씁니다.",
+      "delete": "삭제",
+      "delete_tip": "선택한 프로필을 삭제합니다.",
+      "delete_title": "삭제 확인",
+      "delete_message": "프로필 '{name}'을(를) 삭제할까요? 이 작업은 되돌릴 수 없습니다.",
+      "delete_confirm": "예, 삭제",
+      "delete_failed": "프로필 '{name}'을(를) 삭제하지 못했습니다. MotionCab.log를 확인하세요.",
+      "deleted_toast": "프로필 '{name}'을(를) 삭제했습니다.",
+      "fallback_failed": "삭제했지만 '{name}'을(를) 불러오지 못했습니다. MotionCab.log를 확인하세요."
+    },
+    "reset": {
+      "section": "위험 구역",
+      "button": "모든 설정 초기화",
+      "title": "초기화 확인",
+      "message": "MotionCab의 모든 설정을 기본값으로 초기화할까요?",
+      "confirm": "예, 모두 초기화",
+      "done_toast": "MotionCab의 모든 설정을 기본값으로 초기화했습니다."
+    },
+    "about": {
+      "details": "세부 정보",
+      "version": "버전: **{version}**",
+      "developer": "개발자: **{author}**",
+      "links": "링크",
+      "website": "웹사이트",
+      "website_desc": "문서",
+      "discord": "Discord",
+      "discord_desc": "커뮤니티 및 지원",
+      "github": "GitHub",
+      "github_desc": "릴리스 및 버그 신고",
+      "youtube": "YouTube",
+      "youtube_desc": "동영상 및 소개",
+      "support": "후원",
+      "support_text": "MotionCab이 마음에 드신다면 개발을 후원할 수 있습니다.",
+      "donate": "PayPal로 후원하기",
+      "donate_desc": "PayPal에서 MotionCab 후원하기",
+      "tips": "팁",
+      "tip_reset": "슬라이더를 마우스 오른쪽 버튼으로 클릭하면 기본값으로 돌아갑니다.",
+      "tip_profiles": "{settings_tab} 탭에서 설정을 프로필로 저장하세요.",
+      "tip_interior": "모든 효과는 실내 카메라에서만 작동합니다.",
+      "credits": "크레딧",
+      "credits_text": "SPF Framework 및 기여자 여러분."
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/h",
+      "mph": "mph"
+    }
+  }
+}

@@ -1,0 +1,381 @@
+{
+  "language": {
+    "en": "Angličtina    [English]",
+    "uk": "Ukrajinština    [Українська]",
+    "de": "Němčina    [Deutsch]",
+    "fr": "Francouzština    [Français]",
+    "es": "Španělština    [Español]",
+    "pl": "Polština    [Polski]",
+    "ru": "Ruština    [Русский]",
+    "pt_br": "Brazilská portugalština    [Português (Brasil)]",
+    "it": "Italština    [Italiano]",
+    "nl": "Nizozemština    [Nederlands]",
+    "tr": "Turečtina    [Türkçe]",
+    "cs": "Čeština",
+    "zh": "Čínština (zjednodušená)    [简体中文]",
+    "ja": "Japonština    [日本語]",
+    "ko": "Korejština    [한국어]"
+  },
+  "plugin": {
+    "description": "Dynamický pohyb hlavy pro ETS2 a ATS"
+  },
+  "window": {
+    "title": "Rychlé nastavení MotionCab",
+    "desc": "Rychlý přístup k nastavení všech efektů jako alternativa k záložce Vlastní nastavení."
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "Zobrazit/skrýt okno nastavení",
+      "desc": "Zobrazí nebo skryje okno rychlého nastavení MotionCab."
+    },
+    "look_left": {
+      "title": "Podívat se doleva",
+      "desc": "Plynule se podívá k levému oknu/zrcátku."
+    },
+    "look_right": {
+      "title": "Podívat se doprava",
+      "desc": "Plynule se podívá k pravému oknu/zrcátku."
+    },
+    "zoom": {
+      "title": "Přiblížení",
+      "desc": "Podržením plynule přiblížíte; uvolněním se pohled postupně vrátí do normálu."
+    }
+  },
+  "settings": {
+    "enabled_desc": "Zapne nebo vypne tento efekt.",
+    "driving": {
+      "title": "Jízda",
+      "desc": "Reakce hlavy a kamery na pohyb a zatáčení kamionu.",
+      "head_motion": {
+        "title": "Pohyb hlavy",
+        "desc": "Nastavení efektu dynamického pohybu hlavy.",
+        "enabled": {
+          "title": "Zapnout pohyb hlavy"
+        },
+        "sway_strength": {
+          "title": "Síla kývání",
+          "desc": "Jak moc je hlava vychylována při zrychlení, brzdění nebo v zatáčce."
+        },
+        "tilt_strength": {
+          "title": "Síla náklonu",
+          "desc": "Jak moc se hlava naklání, když se kabina naklání nebo houpe."
+        },
+        "smoothing_time": {
+          "title": "Vyhlazení",
+          "desc": "Jak rychle se hlava ustálí. Vyšší = pomalejší a plynulejší, nižší = svižnější."
+        }
+      },
+      "body_dynamics": {
+        "title": "Dynamika těla",
+        "desc": "Hlava se v zatáčkách naklání ven a při brzdění kývne dopředu, jako tělo řidiče reagující na pohyb kamionu.",
+        "enabled": {
+          "title": "Zapnout dynamiku těla"
+        },
+        "lean_strength": {
+          "title": "Síla náklonu do strany",
+          "desc": "Jak moc se hlava naklání ven ze zatáčky."
+        },
+        "nod_strength": {
+          "title": "Síla kývnutí",
+          "desc": "Jak moc hlava klesne dopředu při brzdění a ucukne dozadu při zrychlení."
+        },
+        "smoothing_time": {
+          "title": "Vyhlazení",
+          "desc": "Jak rychle se náklon a kývnutí ustálí. Nižší = svižnější."
+        }
+      },
+      "steering_camera": {
+        "title": "Kamera řízení",
+        "desc": "Vyhlazené otáčení kamery podle volantu.",
+        "enabled": {
+          "title": "Zapnout kameru řízení"
+        },
+        "rotation_factor_deg": {
+          "title": "Rozsah otočení",
+          "desc": "Jak daleko se kamera otočí, když volant vytočíte na doraz."
+        },
+        "smoothing_time": {
+          "title": "Vyhlazení",
+          "desc": "Jak plynulé je otáčení kamery, jakmile se rozjede. Vyšší = plynulejší a pomalejší."
+        },
+        "delay_seconds": {
+          "title": "Zpoždění reakce",
+          "desc": "Jak dlouho kamera po otočení volantem čeká, než se začne pohybovat."
+        }
+      }
+    },
+    "road": {
+      "title": "Silnice",
+      "desc": "Efekty způsobené povrchem vozovky, odpružením a rychlostí.",
+      "suspension": {
+        "title": "Odpružení",
+        "desc": "Kamera svisle sleduje povrch vozovky jako sedadlo na odpružení kamionu.",
+        "enabled": {
+          "title": "Zapnout odpružení"
+        },
+        "vertical_strength": {
+          "title": "Svislá síla",
+          "desc": "Jak moc nerovnosti na silnici nadhazují hlavu nahoru a dolů."
+        },
+        "reactivity": {
+          "title": "Reaktivita",
+          "desc": "Jak rychle se hlava po nerovnosti vrátí. Nižší = svižnější."
+        },
+        "grade_strength": {
+          "title": "Sledování sklonu",
+          "desc": "Zvedá hlavu při jízdě z kopce a sklání ji při jízdě do kopce."
+        }
+      },
+      "road_irregularity": {
+        "title": "Nerovnosti vozovky",
+        "desc": "Drnčení podle povrchu pod koly (štěrk, dlažební kostky, hlína nebo hladký asfalt), oddělené od skutečných rázů odpružení. Nerovný terén jako hlína nebo tráva navíc kolébá hlavou ze strany na stranu.",
+        "enabled": {
+          "title": "Zapnout nerovnosti vozovky"
+        },
+        "intensity": {
+          "title": "Intenzita",
+          "desc": "Jak silné je drnčení povrchu a kolébání v terénu."
+        },
+        "reactivity": {
+          "title": "Reaktivita",
+          "desc": "Jak ostré a bzučivé je drnčení povrchu. Nižší = ostřejší."
+        }
+      },
+      "speed_shake": {
+        "title": "Třes od rychlosti",
+        "desc": "Realistické kývání hlavy za jízdy, které roste s rychlostí kamionu.",
+        "enabled": {
+          "title": "Zapnout třes od rychlosti"
+        },
+        "intensity": {
+          "title": "Intenzita",
+          "desc": "Celková síla třesu při rychlé jízdě."
+        },
+        "smoothing_time": {
+          "title": "Vyhlazení",
+          "desc": "Jak se třes projevuje v čase. Vyšší = pomalejší a plynulejší, nižší = trhanější a nervóznější."
+        },
+        "rotation": {
+          "title": "Rotace",
+          "desc": "Jak moc se pohled v rámci třesu naklání/otáčí, místo aby se jen posouval do stran. Nastavte 0 pro zachování pouze bočního pohybu."
+        },
+        "vertical": {
+          "title": "Svisle",
+          "desc": "Kolik svislého poskakování je přimícháno do třesu."
+        },
+        "roughness": {
+          "title": "Nepravidelnost",
+          "desc": "Jak nerovnoměrný je třes v čase. 0 jej drží konstantní; vyšší hodnoty střídají klidné a neklidné úseky."
+        }
+      }
+    },
+    "cabin": {
+      "title": "Kabina",
+      "desc": "Efekty řidiče a motoru uvnitř kabiny.",
+      "idle_breathing": {
+        "title": "Dýchání v klidu",
+        "desc": "Jemný pohyb dýchání v klidu, který se s rostoucí rychlostí vytrácí.",
+        "enabled": {
+          "title": "Zapnout dýchání v klidu"
+        },
+        "vertical_amplitude": {
+          "title": "Svislá amplituda",
+          "desc": "Jak moc kamera stoupá a klesá s každým nádechem."
+        },
+        "pitch_amplitude_deg": {
+          "title": "Amplituda kývnutí",
+          "desc": "Jak moc se hlava s každým nádechem naklání dopředu/dozadu."
+        },
+        "breathing_rate_bpm": {
+          "title": "Rychlost dýchání",
+          "desc": "Jak rychle probíhá dýchání."
+        },
+        "fade_start_kmh": {
+          "title": "Rychlost začátku vytrácení",
+          "desc": "Rychlost, od které se tento efekt při zrychlování začne vytrácet."
+        },
+        "fade_end_kmh": {
+          "title": "Rychlost konce vytrácení",
+          "desc": "Rychlost, při které tento efekt úplně zmizí."
+        }
+      },
+      "engine_vibration": {
+        "title": "Vibrace motoru",
+        "desc": "Jemné vibrace motoru podle otáček. U elektrických kamionů automaticky vypnuto.",
+        "enabled": {
+          "title": "Zapnout vibrace motoru"
+        },
+        "intensity": {
+          "title": "Intenzita",
+          "desc": "Jak silné je dunění motoru."
+        }
+      },
+      "engine_start_stop": {
+        "title": "Start/stop motoru",
+        "desc": "Krátké mechanické škubnutí při nastartování nebo zhasnutí motoru. U elektrických kamionů automaticky vypnuto.",
+        "enabled": {
+          "title": "Zapnout start/stop motoru"
+        },
+        "intensity": {
+          "title": "Intenzita",
+          "desc": "Jak silné je škubnutí při startu nebo vypnutí motoru."
+        },
+        "duration": {
+          "title": "Doba trvání",
+          "desc": "Jak dlouho trvá škubnutí při startu. Škubnutí při vypnutí je kratší a jemnější."
+        }
+      }
+    },
+    "manual": {
+      "title": "Ruční",
+      "desc": "Efekty pohledu a přiblížení, které spouštíte sami.",
+      "mirror_check": {
+        "title": "Kontrola zrcátek",
+        "desc": "Podívá se do příslušného zrcátka, dokud svítí blinkr, a po jeho vypnutí se vrátí na střed.",
+        "hint": "Vyžaduje, aby byly ve hře přiřazeny klávesy „Levý blinkr“ a „Pravý blinkr“.",
+        "enabled": {
+          "title": "Zapnout kontrolu zrcátek"
+        },
+        "look_angle_deg": {
+          "title": "Úhel pohledu",
+          "desc": "Jak daleko se hlava otočí k zrcátku."
+        },
+        "pitch_offset_deg": {
+          "title": "Sklon",
+          "desc": "Jak moc se hlava při pohledu do zrcátka skloní dolů."
+        },
+        "smoothing_time": {
+          "title": "Vyhlazení",
+          "desc": "Jak plynulý je pohyb pohledu tam a zpět."
+        },
+        "require_stationary": {
+          "title": "Pouze na místě",
+          "desc": "Dívat se do zrcátka, jen když kamion stojí."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Ignorovat za jízdy",
+          "desc": "Nedívat se do zrcátka kvůli blinkru zapnutému za jízdy, a to ani po zastavení."
+        }
+      },
+      "manual_look": {
+        "title": "Ruční pohled",
+        "desc": "Plynulé pohledy doleva/doprava na dvou klávesách.",
+        "hint": "Tyto klávesy jsou nezávislé na ovládání hry.",
+        "enabled": {
+          "title": "Zapnout ruční pohled"
+        },
+        "look_angle_deg": {
+          "title": "Úhel pohledu",
+          "desc": "Jak daleko se hlava otočí při pohledu doleva nebo doprava."
+        },
+        "smoothing_time": {
+          "title": "Vyhlazení",
+          "desc": "Jak plynulý je pohyb pohledu tam a zpět."
+        },
+        "toggle_mode": {
+          "title": "Režim přepínání",
+          "desc": "Zapnuto: jedním stiskem se podíváte, dalším se vrátíte. Vypnuto: díváte se, dokud klávesu držíte, uvolněním se vrátíte."
+        }
+      },
+      "manual_zoom": {
+        "title": "Ruční přiblížení",
+        "desc": "Plynulé přiblížení na jedné vyhrazené klávese, podobně jako herní klávesa přiblížení: podržením přiblížíte, uvolněním se pohled postupně vrátí do normálu. Nezávislé na herních klávesách přiblížení, které mění zorné pole skokově a nelze je přímo vyhladit.",
+        "hint": "Tato klávesa je nezávislá na herní klávese „Přiblížení vnitřní kamery“.",
+        "enabled": {
+          "title": "Zapnout ruční přiblížení"
+        },
+        "zoom_fov_deg": {
+          "title": "Úroveň přiblížení",
+          "desc": "Jak moc se pohled přiblíží při držení klávesy přiblížení. Nižší = větší přiblížení."
+        },
+        "smoothing_time": {
+          "title": "Vyhlazení",
+          "desc": "Jak plynulé je přibližování a oddalování."
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "Zapnuto",
+    "cancel": "Zrušit",
+    "slider_reset_hint": "Pravým kliknutím na posuvník jej obnovíte.",
+    "profile_badge": "Profil: {name}",
+    "unsaved_changes": "(Neuložené změny)",
+    "tabs": {
+      "settings": "Nastavení",
+      "about": "O pluginu"
+    },
+    "keybind": {
+      "section": "Klávesové zkratky",
+      "toggle_window": "Zobrazit okno",
+      "unbound": "(nepřiřazeno)",
+      "rebind_tip": "Kliknutím přiřadíte znovu.",
+      "options_tip": "Možnosti přiřazení (držení/přepínání, mrtvá zóna, ...).",
+      "add_tip": "Přidat další přiřazení."
+    },
+    "profiles": {
+      "section": "Profily",
+      "name_hint": "Název profilu...",
+      "save_as": "Uložit jako profil",
+      "save_as_tip": "Uloží všechna aktuální nastavení efektů pod tímto názvem profilu.",
+      "invalid_name": "Nejprve zadejte platný název profilu.",
+      "saved_toast": "Profil „{name}“ uložen.",
+      "save_failed": "Profil se nepodařilo uložit, zkontrolujte MotionCab.log.",
+      "overwrite_title": "Potvrdit přepsání",
+      "overwrite_message": "Profil s názvem „{name}“ již existuje. Přepsat?",
+      "overwrite_confirm": "Ano, přepsat",
+      "none": "Zatím žádné uložené profily.",
+      "select_tip": "Vybraný profil se okamžitě načte.",
+      "load_failed": "Profil „{name}“ se nepodařilo načíst, zkontrolujte MotionCab.log.",
+      "no_match": "Aktuálnímu nastavení neodpovídá žádný profil. Vyberte profil k načtení, nebo nastavení uložte výše jako nový profil.",
+      "save": "Uložit",
+      "saved": "Uloženo",
+      "save_tip": "Přepíše vybraný profil aktuálním nastavením.",
+      "delete": "Smazat",
+      "delete_tip": "Smazat vybraný profil.",
+      "delete_title": "Potvrdit smazání",
+      "delete_message": "Smazat profil „{name}“? Tuto akci nelze vrátit.",
+      "delete_confirm": "Ano, smazat",
+      "delete_failed": "Profil „{name}“ se nepodařilo smazat, zkontrolujte MotionCab.log.",
+      "deleted_toast": "Profil „{name}“ smazán.",
+      "fallback_failed": "Smazáno, ale „{name}“ se nepodařilo načíst, zkontrolujte MotionCab.log."
+    },
+    "reset": {
+      "section": "Nebezpečná zóna",
+      "button": "Obnovit všechna nastavení",
+      "title": "Potvrdit obnovení",
+      "message": "Obnovit všechna nastavení MotionCab na výchozí hodnoty?",
+      "confirm": "Ano, obnovit vše",
+      "done_toast": "Všechna nastavení MotionCab byla obnovena na výchozí hodnoty."
+    },
+    "about": {
+      "details": "Podrobnosti",
+      "version": "Verze: **{version}**",
+      "developer": "Vývojář: **{author}**",
+      "links": "Odkazy",
+      "website": "Web",
+      "website_desc": "Dokumentace",
+      "discord": "Discord",
+      "discord_desc": "Komunita a podpora",
+      "github": "GitHub",
+      "github_desc": "Vydání a hlášení chyb",
+      "youtube": "YouTube",
+      "youtube_desc": "Videa a ukázky",
+      "support": "Podpora",
+      "support_text": "Pokud se vám MotionCab líbí, můžete podpořit jeho vývoj.",
+      "donate": "Přispět přes PayPal",
+      "donate_desc": "Podpořit MotionCab přes PayPal",
+      "tips": "Tipy",
+      "tip_reset": "Pravým kliknutím na libovolný posuvník obnovíte jeho výchozí hodnotu.",
+      "tip_profiles": "Uložte své nastavení jako profil na záložce {settings_tab}.",
+      "tip_interior": "Všechny efekty fungují pouze ve vnitřní kameře.",
+      "credits": "Poděkování",
+      "credits_text": "SPF Framework a přispěvatelé."
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/h",
+      "mph": "mph"
+    }
+  }
+}

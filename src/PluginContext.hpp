@@ -4,6 +4,7 @@
 #include "SPF_Environment_API.h"
 #include "SPF_Formatting_API.h"
 #include "SPF_KeyBinds_API.h"
+#include "SPF_Localization_API.h"
 #include "SPF_Logger_API.h"
 #include "SPF_Plugin.h"
 #include "SPF_TelemetryData.h"
@@ -30,6 +31,7 @@ struct PluginContext {
   SPF_Telemetry_Handle *telemetry_handle = nullptr;
   SPF_KeyBinds_Handle *keybinds_handle = nullptr;
   SPF_Environment_Handle *environment_handle = nullptr;
+  SPF_Localization_Handle *localization_handle = nullptr;
 
   EffectManager effects;
   std::unique_ptr<ManualZoomEffect> manual_zoom;

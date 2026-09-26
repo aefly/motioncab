@@ -1,0 +1,381 @@
+{
+  "language": {
+    "en": "Inglese    [English]",
+    "uk": "Ucraino    [Українська]",
+    "de": "Tedesco    [Deutsch]",
+    "fr": "Francese    [Français]",
+    "es": "Spagnolo    [Español]",
+    "pl": "Polacco    [Polski]",
+    "ru": "Russo    [Русский]",
+    "pt_br": "Portoghese (Brasile)    [Português (Brasil)]",
+    "it": "Italiano",
+    "nl": "Olandese    [Nederlands]",
+    "tr": "Turco    [Türkçe]",
+    "cs": "Ceco    [Čeština]",
+    "zh": "Cinese (semplificato)    [简体中文]",
+    "ja": "Giapponese    [日本語]",
+    "ko": "Coreano    [한국어]"
+  },
+  "plugin": {
+    "description": "Movimento dinamico della testa per ETS2 e ATS"
+  },
+  "window": {
+    "title": "Impostazioni rapide di MotionCab",
+    "desc": "Accesso rapido alle impostazioni di ogni effetto, in alternativa alla scheda Impostazioni personalizzate."
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "Mostra/nascondi la finestra delle impostazioni",
+      "desc": "Mostra o nasconde la finestra delle impostazioni rapide di MotionCab."
+    },
+    "look_left": {
+      "title": "Guarda a sinistra",
+      "desc": "Guarda dolcemente verso il finestrino/lo specchietto sinistro."
+    },
+    "look_right": {
+      "title": "Guarda a destra",
+      "desc": "Guarda dolcemente verso il finestrino/lo specchietto destro."
+    },
+    "zoom": {
+      "title": "Zoom",
+      "desc": "Tieni premuto per ingrandire dolcemente; rilascia per tornare gradualmente alla vista normale."
+    }
+  },
+  "settings": {
+    "enabled_desc": "Attiva o disattiva questo effetto.",
+    "driving": {
+      "title": "Guida",
+      "desc": "Reazioni della testa e della telecamera al movimento e alla sterzata del camion.",
+      "head_motion": {
+        "title": "Movimento della testa",
+        "desc": "Impostazioni dell'effetto di movimento dinamico della testa.",
+        "enabled": {
+          "title": "Attiva movimento della testa"
+        },
+        "sway_strength": {
+          "title": "Intensità dell'oscillazione",
+          "desc": "Quanto viene spinta la tua testa quando acceleri, freni o affronti una curva."
+        },
+        "tilt_strength": {
+          "title": "Intensità dell'inclinazione",
+          "desc": "Quanto si inclina la tua testa quando la cabina si piega o dondola."
+        },
+        "smoothing_time": {
+          "title": "Smorzamento",
+          "desc": "Quanto velocemente la testa si assesta. Più alto = più lento e morbido, più basso = più reattivo."
+        }
+      },
+      "body_dynamics": {
+        "title": "Dinamica del corpo",
+        "desc": "La testa si inclina verso l'esterno delle curve e si piega in avanti in frenata, come il corpo di un autista che reagisce al movimento del camion.",
+        "enabled": {
+          "title": "Attiva dinamica del corpo"
+        },
+        "lean_strength": {
+          "title": "Intensità dell'inclinazione laterale",
+          "desc": "Quanto si inclina la tua testa verso l'esterno di una curva."
+        },
+        "nod_strength": {
+          "title": "Intensità del beccheggio",
+          "desc": "Quanto la tua testa si piega in avanti in frenata e arretra in accelerazione."
+        },
+        "smoothing_time": {
+          "title": "Smorzamento",
+          "desc": "Quanto velocemente si assestano inclinazione e beccheggio. Più basso = più reattivo."
+        }
+      },
+      "steering_camera": {
+        "title": "Telecamera di sterzata",
+        "desc": "Rotazione morbida della telecamera che segue il volante.",
+        "enabled": {
+          "title": "Attiva telecamera di sterzata"
+        },
+        "rotation_factor_deg": {
+          "title": "Ampiezza della rotazione",
+          "desc": "Quanto ruota la telecamera quando giri il volante fino in fondo."
+        },
+        "smoothing_time": {
+          "title": "Smorzamento",
+          "desc": "Quanto è morbida la rotazione della telecamera una volta avviata. Più alto = più morbido e lento."
+        },
+        "delay_seconds": {
+          "title": "Ritardo di reazione",
+          "desc": "Quanto aspetta la telecamera dopo che giri il volante prima di iniziare a muoversi."
+        }
+      }
+    },
+    "road": {
+      "title": "Strada",
+      "desc": "Effetti dovuti al manto stradale, alle sospensioni e alla velocità.",
+      "suspension": {
+        "title": "Sospensioni",
+        "desc": "La telecamera segue verticalmente la superficie della strada, come un sedile sulle sospensioni del camion.",
+        "enabled": {
+          "title": "Attiva sospensioni"
+        },
+        "vertical_strength": {
+          "title": "Intensità verticale",
+          "desc": "Quanto le buche della strada fanno sobbalzare la tua testa su e giù."
+        },
+        "reactivity": {
+          "title": "Reattività",
+          "desc": "Quanto velocemente la testa si riprende dopo una buca. Più basso = più reattivo."
+        },
+        "grade_strength": {
+          "title": "Segui la pendenza",
+          "desc": "Alza la testa in discesa e la abbassa in salita."
+        }
+      },
+      "road_irregularity": {
+        "title": "Irregolarità stradale",
+        "desc": "Vibrazione in base al materiale del terreno sotto le ruote (ghiaia, pavé, sterrato o asfalto liscio), separata dalle vere sollecitazioni delle sospensioni. Il terreno irregolare come sterrato o erba fa anche dondolare la testa da un lato all'altro.",
+        "enabled": {
+          "title": "Attiva irregolarità stradale"
+        },
+        "intensity": {
+          "title": "Intensità",
+          "desc": "Quanto sono forti la vibrazione del manto e il dondolio fuoristrada."
+        },
+        "reactivity": {
+          "title": "Reattività",
+          "desc": "Quanto è secca e vibrante la vibrazione del manto. Più basso = più secca."
+        }
+      },
+      "speed_shake": {
+        "title": "Tremolio da velocità",
+        "desc": "Oscillazione realistica della testa durante la guida, che aumenta con la velocità del camion.",
+        "enabled": {
+          "title": "Attiva tremolio da velocità"
+        },
+        "intensity": {
+          "title": "Intensità",
+          "desc": "Intensità complessiva del tremolio percepito guidando veloce."
+        },
+        "smoothing_time": {
+          "title": "Smorzamento",
+          "desc": "Come si percepisce il tremolio nel tempo. Più alto = più lento e morbido, più basso = più scattoso e nervoso."
+        },
+        "rotation": {
+          "title": "Rotazione",
+          "desc": "Quanto la visuale si inclina/ruota nel tremolio, invece di muoversi solo lateralmente. Imposta 0 per mantenere solo il movimento laterale."
+        },
+        "vertical": {
+          "title": "Verticale",
+          "desc": "Quanto rimbalzo verticale viene mescolato al tremolio."
+        },
+        "roughness": {
+          "title": "Irregolarità",
+          "desc": "Quanto è irregolare il tremolio nel tempo. 0 lo mantiene costante; valori più alti alternano tratti calmi e agitati."
+        }
+      }
+    },
+    "cabin": {
+      "title": "Cabina",
+      "desc": "Effetti del conducente e del motore all'interno della cabina.",
+      "idle_breathing": {
+        "title": "Respirazione a riposo",
+        "desc": "Leggero movimento di respirazione a riposo che svanisce all'aumentare della velocità.",
+        "enabled": {
+          "title": "Attiva respirazione a riposo"
+        },
+        "vertical_amplitude": {
+          "title": "Ampiezza verticale",
+          "desc": "Quanto sale e scende la telecamera a ogni respiro."
+        },
+        "pitch_amplitude_deg": {
+          "title": "Ampiezza del cenno",
+          "desc": "Quanto la tua testa si inclina avanti/indietro a ogni respiro."
+        },
+        "breathing_rate_bpm": {
+          "title": "Frequenza respiratoria",
+          "desc": "Quanto velocemente si respira."
+        },
+        "fade_start_kmh": {
+          "title": "Velocità di inizio dissolvenza",
+          "desc": "La velocità alla quale questo effetto inizia a svanire mentre acceleri."
+        },
+        "fade_end_kmh": {
+          "title": "Velocità di fine dissolvenza",
+          "desc": "La velocità alla quale questo effetto è completamente svanito."
+        }
+      },
+      "engine_vibration": {
+        "title": "Vibrazione del motore",
+        "desc": "Leggera vibrazione del motore in base ai giri. Disattivata automaticamente sui camion elettrici.",
+        "enabled": {
+          "title": "Attiva vibrazione del motore"
+        },
+        "intensity": {
+          "title": "Intensità",
+          "desc": "Quanto è forte il rombo del motore."
+        }
+      },
+      "engine_start_stop": {
+        "title": "Avvio/arresto del motore",
+        "desc": "Un breve scossone meccanico quando il motore si avvia o si spegne. Disattivato automaticamente sui camion elettrici.",
+        "enabled": {
+          "title": "Attiva avvio/arresto del motore"
+        },
+        "intensity": {
+          "title": "Intensità",
+          "desc": "Quanto è forte lo scossone all'avvio o all'arresto del motore."
+        },
+        "duration": {
+          "title": "Durata",
+          "desc": "Quanto dura lo scossone all'avvio. Quello all'arresto è più breve e più dolce."
+        }
+      }
+    },
+    "manual": {
+      "title": "Manuale",
+      "desc": "Effetti di sguardo e zoom che attivi tu.",
+      "mirror_check": {
+        "title": "Controllo specchietti",
+        "desc": "Guarda verso lo specchietto corrispondente mentre un indicatore di direzione è acceso e torna al centro quando si spegne.",
+        "hint": "Richiede che i tasti nativi del gioco «Indicatore di direzione sinistro» e «Indicatore di direzione destro» siano assegnati.",
+        "enabled": {
+          "title": "Attiva controllo specchietti"
+        },
+        "look_angle_deg": {
+          "title": "Angolo dello sguardo",
+          "desc": "Quanto ruota la tua testa per guardare lo specchietto."
+        },
+        "pitch_offset_deg": {
+          "title": "Inclinazione",
+          "desc": "Quanto si abbassa la tua testa mentre guardi lo specchietto."
+        },
+        "smoothing_time": {
+          "title": "Smorzamento",
+          "desc": "Quanto è morbido il movimento di andata e ritorno dello sguardo."
+        },
+        "require_stationary": {
+          "title": "Solo da fermo",
+          "desc": "Guarda lo specchietto solo quando il camion è fermo."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Ignora in movimento",
+          "desc": "Non guardare lo specchietto per un indicatore attivato in movimento, anche dopo esserti fermato."
+        }
+      },
+      "manual_look": {
+        "title": "Sguardo manuale",
+        "desc": "Sguardi morbidi a sinistra/destra assegnati a due tasti.",
+        "hint": "Questi tasti sono separati dai comandi nativi del gioco.",
+        "enabled": {
+          "title": "Attiva sguardo manuale"
+        },
+        "look_angle_deg": {
+          "title": "Angolo dello sguardo",
+          "desc": "Quanto ruota la tua testa quando guardi a sinistra o a destra."
+        },
+        "smoothing_time": {
+          "title": "Smorzamento",
+          "desc": "Quanto è morbido il movimento di andata e ritorno dello sguardo."
+        },
+        "toggle_mode": {
+          "title": "Modalità alternata",
+          "desc": "Attiva: premi una volta per guardare, di nuovo per tornare. Disattiva: guarda finché tieni premuto, rilascia per tornare."
+        }
+      },
+      "manual_zoom": {
+        "title": "Zoom manuale",
+        "desc": "Zoom morbido su un unico tasto dedicato, come il tasto zoom nativo: tieni premuto per ingrandire, rilascia per tornare gradualmente alla vista normale. Indipendente dai tasti zoom nativi, che cambiano il campo visivo a scatti fissi e non possono essere smorzati direttamente.",
+        "hint": "Questo tasto è separato dal tasto nativo del gioco «Zoom telecamera interna».",
+        "enabled": {
+          "title": "Attiva zoom manuale"
+        },
+        "zoom_fov_deg": {
+          "title": "Livello di zoom",
+          "desc": "Quanto si ingrandisce la vista tenendo premuto il tasto zoom. Più basso = più ingrandito."
+        },
+        "smoothing_time": {
+          "title": "Smorzamento",
+          "desc": "Quanto è morbido l'ingrandimento e il ritorno dello zoom."
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "Attivo",
+    "cancel": "Annulla",
+    "slider_reset_hint": "Clic destro su un cursore per ripristinarlo.",
+    "profile_badge": "Profilo: {name}",
+    "unsaved_changes": "(Modifiche non salvate)",
+    "tabs": {
+      "settings": "Impostazioni",
+      "about": "Informazioni"
+    },
+    "keybind": {
+      "section": "Assegnazione tasti",
+      "toggle_window": "Mostra finestra",
+      "unbound": "(non assegnato)",
+      "rebind_tip": "Clicca per riassegnare.",
+      "options_tip": "Opzioni di assegnazione (tieni premuto/alterna, zona morta, ...).",
+      "add_tip": "Aggiungi un'altra assegnazione."
+    },
+    "profiles": {
+      "section": "Profili",
+      "name_hint": "Nome del profilo...",
+      "save_as": "Salva come profilo",
+      "save_as_tip": "Salva tutte le impostazioni correnti degli effetti con questo nome di profilo.",
+      "invalid_name": "Inserisci prima un nome di profilo valido.",
+      "saved_toast": "Profilo «{name}» salvato.",
+      "save_failed": "Impossibile salvare il profilo, controlla MotionCab.log.",
+      "overwrite_title": "Conferma sovrascrittura",
+      "overwrite_message": "Esiste già un profilo chiamato «{name}». Sovrascriverlo?",
+      "overwrite_confirm": "Sì, sovrascrivi",
+      "none": "Nessun profilo salvato.",
+      "select_tip": "Selezionare un profilo lo carica immediatamente.",
+      "load_failed": "Impossibile caricare il profilo «{name}», controlla MotionCab.log.",
+      "no_match": "Nessun profilo corrisponde alle impostazioni correnti. Scegline uno da caricare o salvale come nuovo profilo qui sopra.",
+      "save": "Salva",
+      "saved": "Salvato",
+      "save_tip": "Sovrascrive il profilo selezionato con le impostazioni correnti.",
+      "delete": "Elimina",
+      "delete_tip": "Elimina il profilo selezionato.",
+      "delete_title": "Conferma eliminazione",
+      "delete_message": "Eliminare il profilo «{name}»? L'operazione non può essere annullata.",
+      "delete_confirm": "Sì, elimina",
+      "delete_failed": "Impossibile eliminare il profilo «{name}», controlla MotionCab.log.",
+      "deleted_toast": "Profilo «{name}» eliminato.",
+      "fallback_failed": "Eliminato, ma impossibile caricare «{name}», controlla MotionCab.log."
+    },
+    "reset": {
+      "section": "Zona pericolosa",
+      "button": "Ripristina tutte le impostazioni",
+      "title": "Conferma ripristino",
+      "message": "Ripristinare tutte le impostazioni di MotionCab ai valori predefiniti?",
+      "confirm": "Sì, ripristina tutto",
+      "done_toast": "Tutte le impostazioni di MotionCab sono state ripristinate ai valori predefiniti."
+    },
+    "about": {
+      "details": "Dettagli",
+      "version": "Versione: **{version}**",
+      "developer": "Sviluppatore: **{author}**",
+      "links": "Link",
+      "website": "Sito web",
+      "website_desc": "Documentazione",
+      "discord": "Discord",
+      "discord_desc": "Community e supporto",
+      "github": "GitHub",
+      "github_desc": "Versioni e segnalazione di bug",
+      "youtube": "YouTube",
+      "youtube_desc": "Video e dimostrazioni",
+      "support": "Supporto",
+      "support_text": "Se ti piace MotionCab, puoi supportarne lo sviluppo.",
+      "donate": "Dona con PayPal",
+      "donate_desc": "Supporta MotionCab su PayPal",
+      "tips": "Suggerimenti",
+      "tip_reset": "Clic destro su un cursore per ripristinarne il valore predefinito.",
+      "tip_profiles": "Salva le tue impostazioni come profilo nella scheda {settings_tab}.",
+      "tip_interior": "Tutti gli effetti funzionano solo con la telecamera interna.",
+      "credits": "Riconoscimenti",
+      "credits_text": "SPF Framework e i suoi collaboratori."
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/h",
+      "mph": "mph"
+    }
+  }
+}

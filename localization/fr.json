@@ -1,0 +1,381 @@
+{
+  "language": {
+    "en": "Anglais    [English]",
+    "uk": "Ukrainien    [Українська]",
+    "de": "Allemand    [Deutsch]",
+    "fr": "Français",
+    "es": "Espagnol    [Español]",
+    "pl": "Polonais    [Polski]",
+    "ru": "Russe    [Русский]",
+    "pt_br": "Portugais (Brésil)    [Português (Brasil)]",
+    "it": "Italien    [Italiano]",
+    "nl": "Néerlandais    [Nederlands]",
+    "tr": "Turc    [Türkçe]",
+    "cs": "Tchèque    [Čeština]",
+    "zh": "Chinois (simplifié)    [简体中文]",
+    "ja": "Japonais    [日本語]",
+    "ko": "Coréen    [한국어]"
+  },
+  "plugin": {
+    "description": "Mouvements de tête dynamiques pour ETS2 et ATS"
+  },
+  "window": {
+    "title": "Réglages rapides MotionCab",
+    "desc": "Accès rapide aux réglages de chaque effet, en alternative à l'onglet Paramètres personnalisés."
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "Afficher/masquer la fenêtre de réglages",
+      "desc": "Affiche ou masque la fenêtre de réglages rapides de MotionCab."
+    },
+    "look_left": {
+      "title": "Regarder à gauche",
+      "desc": "Tourne doucement la tête vers la vitre/le rétroviseur gauche."
+    },
+    "look_right": {
+      "title": "Regarder à droite",
+      "desc": "Tourne doucement la tête vers la vitre/le rétroviseur droit."
+    },
+    "zoom": {
+      "title": "Zoom",
+      "desc": "Maintenir pour zoomer en douceur ; relâcher pour revenir progressivement à la normale."
+    }
+  },
+  "settings": {
+    "enabled_desc": "Active ou désactive cet effet.",
+    "driving": {
+      "title": "Conduite",
+      "desc": "Réactions de la tête et de la caméra aux mouvements et à la direction du camion.",
+      "head_motion": {
+        "title": "Mouvement de tête",
+        "desc": "Réglages de l'effet de mouvement de tête dynamique.",
+        "enabled": {
+          "title": "Activer le mouvement de tête"
+        },
+        "sway_strength": {
+          "title": "Force du balancement",
+          "desc": "À quel point votre tête est bousculée quand vous accélérez, freinez ou prenez un virage."
+        },
+        "tilt_strength": {
+          "title": "Force d'inclinaison",
+          "desc": "À quel point votre tête s'incline quand la cabine penche ou tangue."
+        },
+        "smoothing_time": {
+          "title": "Lissage",
+          "desc": "Vitesse à laquelle votre tête se stabilise. Plus haut = plus lent et plus doux, plus bas = plus vif."
+        }
+      },
+      "body_dynamics": {
+        "title": "Dynamique du corps",
+        "desc": "La tête penche vers l'extérieur des virages et bascule vers l'avant au freinage, comme le corps d'un conducteur qui réagit aux mouvements du camion.",
+        "enabled": {
+          "title": "Activer la dynamique du corps"
+        },
+        "lean_strength": {
+          "title": "Force de penchement",
+          "desc": "À quel point votre tête penche vers l'extérieur d'un virage."
+        },
+        "nod_strength": {
+          "title": "Force de hochement",
+          "desc": "À quel point votre tête plonge vers l'avant au freinage et recule à l'accélération."
+        },
+        "smoothing_time": {
+          "title": "Lissage",
+          "desc": "Vitesse à laquelle le penchement et le hochement se stabilisent. Plus bas = plus vif."
+        }
+      },
+      "steering_camera": {
+        "title": "Caméra de direction",
+        "desc": "Rotation lissée de la caméra qui suit le volant.",
+        "enabled": {
+          "title": "Activer la caméra de direction"
+        },
+        "rotation_factor_deg": {
+          "title": "Amplitude de rotation",
+          "desc": "Jusqu'où la caméra tourne quand vous braquez le volant à fond."
+        },
+        "smoothing_time": {
+          "title": "Lissage",
+          "desc": "Douceur de la rotation de la caméra une fois lancée. Plus haut = plus doux et plus lent."
+        },
+        "delay_seconds": {
+          "title": "Délai de réaction",
+          "desc": "Temps d'attente de la caméra après que vous tournez le volant avant qu'elle commence à bouger."
+        }
+      }
+    },
+    "road": {
+      "title": "Route",
+      "desc": "Effets liés au revêtement de la route, à la suspension et à la vitesse.",
+      "suspension": {
+        "title": "Suspension",
+        "desc": "La caméra suit verticalement la surface de la route, comme un siège porté par la suspension du camion.",
+        "enabled": {
+          "title": "Activer la suspension"
+        },
+        "vertical_strength": {
+          "title": "Force verticale",
+          "desc": "À quel point les bosses de la route font rebondir votre tête de haut en bas."
+        },
+        "reactivity": {
+          "title": "Réactivité",
+          "desc": "Vitesse à laquelle votre tête se replace après une bosse. Plus bas = plus vif."
+        },
+        "grade_strength": {
+          "title": "Suivi de la pente",
+          "desc": "Relève votre tête dans les descentes et l'abaisse dans les montées."
+        }
+      },
+      "road_irregularity": {
+        "title": "Irrégularités de la route",
+        "desc": "Vibrations texturées selon le sol sous les roues (gravier, pavés, terre ou asphalte lisse), distinctes des vraies bosses de suspension. Les sols irréguliers comme la terre ou l'herbe font aussi balancer votre tête d'un côté à l'autre.",
+        "enabled": {
+          "title": "Activer les irrégularités de la route"
+        },
+        "intensity": {
+          "title": "Intensité",
+          "desc": "Force des vibrations du revêtement et du balancement hors route."
+        },
+        "reactivity": {
+          "title": "Réactivité",
+          "desc": "À quel point les vibrations du revêtement sont sèches et vibrantes. Plus bas = plus sec."
+        }
+      },
+      "speed_shake": {
+        "title": "Tremblement de vitesse",
+        "desc": "Balancement réaliste de la tête en roulant, qui augmente avec la vitesse du camion.",
+        "enabled": {
+          "title": "Activer le tremblement de vitesse"
+        },
+        "intensity": {
+          "title": "Intensité",
+          "desc": "Force globale du tremblement ressenti en roulant vite."
+        },
+        "smoothing_time": {
+          "title": "Lissage",
+          "desc": "Comportement du tremblement dans le temps. Plus haut = plus lent et plus doux, plus bas = plus saccadé et nerveux."
+        },
+        "rotation": {
+          "title": "Rotation",
+          "desc": "À quel point votre vue s'incline/tourne dans le tremblement, plutôt que de seulement bouger latéralement. Mettre à 0 pour ne garder que le mouvement latéral."
+        },
+        "vertical": {
+          "title": "Vertical",
+          "desc": "Part de rebond vertical mélangée au tremblement."
+        },
+        "roughness": {
+          "title": "Irrégularité",
+          "desc": "À quel point le tremblement varie dans le temps. 0 le garde constant ; plus haut alterne passages calmes et agités."
+        }
+      }
+    },
+    "cabin": {
+      "title": "Cabine",
+      "desc": "Effets du conducteur et du moteur à l'intérieur de la cabine.",
+      "idle_breathing": {
+        "title": "Respiration au repos",
+        "desc": "Léger mouvement de respiration au repos qui s'estompe quand la vitesse augmente.",
+        "enabled": {
+          "title": "Activer la respiration au repos"
+        },
+        "vertical_amplitude": {
+          "title": "Amplitude verticale",
+          "desc": "De combien la caméra monte et descend à chaque respiration."
+        },
+        "pitch_amplitude_deg": {
+          "title": "Amplitude du hochement",
+          "desc": "À quel point votre tête bascule vers l'avant/l'arrière à chaque respiration."
+        },
+        "breathing_rate_bpm": {
+          "title": "Rythme respiratoire",
+          "desc": "Vitesse de la respiration."
+        },
+        "fade_start_kmh": {
+          "title": "Vitesse de début d'atténuation",
+          "desc": "Vitesse à partir de laquelle cet effet commence à s'estomper quand vous accélérez."
+        },
+        "fade_end_kmh": {
+          "title": "Vitesse de fin d'atténuation",
+          "desc": "Vitesse à laquelle cet effet a complètement disparu."
+        }
+      },
+      "engine_vibration": {
+        "title": "Vibration du moteur",
+        "desc": "Fine vibration du moteur proportionnelle au régime. Désactivée automatiquement sur les camions électriques.",
+        "enabled": {
+          "title": "Activer la vibration du moteur"
+        },
+        "intensity": {
+          "title": "Intensité",
+          "desc": "Force du grondement du moteur."
+        }
+      },
+      "engine_start_stop": {
+        "title": "Démarrage/arrêt du moteur",
+        "desc": "Une courte secousse mécanique quand le moteur démarre ou cale. Désactivée automatiquement sur les camions électriques.",
+        "enabled": {
+          "title": "Activer le démarrage/arrêt du moteur"
+        },
+        "intensity": {
+          "title": "Intensité",
+          "desc": "Force de la secousse au démarrage ou à l'arrêt du moteur."
+        },
+        "duration": {
+          "title": "Durée",
+          "desc": "Durée de la secousse au démarrage. Celle de l'arrêt est plus courte et plus douce."
+        }
+      }
+    },
+    "manual": {
+      "title": "Manuel",
+      "desc": "Effets de regard et de zoom que vous déclenchez vous-même.",
+      "mirror_check": {
+        "title": "Contrôle des rétroviseurs",
+        "desc": "Regarde vers le rétroviseur correspondant tant qu'un clignotant est allumé, et se recentre quand il s'éteint.",
+        "hint": "Nécessite que les touches natives « Clignotant gauche » et « Clignotant droit » du jeu soient assignées.",
+        "enabled": {
+          "title": "Activer le contrôle des rétroviseurs"
+        },
+        "look_angle_deg": {
+          "title": "Angle de regard",
+          "desc": "De combien votre tête tourne pour regarder le rétroviseur."
+        },
+        "pitch_offset_deg": {
+          "title": "Inclinaison",
+          "desc": "De combien votre tête s'abaisse en regardant le rétroviseur."
+        },
+        "smoothing_time": {
+          "title": "Lissage",
+          "desc": "Douceur du mouvement aller-retour du regard."
+        },
+        "require_stationary": {
+          "title": "Seulement à l'arrêt",
+          "desc": "Ne regarder le rétroviseur que lorsque le camion est à l'arrêt."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Ignorer en roulant",
+          "desc": "Ne pas regarder le rétroviseur pour un clignotant activé en roulant, même après l'arrêt."
+        }
+      },
+      "manual_look": {
+        "title": "Regard manuel",
+        "desc": "Coups d'œil fluides à gauche/à droite assignés à deux touches.",
+        "hint": "Ces touches sont indépendantes des commandes natives du jeu.",
+        "enabled": {
+          "title": "Activer le regard manuel"
+        },
+        "look_angle_deg": {
+          "title": "Angle de regard",
+          "desc": "De combien votre tête tourne quand vous regardez à gauche ou à droite."
+        },
+        "smoothing_time": {
+          "title": "Lissage",
+          "desc": "Douceur du mouvement aller-retour du regard."
+        },
+        "toggle_mode": {
+          "title": "Mode bascule",
+          "desc": "Activé : appuyer une fois pour regarder, une seconde fois pour revenir. Désactivé : regarder tant que la touche est maintenue, relâcher pour revenir."
+        }
+      },
+      "manual_zoom": {
+        "title": "Zoom manuel",
+        "desc": "Zoom fluide sur une seule touche dédiée, comme la touche de zoom native : maintenir pour zoomer, relâcher pour revenir progressivement à la normale. Indépendant des touches de zoom natives, qui changent le champ de vision par paliers et ne peuvent pas être lissées directement.",
+        "hint": "Cette touche est indépendante de la touche native « Zoom caméra intérieure » du jeu.",
+        "enabled": {
+          "title": "Activer le zoom manuel"
+        },
+        "zoom_fov_deg": {
+          "title": "Niveau de zoom",
+          "desc": "Niveau de zoom atteint en maintenant la touche. Plus bas = zoom plus fort."
+        },
+        "smoothing_time": {
+          "title": "Lissage",
+          "desc": "Douceur de l'entrée et de la sortie du zoom."
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "Activé",
+    "cancel": "Annuler",
+    "slider_reset_hint": "Clic droit sur un curseur pour le réinitialiser.",
+    "profile_badge": "Profil : {name}",
+    "unsaved_changes": "(Modifications non enregistrées)",
+    "tabs": {
+      "settings": "Paramètres",
+      "about": "À propos"
+    },
+    "keybind": {
+      "section": "Raccourcis",
+      "toggle_window": "Afficher la fenêtre",
+      "unbound": "(non assigné)",
+      "rebind_tip": "Cliquer pour réassigner.",
+      "options_tip": "Options de l'assignation (maintien/bascule, zone morte, ...).",
+      "add_tip": "Ajouter une autre assignation."
+    },
+    "profiles": {
+      "section": "Profils",
+      "name_hint": "Nom du profil...",
+      "save_as": "Enregistrer le profil",
+      "save_as_tip": "Enregistre tous les réglages actuels des effets sous ce nom de profil.",
+      "invalid_name": "Saisissez d'abord un nom de profil valide.",
+      "saved_toast": "Profil « {name} » enregistré.",
+      "save_failed": "Échec de l'enregistrement du profil, consultez MotionCab.log.",
+      "overwrite_title": "Confirmer l'écrasement",
+      "overwrite_message": "Un profil nommé « {name} » existe déjà. L'écraser ?",
+      "overwrite_confirm": "Oui, écraser",
+      "none": "Aucun profil enregistré.",
+      "select_tip": "Sélectionner un profil le charge immédiatement.",
+      "load_failed": "Échec du chargement du profil « {name} », consultez MotionCab.log.",
+      "no_match": "Aucun profil ne correspond aux réglages actuels. Choisissez-en un à charger, ou enregistrez-les comme nouveau profil ci-dessus.",
+      "save": "Enregistrer",
+      "saved": "Enregistré",
+      "save_tip": "Écrase le profil sélectionné avec les réglages actuels.",
+      "delete": "Supprimer",
+      "delete_tip": "Supprimer le profil sélectionné.",
+      "delete_title": "Confirmer la suppression",
+      "delete_message": "Supprimer le profil « {name} » ? Cette action est irréversible.",
+      "delete_confirm": "Oui, supprimer",
+      "delete_failed": "Échec de la suppression du profil « {name} », consultez MotionCab.log.",
+      "deleted_toast": "Profil « {name} » supprimé.",
+      "fallback_failed": "Supprimé, mais échec du chargement de « {name} », consultez MotionCab.log."
+    },
+    "reset": {
+      "section": "Zone de danger",
+      "button": "Tout réinitialiser",
+      "title": "Confirmer la réinitialisation",
+      "message": "Remettre tous les réglages de MotionCab à leur valeur par défaut ?",
+      "confirm": "Oui, tout réinitialiser",
+      "done_toast": "Tous les réglages de MotionCab ont été remis à leur valeur par défaut."
+    },
+    "about": {
+      "details": "Détails",
+      "version": "Version : **{version}**",
+      "developer": "Développeur : **{author}**",
+      "links": "Liens",
+      "website": "Site web",
+      "website_desc": "Documentation",
+      "discord": "Discord",
+      "discord_desc": "Communauté et support",
+      "github": "GitHub",
+      "github_desc": "Versions et signalement de bugs",
+      "youtube": "YouTube",
+      "youtube_desc": "Vidéos et démonstrations",
+      "support": "Soutien",
+      "support_text": "Si vous appréciez MotionCab, vous pouvez soutenir son développement.",
+      "donate": "Faire un don via PayPal",
+      "donate_desc": "Soutenir MotionCab sur PayPal",
+      "tips": "Astuces",
+      "tip_reset": "Clic droit sur un curseur pour le remettre à sa valeur par défaut.",
+      "tip_profiles": "Enregistrez vos réglages dans un profil depuis l'onglet {settings_tab}.",
+      "tip_interior": "Tous les effets ne fonctionnent qu'en caméra intérieure.",
+      "credits": "Crédits",
+      "credits_text": "SPF Framework et ses contributeurs."
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/h",
+      "mph": "mi/h"
+    }
+  }
+}

@@ -8,6 +8,7 @@
 #include <cctype>
 #include <cmath>
 #include <filesystem>
+#include <iterator>
 
 namespace motioncab::profiles {
 
@@ -184,6 +185,16 @@ SPF_Config_Handle *OpenProfileContext(PluginContext &ctx,
 }
 
 } // namespace
+
+std::vector<const char *> AllSettingKeys() {
+  std::vector<const char *> keys;
+  keys.reserve(std::size(kBoolKeys) + std::size(kFloatKeys));
+  for (const BoolKey &k : kBoolKeys)
+    keys.push_back(k.key);
+  for (const FloatKey &k : kFloatKeys)
+    keys.push_back(k.key);
+  return keys;
+}
 
 std::string Sanitize(const std::string &name) {
   std::string out;

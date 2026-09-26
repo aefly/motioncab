@@ -59,6 +59,7 @@ set(PLUGIN_SOURCES
     "src/Plugin.cpp"
     "src/Manifest.cpp"
     "src/PluginContext.cpp"
+    "src/Localization.cpp"
     "src/ProfileManager.cpp"
     "src/effects/EffectManager.cpp"
     "src/effects/HeadMotionEffect.cpp"

@@ -12,6 +12,7 @@
 - [ ] Bug fix
 - [ ] Refactor / Cleanup
 - [ ] Build / CI
+- [ ] Localization
 - [ ] Docs
 - [ ] Other
 
@@ -29,7 +30,7 @@
 - [ ] Effect doesn't conflict with existing effects
 - [ ] Setting/config added to the native SPF settings UI (`Manifest.cpp`)
 - [ ] Same setting mirrored in the Quick Settings window (`SettingsWindow.cpp`)
-- [ ] Titles/tooltips added to `src/ui/SettingsText.hpp`
+- [ ] Text added to every `localization/*.json` file
 - [ ] Default value mirrored in `src/ui/SettingsDefaults.hpp`
 - [ ] Checked `./SPF_API` docs before implementing/modifying an SDK interaction
 
@@ -44,6 +45,10 @@ X truck/trailer, checked native UI + Quick Settings window stay in sync.
 - [ ] Tested in-game
 - [ ] Native settings UI and Quick Settings window both updated, if a
       setting changed
+- [ ] `python3 .github/scripts/check-localization.py` passes, if a
+      `localization/*.json` file changed
+- [ ] Changed text checked in-game in that language (reads naturally,
+      fits the Quick Settings window), if a translation changed
 
 ## Screenshots / Videos
 

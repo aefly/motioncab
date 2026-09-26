@@ -32,6 +32,10 @@ std::string Sanitize(const std::string &name);
 const std::string *FindIgnoreCase(const std::vector<std::string> &names,
                                   const std::string &name);
 
+// Every setting key a profile covers (all of MotionCab's settings), in the
+// order of the key tables in ProfileManager.cpp.
+std::vector<const char *> AllSettingKeys();
+
 // Lists saved profile names (without the .json extension), sorted.
 std::vector<std::string> List(PluginContext &ctx);
 

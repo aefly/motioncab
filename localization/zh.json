@@ -1,0 +1,381 @@
+{
+  "language": {
+    "en": "英语    [English]",
+    "uk": "乌克兰语    [Українська]",
+    "de": "德语    [Deutsch]",
+    "fr": "法语    [Français]",
+    "es": "西班牙语    [Español]",
+    "pl": "波兰语    [Polski]",
+    "ru": "俄语    [Русский]",
+    "pt_br": "巴西葡萄牙语    [Português (Brasil)]",
+    "it": "意大利语    [Italiano]",
+    "nl": "荷兰语    [Nederlands]",
+    "tr": "土耳其语    [Türkçe]",
+    "cs": "捷克语    [Čeština]",
+    "zh": "中文（简体）",
+    "ja": "日语    [日本語]",
+    "ko": "韩语    [한국어]"
+  },
+  "plugin": {
+    "description": "适用于 ETS2 和 ATS 的动态头部运动"
+  },
+  "window": {
+    "title": "MotionCab 快速设置",
+    "desc": "快速访问每个效果的设置，可替代“自定义设置”选项卡。"
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "显示/隐藏设置窗口",
+      "desc": "显示或隐藏 MotionCab 快速设置窗口。"
+    },
+    "look_left": {
+      "title": "向左看",
+      "desc": "平滑地看向左侧车窗/后视镜。"
+    },
+    "look_right": {
+      "title": "向右看",
+      "desc": "平滑地看向右侧车窗/后视镜。"
+    },
+    "zoom": {
+      "title": "缩放",
+      "desc": "按住可平滑放大；松开后逐渐恢复正常视角。"
+    }
+  },
+  "settings": {
+    "enabled_desc": "开启或关闭此效果。",
+    "driving": {
+      "title": "驾驶",
+      "desc": "头部和镜头对卡车移动与转向的反应。",
+      "head_motion": {
+        "title": "头部运动",
+        "desc": "动态头部运动效果的设置。",
+        "enabled": {
+          "title": "启用头部运动"
+        },
+        "sway_strength": {
+          "title": "摆动强度",
+          "desc": "加速、刹车或转弯时头部被推动的幅度。"
+        },
+        "tilt_strength": {
+          "title": "倾斜强度",
+          "desc": "驾驶室倾斜或晃动时头部倾斜的幅度。"
+        },
+        "smoothing_time": {
+          "title": "平滑",
+          "desc": "头部回到原位的速度。越高 = 越慢越平滑，越低 = 越灵敏。"
+        }
+      },
+      "body_dynamics": {
+        "title": "身体动态",
+        "desc": "转弯时头部向弯道外侧倾斜，刹车时向前点头，就像驾驶员的身体对卡车运动做出反应。",
+        "enabled": {
+          "title": "启用身体动态"
+        },
+        "lean_strength": {
+          "title": "侧倾强度",
+          "desc": "转弯时头部向外侧倾斜的幅度。"
+        },
+        "nod_strength": {
+          "title": "点头强度",
+          "desc": "刹车时头部前倾、加速时后仰的幅度。"
+        },
+        "smoothing_time": {
+          "title": "平滑",
+          "desc": "侧倾和点头恢复平稳的速度。越低 = 越灵敏。"
+        }
+      },
+      "steering_camera": {
+        "title": "转向镜头",
+        "desc": "跟随方向盘的平滑镜头旋转。",
+        "enabled": {
+          "title": "启用转向镜头"
+        },
+        "rotation_factor_deg": {
+          "title": "旋转幅度",
+          "desc": "方向盘打满时镜头转动的角度。"
+        },
+        "smoothing_time": {
+          "title": "平滑",
+          "desc": "镜头开始转动后的平滑程度。越高 = 越平滑越慢。"
+        },
+        "delay_seconds": {
+          "title": "反应延迟",
+          "desc": "转动方向盘后镜头开始移动前的等待时间。"
+        }
+      }
+    },
+    "road": {
+      "title": "道路",
+      "desc": "由路面、悬挂和速度引起的效果。",
+      "suspension": {
+        "title": "悬挂",
+        "desc": "镜头在垂直方向上跟随路面，就像坐在卡车悬挂上的座椅。",
+        "enabled": {
+          "title": "启用悬挂"
+        },
+        "vertical_strength": {
+          "title": "垂直强度",
+          "desc": "路面颠簸让头部上下弹动的幅度。"
+        },
+        "reactivity": {
+          "title": "响应速度",
+          "desc": "颠簸后头部恢复的速度。越低 = 越灵敏。"
+        },
+        "grade_strength": {
+          "title": "跟随坡度",
+          "desc": "下坡时抬起头部，上坡时压低头部。"
+        }
+      },
+      "road_irregularity": {
+        "title": "路面不平",
+        "desc": "根据车轮下的地面材质（碎石、鹅卵石、泥土或平滑沥青）产生的纹理震动，与真实的悬挂颠簸分开。泥土或草地等不平整地面还会让头部左右摇晃。",
+        "enabled": {
+          "title": "启用路面不平"
+        },
+        "intensity": {
+          "title": "强度",
+          "desc": "路面纹理震动和越野摇晃的强度。"
+        },
+        "reactivity": {
+          "title": "响应速度",
+          "desc": "路面纹理震动的尖锐与嗡鸣程度。越低 = 越尖锐。"
+        }
+      },
+      "speed_shake": {
+        "title": "速度抖动",
+        "desc": "驾驶时逼真的头部晃动，随车速增加而增强。",
+        "enabled": {
+          "title": "启用速度抖动"
+        },
+        "intensity": {
+          "title": "强度",
+          "desc": "高速行驶时感受到的抖动总体强度。"
+        },
+        "smoothing_time": {
+          "title": "平滑",
+          "desc": "抖动随时间的感觉。越高 = 越慢越平滑，越低 = 越跳跃越急促。"
+        },
+        "rotation": {
+          "title": "旋转",
+          "desc": "抖动中视角倾斜/转动的程度，而不仅是左右移动。设为 0 则只保留左右移动。"
+        },
+        "vertical": {
+          "title": "垂直",
+          "desc": "抖动中混入的上下弹动量。"
+        },
+        "roughness": {
+          "title": "不规则度",
+          "desc": "抖动随时间的不均匀程度。0 保持恒定；更高的值会交替出现平静与剧烈的片段。"
+        }
+      }
+    },
+    "cabin": {
+      "title": "驾驶室",
+      "desc": "来自驾驶室内驾驶员和发动机的效果。",
+      "idle_breathing": {
+        "title": "静止呼吸",
+        "desc": "静止时细微的呼吸动作，随速度增加逐渐消失。",
+        "enabled": {
+          "title": "启用静止呼吸"
+        },
+        "vertical_amplitude": {
+          "title": "垂直幅度",
+          "desc": "每次呼吸时镜头升降的幅度。"
+        },
+        "pitch_amplitude_deg": {
+          "title": "点头幅度",
+          "desc": "每次呼吸时头部前后倾斜的幅度。"
+        },
+        "breathing_rate_bpm": {
+          "title": "呼吸频率",
+          "desc": "呼吸的快慢。"
+        },
+        "fade_start_kmh": {
+          "title": "淡出起始速度",
+          "desc": "加速时此效果开始淡出的速度。"
+        },
+        "fade_end_kmh": {
+          "title": "淡出结束速度",
+          "desc": "此效果完全消失时的速度。"
+        }
+      },
+      "engine_vibration": {
+        "title": "发动机振动",
+        "desc": "随转速变化的细微发动机振动。电动卡车上自动禁用。",
+        "enabled": {
+          "title": "启用发动机振动"
+        },
+        "intensity": {
+          "title": "强度",
+          "desc": "发动机轰鸣的强度。"
+        }
+      },
+      "engine_start_stop": {
+        "title": "发动机启动/熄火",
+        "desc": "发动机启动或熄火时短暂的机械抖动。电动卡车上自动禁用。",
+        "enabled": {
+          "title": "启用发动机启动/熄火"
+        },
+        "intensity": {
+          "title": "强度",
+          "desc": "发动机启动或熄火时抖动的强度。"
+        },
+        "duration": {
+          "title": "持续时间",
+          "desc": "启动抖动持续的时间。熄火抖动更短、更柔和。"
+        }
+      }
+    },
+    "manual": {
+      "title": "手动",
+      "desc": "由你自己触发的观察和缩放效果。",
+      "mirror_check": {
+        "title": "查看后视镜",
+        "desc": "转向灯开启时看向对应的后视镜，关闭后回到中间。",
+        "hint": "需要在游戏中绑定原生的“左转向灯”和“右转向灯”按键。",
+        "enabled": {
+          "title": "启用查看后视镜"
+        },
+        "look_angle_deg": {
+          "title": "观察角度",
+          "desc": "查看后视镜时头部转动的角度。"
+        },
+        "pitch_offset_deg": {
+          "title": "俯仰偏移",
+          "desc": "查看后视镜时头部向下倾斜的幅度。"
+        },
+        "smoothing_time": {
+          "title": "平滑",
+          "desc": "观察与回正动作的平滑程度。"
+        },
+        "require_stationary": {
+          "title": "仅在静止时",
+          "desc": "仅在卡车停止时查看后视镜。"
+        },
+        "ignore_after_moving_signal": {
+          "title": "行驶中忽略",
+          "desc": "对于行驶中打开的转向灯，即使停车后也不查看后视镜。"
+        }
+      },
+      "manual_look": {
+        "title": "手动观察",
+        "desc": "绑定到两个按键的平滑左右观察。",
+        "hint": "这些按键独立于游戏的原生控制。",
+        "enabled": {
+          "title": "启用手动观察"
+        },
+        "look_angle_deg": {
+          "title": "观察角度",
+          "desc": "向左或向右看时头部转动的角度。"
+        },
+        "smoothing_time": {
+          "title": "平滑",
+          "desc": "观察与回正动作的平滑程度。"
+        },
+        "toggle_mode": {
+          "title": "切换模式",
+          "desc": "开启：按一次观察，再按一次回正。关闭：按住时观察，松开后回正。"
+        }
+      },
+      "manual_zoom": {
+        "title": "手动缩放",
+        "desc": "使用单个专用按键平滑缩放，类似原生缩放键：按住放大，松开后逐渐恢复正常。独立于原生缩放键，后者以固定步长改变视野且无法直接平滑。",
+        "hint": "此按键独立于游戏原生的“缩放车内视角”按键。",
+        "enabled": {
+          "title": "启用手动缩放"
+        },
+        "zoom_fov_deg": {
+          "title": "缩放级别",
+          "desc": "按住缩放键时视角放大的程度。越低 = 放大越多。"
+        },
+        "smoothing_time": {
+          "title": "平滑",
+          "desc": "放大和缩小的平滑程度。"
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "已启用",
+    "cancel": "取消",
+    "slider_reset_hint": "右键单击滑块可将其重置为默认值。",
+    "profile_badge": "配置：{name}",
+    "unsaved_changes": "（未保存的更改）",
+    "tabs": {
+      "settings": "设置",
+      "about": "关于"
+    },
+    "keybind": {
+      "section": "按键绑定",
+      "toggle_window": "切换窗口",
+      "unbound": "（未绑定）",
+      "rebind_tip": "单击以重新绑定。",
+      "options_tip": "绑定选项（按住/切换、死区等）。",
+      "add_tip": "添加另一个绑定。"
+    },
+    "profiles": {
+      "section": "配置",
+      "name_hint": "配置名称...",
+      "save_as": "另存为配置",
+      "save_as_tip": "将当前所有效果设置保存到此配置名称下。",
+      "invalid_name": "请先输入有效的配置名称。",
+      "saved_toast": "已保存配置“{name}”。",
+      "save_failed": "保存配置失败，请查看 MotionCab.log。",
+      "overwrite_title": "确认覆盖",
+      "overwrite_message": "名为“{name}”的配置已存在。要覆盖吗？",
+      "overwrite_confirm": "是，覆盖",
+      "none": "暂无已保存的配置。",
+      "select_tip": "选择配置后会立即加载。",
+      "load_failed": "加载配置“{name}”失败，请查看 MotionCab.log。",
+      "no_match": "没有与当前设置匹配的配置。请选择一个进行加载，或在上方将其另存为新配置。",
+      "save": "保存",
+      "saved": "已保存",
+      "save_tip": "用当前设置覆盖所选配置。",
+      "delete": "删除",
+      "delete_tip": "删除所选配置。",
+      "delete_title": "确认删除",
+      "delete_message": "删除配置“{name}”？此操作无法撤销。",
+      "delete_confirm": "是，删除",
+      "delete_failed": "删除配置“{name}”失败，请查看 MotionCab.log。",
+      "deleted_toast": "已删除配置“{name}”。",
+      "fallback_failed": "已删除，但加载“{name}”失败，请查看 MotionCab.log。"
+    },
+    "reset": {
+      "section": "危险区域",
+      "button": "重置所有设置",
+      "title": "确认重置",
+      "message": "将 MotionCab 的所有设置重置为默认值？",
+      "confirm": "是，全部重置",
+      "done_toast": "已将 MotionCab 的所有设置重置为默认值。"
+    },
+    "about": {
+      "details": "详情",
+      "version": "版本：**{version}**",
+      "developer": "开发者：**{author}**",
+      "links": "链接",
+      "website": "网站",
+      "website_desc": "文档",
+      "discord": "Discord",
+      "discord_desc": "社区与支持",
+      "github": "GitHub",
+      "github_desc": "版本发布与错误报告",
+      "youtube": "YouTube",
+      "youtube_desc": "视频与演示",
+      "support": "支持",
+      "support_text": "如果你喜欢 MotionCab，可以支持它的开发。",
+      "donate": "通过 PayPal 捐赠",
+      "donate_desc": "在 PayPal 上支持 MotionCab",
+      "tips": "提示",
+      "tip_reset": "右键单击任意滑块可将其恢复为默认值。",
+      "tip_profiles": "在 {settings_tab} 选项卡中将你的调校保存为配置。",
+      "tip_interior": "所有效果仅在车内视角下生效。",
+      "credits": "致谢",
+      "credits_text": "SPF Framework 及其贡献者。"
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "公里/小时",
+      "mph": "英里/小时"
+    }
+  }
+}

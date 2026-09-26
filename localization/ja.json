@@ -1,0 +1,381 @@
+{
+  "language": {
+    "en": "英語    [English]",
+    "uk": "ウクライナ語    [Українська]",
+    "de": "ドイツ語    [Deutsch]",
+    "fr": "フランス語    [Français]",
+    "es": "スペイン語    [Español]",
+    "pl": "ポーランド語    [Polski]",
+    "ru": "ロシア語    [Русский]",
+    "pt_br": "ポルトガル語（ブラジル）    [Português (Brasil)]",
+    "it": "イタリア語    [Italiano]",
+    "nl": "オランダ語    [Nederlands]",
+    "tr": "トルコ語    [Türkçe]",
+    "cs": "チェコ語    [Čeština]",
+    "zh": "中国語（簡体字）    [简体中文]",
+    "ja": "日本語",
+    "ko": "韓国語    [한국어]"
+  },
+  "plugin": {
+    "description": "ETS2・ATS 向けのダイナミックな頭の動き"
+  },
+  "window": {
+    "title": "MotionCab クイック設定",
+    "desc": "「カスタム設定」タブの代わりに、各エフェクトの設定へすばやくアクセスできます。"
+  },
+  "keybinds": {
+    "ui_toggle": {
+      "title": "設定ウィンドウの表示/非表示",
+      "desc": "MotionCab クイック設定ウィンドウを表示または非表示にします。"
+    },
+    "look_left": {
+      "title": "左を見る",
+      "desc": "左の窓/ミラーの方へなめらかに視線を向けます。"
+    },
+    "look_right": {
+      "title": "右を見る",
+      "desc": "右の窓/ミラーの方へなめらかに視線を向けます。"
+    },
+    "zoom": {
+      "title": "ズーム",
+      "desc": "押し続けるとなめらかにズームイン、離すと徐々に通常の視点に戻ります。"
+    }
+  },
+  "settings": {
+    "enabled_desc": "このエフェクトのオン/オフを切り替えます。",
+    "driving": {
+      "title": "運転",
+      "desc": "トラックの動きやハンドル操作に対する頭とカメラの反応です。",
+      "head_motion": {
+        "title": "頭の動き",
+        "desc": "ダイナミックな頭の動きエフェクトの設定です。",
+        "enabled": {
+          "title": "頭の動きを有効化"
+        },
+        "sway_strength": {
+          "title": "揺れの強さ",
+          "desc": "加速、ブレーキ、カーブのときに頭がどれだけ押されるか。"
+        },
+        "tilt_strength": {
+          "title": "傾きの強さ",
+          "desc": "キャビンが傾いたり揺れたりしたときに頭がどれだけ傾くか。"
+        },
+        "smoothing_time": {
+          "title": "スムージング",
+          "desc": "頭が元の位置に落ち着く速さ。高い = ゆっくりなめらか、低い = 機敏。"
+        }
+      },
+      "body_dynamics": {
+        "title": "体の動き",
+        "desc": "トラックの動きに反応するドライバーの体のように、カーブでは頭が外側に傾き、ブレーキでは前にうなずきます。",
+        "enabled": {
+          "title": "体の動きを有効化"
+        },
+        "lean_strength": {
+          "title": "傾きの強さ",
+          "desc": "カーブで頭が外側にどれだけ傾くか。"
+        },
+        "nod_strength": {
+          "title": "うなずきの強さ",
+          "desc": "ブレーキ時に頭がどれだけ前に沈み、加速時にどれだけ後ろに下がるか。"
+        },
+        "smoothing_time": {
+          "title": "スムージング",
+          "desc": "傾きとうなずきが落ち着く速さ。低い = 機敏。"
+        }
+      },
+      "steering_camera": {
+        "title": "ステアリングカメラ",
+        "desc": "ハンドルに合わせてなめらかに回転するカメラ。",
+        "enabled": {
+          "title": "ステアリングカメラを有効化"
+        },
+        "rotation_factor_deg": {
+          "title": "回転量",
+          "desc": "ハンドルをいっぱいに切ったときにカメラがどれだけ回るか。"
+        },
+        "smoothing_time": {
+          "title": "スムージング",
+          "desc": "カメラが回り始めてからの動きのなめらかさ。高い = なめらかでゆっくり。"
+        },
+        "delay_seconds": {
+          "title": "反応の遅れ",
+          "desc": "ハンドルを切ってからカメラが動き始めるまでの待ち時間。"
+        }
+      }
+    },
+    "road": {
+      "title": "路面",
+      "desc": "路面、サスペンション、速度によるエフェクトです。",
+      "suspension": {
+        "title": "サスペンション",
+        "desc": "トラックのサスペンションに乗ったシートのように、カメラが路面を上下に追従します。",
+        "enabled": {
+          "title": "サスペンションを有効化"
+        },
+        "vertical_strength": {
+          "title": "上下の強さ",
+          "desc": "路面の凹凸で頭がどれだけ上下に跳ねるか。"
+        },
+        "reactivity": {
+          "title": "反応速度",
+          "desc": "段差の後に頭が戻る速さ。低い = 機敏。"
+        },
+        "grade_strength": {
+          "title": "勾配への追従",
+          "desc": "下り坂では頭を上げ、上り坂では頭を下げます。"
+        }
+      },
+      "road_irregularity": {
+        "title": "路面の凹凸",
+        "desc": "タイヤの下の地面の材質（砂利、石畳、土、なめらかなアスファルト）に応じた細かな振動で、実際のサスペンションの衝撃とは別です。土や草地のような凹凸のある地面では、頭が左右にも揺れます。",
+        "enabled": {
+          "title": "路面の凹凸を有効化"
+        },
+        "intensity": {
+          "title": "強さ",
+          "desc": "路面の振動とオフロードでの揺れの強さ。"
+        },
+        "reactivity": {
+          "title": "反応速度",
+          "desc": "路面の振動の鋭さと細かさ。低い = 鋭い。"
+        }
+      },
+      "speed_shake": {
+        "title": "速度による揺れ",
+        "desc": "走行中のリアルな頭の揺れで、トラックの速度に応じて大きくなります。",
+        "enabled": {
+          "title": "速度による揺れを有効化"
+        },
+        "intensity": {
+          "title": "強さ",
+          "desc": "高速走行時に感じる揺れ全体の強さ。"
+        },
+        "smoothing_time": {
+          "title": "スムージング",
+          "desc": "時間経過による揺れの感じ方。高い = ゆっくりなめらか、低い = ぎくしゃくして落ち着きがない。"
+        },
+        "rotation": {
+          "title": "回転",
+          "desc": "揺れの中で、左右に動くだけでなく視点がどれだけ傾いたり回ったりするか。0 にすると左右の動きだけになります。"
+        },
+        "vertical": {
+          "title": "上下",
+          "desc": "揺れに加える上下の跳ねの量。"
+        },
+        "roughness": {
+          "title": "不規則さ",
+          "desc": "時間経過による揺れのむら。0 で一定、高くすると穏やかな区間と荒い区間が交互に現れます。"
+        }
+      }
+    },
+    "cabin": {
+      "title": "キャビン",
+      "desc": "キャビン内のドライバーとエンジンによるエフェクトです。",
+      "idle_breathing": {
+        "title": "停車中の呼吸",
+        "desc": "停車中のさりげない呼吸の動きで、速度が上がるとフェードアウトします。",
+        "enabled": {
+          "title": "停車中の呼吸を有効化"
+        },
+        "vertical_amplitude": {
+          "title": "上下の振れ幅",
+          "desc": "呼吸ごとにカメラが上下する量。"
+        },
+        "pitch_amplitude_deg": {
+          "title": "うなずきの振れ幅",
+          "desc": "呼吸ごとに頭が前後に傾く量。"
+        },
+        "breathing_rate_bpm": {
+          "title": "呼吸の速さ",
+          "desc": "呼吸の速さです。"
+        },
+        "fade_start_kmh": {
+          "title": "フェード開始速度",
+          "desc": "加速したときにこのエフェクトが消え始める速度。"
+        },
+        "fade_end_kmh": {
+          "title": "フェード終了速度",
+          "desc": "このエフェクトが完全に消える速度。"
+        }
+      },
+      "engine_vibration": {
+        "title": "エンジンの振動",
+        "desc": "回転数に応じた細かなエンジンの振動。電動トラックでは自動的に無効になります。",
+        "enabled": {
+          "title": "エンジンの振動を有効化"
+        },
+        "intensity": {
+          "title": "強さ",
+          "desc": "エンジンの唸りの強さ。"
+        }
+      },
+      "engine_start_stop": {
+        "title": "エンジン始動/停止",
+        "desc": "エンジンがかかったり止まったりするときの短い機械的な揺れ。電動トラックでは自動的に無効になります。",
+        "enabled": {
+          "title": "エンジン始動/停止を有効化"
+        },
+        "intensity": {
+          "title": "強さ",
+          "desc": "エンジンの始動・停止時の揺れの強さ。"
+        },
+        "duration": {
+          "title": "長さ",
+          "desc": "始動時の揺れが続く時間。停止時の揺れはこれより短く穏やかです。"
+        }
+      }
+    },
+    "manual": {
+      "title": "手動",
+      "desc": "自分で操作する視線とズームのエフェクトです。",
+      "mirror_check": {
+        "title": "ミラー確認",
+        "desc": "ウインカーが点いている間は対応するミラーを見て、消えると正面に戻ります。",
+        "hint": "ゲーム本来の「左ウインカー」と「右ウインカー」のキーが割り当てられている必要があります。",
+        "enabled": {
+          "title": "ミラー確認を有効化"
+        },
+        "look_angle_deg": {
+          "title": "視線の角度",
+          "desc": "ミラーを確認するときに頭が回る量。"
+        },
+        "pitch_offset_deg": {
+          "title": "下向きの角度",
+          "desc": "ミラーを確認するときに頭が下を向く量。"
+        },
+        "smoothing_time": {
+          "title": "スムージング",
+          "desc": "見る・戻る動きのなめらかさ。"
+        },
+        "require_stationary": {
+          "title": "停車中のみ",
+          "desc": "トラックが停止しているときだけミラーを確認します。"
+        },
+        "ignore_after_moving_signal": {
+          "title": "走行中は無視",
+          "desc": "走行中に出したウインカーでは、停車した後でもミラーを確認しません。"
+        }
+      },
+      "manual_look": {
+        "title": "手動の視線",
+        "desc": "2 つのキーに割り当てた、なめらかな左右の視線移動。",
+        "hint": "これらのキーはゲーム本来の操作とは別です。",
+        "enabled": {
+          "title": "手動の視線を有効化"
+        },
+        "look_angle_deg": {
+          "title": "視線の角度",
+          "desc": "左右を見るときに頭が回る量。"
+        },
+        "smoothing_time": {
+          "title": "スムージング",
+          "desc": "見る・戻る動きのなめらかさ。"
+        },
+        "toggle_mode": {
+          "title": "トグルモード",
+          "desc": "オン：1 回押すと見て、もう一度押すと戻ります。オフ：押している間だけ見て、離すと戻ります。"
+        }
+      },
+      "manual_zoom": {
+        "title": "手動ズーム",
+        "desc": "ゲーム本来のズームキーのように、専用キー 1 つでなめらかにズーム：押し続けるとズームイン、離すと徐々に通常に戻ります。視野を固定の段階で切り替えるため直接なめらかにできない、ゲーム本来のズームキーとは独立しています。",
+        "hint": "このキーはゲーム本来の「車内カメラのズーム」キーとは別です。",
+        "enabled": {
+          "title": "手動ズームを有効化"
+        },
+        "zoom_fov_deg": {
+          "title": "ズームレベル",
+          "desc": "ズームキーを押している間にどれだけ拡大するか。低い = より拡大。"
+        },
+        "smoothing_time": {
+          "title": "スムージング",
+          "desc": "ズームイン/アウトのなめらかさ。"
+        }
+      }
+    }
+  },
+  "ui": {
+    "enabled": "有効",
+    "cancel": "キャンセル",
+    "slider_reset_hint": "スライダーを右クリックするとデフォルトに戻ります。",
+    "profile_badge": "プロファイル：{name}",
+    "unsaved_changes": "（未保存の変更）",
+    "tabs": {
+      "settings": "設定",
+      "about": "情報"
+    },
+    "keybind": {
+      "section": "キー割り当て",
+      "toggle_window": "ウィンドウ切替",
+      "unbound": "（未割り当て）",
+      "rebind_tip": "クリックして割り当て直します。",
+      "options_tip": "割り当てのオプション（長押し/トグル、デッドゾーンなど）。",
+      "add_tip": "別の割り当てを追加します。"
+    },
+    "profiles": {
+      "section": "プロファイル",
+      "name_hint": "プロファイル名...",
+      "save_as": "プロファイルとして保存",
+      "save_as_tip": "現在のすべてのエフェクト設定をこのプロファイル名で保存します。",
+      "invalid_name": "まず有効なプロファイル名を入力してください。",
+      "saved_toast": "プロファイル「{name}」を保存しました。",
+      "save_failed": "プロファイルを保存できませんでした。MotionCab.log を確認してください。",
+      "overwrite_title": "上書きの確認",
+      "overwrite_message": "「{name}」という名前のプロファイルはすでに存在します。上書きしますか？",
+      "overwrite_confirm": "はい、上書きする",
+      "none": "保存されたプロファイルはまだありません。",
+      "select_tip": "プロファイルを選択するとすぐに読み込まれます。",
+      "load_failed": "プロファイル「{name}」を読み込めませんでした。MotionCab.log を確認してください。",
+      "no_match": "現在の設定に一致するプロファイルはありません。読み込むものを選ぶか、上で新しいプロファイルとして保存してください。",
+      "save": "保存",
+      "saved": "保存しました",
+      "save_tip": "選択中のプロファイルを現在の設定で上書きします。",
+      "delete": "削除",
+      "delete_tip": "選択中のプロファイルを削除します。",
+      "delete_title": "削除の確認",
+      "delete_message": "プロファイル「{name}」を削除しますか？ この操作は元に戻せません。",
+      "delete_confirm": "はい、削除する",
+      "delete_failed": "プロファイル「{name}」を削除できませんでした。MotionCab.log を確認してください。",
+      "deleted_toast": "プロファイル「{name}」を削除しました。",
+      "fallback_failed": "削除しましたが、「{name}」を読み込めませんでした。MotionCab.log を確認してください。"
+    },
+    "reset": {
+      "section": "危険な操作",
+      "button": "すべての設定をリセット",
+      "title": "リセットの確認",
+      "message": "MotionCab のすべての設定をデフォルト値に戻しますか？",
+      "confirm": "はい、すべてリセット",
+      "done_toast": "MotionCab のすべての設定をデフォルト値に戻しました。"
+    },
+    "about": {
+      "details": "詳細",
+      "version": "バージョン：**{version}**",
+      "developer": "開発者：**{author}**",
+      "links": "リンク",
+      "website": "ウェブサイト",
+      "website_desc": "ドキュメント",
+      "discord": "Discord",
+      "discord_desc": "コミュニティとサポート",
+      "github": "GitHub",
+      "github_desc": "リリースとバグ報告",
+      "youtube": "YouTube",
+      "youtube_desc": "動画と紹介",
+      "support": "支援",
+      "support_text": "MotionCab を気に入っていただけたら、開発を支援できます。",
+      "donate": "PayPal で寄付",
+      "donate_desc": "PayPal で MotionCab を支援",
+      "tips": "ヒント",
+      "tip_reset": "スライダーを右クリックするとデフォルト値に戻ります。",
+      "tip_profiles": "{settings_tab} タブで設定をプロファイルとして保存できます。",
+      "tip_interior": "すべてのエフェクトは車内カメラでのみ動作します。",
+      "credits": "クレジット",
+      "credits_text": "SPF Framework と貢献者の皆さま。"
+    },
+    "units": {
+      "speed_system": "metric",
+      "kmh": "km/h",
+      "mph": "mph"
+    }
+  }
+}

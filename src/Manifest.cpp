@@ -2,7 +2,7 @@
 
 #include "Links.hpp"
 #include "PluginContext.hpp"
-#include "ui/SettingsText.hpp"
+#include "ui/SettingsDefaults.hpp"
 
 namespace motioncab {
 
@@ -13,7 +13,7 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
   api->Info_SetName(h, PluginContext::kPluginName);
   api->Info_SetVersion(h, PLUGIN_VERSION);
   api->Info_SetAuthor(h, PLUGIN_AUTHOR);
-  api->Info_SetDescriptionLiteral(h, PLUGIN_DESCRIPTION);
+  api->Info_SetDescriptionKey(h, "plugin.description");
   api->Info_SetMinFrameworkVersion(h, "1.2.4");
   api->Info_SetWebsiteUrl(h, links::kWebsite);
   api->Info_SetGithubUrl(h, links::kGithub);
@@ -25,6 +25,7 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
   api->Policy_AddConfigurableSystem(h, "settings");
   api->Policy_AddConfigurableSystem(h, "logging");
   api->Policy_AddConfigurableSystem(h, "ui");
+  api->Policy_AddConfigurableSystem(h, "localization");
 
   // --- Default Settings ---
   const char *defaults = R"json({
@@ -117,6 +118,7 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
   // Enabling/disabling effects is handled entirely through their "enabled"
   // checkbox in the settings UI.
   api->Defaults_SetLogging(h, "info", true);
+  api->Defaults_SetLocalization(h, "en");
   api->Defaults_AddKeybind(h, "ManualLook", "look_left", "keyboard",
                            "KEY_DIVIDE", "always");
   api->Defaults_AddKeybind(h, "ManualLook", "look_right", "keyboard",
@@ -125,282 +127,306 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
                            "always");
   api->Defaults_AddKeybind(h, "UI", "toggle", "keyboard", "KEY_F9", "always");
   // isVisible=true here only decides the very first launch ever
-  api->Defaults_AddWindow(h, "MotionCab", true, true, 100, 100, 476, 640, false,
-                          true);
+  api->Defaults_AddWindow(h, "MotionCab", true, true, 100, 100,
+                          defaults::kWindowWidth, defaults::kWindowHeight,
+                          false, true);
 
   // --- UI Metadata ---
-  api->Meta_AddWindow(h, "MotionCab", "MotionCab Quick Settings",
-                      "Quick access to every effect's settings, as an "
-                      "alternative to the Custom Settings tab.");
-  api->Meta_AddKeybind(h, "UI", "toggle", "Toggle Settings Window",
-                       "Shows or hides the MotionCab Quick Settings window.");
+  // Titles and descriptions are keys into localization/<lang>.json. A
+  // setting's keys are its own path under "settings." plus ".title" /
+  // ".desc", the scheme SettingsWindow.cpp relies on to find the same
+  // strings. Every effect's "enabled" toggle shares one description.
+  api->Meta_AddWindow(h, "MotionCab", "window.title", "window.desc");
+  api->Meta_AddKeybind(h, "UI", "toggle", "keybinds.ui_toggle.title",
+                       "keybinds.ui_toggle.desc");
+
+  api->Meta_AddCustomSetting(h, "driving", "settings.driving.title",
+                             "settings.driving.desc", nullptr, nullptr, false);
+
   api->Meta_AddCustomSetting(
-      h, "driving", "Driving",
-      "Head and camera reactions to how the truck moves and steers.", nullptr,
-      nullptr, false);
-  api->Meta_AddCustomSetting(h, "driving.head_motion", "Head Motion",
-                             "Dynamic head-motion effect settings.", nullptr,
-                             nullptr, false);
+      h, "driving.head_motion", "settings.driving.head_motion.title",
+      "settings.driving.head_motion.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "driving.head_motion.enabled",
-                             "Enable Head Motion", tip::kEnabled, nullptr,
-                             nullptr, false);
+                             "settings.driving.head_motion.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "driving.head_motion.sway_strength", "Sway Strength",
-      tip::kHeadMotionSwayStrength, "slider",
+      h, "driving.head_motion.sway_strength",
+      "settings.driving.head_motion.sway_strength.title",
+      "settings.driving.head_motion.sway_strength.desc", "slider",
       R"({ "min": 0.0, "max": 0.6, "format": "%.2f" })", false);
   api->Meta_AddCustomSetting(
-      h, "driving.head_motion.tilt_strength", "Tilt Strength",
-      tip::kHeadMotionTiltStrength, "slider",
+      h, "driving.head_motion.tilt_strength",
+      "settings.driving.head_motion.tilt_strength.title",
+      "settings.driving.head_motion.tilt_strength.desc", "slider",
       R"({ "min": 0.0, "max": 0.6, "format": "%.2f" })", false);
   api->Meta_AddCustomSetting(
-      h, "driving.head_motion.smoothing_time", "Smoothing",
-      tip::kHeadMotionSmoothing, "slider",
+      h, "driving.head_motion.smoothing_time",
+      "settings.driving.head_motion.smoothing_time.title",
+      "settings.driving.head_motion.smoothing_time.desc", "slider",
       R"({ "min": 0.02, "max": 0.5, "format": "%.2f s" })", false);
 
   api->Meta_AddCustomSetting(
-      h, "driving.steering_camera", "Steering Camera",
-      "Smoothed camera rotation following the steering wheel.", nullptr,
-      nullptr, false);
+      h, "driving.steering_camera", "settings.driving.steering_camera.title",
+      "settings.driving.steering_camera.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "driving.steering_camera.enabled",
-                             "Enable Steering Camera", tip::kEnabled, nullptr,
-                             nullptr, false);
+                             "settings.driving.steering_camera.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "driving.steering_camera.rotation_factor_deg", "Rotation Amount",
-      tip::kSteeringCameraRotationAmount, "slider",
+      h, "driving.steering_camera.rotation_factor_deg",
+      "settings.driving.steering_camera.rotation_factor_deg.title",
+      "settings.driving.steering_camera.rotation_factor_deg.desc", "slider",
       R"({ "min": 20.0, "max": 60.0, "format": "%.1f deg" })", false);
   api->Meta_AddCustomSetting(
-      h, "driving.steering_camera.smoothing_time", "Smoothing",
-      tip::kSteeringCameraSmoothing, "slider",
+      h, "driving.steering_camera.smoothing_time",
+      "settings.driving.steering_camera.smoothing_time.title",
+      "settings.driving.steering_camera.smoothing_time.desc", "slider",
       R"({ "min": 0.02, "max": 1.0, "format": "%.2f s" })", false);
   api->Meta_AddCustomSetting(
-      h, "driving.steering_camera.delay_seconds", "Reaction Delay",
-      tip::kSteeringCameraReactionDelay, "slider",
+      h, "driving.steering_camera.delay_seconds",
+      "settings.driving.steering_camera.delay_seconds.title",
+      "settings.driving.steering_camera.delay_seconds.desc", "slider",
       R"({ "min": 0.0, "max": 0.3, "format": "%.2f s" })", false);
 
+  api->Meta_AddCustomSetting(h, "cabin", "settings.cabin.title",
+                             "settings.cabin.desc", nullptr, nullptr, false);
+
   api->Meta_AddCustomSetting(
-      h, "cabin", "Cabin",
-      "Effects from the driver and the engine inside the cabin.", nullptr,
-      nullptr, false);
-  api->Meta_AddCustomSetting(
-      h, "cabin.idle_breathing", "Idle Breathing",
-      "Subtle idle breathing motion that fades out as speed increases.",
-      nullptr, nullptr, false);
+      h, "cabin.idle_breathing", "settings.cabin.idle_breathing.title",
+      "settings.cabin.idle_breathing.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "cabin.idle_breathing.enabled",
-                             "Enable Idle Breathing", tip::kEnabled, nullptr,
-                             nullptr, false);
+                             "settings.cabin.idle_breathing.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "cabin.idle_breathing.vertical_amplitude", "Vertical Amount",
-      tip::kIdleBreathingVerticalAmount, "slider",
+      h, "cabin.idle_breathing.vertical_amplitude",
+      "settings.cabin.idle_breathing.vertical_amplitude.title",
+      "settings.cabin.idle_breathing.vertical_amplitude.desc", "slider",
       R"({ "min": 0.0, "max": 0.01, "format": "%.3f m" })", false);
   api->Meta_AddCustomSetting(
-      h, "cabin.idle_breathing.pitch_amplitude_deg", "Head Nod Amount",
-      tip::kIdleBreathingHeadNodAmount, "slider",
+      h, "cabin.idle_breathing.pitch_amplitude_deg",
+      "settings.cabin.idle_breathing.pitch_amplitude_deg.title",
+      "settings.cabin.idle_breathing.pitch_amplitude_deg.desc", "slider",
       R"({ "min": 0.0, "max": 1.5, "format": "%.2f deg" })", false);
   api->Meta_AddCustomSetting(
-      h, "cabin.idle_breathing.breathing_rate_bpm", "Breathing Rate",
-      tip::kIdleBreathingRate, "slider",
+      h, "cabin.idle_breathing.breathing_rate_bpm",
+      "settings.cabin.idle_breathing.breathing_rate_bpm.title",
+      "settings.cabin.idle_breathing.breathing_rate_bpm.desc", "slider",
       R"({ "min": 10.0, "max": 20.0, "format": "%.0f bpm" })", false);
   api->Meta_AddCustomSetting(
-      h, "cabin.idle_breathing.fade_start_kmh", "Fade Start Speed",
-      tip::kIdleBreathingFadeStart, "slider",
+      h, "cabin.idle_breathing.fade_start_kmh",
+      "settings.cabin.idle_breathing.fade_start_kmh.title",
+      "settings.cabin.idle_breathing.fade_start_kmh.desc", "slider",
       R"({ "min": 0.0, "max": 100.0, "format": "%.0f km/h" })", false);
   api->Meta_AddCustomSetting(
-      h, "cabin.idle_breathing.fade_end_kmh", "Fade End Speed",
-      tip::kIdleBreathingFadeEnd, "slider",
+      h, "cabin.idle_breathing.fade_end_kmh",
+      "settings.cabin.idle_breathing.fade_end_kmh.title",
+      "settings.cabin.idle_breathing.fade_end_kmh.desc", "slider",
       R"({ "min": 0.0, "max": 100.0, "format": "%.0f km/h" })", false);
 
+  api->Meta_AddCustomSetting(h, "road", "settings.road.title",
+                             "settings.road.desc", nullptr, nullptr, false);
+
   api->Meta_AddCustomSetting(
-      h, "road", "Road",
-      "Effects driven by the road surface, suspension and speed.", nullptr,
-      nullptr, false);
-  api->Meta_AddCustomSetting(h, "road.suspension", "Suspension",
-                             "Camera follows the road surface vertically, like "
-                             "a seat riding the truck's suspension.",
-                             nullptr, nullptr, false);
-  api->Meta_AddCustomSetting(h, "road.suspension.enabled", "Enable Suspension",
-                             tip::kEnabled, nullptr, nullptr, false);
+      h, "road.suspension", "settings.road.suspension.title",
+      "settings.road.suspension.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "road.suspension.vertical_strength", "Vertical Strength",
-      tip::kSuspensionVerticalStrength, "slider",
+      h, "road.suspension.enabled", "settings.road.suspension.enabled.title",
+      "settings.enabled_desc", nullptr, nullptr, false);
+  api->Meta_AddCustomSetting(
+      h, "road.suspension.vertical_strength",
+      "settings.road.suspension.vertical_strength.title",
+      "settings.road.suspension.vertical_strength.desc", "slider",
       R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
   api->Meta_AddCustomSetting(
-      h, "road.suspension.reactivity", "Reactivity", tip::kSuspensionReactivity,
-      "slider", R"({ "min": 0.02, "max": 0.3, "format": "%.2f s" })", false);
+      h, "road.suspension.reactivity",
+      "settings.road.suspension.reactivity.title",
+      "settings.road.suspension.reactivity.desc", "slider",
+      R"({ "min": 0.02, "max": 0.3, "format": "%.2f s" })", false);
   api->Meta_AddCustomSetting(
-      h, "road.suspension.grade_strength", "Grade Follow",
-      tip::kSuspensionGradeStrength, "slider",
+      h, "road.suspension.grade_strength",
+      "settings.road.suspension.grade_strength.title",
+      "settings.road.suspension.grade_strength.desc", "slider",
       R"({ "min": 0.0, "max": 1.0, "format": "%.2f" })", false);
 
-  api->Meta_AddCustomSetting(h, "cabin.engine_vibration", "Engine Vibration",
-                             "Fine engine vibration scaled by RPM. "
-                             "Automatically disabled on electric trucks.",
-                             nullptr, nullptr, false);
+  api->Meta_AddCustomSetting(
+      h, "cabin.engine_vibration", "settings.cabin.engine_vibration.title",
+      "settings.cabin.engine_vibration.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "cabin.engine_vibration.enabled",
-                             "Enable Engine Vibration", tip::kEnabled, nullptr,
-                             nullptr, false);
-  api->Meta_AddCustomSetting(h, "cabin.engine_vibration.intensity", "Intensity",
-                             tip::kEngineVibrationIntensity, "slider",
-                             R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })",
-                             false);
+                             "settings.cabin.engine_vibration.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
+  api->Meta_AddCustomSetting(
+      h, "cabin.engine_vibration.intensity",
+      "settings.cabin.engine_vibration.intensity.title",
+      "settings.cabin.engine_vibration.intensity.desc", "slider",
+      R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
 
-  api->Meta_AddCustomSetting(h, "manual", "Manual",
-                             "Look and zoom effects you trigger yourself.",
-                             nullptr, nullptr, false);
+  api->Meta_AddCustomSetting(h, "manual", "settings.manual.title",
+                             "settings.manual.desc", nullptr, nullptr, false);
+
   api->Meta_AddCustomSetting(
-      h, "manual.mirror_check", "Mirror Check",
-      "Looks toward the corresponding mirror while a turn signal is on, and "
-      "recenters when it's off.",
-      nullptr, nullptr, false);
+      h, "manual.mirror_check", "settings.manual.mirror_check.title",
+      "settings.manual.mirror_check.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "manual.mirror_check.enabled",
-                             "Enable Mirror Check", tip::kEnabled, nullptr,
-                             nullptr, false);
+                             "settings.manual.mirror_check.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "manual.mirror_check.look_angle_deg", "Look Angle",
-      tip::kMirrorCheckLookAngle, "slider",
+      h, "manual.mirror_check.look_angle_deg",
+      "settings.manual.mirror_check.look_angle_deg.title",
+      "settings.manual.mirror_check.look_angle_deg.desc", "slider",
       R"({ "min": 15.0, "max": 50.0, "format": "%.0f deg" })", false);
   api->Meta_AddCustomSetting(
-      h, "manual.mirror_check.pitch_offset_deg", "Pitch Offset",
-      tip::kMirrorCheckPitchOffset, "slider",
+      h, "manual.mirror_check.pitch_offset_deg",
+      "settings.manual.mirror_check.pitch_offset_deg.title",
+      "settings.manual.mirror_check.pitch_offset_deg.desc", "slider",
       R"({ "min": 0.0, "max": 10.0, "format": "%.0f deg" })", false);
   api->Meta_AddCustomSetting(
-      h, "manual.mirror_check.smoothing_time", "Smoothing",
-      tip::kMirrorCheckSmoothing, "slider",
+      h, "manual.mirror_check.smoothing_time",
+      "settings.manual.mirror_check.smoothing_time.title",
+      "settings.manual.mirror_check.smoothing_time.desc", "slider",
       R"({ "min": 0.0, "max": 0.7, "format": "%.2f s" })", false);
   api->Meta_AddCustomSetting(
-      h, "manual.mirror_check.require_stationary", "Only When Stationary",
-      tip::kMirrorCheckRequireStationary, nullptr, nullptr, false);
+      h, "manual.mirror_check.require_stationary",
+      "settings.manual.mirror_check.require_stationary.title",
+      "settings.manual.mirror_check.require_stationary.desc", nullptr, nullptr,
+      false);
   api->Meta_AddCustomSetting(
       h, "manual.mirror_check.ignore_after_moving_signal",
-      "Ignore While Moving", tip::kMirrorCheckIgnoreAfterMovingSignal, nullptr,
+      "settings.manual.mirror_check.ignore_after_moving_signal.title",
+      "settings.manual.mirror_check.ignore_after_moving_signal.desc", nullptr,
       nullptr, false);
 
   api->Meta_AddCustomSetting(
-      h, "manual.manual_look", "Manual Look",
-      "Smooth manual look-left/look-right glances bound to two keys.", nullptr,
-      nullptr, false);
+      h, "manual.manual_look", "settings.manual.manual_look.title",
+      "settings.manual.manual_look.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "manual.manual_look.enabled",
-                             "Enable Manual Look", tip::kEnabled, nullptr,
-                             nullptr, false);
+                             "settings.manual.manual_look.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "manual.manual_look.look_angle_deg", "Look Angle",
-      tip::kManualLookLookAngle, "slider",
+      h, "manual.manual_look.look_angle_deg",
+      "settings.manual.manual_look.look_angle_deg.title",
+      "settings.manual.manual_look.look_angle_deg.desc", "slider",
       R"({ "min": 20.0, "max": 90.0, "format": "%.0f deg" })", false);
   api->Meta_AddCustomSetting(
-      h, "manual.manual_look.smoothing_time", "Smoothing",
-      tip::kManualLookSmoothing, "slider",
+      h, "manual.manual_look.smoothing_time",
+      "settings.manual.manual_look.smoothing_time.title",
+      "settings.manual.manual_look.smoothing_time.desc", "slider",
       R"({ "min": 0.0, "max": 0.7, "format": "%.2f s" })", false);
-  api->Meta_AddCustomSetting(h, "manual.manual_look.toggle_mode", "Toggle Mode",
-                             tip::kManualLookToggleMode, nullptr, nullptr,
-                             false);
+  api->Meta_AddCustomSetting(
+      h, "manual.manual_look.toggle_mode",
+      "settings.manual.manual_look.toggle_mode.title",
+      "settings.manual.manual_look.toggle_mode.desc", nullptr, nullptr, false);
 
-  api->Meta_AddKeybind(h, "ManualLook", "look_left", "Look Left",
-                       "Smoothly looks toward the left window/mirror.");
-  api->Meta_AddKeybind(h, "ManualLook", "look_right", "Look Right",
-                       "Smoothly looks toward the right window/mirror.");
+  api->Meta_AddKeybind(h, "ManualLook", "look_left", "keybinds.look_left.title",
+                       "keybinds.look_left.desc");
+  api->Meta_AddKeybind(h, "ManualLook", "look_right",
+                       "keybinds.look_right.title", "keybinds.look_right.desc");
 
   api->Meta_AddCustomSetting(
-      h, "road.road_irregularity", "Road Irregularity",
-      "Textured chatter based on the ground material under the wheels "
-      "(gravel, cobblestone, dirt vs. smooth asphalt), separate from real "
-      "suspension bumps. Uneven ground like dirt or grass also rocks your "
-      "head from side to side.",
-      nullptr, nullptr, false);
+      h, "road.road_irregularity", "settings.road.road_irregularity.title",
+      "settings.road.road_irregularity.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "road.road_irregularity.enabled",
-                             "Enable Road Irregularity", tip::kEnabled, nullptr,
-                             nullptr, false);
-  api->Meta_AddCustomSetting(h, "road.road_irregularity.intensity", "Intensity",
-                             tip::kRoadIrregularityIntensity, "slider",
-                             R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })",
-                             false);
+                             "settings.road.road_irregularity.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "road.road_irregularity.reactivity", "Reactivity",
-      tip::kRoadIrregularityReactivity, "slider",
+      h, "road.road_irregularity.intensity",
+      "settings.road.road_irregularity.intensity.title",
+      "settings.road.road_irregularity.intensity.desc", "slider",
+      R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
+  api->Meta_AddCustomSetting(
+      h, "road.road_irregularity.reactivity",
+      "settings.road.road_irregularity.reactivity.title",
+      "settings.road.road_irregularity.reactivity.desc", "slider",
       R"({ "min": 0.02, "max": 0.2, "format": "%.2f s" })", false);
 
   api->Meta_AddCustomSetting(
-      h, "road.speed_shake", "Speed Shake",
-      "Realistic head sway while driving, growing with truck speed.", nullptr,
-      nullptr, false);
-  api->Meta_AddCustomSetting(h, "road.speed_shake.enabled",
-                             "Enable Speed Shake", tip::kEnabled, nullptr,
-                             nullptr, false);
+      h, "road.speed_shake", "settings.road.speed_shake.title",
+      "settings.road.speed_shake.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "road.speed_shake.intensity", "Intensity", tip::kSpeedShakeIntensity,
-      "slider", R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
+      h, "road.speed_shake.enabled", "settings.road.speed_shake.enabled.title",
+      "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "road.speed_shake.smoothing_time", "Smoothing",
-      tip::kSpeedShakeSmoothing, "slider",
+      h, "road.speed_shake.intensity",
+      "settings.road.speed_shake.intensity.title",
+      "settings.road.speed_shake.intensity.desc", "slider",
+      R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
+  api->Meta_AddCustomSetting(
+      h, "road.speed_shake.smoothing_time",
+      "settings.road.speed_shake.smoothing_time.title",
+      "settings.road.speed_shake.smoothing_time.desc", "slider",
       R"({ "min": 0.1, "max": 1.0, "format": "%.2f s" })", false);
   api->Meta_AddCustomSetting(
-      h, "road.speed_shake.rotation", "Rotation", tip::kSpeedShakeRotation,
-      "slider", R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
+      h, "road.speed_shake.rotation",
+      "settings.road.speed_shake.rotation.title",
+      "settings.road.speed_shake.rotation.desc", "slider",
+      R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
   api->Meta_AddCustomSetting(
-      h, "road.speed_shake.vertical", "Vertical", tip::kSpeedShakeVertical,
-      "slider", R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
+      h, "road.speed_shake.vertical",
+      "settings.road.speed_shake.vertical.title",
+      "settings.road.speed_shake.vertical.desc", "slider",
+      R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
   api->Meta_AddCustomSetting(
-      h, "road.speed_shake.roughness", "Roughness", tip::kSpeedShakeRoughness,
-      "slider", R"({ "min": 0.0, "max": 1.0, "format": "%.2f" })", false);
+      h, "road.speed_shake.roughness",
+      "settings.road.speed_shake.roughness.title",
+      "settings.road.speed_shake.roughness.desc", "slider",
+      R"({ "min": 0.0, "max": 1.0, "format": "%.2f" })", false);
 
   api->Meta_AddCustomSetting(
-      h, "driving.body_dynamics", "Body Dynamics",
-      "Head leans toward the outside of corners and nods forward when "
-      "braking, like a driver's body reacting to the truck's motion.",
-      nullptr, nullptr, false);
+      h, "driving.body_dynamics", "settings.driving.body_dynamics.title",
+      "settings.driving.body_dynamics.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "driving.body_dynamics.enabled",
-                             "Enable Body Dynamics", tip::kEnabled, nullptr,
-                             nullptr, false);
+                             "settings.driving.body_dynamics.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "driving.body_dynamics.lean_strength", "Lean Strength",
-      tip::kBodyDynamicsLeanStrength, "slider",
+      h, "driving.body_dynamics.lean_strength",
+      "settings.driving.body_dynamics.lean_strength.title",
+      "settings.driving.body_dynamics.lean_strength.desc", "slider",
       R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
   api->Meta_AddCustomSetting(
-      h, "driving.body_dynamics.nod_strength", "Nod Strength",
-      tip::kBodyDynamicsNodStrength, "slider",
+      h, "driving.body_dynamics.nod_strength",
+      "settings.driving.body_dynamics.nod_strength.title",
+      "settings.driving.body_dynamics.nod_strength.desc", "slider",
       R"({ "min": 0.0, "max": 2.0, "format": "%.2f" })", false);
   api->Meta_AddCustomSetting(
-      h, "driving.body_dynamics.smoothing_time", "Smoothing",
-      tip::kBodyDynamicsSmoothing, "slider",
+      h, "driving.body_dynamics.smoothing_time",
+      "settings.driving.body_dynamics.smoothing_time.title",
+      "settings.driving.body_dynamics.smoothing_time.desc", "slider",
       R"({ "min": 0.05, "max": 0.6, "format": "%.2f s" })", false);
 
   api->Meta_AddCustomSetting(
-      h, "cabin.engine_start_stop", "Engine Start/Stop",
-      "A short mechanical shudder when the engine starts or dies. "
-      "Automatically disabled on electric trucks.",
-      nullptr, nullptr, false);
+      h, "cabin.engine_start_stop", "settings.cabin.engine_start_stop.title",
+      "settings.cabin.engine_start_stop.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "cabin.engine_start_stop.enabled",
-                             "Enable Engine Start/Stop", tip::kEnabled, nullptr,
-                             nullptr, false);
+                             "settings.cabin.engine_start_stop.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "cabin.engine_start_stop.intensity", "Intensity",
-      tip::kEngineStartStopIntensity, "slider",
+      h, "cabin.engine_start_stop.intensity",
+      "settings.cabin.engine_start_stop.intensity.title",
+      "settings.cabin.engine_start_stop.intensity.desc", "slider",
       R"({ "min": 0.0, "max": 0.3, "format": "%.2f" })", false);
   api->Meta_AddCustomSetting(
-      h, "cabin.engine_start_stop.duration", "Duration",
-      tip::kEngineStartStopDuration, "slider",
+      h, "cabin.engine_start_stop.duration",
+      "settings.cabin.engine_start_stop.duration.title",
+      "settings.cabin.engine_start_stop.duration.desc", "slider",
       R"({ "min": 0.3, "max": 2.0, "format": "%.2f s" })", false);
 
   api->Meta_AddCustomSetting(
-      h, "manual.manual_zoom", "Manual Zoom",
-      "Smooth zoom on a single dedicated key, like the native zoom key: "
-      "hold to zoom in, release to ease back to normal. Independent of "
-      "the native zoom keys, which jump the FOV in fixed steps and can't "
-      "be smoothed directly.",
-      nullptr, nullptr, false);
+      h, "manual.manual_zoom", "settings.manual.manual_zoom.title",
+      "settings.manual.manual_zoom.desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(h, "manual.manual_zoom.enabled",
-                             "Enable Manual Zoom", tip::kEnabled, nullptr,
-                             nullptr, false);
+                             "settings.manual.manual_zoom.enabled.title",
+                             "settings.enabled_desc", nullptr, nullptr, false);
   api->Meta_AddCustomSetting(
-      h, "manual.manual_zoom.zoom_fov_deg", "Zoom Level",
-      tip::kManualZoomZoomLevel, "slider",
+      h, "manual.manual_zoom.zoom_fov_deg",
+      "settings.manual.manual_zoom.zoom_fov_deg.title",
+      "settings.manual.manual_zoom.zoom_fov_deg.desc", "slider",
       R"({ "min": 5.0, "max": 60.0, "format": "%.0f deg" })", false);
   api->Meta_AddCustomSetting(
-      h, "manual.manual_zoom.smoothing_time", "Smoothing",
-      tip::kManualZoomSmoothing, "slider",
+      h, "manual.manual_zoom.smoothing_time",
+      "settings.manual.manual_zoom.smoothing_time.title",
+      "settings.manual.manual_zoom.smoothing_time.desc", "slider",
       R"({ "min": 0.02, "max": 0.5, "format": "%.2f s" })", false);
 
-  api->Meta_AddKeybind(
-      h, "ManualZoom", "zoom", "Zoom",
-      "Hold to smoothly zoom in; release to ease back to normal.");
+  api->Meta_AddKeybind(h, "ManualZoom", "zoom", "keybinds.zoom.title",
+                       "keybinds.zoom.desc");
 }
 
 } // namespace motioncab
