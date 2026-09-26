@@ -90,9 +90,13 @@
         "enabled": {
           "title": "Włącz kamerę kierownicy"
         },
-        "rotation_factor_deg": {
-          "title": "Zakres obrotu",
-          "desc": "Jak daleko obraca się kamera, gdy skręcisz kierownicę do oporu."
+        "rotation_left_deg": {
+          "title": "Zakres obrotu (w lewo)",
+          "desc": "Jak daleko obraca się kamera, gdy skręcisz kierownicę do oporu w lewo."
+        },
+        "rotation_right_deg": {
+          "title": "Zakres obrotu (w prawo)",
+          "desc": "Jak daleko obraca się kamera, gdy skręcisz kierownicę do oporu w prawo."
         },
         "smoothing_time": {
           "title": "Wygładzanie",

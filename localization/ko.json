@@ -90,9 +90,13 @@
         "enabled": {
           "title": "조향 카메라 사용"
         },
-        "rotation_factor_deg": {
-          "title": "회전량",
-          "desc": "핸들을 끝까지 돌렸을 때 카메라가 회전하는 정도입니다."
+        "rotation_left_deg": {
+          "title": "회전량 (왼쪽)",
+          "desc": "핸들을 왼쪽 끝까지 돌렸을 때 카메라가 회전하는 정도입니다."
+        },
+        "rotation_right_deg": {
+          "title": "회전량 (오른쪽)",
+          "desc": "핸들을 오른쪽 끝까지 돌렸을 때 카메라가 회전하는 정도입니다."
         },
         "smoothing_time": {
           "title": "부드러움",

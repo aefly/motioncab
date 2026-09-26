@@ -90,9 +90,13 @@
         "enabled": {
           "title": "Lenkkamera aktivieren"
         },
-        "rotation_factor_deg": {
-          "title": "Drehstärke",
-          "desc": "Wie weit sich die Kamera dreht, wenn du das Lenkrad voll einschlägst."
+        "rotation_left_deg": {
+          "title": "Drehstärke (links)",
+          "desc": "Wie weit sich die Kamera dreht, wenn du das Lenkrad voll nach links einschlägst."
+        },
+        "rotation_right_deg": {
+          "title": "Drehstärke (rechts)",
+          "desc": "Wie weit sich die Kamera dreht, wenn du das Lenkrad voll nach rechts einschlägst."
         },
         "smoothing_time": {
           "title": "Glättung",

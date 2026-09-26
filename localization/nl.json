@@ -90,9 +90,13 @@
         "enabled": {
           "title": "Stuurcamera inschakelen"
         },
-        "rotation_factor_deg": {
-          "title": "Draaihoek",
-          "desc": "Hoe ver de camera draait als je het stuur helemaal omdraait."
+        "rotation_left_deg": {
+          "title": "Draaihoek (links)",
+          "desc": "Hoe ver de camera draait als je het stuur helemaal naar links draait."
+        },
+        "rotation_right_deg": {
+          "title": "Draaihoek (rechts)",
+          "desc": "Hoe ver de camera draait als je het stuur helemaal naar rechts draait."
         },
         "smoothing_time": {
           "title": "Demping",

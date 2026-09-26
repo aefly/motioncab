@@ -90,9 +90,13 @@
         "enabled": {
           "title": "Direksiyon kamerasını etkinleştir"
         },
-        "rotation_factor_deg": {
-          "title": "Dönüş miktarı",
-          "desc": "Direksiyonu sonuna kadar çevirdiğinizde kameranın ne kadar döndüğü."
+        "rotation_left_deg": {
+          "title": "Dönüş miktarı (sol)",
+          "desc": "Direksiyonu sonuna kadar sola çevirdiğinizde kameranın ne kadar döndüğü."
+        },
+        "rotation_right_deg": {
+          "title": "Dönüş miktarı (sağ)",
+          "desc": "Direksiyonu sonuna kadar sağa çevirdiğinizde kameranın ne kadar döndüğü."
         },
         "smoothing_time": {
           "title": "Yumuşatma",

@@ -90,9 +90,13 @@
         "enabled": {
           "title": "Attiva telecamera di sterzata"
         },
-        "rotation_factor_deg": {
-          "title": "Ampiezza della rotazione",
-          "desc": "Quanto ruota la telecamera quando giri il volante fino in fondo."
+        "rotation_left_deg": {
+          "title": "Ampiezza della rotazione (sinistra)",
+          "desc": "Quanto ruota la telecamera quando giri il volante fino in fondo a sinistra."
+        },
+        "rotation_right_deg": {
+          "title": "Ampiezza della rotazione (destra)",
+          "desc": "Quanto ruota la telecamera quando giri il volante fino in fondo a destra."
         },
         "smoothing_time": {
           "title": "Smorzamento",

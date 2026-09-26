@@ -90,9 +90,13 @@
         "enabled": {
           "title": "Enable Steering Camera"
         },
-        "rotation_factor_deg": {
-          "title": "Rotation Amount",
-          "desc": "How far the camera turns when you crank the wheel all the way."
+        "rotation_left_deg": {
+          "title": "Rotation Amount (Left)",
+          "desc": "How far the camera turns when you crank the wheel all the way to the left."
+        },
+        "rotation_right_deg": {
+          "title": "Rotation Amount (Right)",
+          "desc": "How far the camera turns when you crank the wheel all the way to the right."
         },
         "smoothing_time": {
           "title": "Smoothing",

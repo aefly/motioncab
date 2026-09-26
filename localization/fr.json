@@ -90,9 +90,13 @@
         "enabled": {
           "title": "Activer la caméra de direction"
         },
-        "rotation_factor_deg": {
-          "title": "Amplitude de rotation",
-          "desc": "Jusqu'où la caméra tourne quand vous braquez le volant à fond."
+        "rotation_left_deg": {
+          "title": "Amplitude de rotation (gauche)",
+          "desc": "Jusqu'où la caméra tourne quand vous braquez le volant à fond vers la gauche."
+        },
+        "rotation_right_deg": {
+          "title": "Amplitude de rotation (droite)",
+          "desc": "Jusqu'où la caméra tourne quand vous braquez le volant à fond vers la droite."
         },
         "smoothing_time": {
           "title": "Lissage",

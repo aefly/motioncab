@@ -90,9 +90,13 @@
         "enabled": {
           "title": "ステアリングカメラを有効化"
         },
-        "rotation_factor_deg": {
-          "title": "回転量",
-          "desc": "ハンドルをいっぱいに切ったときにカメラがどれだけ回るか。"
+        "rotation_left_deg": {
+          "title": "回転量（左）",
+          "desc": "ハンドルを左にいっぱいに切ったときにカメラがどれだけ回るか。"
+        },
+        "rotation_right_deg": {
+          "title": "回転量（右）",
+          "desc": "ハンドルを右にいっぱいに切ったときにカメラがどれだけ回るか。"
         },
         "smoothing_time": {
           "title": "スムージング",

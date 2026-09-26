@@ -90,9 +90,13 @@
         "enabled": {
           "title": "启用转向镜头"
         },
-        "rotation_factor_deg": {
-          "title": "旋转幅度",
-          "desc": "方向盘打满时镜头转动的角度。"
+        "rotation_left_deg": {
+          "title": "旋转幅度（左）",
+          "desc": "方向盘向左打满时镜头转动的角度。"
+        },
+        "rotation_right_deg": {
+          "title": "旋转幅度（右）",
+          "desc": "方向盘向右打满时镜头转动的角度。"
         },
         "smoothing_time": {
           "title": "平滑",

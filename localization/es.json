@@ -90,9 +90,13 @@
         "enabled": {
           "title": "Activar cámara de dirección"
         },
-        "rotation_factor_deg": {
-          "title": "Cantidad de rotación",
-          "desc": "Cuánto gira la cámara cuando giras el volante hasta el tope."
+        "rotation_left_deg": {
+          "title": "Cantidad de rotación (izquierda)",
+          "desc": "Cuánto gira la cámara cuando giras el volante hasta el tope a la izquierda."
+        },
+        "rotation_right_deg": {
+          "title": "Cantidad de rotación (derecha)",
+          "desc": "Cuánto gira la cámara cuando giras el volante hasta el tope a la derecha."
         },
         "smoothing_time": {
           "title": "Suavizado",

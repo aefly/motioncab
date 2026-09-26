@@ -90,9 +90,13 @@
         "enabled": {
           "title": "Zapnout kameru řízení"
         },
-        "rotation_factor_deg": {
-          "title": "Rozsah otočení",
-          "desc": "Jak daleko se kamera otočí, když volant vytočíte na doraz."
+        "rotation_left_deg": {
+          "title": "Rozsah otočení (vlevo)",
+          "desc": "Jak daleko se kamera otočí, když volant vytočíte na doraz doleva."
+        },
+        "rotation_right_deg": {
+          "title": "Rozsah otočení (vpravo)",
+          "desc": "Jak daleko se kamera otočí, když volant vytočíte na doraz doprava."
         },
         "smoothing_time": {
           "title": "Vyhlazení",
