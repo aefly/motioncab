@@ -55,6 +55,7 @@ camera control, keybind rebinding, and the in-game settings UI.
   dies
 - **Manual Zoom** — smooth zoom effect
 - **Profiles** — create, save, and switch between named presets
+- **Localized** — available in 15 languages
 
 Every effect above is independently customizable and toggleable, and only
 active while in the interior (cabin) camera view.
@@ -166,6 +167,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   ├── Plugin.cpp                    Lifecycle callbacks, telemetry wiring, camera application
 │   ├── Manifest.cpp / Manifest.hpp   Plugin identity, settings defaults, keybinds, UI metadata
 │   ├── Links.hpp                     Plugin URLs
+│   ├── Localization.cpp / .hpp       Translated string lookup (loc::Tr)
 │   ├── PluginContext.cpp / .hpp      Shared plugin state
 │   ├── math/
 │   │   ├── SpringDamper.hpp          Critically-damped spring, the core smoothing primitive
@@ -188,15 +190,18 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   ├── ui/
 │   │   ├── SettingsWindow.cpp / .hpp   MotionCab Quick Settings window
 │   │   ├── OpenUrl.cpp / .hpp          Opens a URL in the system browser
-│   │   ├── SettingsText.hpp            Shared tooltip strings (native UI + custom UI)
 │   │   └── SettingsDefaults.hpp        Shared default values
 │   └── ProfileManager.cpp / .hpp     Create/save/switch named presets
 ├── data/
 │   └── logo.png                      About tab logo
+├── localization/
+│   └── <lang>.json                   UI text, one file per language
 ├── SPF_API/                          SPF Framework SDK headers
 ├── cmake/
 │   └── toolchain-mingw.cmake         MinGW cross-compile toolchain
 ├── .github/workflows/build.yaml      CI/CD
+├── .github/scripts/
+│   └── check-localization.py         Checks every language file against en.json
 ├── CMakeLists.txt                    Plugin sources, deploy steps
 ├── CMakePresets.json                 Toolchain/build-type presets
 ├── CMakeUserPresets.json             Game deploy paths
@@ -208,9 +213,10 @@ game's `plugins/spfPlugins/MotionCab/`.
 
 ## Contributing
 
-Bug reports, feature requests, and pull requests are welcome — see
-[CONTRIBUTE.md](./CONTRIBUTE.md) for build instructions, coding
-standards, and how to submit a change.
+Bug reports, feature requests, pull requests and translation fixes are
+welcome — see [CONTRIBUTE.md](./CONTRIBUTE.md) for build instructions,
+coding standards, how to improve a translation or add a language, and
+how to submit a change.
 
 ## License
 
