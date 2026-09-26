@@ -60,8 +60,10 @@ constexpr FloatKey kFloatKeys[] = {
      defaults::kHeadMotionTiltStrength},
     {"settings.driving.head_motion.smoothing_time",
      defaults::kHeadMotionSmoothing},
-    {"settings.driving.steering_camera.rotation_factor_deg",
-     defaults::kSteeringCameraRotationAmount},
+    {"settings.driving.steering_camera.rotation_left_deg",
+     defaults::kSteeringCameraRotationLeft},
+    {"settings.driving.steering_camera.rotation_right_deg",
+     defaults::kSteeringCameraRotationRight},
     {"settings.driving.steering_camera.smoothing_time",
      defaults::kSteeringCameraSmoothing},
     {"settings.driving.steering_camera.delay_seconds",
@@ -118,6 +120,52 @@ constexpr FloatKey kFloatKeys[] = {
     {"settings.manual.manual_zoom.smoothing_time",
      defaults::kManualZoomSmoothing},
 };
+
+// Float settings renamed/split since a released version: the old key's value
+// is copied into every new key, then the old key is removed (settings.json
+// only, see MigrateLegacyKeys). v1.0.x had one steering camera rotation
+// amount for both turn directions.
+//
+// A setting deleted outright, with no replacement, doesn't belong here: its
+// key just stays in settings.json and old profiles, unused, since nothing
+// reads it anymore.
+struct LegacyFloatKey {
+  const char *old_key;
+  const char *new_keys[2];
+};
+
+constexpr LegacyFloatKey kLegacyFloatKeys[] = {
+    {"settings.driving.steering_camera.rotation_factor_deg",
+     {"settings.driving.steering_camera.rotation_left_deg",
+      "settings.driving.steering_camera.rotation_right_deg"}},
+};
+
+// Returns true if anything was migrated (the caller decides whether to save).
+//
+// Cfg_RemoveKey works on settings.json but not on a Cfg_CreateCustomContext
+// file (confirmed in-game: a migrated profile still had the old keys after
+// Cfg_Save). So for profiles the old key sticks around, and migrating on its
+// presence alone would overwrite the new per-side values with the old single
+// one every time the profile is opened. Profiles are therefore only migrated
+// while the new keys are missing (`skip_if_migrated`). settings.json can't
+// use that test, since SPF fills the new keys in from the manifest defaults
+// before the plugin runs, but there the removal sticks.
+bool MigrateLegacyKeys(SPF_Config_API *cfg, SPF_Config_Handle *h,
+                       bool skip_if_migrated) {
+  bool migrated = false;
+  for (const LegacyFloatKey &k : kLegacyFloatKeys) {
+    if (!cfg->Cfg_HasKey(h, k.old_key))
+      continue;
+    if (skip_if_migrated && cfg->Cfg_HasKey(h, k.new_keys[0]))
+      continue;
+    const double value = cfg->Cfg_GetFloat(h, k.old_key, 0.0);
+    for (const char *new_key : k.new_keys)
+      cfg->Cfg_SetFloat(h, new_key, value);
+    cfg->Cfg_RemoveKey(h, k.old_key);
+    migrated = true;
+  }
+  return migrated;
+}
 
 std::string ToLower(const std::string &s) {
   std::string out = s;
@@ -181,10 +229,24 @@ SPF_Config_Handle *OpenProfileContext(PluginContext &ctx,
   const std::string path = ProfilePath(ctx, name);
   if (path.empty())
     return nullptr;
-  return ctx.core->config->Cfg_CreateCustomContext(path.c_str());
+  SPF_Config_Handle *h =
+      ctx.core->config->Cfg_CreateCustomContext(path.c_str());
+  // Profiles saved by an older version still carry the old keys.
+  if (h && MigrateLegacyKeys(ctx.core->config, h, true))
+    ctx.core->config->Cfg_Save(h);
+  return h;
 }
 
 } // namespace
+
+void MigrateLegacySettings(PluginContext &ctx) {
+  if (!ctx.core || !ctx.core->config || !ctx.config_handle)
+    return;
+  if (!MigrateLegacyKeys(ctx.core->config, ctx.config_handle, false))
+    return;
+  ctx.core->config->Cfg_Save(ctx.config_handle);
+  ctx.Log(SPF_LOG_INFO, "Migrated settings from an older version");
+}
 
 std::vector<const char *> AllSettingKeys() {
   std::vector<const char *> keys;
@@ -251,12 +313,18 @@ std::vector<std::string> List(PluginContext &ctx) {
 }
 
 bool Save(PluginContext &ctx, const std::string &name) {
-  if (!ctx.config_handle || name.empty())
+  if (!ctx.config_handle || name.empty()) {
+    ctx.LogFmt(SPF_LOG_WARN, "Failed to save profile '%s'", name.c_str());
     return false;
+  }
 
+  // Checked before OpenProfileContext(), which creates the file.
+  const bool existed = ProfileFileExists(ctx, name);
   SPF_Config_Handle *profile_h = OpenProfileContext(ctx, name);
-  if (!profile_h)
+  if (!profile_h) {
+    ctx.LogFmt(SPF_LOG_WARN, "Failed to save profile '%s'", name.c_str());
     return false;
+  }
 
   CopyAllKeys(ctx.core->config, ctx.config_handle, profile_h);
   ctx.core->config->Cfg_Save(profile_h);
@@ -266,7 +334,10 @@ bool Save(PluginContext &ctx, const std::string &name) {
   // context isn't reliably flushed by the time the game actually exits.
   // Without this, a restart reads back a stale kLastProfileKey from disk.
   ctx.core->config->Cfg_Save(ctx.config_handle);
-  ctx.LogFmt(SPF_LOG_INFO, "Saved profile '%s'", name.c_str());
+  ctx.LogFmt(SPF_LOG_INFO,
+             existed ? "Saved profile '%s'" : "Created profile '%s'",
+             name.c_str());
+  ctx.LogFmt(SPF_LOG_INFO, "Loaded profile '%s'", name.c_str());
   // A new profile file may have just been created, and live config now
   // exactly matches this one, so force both caches to recompute next read.
   ctx.profile_list_dirty = true;
@@ -275,17 +346,24 @@ bool Save(PluginContext &ctx, const std::string &name) {
 }
 
 bool Load(PluginContext &ctx, const std::string &name) {
-  if (!ctx.config_handle || name.empty())
+  if (!ctx.config_handle || name.empty()) {
+    ctx.LogFmt(SPF_LOG_WARN, "Failed to load profile '%s'", name.c_str());
     return false;
+  }
 
   const std::string path = ProfilePath(ctx, name);
   std::error_code ec;
-  if (path.empty() || !fs::exists(path, ec))
+  if (path.empty() || !fs::exists(path, ec)) {
+    ctx.LogFmt(SPF_LOG_WARN, "Failed to load profile '%s': file not found",
+               name.c_str());
     return false;
+  }
 
   SPF_Config_Handle *profile_h = OpenProfileContext(ctx, name);
-  if (!profile_h)
+  if (!profile_h) {
+    ctx.LogFmt(SPF_LOG_WARN, "Failed to load profile '%s'", name.c_str());
     return false;
+  }
 
   CopyAllKeys(ctx.core->config, profile_h, ctx.config_handle);
   ctx.effects.LoadAllConfig();
@@ -309,13 +387,15 @@ bool Load(PluginContext &ctx, const std::string &name) {
 
 bool Delete(PluginContext &ctx, const std::string &name) {
   const std::string path = ProfilePath(ctx, name);
-  if (path.empty())
-    return false;
   std::error_code ec;
-  const bool removed = fs::remove(path, ec);
-  if (removed)
-    ctx.profile_list_dirty = true;
-  return removed;
+  const bool removed = !path.empty() && fs::remove(path, ec);
+  if (!removed) {
+    ctx.LogFmt(SPF_LOG_WARN, "Failed to delete profile '%s'", name.c_str());
+    return false;
+  }
+  ctx.LogFmt(SPF_LOG_INFO, "Deleted profile '%s'", name.c_str());
+  ctx.profile_list_dirty = true;
+  return true;
 }
 
 void EnsureDefaultExists(PluginContext &ctx) {
