@@ -15,6 +15,9 @@ struct HeadOffset {
   float yaw = 0.0f, pitch = 0.0f;
   // Degrees, head tilt to either side (Cam_SetInteriorRoll takes degrees).
   float roll = 0.0f;
+  // Degrees added to the interior FOV, layered by Plugin.cpp on top of the
+  // player's FOV (and ManualZoomEffect's zoom, see its class comment).
+  float fov = 0.0f;
 };
 
 // Base interface for a MotionCab head-motion effect.
