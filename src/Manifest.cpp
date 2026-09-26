@@ -13,8 +13,6 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
   api->Info_SetName(h, PluginContext::kPluginName);
   api->Info_SetVersion(h, PLUGIN_VERSION);
   api->Info_SetAuthor(h, PLUGIN_AUTHOR);
-  // No Info_SetDescriptionLiteral: SPF shows a literal over the key, which
-  // would leave the description untranslated.
   api->Info_SetDescriptionKey(h, "plugin.description");
   api->Info_SetMinFrameworkVersion(h, "1.2.4");
   api->Info_SetWebsiteUrl(h, links::kWebsite);
