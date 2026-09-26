@@ -32,6 +32,14 @@ std::string Sanitize(const std::string &name);
 const std::string *FindIgnoreCase(const std::vector<std::string> &names,
                                   const std::string &name);
 
+// Rewrites settings.json keys renamed or split since a released version,
+// keeping the user's values. Profile files are migrated too whenever
+// they're opened, as long as they don't have the new keys yet (see
+// MigrateLegacyKeys in ProfileManager.cpp). Settings deleted outright
+// aren't touched. Call once on activation, before anything reads the live
+// settings.
+void MigrateLegacySettings(PluginContext &ctx);
+
 // Every setting key a profile covers (all of MotionCab's settings), in the
 // order of the key tables in ProfileManager.cpp.
 std::vector<const char *> AllSettingKeys();
