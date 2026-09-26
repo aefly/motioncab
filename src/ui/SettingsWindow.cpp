@@ -286,6 +286,8 @@ void ResetSteeringCamera(SPF_Config_API *cfg, SPF_Config_Handle *h) {
                     defaults::kSteeringCameraSmoothing);
   cfg->Cfg_SetFloat(h, "settings.driving.steering_camera.delay_seconds",
                     defaults::kSteeringCameraReactionDelay);
+  cfg->Cfg_SetBool(h, "settings.driving.steering_camera.disable_in_reverse",
+                   defaults::kSteeringCameraDisableInReverse);
 }
 
 void ResetIdleBreathing(SPF_Config_API *cfg, SPF_Config_Handle *h) {
@@ -427,6 +429,8 @@ void DrawSteeringCamera(SPF_UI_API *ui, SPF_Config_API *cfg,
               0.02f, 1.0f, "%.2f s", defaults::kSteeringCameraSmoothing);
     DrawFloat(ui, cfg, h, "settings.driving.steering_camera.delay_seconds",
               0.0f, 0.3f, "%.2f s", defaults::kSteeringCameraReactionDelay);
+    DrawBool(ui, cfg, h, "settings.driving.steering_camera.disable_in_reverse",
+             defaults::kSteeringCameraDisableInReverse);
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
