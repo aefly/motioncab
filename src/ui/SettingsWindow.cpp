@@ -256,8 +256,8 @@ void DrawSpeed(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   // The unit comes from a translation, so escape any '%' before it goes
   // into a printf-style format.
   std::string format = "%.0f ";
-  for (const char *c = loc::Tr(imperial ? "ui.units.mph" : "ui.units.kmh");
-       *c; ++c)
+  for (const char *c = loc::Tr(imperial ? "ui.units.mph" : "ui.units.kmh"); *c;
+       ++c)
     format += *c == '%' ? std::string("%%") : std::string(1, *c);
   DrawFloat(ui, cfg, h, key, min_kmh, max_kmh, format.c_str(), default_kmh,
             imperial ? kMphPerKmh : 1.0f);
@@ -278,8 +278,10 @@ void ResetHeadMotion(SPF_Config_API *cfg, SPF_Config_Handle *h) {
 
 void ResetSteeringCamera(SPF_Config_API *cfg, SPF_Config_Handle *h) {
   cfg->Cfg_SetBool(h, "settings.driving.steering_camera.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.driving.steering_camera.rotation_factor_deg",
-                    defaults::kSteeringCameraRotationAmount);
+  cfg->Cfg_SetFloat(h, "settings.driving.steering_camera.rotation_left_deg",
+                    defaults::kSteeringCameraRotationLeft);
+  cfg->Cfg_SetFloat(h, "settings.driving.steering_camera.rotation_right_deg",
+                    defaults::kSteeringCameraRotationRight);
   cfg->Cfg_SetFloat(h, "settings.driving.steering_camera.smoothing_time",
                     defaults::kSteeringCameraSmoothing);
   cfg->Cfg_SetFloat(h, "settings.driving.steering_camera.delay_seconds",
@@ -417,9 +419,10 @@ void DrawSteeringCamera(SPF_UI_API *ui, SPF_Config_API *cfg,
       DrawEnabled(ui, cfg, h, "settings.driving.steering_camera.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "steering_camera_table")) {
-    DrawFloat(ui, cfg, h,
-              "settings.driving.steering_camera.rotation_factor_deg", 20.0f,
-              60.0f, "%.1f deg", defaults::kSteeringCameraRotationAmount);
+    DrawFloat(ui, cfg, h, "settings.driving.steering_camera.rotation_left_deg",
+              20.0f, 60.0f, "%.1f deg", defaults::kSteeringCameraRotationLeft);
+    DrawFloat(ui, cfg, h, "settings.driving.steering_camera.rotation_right_deg",
+              20.0f, 60.0f, "%.1f deg", defaults::kSteeringCameraRotationRight);
     DrawFloat(ui, cfg, h, "settings.driving.steering_camera.smoothing_time",
               0.02f, 1.0f, "%.2f s", defaults::kSteeringCameraSmoothing);
     DrawFloat(ui, cfg, h, "settings.driving.steering_camera.delay_seconds",
@@ -912,13 +915,13 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
       ui->UI_Spacing();
       if (MutedButton(ui, loc::Tr("ui.profiles.delete_confirm"))) {
         if (!profiles::Delete(ctx, pending_delete)) {
-          ShowToast(ui, SPF_NOTIFICATION_ERROR,
-                    loc::Tr("ui.profiles.delete_failed",
-                            {{"name", pending_delete}}));
+          ShowToast(
+              ui, SPF_NOTIFICATION_ERROR,
+              loc::Tr("ui.profiles.delete_failed", {{"name", pending_delete}}));
         } else {
-          ShowToast(ui, SPF_NOTIFICATION_SUCCESS,
-                    loc::Tr("ui.profiles.deleted_toast",
-                            {{"name", pending_delete}}));
+          ShowToast(
+              ui, SPF_NOTIFICATION_SUCCESS,
+              loc::Tr("ui.profiles.deleted_toast", {{"name", pending_delete}}));
           // Deleting the active profile shouldn't leave its values loaded,
           // so fall back to "Default", recreating it first if it's what
           // just got deleted.
@@ -1114,13 +1117,13 @@ void DrawAboutTab(SPF_UI_API *ui) {
   ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
   const float button_w = (avail_x - kButtonGap) * 0.5f;
 
-  LinkButton(ui, WithIcon(ICON_FA_GLOBE, loc::Tr("ui.about.website")),
-             button_w, links::kWebsite, loc::Tr("ui.about.website_desc"));
+  LinkButton(ui, WithIcon(ICON_FA_GLOBE, loc::Tr("ui.about.website")), button_w,
+             links::kWebsite, loc::Tr("ui.about.website_desc"));
   ui->UI_SameLine(0.0f, kButtonGap);
   LinkButton(ui, WithIcon(ICON_FA_DISCORD, loc::Tr("ui.about.discord")),
              button_w, links::kDiscord, loc::Tr("ui.about.discord_desc"));
-  LinkButton(ui, WithIcon(ICON_FA_GITHUB, loc::Tr("ui.about.github")),
-             button_w, links::kGithub, loc::Tr("ui.about.github_desc"));
+  LinkButton(ui, WithIcon(ICON_FA_GITHUB, loc::Tr("ui.about.github")), button_w,
+             links::kGithub, loc::Tr("ui.about.github_desc"));
   ui->UI_SameLine(0.0f, kButtonGap);
   LinkButton(ui, WithIcon(ICON_FA_YOUTUBE, loc::Tr("ui.about.youtube")),
              button_w, links::kYoutube, loc::Tr("ui.about.youtube_desc"));
@@ -1138,9 +1141,8 @@ void DrawAboutTab(SPF_UI_API *ui) {
   ui->UI_Spacing();
   DrawSectionTitle(ui, loc::Tr("ui.about.tips"));
   ui->UI_Spacing();
-  const std::string settings_tab =
-      WithIcon(ICON_FA_GEAR, "**" + std::string(loc::Tr("ui.tabs.settings")) +
-                                 "**");
+  const std::string settings_tab = WithIcon(
+      ICON_FA_GEAR, "**" + std::string(loc::Tr("ui.tabs.settings")) + "**");
   const std::string tips =
       "- " + std::string(loc::Tr("ui.about.tip_reset")) + "\n- " +
       loc::Tr("ui.about.tip_profiles", {{"settings_tab", settings_tab}}) +
@@ -1233,8 +1235,7 @@ TabMetrics MeasureTabs(SPF_UI_API *ui) {
 // All 0 when the tabs don't even fit at their own width: ImGui then
 // shrinks them itself, for the frame until FitWindowToTabs widens the
 // window. Call right before UI_BeginTabBar.
-std::array<float, kTabCount> StretchTabs(SPF_UI_API *ui,
-                                         const TabMetrics &m) {
+std::array<float, kTabCount> StretchTabs(SPF_UI_API *ui, const TabMetrics &m) {
   std::array<float, kTabCount> widths{};
   float avail_x = 0.0f, avail_y = 0.0f;
   ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
@@ -1242,9 +1243,10 @@ std::array<float, kTabCount> StretchTabs(SPF_UI_API *ui,
   if (spare < 0)
     return widths;
   const int count = static_cast<int>(kTabCount);
-  for (int i = 0; i < count; ++i)
-    widths[i] = m.width[i] + static_cast<float>(spare / count +
-                                                 (i < spare % count ? 1 : 0));
+  for (int i = 0; i < count; ++i) {
+    const int extra_px = spare / count + (i < spare % count ? 1 : 0);
+    widths[i] = m.width[i] + static_cast<float>(extra_px);
+  }
   return widths;
 }
 
@@ -1256,8 +1258,7 @@ bool BeginTab(SPF_UI_API *ui, const TabInfo &tab, float width,
   const std::string title = TabTitle(tab);
   if (width <= 0.0f) {
     const std::string label = title + "###tab_" + tab.id;
-    return ui->UI_BeginTabItem(label.c_str(), nullptr,
-                               SPF_TAB_ITEM_FLAG_NONE);
+    return ui->UI_BeginTabItem(label.c_str(), nullptr, SPF_TAB_ITEM_FLAG_NONE);
   }
 
   const std::string label = std::string("###tab_") + tab.id;
@@ -1410,8 +1411,7 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
 
   const TabMetrics tab_metrics = MeasureTabs(ui);
   FitWindowToTabs(ui, tab_metrics);
-  const std::array<float, kTabCount> tab_widths =
-      StretchTabs(ui, tab_metrics);
+  const std::array<float, kTabCount> tab_widths = StretchTabs(ui, tab_metrics);
   if (!ui->UI_BeginTabBar("MotionCabTabs", SPF_TAB_BAR_FLAG_NONE)) {
     ui->UI_PopStyleVar(pushed_vars);
     ui->UI_PopStyleColor(pushed_colors);

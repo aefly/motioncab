@@ -12,7 +12,8 @@ constexpr float kHeadMotionSwayStrength = 0.2f;
 constexpr float kHeadMotionTiltStrength = 0.15f;
 constexpr float kHeadMotionSmoothing = 0.2f;
 
-constexpr float kSteeringCameraRotationAmount = 30.0f;
+constexpr float kSteeringCameraRotationLeft = 30.0f;
+constexpr float kSteeringCameraRotationRight = 30.0f;
 constexpr float kSteeringCameraSmoothing = 0.5f;
 constexpr float kSteeringCameraReactionDelay = 0.2f;
 
