@@ -14,7 +14,7 @@ namespace {
 
 // Titles and descriptions are keys into localization/<lang>.json. A
 // setting's keys are its own path under "settings." plus ".title" /
-// ".desc", the scheme SettingsWindow.cpp relies on to find the same
+// ".desc", the scheme ui/EffectTabs.cpp relies on to find the same
 // strings; groups and effects follow it too, with their own path. Every
 // effect's "enabled" toggle shares one description. SPF attaches each
 // entry to the JSON node at its path, so the order of these calls doesn't
