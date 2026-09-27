@@ -91,8 +91,14 @@ void CameraRig::Remove(SPF_Camera_API *camera) {
   // offset in the pose.
   const HeadOffset none{};
   float x, y, z;
-  if (camera->Cam_GetInteriorSeatPos(&x, &y, &z))
+  if (camera->Cam_GetInteriorSeatPos(&x, &y, &z)) {
+    // The seat may have been rewritten since our last write without a
+    // cabin frame to notice it (F4 seat menu, then unload from another
+    // view): subtracting an offset that's no longer there would shift the
+    // player's own seat for good.
+    DetectExternalSeatWrite({x, y, z, 0.0f, 0.0f});
     WriteSeat(camera, x, y, z, none);
+  }
   float yaw_rad, pitch_rad;
   if (camera->Cam_GetInteriorHeadRot(&yaw_rad, &pitch_rad))
     WriteHeadRot(camera, yaw_rad, pitch_rad, none);
