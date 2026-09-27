@@ -40,8 +40,7 @@ camera control, keybind rebinding, and the in-game settings UI.
   and cornering
 - **Steering Camera** — smoothed camera yaw following the steering wheel
 - **Idle Breathing** — subtle breathing motion that fades out with speed
-- **Suspension** — vertical camera bounce over bumps, like an air-suspended
-  seat, with a grade-follow response to uphill/downhill slope
+- **Suspension** — seat bounce and head tilt over bumps, plus grade follow
 - **Engine Vibration** — RPM-scaled engine buzz
 - **Mirror Check** — looks toward the mirror on turn signal
 - **Manual Look** — smooth look-left/look-right
@@ -108,7 +107,7 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `fade_start_kmh`             | 30.0    | The speed at which this effect starts fading away as you speed up.                                                                   |
 | `fade_end_kmh`               | 50.0    | The speed at which this effect has completely faded away.                                                                            |
 | **Suspension**               |         |                                                                                                                                      |
-| `vertical_strength`          | 1.0     | How much bumps in the road bounce the camera up and down.                                                                            |
+| `vertical_strength`          | 1.0     | How much bumps in the road bounce and tilt the camera.                                                                               |
 | `reactivity`                 | 0.25    | How quickly the seat settles after a bump. Lower = firmer and snappier.                                                              |
 | `grade_strength`             | 0.5     | Raises your head on downhill stretches and lowers it on uphill ones.                                                                 |
 | **Engine Vibration**         |         |                                                                                                                                      |
