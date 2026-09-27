@@ -153,9 +153,9 @@ jobs:
 
       - name: Read minimum SPF version
         run: |
-          spf="$(grep -oP 'Info_SetMinFrameworkVersion\(h, "\K[^"]+' src/Manifest.cpp)"
+          spf="$(grep -oP 'Info_SetMinFrameworkVersion\(h, "\K[^"]+' src/core/Manifest.cpp)"
           if [ -z "$spf" ]; then
-            echo "Could not read the minimum SPF version from src/Manifest.cpp."
+            echo "Could not read the minimum SPF version from src/core/Manifest.cpp."
             exit 1
           fi
           echo "SPF_MIN_VERSION=$spf" >> "$GITHUB_ENV"
