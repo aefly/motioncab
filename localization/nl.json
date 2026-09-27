@@ -121,17 +121,17 @@
       "desc": "Effecten door het wegdek, de vering en de snelheid.",
       "suspension": {
         "title": "Vering",
-        "desc": "De camera volgt het wegdek verticaal, als een stoel op de vering van de truck.",
+        "desc": "Verticaal meeveren van de camera over hobbels, zoals een luchtgeveerde stoel: zakt in, veert terug en komt dan tot rust.",
         "enabled": {
           "title": "Vering inschakelen"
         },
         "vertical_strength": {
           "title": "Verticale sterkte",
-          "desc": "Hoeveel oneffenheden in de weg je hoofd op en neer laten veren."
+          "desc": "Hoeveel oneffenheden in de weg de camera op en neer laten veren."
         },
         "reactivity": {
           "title": "Reactiesnelheid",
-          "desc": "Hoe snel je hoofd zich herstelt na een hobbel. Lager = directer."
+          "desc": "Hoe snel de stoel tot rust komt na een hobbel. Lager = strakker en directer."
         },
         "grade_strength": {
           "title": "Helling volgen",

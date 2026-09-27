@@ -121,17 +121,17 @@
       "desc": "Yol yüzeyi, süspansiyon ve hızdan kaynaklanan efektler.",
       "suspension": {
         "title": "Süspansiyon",
-        "desc": "Kamera, tırın süspansiyonu üzerindeki bir koltuk gibi yol yüzeyini dikey olarak takip eder.",
+        "desc": "Tümseklerde kameranın dikey olarak yaylanması, havalı süspansiyonlu bir koltuk gibi: aşağı iner, geri seker ve ardından eski konumuna döner.",
         "enabled": {
           "title": "Süspansiyonu etkinleştir"
         },
         "vertical_strength": {
           "title": "Dikey güç",
-          "desc": "Yoldaki tümseklerin kafanızı ne kadar aşağı yukarı zıplattığı."
+          "desc": "Yoldaki tümseklerin kamerayı ne kadar aşağı yukarı zıplattığı."
         },
         "reactivity": {
           "title": "Tepkisellik",
-          "desc": "Bir tümsekten sonra kafanızın ne kadar hızlı toparlandığı. Düşük = daha çevik."
+          "desc": "Koltuğun bir tümsekten sonra ne kadar hızlı dengelendiği. Düşük = daha sert ve çevik."
         },
         "grade_strength": {
           "title": "Eğimi takip et",

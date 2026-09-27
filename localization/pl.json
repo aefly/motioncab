@@ -121,17 +121,17 @@
       "desc": "Efekty wywołane nawierzchnią, zawieszeniem i prędkością.",
       "suspension": {
         "title": "Zawieszenie",
-        "desc": "Kamera podąża pionowo za nawierzchnią drogi, jak fotel na zawieszeniu ciężarówki.",
+        "desc": "Pionowe bujanie kamery na nierównościach, jak fotel z pneumatycznym zawieszeniem: opada, odbija się, a potem wraca na miejsce.",
         "enabled": {
           "title": "Włącz zawieszenie"
         },
         "vertical_strength": {
           "title": "Siła pionowa",
-          "desc": "Jak mocno nierówności drogi podrzucają głowę w górę i w dół."
+          "desc": "Jak mocno nierówności drogi podrzucają kamerę w górę i w dół."
         },
         "reactivity": {
           "title": "Reaktywność",
-          "desc": "Jak szybko głowa wraca po nierówności. Niżej = szybciej."
+          "desc": "Jak szybko fotel się uspokaja po nierówności. Niżej = twardziej i szybciej."
         },
         "grade_strength": {
           "title": "Podążanie za nachyleniem",

@@ -121,17 +121,17 @@
       "desc": "Efectos causados por el firme, la suspensión y la velocidad.",
       "suspension": {
         "title": "Suspensión",
-        "desc": "La cámara sigue verticalmente la superficie de la carretera, como un asiento sobre la suspensión del camión.",
+        "desc": "Rebote vertical de la cámara sobre los baches, como un asiento con suspensión neumática: se hunde, rebota y luego vuelve a su sitio.",
         "enabled": {
           "title": "Activar suspensión"
         },
         "vertical_strength": {
           "title": "Fuerza vertical",
-          "desc": "Cuánto hacen rebotar tu cabeza los baches de la carretera."
+          "desc": "Cuánto hacen rebotar la cámara los baches de la carretera."
         },
         "reactivity": {
           "title": "Reactividad",
-          "desc": "Lo rápido que tu cabeza se recupera tras un bache. Más bajo = más ágil."
+          "desc": "Lo rápido que el asiento se estabiliza tras un bache. Más bajo = más firme y ágil."
         },
         "grade_strength": {
           "title": "Seguir la pendiente",

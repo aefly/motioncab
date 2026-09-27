@@ -121,17 +121,17 @@
       "desc": "Efeitos causados pelo piso, pela suspensão e pela velocidade.",
       "suspension": {
         "title": "Suspensão",
-        "desc": "A câmera acompanha verticalmente a superfície da estrada, como um banco apoiado na suspensão do caminhão.",
+        "desc": "Balanço vertical da câmera nos buracos, como um banco com suspensão a ar: afunda, quica e depois volta ao lugar.",
         "enabled": {
           "title": "Ativar suspensão"
         },
         "vertical_strength": {
           "title": "Força vertical",
-          "desc": "Quanto os buracos da estrada fazem sua cabeça quicar para cima e para baixo."
+          "desc": "Quanto os buracos da estrada fazem a câmera quicar para cima e para baixo."
         },
         "reactivity": {
           "title": "Reatividade",
-          "desc": "Com que rapidez sua cabeça se recupera após um buraco. Mais baixo = mais ágil."
+          "desc": "Com que rapidez o banco se estabiliza após um buraco. Mais baixo = mais firme e ágil."
         },
         "grade_strength": {
           "title": "Acompanhar a inclinação",

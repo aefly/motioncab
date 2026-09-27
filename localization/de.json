@@ -121,17 +121,17 @@
       "desc": "Effekte durch Fahrbahnoberfläche, Federung und Geschwindigkeit.",
       "suspension": {
         "title": "Federung",
-        "desc": "Die Kamera folgt der Fahrbahn vertikal, wie ein Sitz auf der Federung des Lkw.",
+        "desc": "Vertikales Nachfedern der Kamera über Bodenwellen, wie ein luftgefederter Sitz: Sie sackt ein, federt zurück und kommt dann zur Ruhe.",
         "enabled": {
           "title": "Federung aktivieren"
         },
         "vertical_strength": {
           "title": "Vertikale Stärke",
-          "desc": "Wie stark Bodenwellen deinen Kopf auf und ab federn lassen."
+          "desc": "Wie stark Bodenwellen die Kamera auf und ab federn lassen."
         },
         "reactivity": {
           "title": "Reaktionsfreude",
-          "desc": "Wie schnell dein Kopf nach einer Bodenwelle nachzieht. Niedriger = direkter."
+          "desc": "Wie schnell sich der Sitz nach einer Bodenwelle beruhigt. Niedriger = straffer und direkter."
         },
         "grade_strength": {
           "title": "Steigung folgen",

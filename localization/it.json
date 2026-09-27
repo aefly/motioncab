@@ -121,17 +121,17 @@
       "desc": "Effetti dovuti al manto stradale, alle sospensioni e alla velocità.",
       "suspension": {
         "title": "Sospensioni",
-        "desc": "La telecamera segue verticalmente la superficie della strada, come un sedile sulle sospensioni del camion.",
+        "desc": "Rimbalzo verticale della telecamera sulle buche, come un sedile a sospensione pneumatica: affonda, rimbalza e poi torna in posizione.",
         "enabled": {
           "title": "Attiva sospensioni"
         },
         "vertical_strength": {
           "title": "Intensità verticale",
-          "desc": "Quanto le buche della strada fanno sobbalzare la tua testa su e giù."
+          "desc": "Quanto le buche della strada fanno sobbalzare la telecamera su e giù."
         },
         "reactivity": {
           "title": "Reattività",
-          "desc": "Quanto velocemente la testa si riprende dopo una buca. Più basso = più reattivo."
+          "desc": "Quanto velocemente il sedile si stabilizza dopo una buca. Più basso = più rigido e reattivo."
         },
         "grade_strength": {
           "title": "Segui la pendenza",

@@ -121,17 +121,17 @@
       "desc": "Effets liés au revêtement de la route, à la suspension et à la vitesse.",
       "suspension": {
         "title": "Suspension",
-        "desc": "La caméra suit verticalement la surface de la route, comme un siège porté par la suspension du camion.",
+        "desc": "Rebond vertical de la caméra sur les bosses, comme un siège à suspension pneumatique : elle s'enfonce, rebondit, puis revient en place.",
         "enabled": {
           "title": "Activer la suspension"
         },
         "vertical_strength": {
           "title": "Force verticale",
-          "desc": "À quel point les bosses de la route font rebondir votre tête de haut en bas."
+          "desc": "À quel point les bosses de la route font rebondir la caméra de haut en bas."
         },
         "reactivity": {
           "title": "Réactivité",
-          "desc": "Vitesse à laquelle votre tête se replace après une bosse. Plus bas = plus vif."
+          "desc": "Vitesse à laquelle le siège se stabilise après une bosse. Plus bas = plus ferme et plus vif."
         },
         "grade_strength": {
           "title": "Suivi de la pente",

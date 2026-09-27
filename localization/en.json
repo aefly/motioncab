@@ -121,21 +121,21 @@
       "desc": "Effects driven by the road surface, suspension and speed.",
       "suspension": {
         "title": "Suspension",
-        "desc": "Camera follows the road surface vertically, like a seat riding the truck's suspension.",
+        "desc": "Vertical camera bounce over road bumps, like an air-suspended seat: it dips, rebounds, then settles back.",
         "enabled": {
           "title": "Enable Suspension"
         },
         "vertical_strength": {
           "title": "Vertical Strength",
-          "desc": "How much bumps in the road bounce your head up and down."
+          "desc": "How much bumps in the road bounce the camera up and down."
         },
         "reactivity": {
           "title": "Reactivity",
-          "desc": "How quickly your head catches up after a bump. Lower = snappier."
+          "desc": "How quickly the seat settles after a bump. Lower = firmer and snappier."
         },
         "grade_strength": {
           "title": "Grade Follow",
-          "desc": "Tilts your head up on downhill stretches and down on uphill ones."
+          "desc": "Raises your head on downhill stretches and lowers it on uphill ones."
         }
       },
       "road_irregularity": {

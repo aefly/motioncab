@@ -121,21 +121,21 @@
       "desc": "Efekty způsobené povrchem vozovky, odpružením a rychlostí.",
       "suspension": {
         "title": "Odpružení",
-        "desc": "Kamera svisle sleduje povrch vozovky jako sedadlo na odpružení kamionu.",
+        "desc": "Svislé pohupování kamery na nerovnostech, jako vzduchem odpružené sedadlo: klesne, odrazí se a pak se vrátí na místo.",
         "enabled": {
           "title": "Zapnout odpružení"
         },
         "vertical_strength": {
           "title": "Svislá síla",
-          "desc": "Jak moc nerovnosti na silnici nadhazují hlavu nahoru a dolů."
+          "desc": "Jak moc nerovnosti na silnici nadhazují kameru nahoru a dolů."
         },
         "reactivity": {
           "title": "Reaktivita",
-          "desc": "Jak rychle se hlava po nerovnosti vrátí. Nižší = svižnější."
+          "desc": "Jak rychle se sedadlo po nerovnosti ustálí. Nižší = tužší a svižnější."
         },
         "grade_strength": {
           "title": "Sledování sklonu",
-          "desc": "Zvedá hlavu při jízdě z kopce a sklání ji při jízdě do kopce."
+          "desc": "Zvedá hlavu při jízdě z kopce a snižuje ji při jízdě do kopce."
         }
       },
       "road_irregularity": {
