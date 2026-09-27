@@ -7,30 +7,31 @@
 #include "SPF_Telemetry_API.h"
 #include "SPF_UI_API.h"
 
-#include "Localization.hpp"
-#include "Manifest.hpp"
-#include "PluginContext.hpp"
-#include "ProfileManager.hpp"
-#include "effects/BlindspotViewerEffect.hpp"
-#include "effects/BodyDynamicsEffect.hpp"
-#include "effects/EngineStartStopEffect.hpp"
-#include "effects/EngineVibrationEffect.hpp"
-#include "effects/HeadMotionEffect.hpp"
-#include "effects/IdleBreathingEffect.hpp"
-#include "effects/ManualLookEffect.hpp"
-#include "effects/ManualZoomEffect.hpp"
-#include "effects/MirrorCheckEffect.hpp"
-#include "effects/RoadIrregularityEffect.hpp"
-#include "effects/SpeedShakeEffect.hpp"
-#include "effects/SteeringCameraEffect.hpp"
-#include "effects/SuspensionEffect.hpp"
+#include "core/Keybinds.hpp"
+#include "core/Localization.hpp"
+#include "core/Manifest.hpp"
+#include "core/PluginContext.hpp"
+#include "core/ProfileManager.hpp"
+#include "effects/cabin/EngineStartStopEffect.hpp"
+#include "effects/cabin/EngineVibrationEffect.hpp"
+#include "effects/cabin/IdleBreathingEffect.hpp"
+#include "effects/driving/BodyDynamicsEffect.hpp"
+#include "effects/driving/HeadMotionEffect.hpp"
+#include "effects/driving/SteeringCameraEffect.hpp"
+#include "effects/manual/BlindspotViewerEffect.hpp"
+#include "effects/manual/ManualLookEffect.hpp"
+#include "effects/manual/ManualZoomEffect.hpp"
+#include "effects/manual/MirrorCheckEffect.hpp"
+#include "effects/road/RoadIrregularityEffect.hpp"
+#include "effects/road/SpeedShakeEffect.hpp"
+#include "effects/road/SuspensionEffect.hpp"
+#include "math/Units.hpp"
 #include "ui/SettingsWindow.hpp"
 
 #include <chrono>
 #include <cmath>
 #include <cstring>
 #include <memory>
-#include <numbers>
 
 using namespace motioncab;
 
@@ -71,13 +72,10 @@ void OnTrailersUpdate(const SPF_Trailer *trailers, uint32_t count,
   Context().effects.NotifyTrailers(trailers, count);
 }
 
-// ManualLookEffect/ManualZoomEffect/BlindspotViewerEffect poll these actions
-// via Kbind_GetActionValue instead. Registering is still required though, an
+// Callback for keybinds::kPolledActions, which the effects poll via
+// Kbind_GetActionValue instead. Registering is still required though, an
 // unregistered action stays stuck at 0.0 even with a valid manifest binding.
-void OnManualLookLeftTriggered() {}
-void OnManualLookRightTriggered() {}
-void OnManualZoomTriggered() {}
-void OnBlindspotViewerTriggered() {}
+void OnPolledActionTriggered() {}
 
 float ComputeDeltaTimeSeconds(PluginContext &ctx) {
   const auto now = std::chrono::steady_clock::now();
@@ -119,7 +117,7 @@ void OnUnload() {
   if (ctx.core && ctx.core->camera) {
     SPF_Camera_API *camera = ctx.core->camera;
     const HeadOffset &applied = ctx.last_applied_offset;
-    constexpr float kDegToRad = std::numbers::pi_v<float> / 180.0f;
+    using math::kDegToRad;
     float x, y, z;
     if (camera->Cam_GetInteriorSeatPos(&x, &y, &z))
       camera->Cam_SetInteriorSeatPos(x - applied.pos_x, y - applied.pos_y,
@@ -218,12 +216,10 @@ void OnActivated(const SPF_Core_API *core_api) {
   ctx.effects.Register(std::make_unique<BlindspotViewerEffect>(
       core_api->config, ctx.config_handle, core_api->keybinds,
       ctx.keybinds_handle));
-  ctx.effects.LoadAllConfig();
-
   ctx.manual_zoom = std::make_unique<ManualZoomEffect>(
       core_api->config, ctx.config_handle, core_api->keybinds,
       ctx.keybinds_handle, &ctx.last_applied_offset.fov);
-  ctx.manual_zoom->LoadConfig();
+  ctx.ReloadEffectsConfig();
 
   ctx.telemetry_handle =
       core_api->telemetry->Tel_GetContext(PluginContext::kPluginName);
@@ -249,20 +245,12 @@ void OnActivated(const SPF_Core_API *core_api) {
 
   if (ctx.keybinds_handle) {
     // Only functional keybinds are registered here; effect enable/disable
-    // stays in the settings UI. Callbacks are no-ops since the effects poll
-    // via Kbind_GetActionValue instead; registering is still required for
-    // that polling to work.
-    core_api->keybinds->Kbind_Register(
-        ctx.keybinds_handle, "ManualLook.look_left", OnManualLookLeftTriggered);
+    // stays in the settings UI.
+    for (const keybinds::Action &action : keybinds::kPolledActions)
+      core_api->keybinds->Kbind_Register(ctx.keybinds_handle, action.id,
+                                         OnPolledActionTriggered);
     core_api->keybinds->Kbind_Register(ctx.keybinds_handle,
-                                       "ManualLook.look_right",
-                                       OnManualLookRightTriggered);
-    core_api->keybinds->Kbind_Register(ctx.keybinds_handle, "ManualZoom.zoom",
-                                       OnManualZoomTriggered);
-    core_api->keybinds->Kbind_Register(ctx.keybinds_handle,
-                                       "BlindspotViewer.peek",
-                                       OnBlindspotViewerTriggered);
-    core_api->keybinds->Kbind_Register(ctx.keybinds_handle, "UI.toggle",
+                                       keybinds::kToggleWindow.id,
                                        OnToggleSettingsWindow);
   }
 
@@ -275,12 +263,10 @@ void OnSettingChanged(SPF_Config_Handle * /*config_handle*/,
   static constexpr char kSettingsPrefix[] = "settings.";
   if (std::strncmp(keyPath, kSettingsPrefix, sizeof(kSettingsPrefix) - 1) ==
       0) {
-    ctx.effects.LoadAllConfig();
-    if (ctx.manual_zoom)
-      ctx.manual_zoom->LoadConfig();
+    ctx.ReloadEffectsConfig();
     // A setting just changed, so the cached "matches the active profile?"
     // answer (SettingsWindow.cpp's unsaved-changes marker) is stale.
-    ctx.profile_matches_dirty = true;
+    profiles::InvalidateMatchCache();
   }
 }
 
@@ -327,9 +313,7 @@ void OnUpdate() {
     // even while inactive, so it's still what must be subtracted below on
     // the first frame back. Zeroing it would bake the stale offset into the
     // live pose, compounding on every view switch.
-    ctx.effects.ResetAll();
-    if (ctx.manual_zoom)
-      ctx.manual_zoom->Reset();
+    ctx.ResetEffects();
     ctx.was_interior_last_frame = true;
   }
 
@@ -357,7 +341,7 @@ void OnUpdate() {
   if (!got_seat || !got_rot)
     return;
 
-  constexpr float kDegToRad = std::numbers::pi_v<float> / 180.0f;
+  using math::kDegToRad;
 
   // Detect the native "recenter camera" hotkey: it snaps rotation straight
   // to the raw default with no event to hook, so infer it heuristically

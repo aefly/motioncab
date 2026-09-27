@@ -39,6 +39,12 @@ game's `plugins/spfPlugins/MotionCab/`.
   any SDK interaction.
 - Make sure a new feature doesn't conflict with an existing effect before
   adding it.
+- Derive a new effect from `ConfigurableEffect`
+  (`src/effects/ConfigurableEffect.hpp`), which handles its `enabled`
+  toggle and reads its settings by name.
+- Reuse the shared helpers (`src/math/Units.hpp`,
+  `src/effects/TelemetryUtil.hpp`, `src/core/Keybinds.hpp`) rather than
+  duplicating their logic in an effect.
 
 ## Localization
 
@@ -91,7 +97,7 @@ may not render.
 
 Never hardcode user-facing text. Add a key to `en.json` and every other
 language file, then look it up with `loc::Tr()` (see
-`src/Localization.hpp`). A setting's title and description live under
+`src/core/Localization.hpp`). A setting's title and description live under
 its own config key plus `.title`/`.desc`
 (e.g. `settings.road.suspension.reactivity.title`).
 

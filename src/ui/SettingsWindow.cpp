@@ -1,10 +1,11 @@
 #include "SettingsWindow.hpp"
 
-#include "Links.hpp"
-#include "Localization.hpp"
-#include "PluginContext.hpp"
-#include "ProfileManager.hpp"
 #include "SPF_Icons.h"
+#include "core/Keybinds.hpp"
+#include "core/Links.hpp"
+#include "core/Localization.hpp"
+#include "core/PluginContext.hpp"
+#include "core/ProfileManager.hpp"
 #include "ui/OpenUrl.hpp"
 #include "ui/SettingsDefaults.hpp"
 
@@ -711,9 +712,9 @@ void DrawManualLook(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
   DrawWrappedHint(ui, loc::Tr("settings.manual.manual_look.hint"));
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "manual_look_table")) {
-    DrawKeybindRow(ui, "ManualLook.look_left",
+    DrawKeybindRow(ui, keybinds::kLookLeft.id,
                    loc::Tr("keybinds.look_left.title"));
-    DrawKeybindRow(ui, "ManualLook.look_right",
+    DrawKeybindRow(ui, keybinds::kLookRight.id,
                    loc::Tr("keybinds.look_right.title"));
     DrawFloat(ui, cfg, h, "settings.manual.manual_look.look_angle_deg", 20.0f,
               90.0f, "%.0f deg", defaults::kManualLookLookAngle);
@@ -735,7 +736,7 @@ void DrawManualZoom(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
   DrawWrappedHint(ui, loc::Tr("settings.manual.manual_zoom.hint"));
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "manual_zoom_table")) {
-    DrawKeybindRow(ui, "ManualZoom.zoom", loc::Tr("keybinds.zoom.title"));
+    DrawKeybindRow(ui, keybinds::kZoom.id, loc::Tr("keybinds.zoom.title"));
     DrawFloat(ui, cfg, h, "settings.manual.manual_zoom.zoom_fov_deg", 5.0f,
               60.0f, "%.0f deg", defaults::kManualZoomZoomLevel);
     DrawFloat(ui, cfg, h, "settings.manual.manual_zoom.smoothing_time", 0.02f,
@@ -754,7 +755,7 @@ void DrawBlindspotViewer(SPF_UI_API *ui, SPF_Config_API *cfg,
       DrawEnabled(ui, cfg, h, "settings.manual.blindspot_viewer.enabled", true);
   ui->UI_BeginDisabled(!enabled);
   if (BeginSettingsTable(ui, "blindspot_viewer_table")) {
-    DrawKeybindRow(ui, "BlindspotViewer.peek",
+    DrawKeybindRow(ui, keybinds::kBlindspotPeek.id,
                    loc::Tr("keybinds.blindspot_viewer.title"));
     DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.pos_x", -0.5f, 0.5f,
               "%.2f m", defaults::kBlindspotViewerPosX);
@@ -1090,19 +1091,13 @@ const LogoTexture &GetLogoTexture(SPF_UI_API *ui) {
     return g_logo_texture;
   g_logo_texture_tried = true;
 
-  PluginContext &ctx = Context();
-  if (!ctx.core || !ctx.core->environment || !ctx.environment_handle ||
-      !ui->UI_CreateTextureFromFile)
+  if (!ui->UI_CreateTextureFromFile)
+    return g_logo_texture;
+  const std::string dir = Context().PluginDataDir();
+  if (dir.empty())
     return g_logo_texture;
 
-  char dir[512];
-  const int len = ctx.core->environment->Env_GetPluginDataDir(
-      ctx.environment_handle, dir, sizeof(dir));
-  if (len <= 0 || len >= static_cast<int>(sizeof(dir)))
-    return g_logo_texture;
-
-  const std::string path =
-      std::string(dir, static_cast<size_t>(len)) + "/logo.png";
+  const std::string path = dir + "/logo.png";
   g_logo_texture.id = ui->UI_CreateTextureFromFile(
       path.c_str(), &g_logo_texture.width, &g_logo_texture.height);
   return g_logo_texture;
@@ -1229,7 +1224,8 @@ void DrawSettingsTab(SPF_UI_API *ui, SPF_Config_API *cfg,
   float label_w = 0.0f, label_h = 0.0f;
   ui->UI_CalcTextSize(toggle_label, &label_w, &label_h);
   const float field_w = std::max(180.0f, label_w);
-  DrawKeybindRowAt(ui, "UI.toggle", toggle_label, field_w + kGap);
+  DrawKeybindRowAt(ui, keybinds::kToggleWindow.id, toggle_label,
+                   field_w + kGap);
 
   ui->UI_Spacing();
   DrawProfilesSection(ui, field_w);

@@ -179,34 +179,31 @@ game's `plugins/spfPlugins/MotionCab/`.
 ```txt
 ├── src/
 │   ├── Plugin.cpp                    Lifecycle callbacks, telemetry wiring, camera application
-│   ├── Manifest.cpp / Manifest.hpp   Plugin identity, settings defaults, keybinds, UI metadata
-│   ├── Links.hpp                     Plugin URLs
-│   ├── Localization.cpp / .hpp       Translated string lookup (loc::Tr)
-│   ├── PluginContext.cpp / .hpp      Shared plugin state
+│   ├── core/
+│   │   ├── Manifest.cpp / .hpp       Plugin identity, settings defaults, keybinds, UI metadata
+│   │   ├── PluginContext.cpp / .hpp  Shared plugin state
+│   │   ├── ProfileManager.cpp / .hpp Create/save/switch named presets
+│   │   ├── Localization.cpp / .hpp   Translated string lookup (loc::Tr)
+│   │   ├── Keybinds.hpp              Keybind action names and key polling helpers
+│   │   ├── StringUtil.hpp            Case-insensitive string helpers
+│   │   └── Links.hpp                 Plugin URLs
 │   ├── math/
 │   │   ├── SpringDamper.hpp          Critically-damped spring, the core smoothing primitive
-│   │   └── Noise.hpp                 Deterministic gradient noise, used by Speed Shake
-│   └── effects/
-│       ├── Effect.hpp                Base effect interface + HeadOffset struct
-│       ├── EffectManager.cpp / .hpp  Owns/drives all HeadOffset-based effects
-│       ├── HeadMotionEffect.*
-│       ├── BodyDynamicsEffect.*
-│       ├── SteeringCameraEffect.*
-│       ├── SuspensionEffect.*
-│       ├── RoadIrregularityEffect.*
-│       ├── SpeedShakeEffect.*
-│       ├── IdleBreathingEffect.*
-│       ├── EngineVibrationEffect.*
-│       ├── EngineStartStopEffect.*
-│       ├── MirrorCheckEffect.*
-│       ├── ManualLookEffect.*
-│       ├── ManualZoomEffect.*
-│       └── BlindspotViewerEffect.*
-│   ├── ui/
-│   │   ├── SettingsWindow.cpp / .hpp   MotionCab Quick Settings window
-│   │   ├── OpenUrl.cpp / .hpp          Opens a URL in the system browser
-│   │   └── SettingsDefaults.hpp        Shared default values
-│   └── ProfileManager.cpp / .hpp     Create/save/switch named presets
+│   │   ├── Noise.hpp                 Deterministic gradient noise
+│   │   └── Units.hpp                 Unit conversions, SmoothStep, phase wrapping
+│   ├── effects/
+│   │   ├── Effect.hpp                Base effect interface + HeadOffset struct
+│   │   ├── ConfigurableEffect.hpp    Base for effects: enabled toggle + settings access
+│   │   ├── EffectManager.cpp / .hpp  Owns/drives all HeadOffset-based effects
+│   │   ├── TelemetryUtil.hpp         Telemetry readings shared by effects
+│   │   ├── driving/                  HeadMotion, BodyDynamics, SteeringCamera
+│   │   ├── road/                     Suspension, RoadIrregularity, SpeedShake
+│   │   ├── cabin/                    IdleBreathing, EngineVibration, EngineStartStop
+│   │   └── manual/                   MirrorCheck, ManualLook, ManualZoom, BlindspotViewer
+│   └── ui/
+│       ├── SettingsWindow.cpp / .hpp MotionCab Quick Settings window
+│       ├── OpenUrl.cpp / .hpp        Opens a URL in the system browser
+│       └── SettingsDefaults.hpp      Shared default values
 ├── data/
 │   └── logo.png                      About tab logo
 ├── localization/
