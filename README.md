@@ -40,8 +40,8 @@ camera control, keybind rebinding, and the in-game settings UI.
   and cornering
 - **Steering Camera** — smoothed camera yaw following the steering wheel
 - **Idle Breathing** — subtle breathing motion that fades out with speed
-- **Suspension** — camera follows real per-wheel suspension movement, with
-  a grade-follow response to uphill/downhill slope
+- **Suspension** — your head rides an air-suspended seat over the truck's
+  bumps, with a grade-follow response to uphill/downhill slope
 - **Engine Vibration** — RPM-scaled engine buzz
 - **Mirror Check** — looks toward the mirror on turn signal
 - **Manual Look** — smooth look-left/look-right
