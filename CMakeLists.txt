@@ -61,6 +61,7 @@ set(PLUGIN_SOURCES
     "src/core/PluginContext.cpp"
     "src/core/Localization.cpp"
     "src/core/ProfileManager.cpp"
+    "src/core/SettingsSchema.cpp"
     "src/effects/EffectManager.cpp"
     "src/effects/driving/HeadMotionEffect.cpp"
     "src/effects/driving/SteeringCameraEffect.cpp"
