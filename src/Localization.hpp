@@ -24,13 +24,9 @@ void Sync();
 const char *Tr(std::string_view key);
 
 // Tr() with every "{name}" in the translation replaced by its value.
-std::string Tr(
-    std::string_view key,
-    std::initializer_list<std::pair<std::string_view, std::string_view>> args);
-
-// Bumped every time Sync() picks up a new active language, the first one
-// included.
-unsigned LanguageChangeCount();
+std::string
+Tr(std::string_view key,
+   std::initializer_list<std::pair<std::string_view, std::string_view>> args);
 
 // Drops the cache, so a plugin reload re-reads the translation files.
 void Reset();

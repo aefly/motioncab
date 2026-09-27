@@ -1295,7 +1295,7 @@ TabMetrics MeasureTabs(SPF_UI_API *ui) {
 // Widths that make the tabs fill the whole tab bar, spreading the spare
 // room evenly (whole pixels, the leftover ones going to the first tabs).
 // All 0 when the tabs don't even fit at their own width: ImGui then
-// shrinks them itself, for the frame until FitWindowToTabs widens the
+// shrinks them itself, for the frame until FitWindowSize widens the
 // window. Call right before UI_BeginTabBar.
 std::array<float, kTabCount> StretchTabs(SPF_UI_API *ui, const TabMetrics &m) {
   std::array<float, kTabCount> widths{};
@@ -1344,100 +1344,66 @@ bool BeginTab(SPF_UI_API *ui, const TabInfo &tab, float width,
   return open;
 }
 
-// True on the first frame after a language switch. `seen` must start at
-// the count from the window's first frame, so the language SPF starts with
-// doesn't count as a switch (that would undo the size the player left the
-// window at last session).
-bool LanguageSwitched(unsigned &seen) {
-  const unsigned now = loc::LanguageChangeCount();
-  const bool switched = now != seen;
-  seen = now;
-  return switched;
+// The window height at which the About tab's content exactly fits, as of
+// the last frame it was open; 0 until then. It depends on the language
+// (text length and wrapping), so FitWindowSize grows the window to it
+// rather than leaving About with a scrollbar.
+float g_about_fit_h = 0.0f;
+
+// Starts the scrolling region a tab's content is drawn in, filling the
+// window's height below the tab bar (minus the footer line, if the tab has
+// one). Expanding a section then shows a scrollbar in it, and the tab bar
+// stays in view. Pair with UI_EndChild.
+void BeginTabContent(SPF_UI_API *ui, const TabInfo &tab, bool with_footer) {
+  float avail_x = 0.0f, avail_y = 0.0f;
+  ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
+  const float footer_h =
+      with_footer ? ui->UI_GetTextLineHeightWithSpacing() : 0.0f;
+  const std::string id = std::string("##content_") + tab.id;
+  ui->UI_BeginChild(id.c_str(), 0.0f,
+                    std::max(1.0f, std::floor(avail_y - footer_h)), false,
+                    SPF_WINDOW_FLAG_NONE);
 }
 
-// Keeps the window exactly wide enough for the tab titles, so none gets
-// cut with "..." (many translations are longer than English): on the
-// first launch and on a language switch it snaps to that width, 1 px
-// narrower would cut a tab. In between, the player can widen it freely
-// but not narrow it past that limit. SPF saves the size like any manual
-// resize.
-void FitWindowToTabs(SPF_UI_API *ui, const TabMetrics &m) {
-  static unsigned s_seen_lang = loc::LanguageChangeCount();
-  static bool s_first_frame = true;
+// The window height at which the content drawn so far in a tab's region
+// exactly fits it. Call inside the region, after its content, with
+// `region_top` the window-local Y the region started at: a borderless child
+// has no padding, and the cursor sits one ItemSpacing below the last item,
+// in content coordinates (unaffected by the scroll position).
+float ContentFitHeight(SPF_UI_API *ui, float region_top) {
+  SPF_Style_Handle *style = ui->UI_GetStyle();
+  float spacing_x = 0.0f, spacing_y = 0.0f, pad_x = 0.0f, pad_y = 0.0f;
+  ui->UI_Style_GetItemSpacing(style, &spacing_x, &spacing_y);
+  ui->UI_Style_GetWindowPadding(style, &pad_x, &pad_y);
+  return std::ceil(region_top + ui->UI_GetCursorPosY() - spacing_y + pad_y);
+}
 
+// [TEMPORARY] Sizes the window, which the player can't resize (see OnRegisterUI
+// in Plugin.cpp): exactly wide enough for the tab titles, so none gets cut with
+// "..." (many translations are longer than English), and kWindowHeight tall, or
+// taller if the About tab needs it in this language (g_about_fit_h), but never
+// taller than the screen. The other tabs' content scrolls within it.
+void FitWindowSize(SPF_UI_API *ui, const TabMetrics &m) {
   float win_pad_x = 0.0f, win_pad_y = 0.0f;
   ui->UI_Style_GetWindowPadding(ui->UI_GetStyle(), &win_pad_x, &win_pad_y);
   // ImGui only shrinks tabs once they overflow the window's width minus
   // WindowPadding on both sides by 1 px or more, and everything is whole
-  // pixels, so this is the exact limit (without the vertical scrollbar,
-  // which FitWindowToContent keeps hidden).
-  const float required = std::round(m.total + win_pad_x * 2.0f);
+  // pixels, so this is the exact width (the tab content scrolls in its own
+  // region, so its scrollbar never narrows the tab bar).
+  const float target_w = std::round(m.total + win_pad_x * 2.0f);
 
-  float win_w = 0.0f, win_h = 0.0f;
-  ui->UI_GetWindowSize(&win_w, &win_h);
-
-  // The first launch ever is the window still at its manifest default;
-  // later launches keep whatever width the player left it at.
-  const bool first_launch =
-      s_first_frame &&
-      std::fabs(win_w - static_cast<float>(defaults::kWindowWidth)) < 0.5f;
-  s_first_frame = false;
-  const bool snap = LanguageSwitched(s_seen_lang) || first_launch;
-
-  if (snap ? std::fabs(win_w - required) < 0.5f : win_w >= required)
-    return;
-  ui->UI_SetWindowSize(required, win_h, SPF_COND_ALWAYS);
-}
-
-// Grows the window to its content's height so it never needs a vertical
-// scrollbar (e.g. after expanding a section or switching tabs), and shrinks
-// it back to the player's own height when the content gets shorter. A
-// language switch resets that height to the default, like FitWindowToTabs.
-// Never goes past the bottom of the screen. Call after drawing all the
-// content.
-void FitWindowToContent(SPF_UI_API *ui) {
-  // The player's own height, and the height we forced on top of it (0
-  // when the window is at the player's height).
-  static float s_user_h = 0.0f;
-  static float s_auto_h = 0.0f;
-  static unsigned s_seen_lang = loc::LanguageChangeCount();
-
-  SPF_Style_Handle *style = ui->UI_GetStyle();
-  float pad_x = 0.0f, pad_y = 0.0f, spacing_x = 0.0f, spacing_y = 0.0f;
-  ui->UI_Style_GetWindowPadding(style, &pad_x, &pad_y);
-  ui->UI_Style_GetItemSpacing(style, &spacing_x, &spacing_y);
-
-  float win_w = 0.0f, win_h = 0.0f;
-  ui->UI_GetWindowSize(&win_w, &win_h);
-
-  // Any height we didn't set ourselves is the player's choice, until the
-  // next language switch.
-  if (s_auto_h == 0.0f || std::fabs(win_h - s_auto_h) > 0.5f) {
-    s_user_h = win_h;
-    s_auto_h = 0.0f;
-  }
-  if (LanguageSwitched(s_seen_lang))
-    s_user_h = static_cast<float>(defaults::kWindowHeight);
-
-  // The cursor sits one ItemSpacing below the last item, in window-local
-  // coordinates that already include the title bar and top padding.
-  float required = std::ceil(ui->UI_GetCursorPosY() - spacing_y + pad_y);
-
-  float win_x = 0.0f, win_y = 0.0f, vp_x = 0.0f, vp_y = 0.0f, vp_w = 0.0f,
-        vp_h = 0.0f;
-  ui->UI_GetWindowPos(&win_x, &win_y);
-  ui->UI_GetMainViewportPos(&vp_x, &vp_y);
+  float target_h =
+      std::max(static_cast<float>(defaults::kWindowHeight), g_about_fit_h);
+  float vp_w = 0.0f, vp_h = 0.0f;
   ui->UI_GetMainViewportSize(&vp_w, &vp_h);
-  const float max_h = vp_y + vp_h - win_y;
-  if (max_h > 0.0f)
-    required = std::min(required, max_h);
+  if (vp_h > 0.0f)
+    target_h = std::min(target_h, std::floor(vp_h));
 
-  const float target = std::max(s_user_h, required);
-  if (std::fabs(target - win_h) <= 0.5f)
+  float win_w = 0.0f, win_h = 0.0f;
+  ui->UI_GetWindowSize(&win_w, &win_h);
+  if (std::fabs(win_w - target_w) < 0.5f && std::fabs(win_h - target_h) < 0.5f)
     return;
-
-  ui->UI_SetWindowSize(win_w, target, SPF_COND_ALWAYS);
-  s_auto_h = target > s_user_h + 0.5f ? target : 0.0f;
+  ui->UI_SetWindowSize(target_w, target_h, SPF_COND_ALWAYS);
 }
 
 } // namespace
@@ -1472,7 +1438,7 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   ui->UI_Spacing();
 
   const TabMetrics tab_metrics = MeasureTabs(ui);
-  FitWindowToTabs(ui, tab_metrics);
+  FitWindowSize(ui, tab_metrics);
   const std::array<float, kTabCount> tab_widths = StretchTabs(ui, tab_metrics);
   if (!ui->UI_BeginTabBar("MotionCabTabs", SPF_TAB_BAR_FLAG_NONE)) {
     ui->UI_PopStyleVar(pushed_vars);
@@ -1481,47 +1447,61 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   }
 
   if (BeginTab(ui, kTabs[0], tab_widths[0], tab_metrics)) {
+    BeginTabContent(ui, kTabs[0], true);
     DrawHeadMotion(ui, cfg, h);
     DrawBodyDynamics(ui, cfg, h);
     DrawSteeringCamera(ui, cfg, h);
+    ui->UI_EndChild();
     ui->UI_EndTabItem();
   }
 
   if (BeginTab(ui, kTabs[1], tab_widths[1], tab_metrics)) {
+    BeginTabContent(ui, kTabs[1], true);
     DrawSuspension(ui, cfg, h);
     DrawRoadIrregularity(ui, cfg, h);
     DrawSpeedShake(ui, cfg, h);
+    ui->UI_EndChild();
     ui->UI_EndTabItem();
   }
 
   if (BeginTab(ui, kTabs[2], tab_widths[2], tab_metrics)) {
+    BeginTabContent(ui, kTabs[2], true);
     DrawIdleBreathing(ui, cfg, h);
     DrawEngineVibration(ui, cfg, h);
     DrawEngineStartStop(ui, cfg, h);
+    ui->UI_EndChild();
     ui->UI_EndTabItem();
   }
 
   const bool manual_tab_open =
       BeginTab(ui, kTabs[3], tab_widths[3], tab_metrics);
   if (manual_tab_open) {
+    BeginTabContent(ui, kTabs[3], true);
     DrawMirrorCheck(ui, cfg, h);
     DrawManualLook(ui, cfg, h);
     DrawManualZoom(ui, cfg, h);
     DrawBlindspotViewer(ui, cfg, h);
+    ui->UI_EndChild();
     ui->UI_EndTabItem();
   }
 
   const bool settings_tab_open =
       BeginTab(ui, kTabs[4], tab_widths[4], tab_metrics);
   if (settings_tab_open) {
+    BeginTabContent(ui, kTabs[4], false);
     DrawSettingsTab(ui, cfg, h);
+    ui->UI_EndChild();
     ui->UI_EndTabItem();
   }
 
   const bool about_tab_open =
       BeginTab(ui, kTabs[5], tab_widths[5], tab_metrics);
   if (about_tab_open) {
+    const float region_top = ui->UI_GetCursorPosY();
+    BeginTabContent(ui, kTabs[5], false);
     DrawAboutTab(ui);
+    g_about_fit_h = ContentFitHeight(ui, region_top);
+    ui->UI_EndChild();
     ui->UI_EndTabItem();
   }
 
@@ -1530,8 +1510,6 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   if (!settings_tab_open && !about_tab_open)
     ui->UI_TextDisabled(
         WithIcon(ICON_FA_CIRCLE_INFO, loc::Tr("ui.slider_reset_hint")).c_str());
-
-  FitWindowToContent(ui);
 
   ui->UI_PopStyleVar(pushed_vars);
   ui->UI_PopStyleColor(pushed_colors);

@@ -147,8 +147,15 @@ void OnUnload() {
 }
 
 void OnRegisterUI(SPF_UI_API *ui_api) {
-  ui_api->UI_RegisterDrawCallback(PluginContext::kPluginName, "MotionCab",
-                                  &DrawSettingsWindow, nullptr);
+  // [TEMPORARY] Not resizable: DrawSettingsWindow sizes it itself (width fitted
+  // to the tab titles, fixed height with scrolling tab content).
+  if (ui_api->UI_RegisterDrawCallbackWithFlags)
+    ui_api->UI_RegisterDrawCallbackWithFlags(
+        PluginContext::kPluginName, "MotionCab", &DrawSettingsWindow, nullptr,
+        SPF_WINDOW_FLAG_NO_RESIZE);
+  else
+    ui_api->UI_RegisterDrawCallback(PluginContext::kPluginName, "MotionCab",
+                                    &DrawSettingsWindow, nullptr);
 }
 
 void OnToggleSettingsWindow() {

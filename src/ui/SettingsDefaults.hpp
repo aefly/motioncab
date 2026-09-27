@@ -69,10 +69,10 @@ constexpr float kBlindspotViewerFovOffset = 10.0f;
 constexpr float kBlindspotViewerSmoothing = 0.6f;
 constexpr bool kBlindspotViewerToggleMode = true;
 
-// The Quick Settings window's size on first launch (Manifest.cpp's
-// Defaults_AddWindow). SettingsWindow.cpp then snaps the width to the tab
-// titles, and falls back to this height on a language switch before
-// fitting it to the new text.
+// [TEMPORARY] The Quick Settings window's size on first launch (Manifest.cpp's
+// Defaults_AddWindow). The player can't resize it: SettingsWindow.cpp
+// keeps it at least kWindowHeight tall (taller if the About tab needs it)
+// and fits its width to the tab titles.
 constexpr int kWindowWidth = 476;
 constexpr int kWindowHeight = 640;
 
