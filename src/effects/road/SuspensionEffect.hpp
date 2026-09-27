@@ -1,9 +1,8 @@
 #pragma once
 
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
-
-#include "ui/SettingsDefaults.hpp"
 
 namespace motioncab {
 
@@ -30,13 +29,13 @@ private:
 
   void RecalibrateBaseline();
 
-  float vertical_strength_ = defaults::kSuspensionVerticalStrength;
-  float reactivity_ =
-      defaults::kSuspensionReactivity; // seconds, spring time constant for
-                                       // how quickly the seat follows the
-                                       // road
+  float vertical_strength_ =
+      settings::Default("settings.road.suspension.vertical_strength");
+  // seconds, spring time constant for how quickly the seat follows the road
+  float reactivity_ = settings::Default("settings.road.suspension.reactivity");
+  // 0 = disabled; see class comment
   float grade_strength_ =
-      defaults::kSuspensionGradeStrength; // 0 = disabled; see class comment
+      settings::Default("settings.road.suspension.grade_strength");
 
   uint32_t wheel_count_ =
       0; // from SPF_TruckConstants; array slots beyond this are unused

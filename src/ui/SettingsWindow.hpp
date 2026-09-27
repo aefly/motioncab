@@ -4,6 +4,13 @@
 
 namespace motioncab {
 
+// [TEMPORARY] The Quick Settings window's size on first launch (Manifest.cpp's
+// Defaults_AddWindow). The player can't resize it: SettingsWindow.cpp
+// keeps it at least kWindowHeight tall (taller if the About tab needs it)
+// and fits its width to the tab titles.
+inline constexpr int kWindowWidth = 476;
+inline constexpr int kWindowHeight = 640;
+
 // Draw callback for the "MotionCab" window declared in Manifest.cpp.
 // Quick access to every effect's enabled toggle and sliders in one compact,
 // collapsible window, as an alternative to navigating the native settings

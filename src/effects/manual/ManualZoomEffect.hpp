@@ -2,9 +2,9 @@
 
 #include "SPF_Camera_API.h"
 #include "SPF_KeyBinds_API.h"
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
-#include "ui/SettingsDefaults.hpp"
 
 namespace motioncab {
 
@@ -48,10 +48,12 @@ private:
   const float *extra_fov_deg_; // see class comment
 
   bool enabled_ = true;
+  // FOV while the zoom key is held
   float zoom_fov_deg_ =
-      defaults::kManualZoomZoomLevel; // FOV while the zoom key is held
+      settings::Default("settings.manual.manual_zoom.zoom_fov_deg");
+  // seconds, spring time constant
   float smoothing_time_ =
-      defaults::kManualZoomSmoothing; // seconds, spring time constant
+      settings::Default("settings.manual.manual_zoom.smoothing_time");
 
   math::SpringDamper1D fov_spring_;
   float base_fov_deg_ = 0.0f; // FOV to return to when the key is released

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
 
@@ -41,8 +42,12 @@ private:
   };
   static SurfaceTraits ClassifySurface(const char *substance_name);
 
-  float intensity_ = 1.0f;   // scales both the chatter and the rocking
-  float reactivity_ = 0.05f; // seconds, noise low-pass time constant
+  // scales both the chatter and the rocking
+  float intensity_ =
+      settings::Default("settings.road.road_irregularity.intensity");
+  // seconds, noise low-pass time constant
+  float reactivity_ =
+      settings::Default("settings.road.road_irregularity.reactivity");
 
   uint32_t wheel_count_ = 0;
   std::array<SurfaceTraits, SPF_TELEMETRY_SUBSTANCE_MAX_COUNT>

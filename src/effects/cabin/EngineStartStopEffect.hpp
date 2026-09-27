@@ -1,8 +1,7 @@
 #pragma once
 
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
-
-#include "ui/SettingsDefaults.hpp"
 
 namespace motioncab {
 
@@ -38,9 +37,11 @@ public:
 private:
   void LoadSettings() override;
 
-  float intensity_ = defaults::kEngineStartStopIntensity;
-  float duration_ = defaults::kEngineStartStopDuration; // seconds, length of
-                                                        // the start-up shudder
+  float intensity_ =
+      settings::Default("settings.cabin.engine_start_stop.intensity");
+  // seconds, length of the start-up shudder
+  float duration_ =
+      settings::Default("settings.cabin.engine_start_stop.duration");
 
   bool is_electric_ = false;
   // Truck model id, to tell a genuine truck swap apart from other events

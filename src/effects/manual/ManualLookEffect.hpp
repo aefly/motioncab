@@ -1,11 +1,11 @@
 #pragma once
 
 #include "core/Keybinds.hpp"
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
 
 #include "SPF_KeyBinds_API.h"
-#include "ui/SettingsDefaults.hpp"
 
 namespace motioncab {
 
@@ -36,13 +36,15 @@ private:
   SPF_KeyBinds_API *keybinds_api_;
   SPF_KeyBinds_Handle *keybinds_handle_;
 
+  // yaw when looking left/right, in degrees
   float look_angle_deg_ =
-      defaults::kManualLookLookAngle; // yaw when looking left/right, in
-                                      // degrees
+      settings::Default("settings.manual.manual_look.look_angle_deg");
+  // seconds, spring time constant
   float smoothing_time_ =
-      defaults::kManualLookSmoothing; // seconds, spring time constant
+      settings::Default("settings.manual.manual_look.smoothing_time");
+  // false = press/hold, true = toggle
   bool toggle_mode_ =
-      defaults::kManualLookToggleMode; // false = press/hold, true = toggle
+      settings::DefaultBool("settings.manual.manual_look.toggle_mode");
 
   math::SpringDamper1D yaw_;
 

@@ -1,9 +1,8 @@
 #pragma once
 
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
-
-#include "ui/SettingsDefaults.hpp"
 
 namespace motioncab {
 
@@ -27,14 +26,15 @@ public:
 private:
   void LoadSettings() override;
 
+  // translational response to linear acceleration
   float sway_strength_ =
-      defaults::kHeadMotionSwayStrength; // translational response to
-                                         // linear acceleration
+      settings::Default("settings.driving.head_motion.sway_strength");
+  // rotational response to angular velocity
   float tilt_strength_ =
-      defaults::kHeadMotionTiltStrength; // rotational response to
-                                         // angular velocity
+      settings::Default("settings.driving.head_motion.tilt_strength");
+  // seconds, spring time constant
   float smoothing_time_ =
-      defaults::kHeadMotionSmoothing; // seconds, spring time constant
+      settings::Default("settings.driving.head_motion.smoothing_time");
 
   math::SpringDamper1D sway_x_;
   math::SpringDamper1D sway_z_;

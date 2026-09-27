@@ -6,8 +6,8 @@
 #include "core/Localization.hpp"
 #include "core/PluginContext.hpp"
 #include "core/ProfileManager.hpp"
+#include "core/SettingsSchema.hpp"
 #include "ui/OpenUrl.hpp"
-#include "ui/SettingsDefaults.hpp"
 
 #include <algorithm>
 #include <array>
@@ -15,6 +15,7 @@
 #include <cmath>
 #include <cstdio>
 #include <iterator>
+#include <span>
 #include <string>
 #include <string_view>
 
@@ -106,6 +107,14 @@ const char *SettingDesc(const char *key) {
   return loc::Tr(std::string(key) + ".desc");
 }
 
+const char *KeybindTitle(const keybinds::Action &action) {
+  return loc::Tr(std::string(action.loc_key) + ".title");
+}
+
+bool IsEnabledToggle(const settings::Setting &setting) {
+  return settings::SplitKey(setting.key).name == "enabled";
+}
+
 // Toggle switch drawn as a bare icon button, e.g. for the value column of a
 // settings table row, where the label already lives in its own column. The
 // config key doubles as the button's ID so it stays unique.
@@ -133,10 +142,10 @@ bool DrawToggleCell(SPF_UI_API *ui, const char *key, bool *value,
 
 // An effect's "Enabled" toggle, with its label after the switch.
 bool DrawEnabled(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
-                 const char *key, bool default_value) {
-  bool value = cfg->Cfg_GetBool(h, key, default_value);
-  if (DrawToggleCell(ui, key, &value, loc::Tr("settings.enabled_desc")))
-    cfg->Cfg_SetBool(h, key, value);
+                 const settings::Setting &setting) {
+  bool value = cfg->Cfg_GetBool(h, setting.key, setting.default_bool());
+  if (DrawToggleCell(ui, setting.key, &value, loc::Tr("settings.enabled_desc")))
+    cfg->Cfg_SetBool(h, setting.key, value);
   ui->UI_SameLine(0.0f, 8.0f);
   ui->UI_Text(loc::Tr("ui.enabled"));
   return value;
@@ -157,31 +166,21 @@ float g_label_column_w = 160.0f;
 
 // The widest label any settings table can show in the active language, so
 // none runs into its slider and every table's columns line up. Table rows
-// are the profile-covered settings (bar the effects' "enabled" toggles,
-// drawn above the table) and the keybind rows.
+// are the settings (bar the effects' "enabled" toggles, drawn above the
+// table) and the polled keybinds.
 float LabelColumnWidth(SPF_UI_API *ui) {
-  static const char *const kKeybindTitles[] = {
-      "keybinds.look_left.title",
-      "keybinds.look_right.title",
-      "keybinds.zoom.title",
-      "keybinds.blindspot_viewer.title",
-  };
-  static const std::vector<const char *> kSettingKeys =
-      profiles::AllSettingKeys();
-
   float widest = 0.0f;
   auto measure = [&](const char *text) {
     float w = 0.0f, h = 0.0f;
     ui->UI_CalcTextSize(text, &w, &h);
     widest = std::max(widest, w);
   };
-  for (const char *key : kSettingKeys) {
-    const std::string_view k(key);
-    if (!k.ends_with(".enabled"))
-      measure(SettingTitle(key));
+  for (const settings::Setting &s : settings::kAll) {
+    if (!IsEnabledToggle(s))
+      measure(SettingTitle(s.key));
   }
-  for (const char *key : kKeybindTitles)
-    measure(loc::Tr(key));
+  for (const keybinds::Action &action : keybinds::kPolledActions)
+    measure(KeybindTitle(action));
   return widest;
 }
 
@@ -213,24 +212,27 @@ void ShowToast(SPF_UI_API *ui, SPF_NotificationType type,
 
 // One label|toggle row.
 void DrawBool(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
-              const char *key, bool default_value) {
-  bool value = cfg->Cfg_GetBool(h, key, default_value);
+              const settings::Setting &setting) {
+  bool value = cfg->Cfg_GetBool(h, setting.key, setting.default_bool());
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableSetColumnIndex(0);
-  ui->UI_Text(SettingTitle(key));
+  ui->UI_Text(SettingTitle(setting.key));
   ui->UI_TableSetColumnIndex(1);
-  if (DrawToggleCell(ui, key, &value, SettingDesc(key)))
-    cfg->Cfg_SetBool(h, key, value);
+  if (DrawToggleCell(ui, setting.key, &value, SettingDesc(setting.key)))
+    cfg->Cfg_SetBool(h, setting.key, value);
 }
 
 // One label|slider row. Right-click the slider to reset it to default.
-// `display_scale` shows the value (and `min`/`max`) multiplied by it, e.g.
-// to show a setting stored in km/h in mph; the stored value doesn't change.
-void DrawFloat(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
-               const char *key, float min, float max, const char *format,
-               float default_value, float display_scale = 1.0f) {
-  float value = static_cast<float>(cfg->Cfg_GetFloat(h, key, default_value)) *
-                display_scale;
+// `display_scale` shows the value (and the slider's range) multiplied by
+// it, e.g. to show a setting stored in km/h in mph; the stored value
+// doesn't change.
+void DrawSlider(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
+                const settings::Setting &setting, const char *format,
+                float display_scale) {
+  const char *key = setting.key;
+  float value =
+      static_cast<float>(cfg->Cfg_GetFloat(h, key, setting.default_value)) *
+      display_scale;
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableSetColumnIndex(0);
   ui->UI_Text(SettingTitle(key));
@@ -238,11 +240,12 @@ void DrawFloat(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   char hidden_label[112];
   std::snprintf(hidden_label, sizeof(hidden_label), "##%s", key);
   ui->UI_SetNextItemWidth(-1.0f);
-  if (ui->UI_SliderFloat(hidden_label, &value, min * display_scale,
-                         max * display_scale, format, SPF_SLIDER_FLAG_NONE))
+  if (ui->UI_SliderFloat(hidden_label, &value, setting.min * display_scale,
+                         setting.max * display_scale, format,
+                         SPF_SLIDER_FLAG_NONE))
     cfg->Cfg_SetFloat(h, key, value / display_scale);
   if (ui->UI_IsItemClicked(SPF_MOUSE_BUTTON_RIGHT))
-    cfg->Cfg_SetFloat(h, key, default_value);
+    cfg->Cfg_SetFloat(h, key, setting.default_value);
   ui->UI_SetItemTooltip(SettingDesc(key));
 }
 
@@ -250,8 +253,7 @@ void DrawFloat(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
 // active language's unit ("ui.units.speed_system": mph for "imperial",
 // e.g. English, since British and American players drive in mph).
 void DrawSpeed(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
-               const char *key, float min_kmh, float max_kmh,
-               float default_kmh) {
+               const settings::Setting &setting) {
   constexpr float kMphPerKmh = 0.621371f;
   const bool imperial =
       std::string_view(loc::Tr("ui.units.speed_system")) == "imperial";
@@ -261,334 +263,17 @@ void DrawSpeed(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   for (const char *c = loc::Tr(imperial ? "ui.units.mph" : "ui.units.kmh"); *c;
        ++c)
     format += *c == '%' ? std::string("%%") : std::string(1, *c);
-  DrawFloat(ui, cfg, h, key, min_kmh, max_kmh, format.c_str(), default_kmh,
-            imperial ? kMphPerKmh : 1.0f);
+  DrawSlider(ui, cfg, h, setting, format.c_str(), imperial ? kMphPerKmh : 1.0f);
 }
 
-// --- Per-effect defaults, reused by the tab-level and global reset
-// buttons drawn in DrawSettingsWindow below. ---
-
-void ResetHeadMotion(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.driving.head_motion.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.driving.head_motion.sway_strength",
-                    defaults::kHeadMotionSwayStrength);
-  cfg->Cfg_SetFloat(h, "settings.driving.head_motion.tilt_strength",
-                    defaults::kHeadMotionTiltStrength);
-  cfg->Cfg_SetFloat(h, "settings.driving.head_motion.smoothing_time",
-                    defaults::kHeadMotionSmoothing);
-}
-
-void ResetSteeringCamera(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.driving.steering_camera.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.driving.steering_camera.rotation_left_deg",
-                    defaults::kSteeringCameraRotationLeft);
-  cfg->Cfg_SetFloat(h, "settings.driving.steering_camera.rotation_right_deg",
-                    defaults::kSteeringCameraRotationRight);
-  cfg->Cfg_SetFloat(h, "settings.driving.steering_camera.smoothing_time",
-                    defaults::kSteeringCameraSmoothing);
-  cfg->Cfg_SetFloat(h, "settings.driving.steering_camera.delay_seconds",
-                    defaults::kSteeringCameraReactionDelay);
-  cfg->Cfg_SetBool(h, "settings.driving.steering_camera.disable_in_reverse",
-                   defaults::kSteeringCameraDisableInReverse);
-}
-
-void ResetIdleBreathing(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.cabin.idle_breathing.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.cabin.idle_breathing.vertical_amplitude",
-                    defaults::kIdleBreathingVerticalAmount);
-  cfg->Cfg_SetFloat(h, "settings.cabin.idle_breathing.pitch_amplitude_deg",
-                    defaults::kIdleBreathingHeadNodAmount);
-  cfg->Cfg_SetFloat(h, "settings.cabin.idle_breathing.breathing_rate_bpm",
-                    defaults::kIdleBreathingRate);
-  cfg->Cfg_SetFloat(h, "settings.cabin.idle_breathing.fade_start_kmh",
-                    defaults::kIdleBreathingFadeStart);
-  cfg->Cfg_SetFloat(h, "settings.cabin.idle_breathing.fade_end_kmh",
-                    defaults::kIdleBreathingFadeEnd);
-}
-
-void ResetSuspension(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.road.suspension.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.road.suspension.vertical_strength",
-                    defaults::kSuspensionVerticalStrength);
-  cfg->Cfg_SetFloat(h, "settings.road.suspension.reactivity",
-                    defaults::kSuspensionReactivity);
-  cfg->Cfg_SetFloat(h, "settings.road.suspension.grade_strength",
-                    defaults::kSuspensionGradeStrength);
-}
-
-void ResetRoadIrregularity(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.road.road_irregularity.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.road.road_irregularity.intensity",
-                    defaults::kRoadIrregularityIntensity);
-  cfg->Cfg_SetFloat(h, "settings.road.road_irregularity.reactivity",
-                    defaults::kRoadIrregularityReactivity);
-}
-
-void ResetSpeedShake(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.road.speed_shake.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.road.speed_shake.intensity",
-                    defaults::kSpeedShakeIntensity);
-  cfg->Cfg_SetFloat(h, "settings.road.speed_shake.smoothing_time",
-                    defaults::kSpeedShakeSmoothing);
-  cfg->Cfg_SetFloat(h, "settings.road.speed_shake.rotation",
-                    defaults::kSpeedShakeRotation);
-  cfg->Cfg_SetFloat(h, "settings.road.speed_shake.vertical",
-                    defaults::kSpeedShakeVertical);
-  cfg->Cfg_SetFloat(h, "settings.road.speed_shake.roughness",
-                    defaults::kSpeedShakeRoughness);
-}
-
-void ResetBodyDynamics(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.driving.body_dynamics.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.driving.body_dynamics.lean_strength",
-                    defaults::kBodyDynamicsLeanStrength);
-  cfg->Cfg_SetFloat(h, "settings.driving.body_dynamics.nod_strength",
-                    defaults::kBodyDynamicsNodStrength);
-  cfg->Cfg_SetFloat(h, "settings.driving.body_dynamics.smoothing_time",
-                    defaults::kBodyDynamicsSmoothing);
-}
-
-void ResetEngineVibration(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.cabin.engine_vibration.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.cabin.engine_vibration.intensity",
-                    defaults::kEngineVibrationIntensity);
-}
-
-void ResetEngineStartStop(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.cabin.engine_start_stop.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.cabin.engine_start_stop.intensity",
-                    defaults::kEngineStartStopIntensity);
-  cfg->Cfg_SetFloat(h, "settings.cabin.engine_start_stop.duration",
-                    defaults::kEngineStartStopDuration);
-}
-
-void ResetMirrorCheck(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.manual.mirror_check.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.manual.mirror_check.look_angle_deg",
-                    defaults::kMirrorCheckLookAngle);
-  cfg->Cfg_SetFloat(h, "settings.manual.mirror_check.pitch_offset_deg",
-                    defaults::kMirrorCheckPitchOffset);
-  cfg->Cfg_SetFloat(h, "settings.manual.mirror_check.smoothing_time",
-                    defaults::kMirrorCheckSmoothing);
-  cfg->Cfg_SetBool(h, "settings.manual.mirror_check.require_stationary",
-                   defaults::kMirrorCheckRequireStationary);
-  cfg->Cfg_SetBool(h, "settings.manual.mirror_check.ignore_after_moving_signal",
-                   defaults::kMirrorCheckIgnoreAfterMovingSignal);
-}
-
-void ResetManualLook(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.manual.manual_look.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.manual.manual_look.look_angle_deg",
-                    defaults::kManualLookLookAngle);
-  cfg->Cfg_SetFloat(h, "settings.manual.manual_look.smoothing_time",
-                    defaults::kManualLookSmoothing);
-  cfg->Cfg_SetBool(h, "settings.manual.manual_look.toggle_mode",
-                   defaults::kManualLookToggleMode);
-}
-
-void ResetManualZoom(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.manual.manual_zoom.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.manual.manual_zoom.zoom_fov_deg",
-                    defaults::kManualZoomZoomLevel);
-  cfg->Cfg_SetFloat(h, "settings.manual.manual_zoom.smoothing_time",
-                    defaults::kManualZoomSmoothing);
-}
-
-void ResetBlindspotViewer(SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  cfg->Cfg_SetBool(h, "settings.manual.blindspot_viewer.enabled", true);
-  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.pos_x",
-                    defaults::kBlindspotViewerPosX);
-  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.pos_y",
-                    defaults::kBlindspotViewerPosY);
-  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.pos_z",
-                    defaults::kBlindspotViewerPosZ);
-  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.yaw_deg",
-                    defaults::kBlindspotViewerYaw);
-  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.pitch_deg",
-                    defaults::kBlindspotViewerPitch);
-  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.roll_deg",
-                    defaults::kBlindspotViewerRoll);
-  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.fov_offset_deg",
-                    defaults::kBlindspotViewerFovOffset);
-  cfg->Cfg_SetFloat(h, "settings.manual.blindspot_viewer.smoothing_time",
-                    defaults::kBlindspotViewerSmoothing);
-  cfg->Cfg_SetBool(h, "settings.manual.blindspot_viewer.toggle_mode",
-                   defaults::kBlindspotViewerToggleMode);
-}
-
-// --- Per-effect draw functions ---
-
-void DrawHeadMotion(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT,
-                    "settings.driving.head_motion"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.driving.head_motion.enabled", true);
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "head_motion_table")) {
-    DrawFloat(ui, cfg, h, "settings.driving.head_motion.sway_strength", 0.0f,
-              0.6f, "%.2f", defaults::kHeadMotionSwayStrength);
-    DrawFloat(ui, cfg, h, "settings.driving.head_motion.tilt_strength", 0.0f,
-              0.6f, "%.2f", defaults::kHeadMotionTiltStrength);
-    DrawFloat(ui, cfg, h, "settings.driving.head_motion.smoothing_time", 0.02f,
-              0.5f, "%.2f s", defaults::kHeadMotionSmoothing);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
-
-void DrawSteeringCamera(SPF_UI_API *ui, SPF_Config_API *cfg,
-                        SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_ROTATE, "settings.driving.steering_camera"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.driving.steering_camera.enabled", true);
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "steering_camera_table")) {
-    DrawFloat(ui, cfg, h, "settings.driving.steering_camera.rotation_left_deg",
-              20.0f, 60.0f, "%.1f deg", defaults::kSteeringCameraRotationLeft);
-    DrawFloat(ui, cfg, h, "settings.driving.steering_camera.rotation_right_deg",
-              20.0f, 60.0f, "%.1f deg", defaults::kSteeringCameraRotationRight);
-    DrawFloat(ui, cfg, h, "settings.driving.steering_camera.smoothing_time",
-              0.02f, 1.0f, "%.2f s", defaults::kSteeringCameraSmoothing);
-    DrawFloat(ui, cfg, h, "settings.driving.steering_camera.delay_seconds",
-              0.0f, 0.3f, "%.2f s", defaults::kSteeringCameraReactionDelay);
-    DrawBool(ui, cfg, h, "settings.driving.steering_camera.disable_in_reverse",
-             defaults::kSteeringCameraDisableInReverse);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
-
-void DrawIdleBreathing(SPF_UI_API *ui, SPF_Config_API *cfg,
-                       SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_LUNGS, "settings.cabin.idle_breathing"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.cabin.idle_breathing.enabled", true);
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "idle_breathing_table")) {
-    DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.vertical_amplitude",
-              0.0f, 0.01f, "%.3f m", defaults::kIdleBreathingVerticalAmount);
-    DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.pitch_amplitude_deg",
-              0.0f, 1.5f, "%.2f deg", defaults::kIdleBreathingHeadNodAmount);
-    DrawFloat(ui, cfg, h, "settings.cabin.idle_breathing.breathing_rate_bpm",
-              10.0f, 20.0f, "%.0f bpm", defaults::kIdleBreathingRate);
-    DrawSpeed(ui, cfg, h, "settings.cabin.idle_breathing.fade_start_kmh", 0.0f,
-              100.0f, defaults::kIdleBreathingFadeStart);
-    DrawSpeed(ui, cfg, h, "settings.cabin.idle_breathing.fade_end_kmh", 0.0f,
-              100.0f, defaults::kIdleBreathingFadeEnd);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
-
-void DrawSuspension(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_ARROWS_UP_DOWN, "settings.road.suspension"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.road.suspension.enabled", true);
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "suspension_table")) {
-    DrawFloat(ui, cfg, h, "settings.road.suspension.vertical_strength", 0.0f,
-              2.0f, "%.2f", defaults::kSuspensionVerticalStrength);
-    DrawFloat(ui, cfg, h, "settings.road.suspension.reactivity", 0.02f, 0.3f,
-              "%.2f s", defaults::kSuspensionReactivity);
-    DrawFloat(ui, cfg, h, "settings.road.suspension.grade_strength", 0.0f, 1.0f,
-              "%.2f", defaults::kSuspensionGradeStrength);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
-
-void DrawSpeedShake(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_TRUCK, "settings.road.speed_shake"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.road.speed_shake.enabled", true);
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "speed_shake_table")) {
-    DrawFloat(ui, cfg, h, "settings.road.speed_shake.intensity", 0.0f, 2.0f,
-              "%.2f", defaults::kSpeedShakeIntensity);
-    DrawFloat(ui, cfg, h, "settings.road.speed_shake.smoothing_time", 0.1f,
-              1.0f, "%.2f s", defaults::kSpeedShakeSmoothing);
-    DrawFloat(ui, cfg, h, "settings.road.speed_shake.rotation", 0.0f, 2.0f,
-              "%.2f", defaults::kSpeedShakeRotation);
-    DrawFloat(ui, cfg, h, "settings.road.speed_shake.vertical", 0.0f, 2.0f,
-              "%.2f", defaults::kSpeedShakeVertical);
-    DrawFloat(ui, cfg, h, "settings.road.speed_shake.roughness", 0.0f, 1.0f,
-              "%.2f", defaults::kSpeedShakeRoughness);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
-
-void DrawBodyDynamics(SPF_UI_API *ui, SPF_Config_API *cfg,
-                      SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_PERSON, "settings.driving.body_dynamics"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.driving.body_dynamics.enabled", true);
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "body_dynamics_table")) {
-    DrawFloat(ui, cfg, h, "settings.driving.body_dynamics.lean_strength", 0.0f,
-              2.0f, "%.2f", defaults::kBodyDynamicsLeanStrength);
-    DrawFloat(ui, cfg, h, "settings.driving.body_dynamics.nod_strength", 0.0f,
-              2.0f, "%.2f", defaults::kBodyDynamicsNodStrength);
-    DrawFloat(ui, cfg, h, "settings.driving.body_dynamics.smoothing_time",
-              0.05f, 0.6f, "%.2f s", defaults::kBodyDynamicsSmoothing);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
-
-void DrawRoadIrregularity(SPF_UI_API *ui, SPF_Config_API *cfg,
-                          SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_ROAD, "settings.road.road_irregularity"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.road.road_irregularity.enabled", true);
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "road_irregularity_table")) {
-    DrawFloat(ui, cfg, h, "settings.road.road_irregularity.intensity", 0.0f,
-              2.0f, "%.2f", defaults::kRoadIrregularityIntensity);
-    DrawFloat(ui, cfg, h, "settings.road.road_irregularity.reactivity", 0.02f,
-              0.2f, "%.2f s", defaults::kRoadIrregularityReactivity);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
-
-void DrawEngineVibration(SPF_UI_API *ui, SPF_Config_API *cfg,
-                         SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_WAVE_SQUARE, "settings.cabin.engine_vibration"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.cabin.engine_vibration.enabled", true);
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "engine_vibration_table")) {
-    DrawFloat(ui, cfg, h, "settings.cabin.engine_vibration.intensity", 0.0f,
-              2.0f, "%.2f", defaults::kEngineVibrationIntensity);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
-
-void DrawEngineStartStop(SPF_UI_API *ui, SPF_Config_API *cfg,
-                         SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_POWER_OFF, "settings.cabin.engine_start_stop"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.cabin.engine_start_stop.enabled", true);
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "engine_start_stop_table")) {
-    DrawFloat(ui, cfg, h, "settings.cabin.engine_start_stop.intensity", 0.0f,
-              0.3f, "%.2f", defaults::kEngineStartStopIntensity);
-    DrawFloat(ui, cfg, h, "settings.cabin.engine_start_stop.duration", 0.3f,
-              2.0f, "%.2f s", defaults::kEngineStartStopDuration);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
+void DrawSettingRow(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
+                    const settings::Setting &setting) {
+  if (setting.type == settings::Type::kBool)
+    DrawBool(ui, cfg, h, setting);
+  else if (setting.is_speed)
+    DrawSpeed(ui, cfg, h, setting);
+  else
+    DrawSlider(ui, cfg, h, setting, setting.format, 1.0f);
 }
 
 // Small muted, word-wrapped note with an info icon. Wraps at the window
@@ -652,15 +337,15 @@ bool KeybindUiAvailable() {
 }
 
 // One label|bindings row for a keybind action, inside a settings table.
-void DrawKeybindRow(SPF_UI_API *ui, const char *action, const char *label) {
+void DrawKeybindRow(SPF_UI_API *ui, const keybinds::Action &action) {
   if (!KeybindUiAvailable())
     return;
 
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableSetColumnIndex(0);
-  ui->UI_Text(label);
+  ui->UI_Text(KeybindTitle(action));
   ui->UI_TableSetColumnIndex(1);
-  DrawKeybindButtons(ui, action);
+  DrawKeybindButtons(ui, action.id);
 }
 
 // Same label|bindings row outside a table, with the buttons placed at
@@ -678,103 +363,81 @@ void DrawKeybindRowAt(SPF_UI_API *ui, const char *action, const char *label,
   DrawKeybindButtons(ui, action);
 }
 
-void DrawMirrorCheck(SPF_UI_API *ui, SPF_Config_API *cfg,
-                     SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_EYE, "settings.manual.mirror_check"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.manual.mirror_check.enabled", true);
-  DrawWrappedHint(ui, loc::Tr("settings.manual.mirror_check.hint"));
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "mirror_check_table")) {
-    DrawFloat(ui, cfg, h, "settings.manual.mirror_check.look_angle_deg", 15.0f,
-              50.0f, "%.0f deg", defaults::kMirrorCheckLookAngle);
-    DrawFloat(ui, cfg, h, "settings.manual.mirror_check.pitch_offset_deg", 0.0f,
-              10.0f, "%.0f deg", defaults::kMirrorCheckPitchOffset);
-    DrawFloat(ui, cfg, h, "settings.manual.mirror_check.smoothing_time", 0.0f,
-              0.7f, "%.2f s", defaults::kMirrorCheckSmoothing);
-    DrawBool(ui, cfg, h, "settings.manual.mirror_check.require_stationary",
-             defaults::kMirrorCheckRequireStationary);
-    DrawBool(ui, cfg, h,
-             "settings.manual.mirror_check.ignore_after_moving_signal",
-             defaults::kMirrorCheckIgnoreAfterMovingSignal);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
+// One effect's section in its tab. Its settings rows come from
+// settings::kAll, in that order, after its keybinds.
+struct EffectUi {
+  const char *icon;
+  const char *prefix; // "settings.<group>.<effect>"
+  bool has_hint;      // shows the "<prefix>.hint" text under its toggle
+  std::span<const keybinds::Action> keybinds;
+};
 
-void DrawManualLook(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_ARROWS_LEFT_RIGHT,
-                    "settings.manual.manual_look"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.manual.manual_look.enabled", true);
-  DrawWrappedHint(ui, loc::Tr("settings.manual.manual_look.hint"));
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "manual_look_table")) {
-    DrawKeybindRow(ui, keybinds::kLookLeft.id,
-                   loc::Tr("keybinds.look_left.title"));
-    DrawKeybindRow(ui, keybinds::kLookRight.id,
-                   loc::Tr("keybinds.look_right.title"));
-    DrawFloat(ui, cfg, h, "settings.manual.manual_look.look_angle_deg", 20.0f,
-              90.0f, "%.0f deg", defaults::kManualLookLookAngle);
-    DrawFloat(ui, cfg, h, "settings.manual.manual_look.smoothing_time", 0.0f,
-              0.7f, "%.2f s", defaults::kManualLookSmoothing);
-    DrawBool(ui, cfg, h, "settings.manual.manual_look.toggle_mode",
-             defaults::kManualLookToggleMode);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
+constexpr keybinds::Action kManualLookKeybinds[] = {keybinds::kLookLeft,
+                                                    keybinds::kLookRight};
 
-void DrawManualZoom(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_MAGNIFYING_GLASS_PLUS,
-                    "settings.manual.manual_zoom"))
-    return;
-  const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.manual.manual_zoom.enabled", true);
-  DrawWrappedHint(ui, loc::Tr("settings.manual.manual_zoom.hint"));
-  ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "manual_zoom_table")) {
-    DrawKeybindRow(ui, keybinds::kZoom.id, loc::Tr("keybinds.zoom.title"));
-    DrawFloat(ui, cfg, h, "settings.manual.manual_zoom.zoom_fov_deg", 5.0f,
-              60.0f, "%.0f deg", defaults::kManualZoomZoomLevel);
-    DrawFloat(ui, cfg, h, "settings.manual.manual_zoom.smoothing_time", 0.02f,
-              0.5f, "%.2f s", defaults::kManualZoomSmoothing);
-    EndSettingsTable(ui);
-  }
-  ui->UI_EndDisabled();
-}
+// Every effect, in display order; each tab shows its own group's.
+constexpr EffectUi kEffects[] = {
+    {ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT,
+     "settings.driving.head_motion",
+     false,
+     {}},
+    {ICON_FA_PERSON, "settings.driving.body_dynamics", false, {}},
+    {ICON_FA_ROTATE, "settings.driving.steering_camera", false, {}},
+    {ICON_FA_ARROWS_UP_DOWN, "settings.road.suspension", false, {}},
+    {ICON_FA_ROAD, "settings.road.road_irregularity", false, {}},
+    {ICON_FA_TRUCK, "settings.road.speed_shake", false, {}},
+    {ICON_FA_LUNGS, "settings.cabin.idle_breathing", false, {}},
+    {ICON_FA_WAVE_SQUARE, "settings.cabin.engine_vibration", false, {}},
+    {ICON_FA_POWER_OFF, "settings.cabin.engine_start_stop", false, {}},
+    {ICON_FA_EYE, "settings.manual.mirror_check", true, {}},
+    {ICON_FA_ARROWS_LEFT_RIGHT, "settings.manual.manual_look", true,
+     kManualLookKeybinds},
+    {ICON_FA_MAGNIFYING_GLASS_PLUS,
+     "settings.manual.manual_zoom",
+     true,
+     {&keybinds::kZoom, 1}},
+    {ICON_FA_TRAFFIC_LIGHT,
+     "settings.manual.blindspot_viewer",
+     false,
+     {&keybinds::kBlindspotPeek, 1}},
+};
 
-void DrawBlindspotViewer(SPF_UI_API *ui, SPF_Config_API *cfg,
-                         SPF_Config_Handle *h) {
-  if (!EffectHeader(ui, ICON_FA_TRAFFIC_LIGHT,
-                    "settings.manual.blindspot_viewer"))
+// Every effect section needs its "enabled" toggle in settings::kAll.
+consteval bool EffectsHaveEnabledToggle() {
+  for (const EffectUi &effect : kEffects) {
+    bool found = false;
+    for (const settings::Setting &s : settings::kAll) {
+      if (settings::InEffect(s, effect.prefix) &&
+          settings::SplitKey(s.key).name == "enabled")
+        found = true;
+    }
+    if (!found)
+      return false;
+  }
+  return true;
+}
+static_assert(EffectsHaveEnabledToggle(),
+              "every effect in kEffects needs an \"enabled\" setting");
+
+void DrawEffect(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
+                const EffectUi &effect) {
+  if (!EffectHeader(ui, effect.icon, effect.prefix))
     return;
+  const std::string prefix(effect.prefix);
   const bool enabled =
-      DrawEnabled(ui, cfg, h, "settings.manual.blindspot_viewer.enabled", true);
+      DrawEnabled(ui, cfg, h, *settings::Find(prefix + ".enabled"));
+  if (effect.has_hint)
+    DrawWrappedHint(ui, loc::Tr(prefix + ".hint"));
   ui->UI_BeginDisabled(!enabled);
-  if (BeginSettingsTable(ui, "blindspot_viewer_table")) {
-    DrawKeybindRow(ui, keybinds::kBlindspotPeek.id,
-                   loc::Tr("keybinds.blindspot_viewer.title"));
-    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.pos_x", -0.5f, 0.5f,
-              "%.2f m", defaults::kBlindspotViewerPosX);
-    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.pos_y", -0.5f, 0.5f,
-              "%.2f m", defaults::kBlindspotViewerPosY);
-    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.pos_z", -1.5f, 0.5f,
-              "%.2f m", defaults::kBlindspotViewerPosZ);
-    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.yaw_deg", -45.0f,
-              45.0f, "%.1f deg", defaults::kBlindspotViewerYaw);
-    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.pitch_deg", -60.0f,
-              60.0f, "%.1f deg", defaults::kBlindspotViewerPitch);
-    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.roll_deg", -15.0f,
-              15.0f, "%.1f deg", defaults::kBlindspotViewerRoll);
-    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.fov_offset_deg",
-              -30.0f, 30.0f, "%.0f deg", defaults::kBlindspotViewerFovOffset);
-    DrawFloat(ui, cfg, h, "settings.manual.blindspot_viewer.smoothing_time",
-              0.2f, 1.5f, "%.2f s", defaults::kBlindspotViewerSmoothing);
-    DrawBool(ui, cfg, h, "settings.manual.blindspot_viewer.toggle_mode",
-             defaults::kBlindspotViewerToggleMode);
+  // "<effect>_table", unique per effect.
+  const std::string table_id = prefix.substr(prefix.rfind('.') + 1) + "_table";
+  if (BeginSettingsTable(ui, table_id.c_str())) {
+    for (const keybinds::Action &action : effect.keybinds)
+      DrawKeybindRow(ui, action);
+    for (const settings::Setting &s : settings::kAll) {
+      if (settings::InEffect(s, effect.prefix) && !IsEnabledToggle(s))
+        DrawSettingRow(ui, cfg, h, s);
+    }
     EndSettingsTable(ui);
   }
   ui->UI_EndDisabled();
@@ -1031,19 +694,7 @@ void DrawResetSection(SPF_UI_API *ui, SPF_Config_API *cfg,
     ui->UI_TextUnformatted(loc::Tr("ui.reset.message"));
     ui->UI_Spacing();
     if (MutedButton(ui, loc::Tr("ui.reset.confirm"))) {
-      ResetHeadMotion(cfg, h);
-      ResetSteeringCamera(cfg, h);
-      ResetIdleBreathing(cfg, h);
-      ResetSuspension(cfg, h);
-      ResetRoadIrregularity(cfg, h);
-      ResetSpeedShake(cfg, h);
-      ResetBodyDynamics(cfg, h);
-      ResetEngineVibration(cfg, h);
-      ResetEngineStartStop(cfg, h);
-      ResetMirrorCheck(cfg, h);
-      ResetManualLook(cfg, h);
-      ResetManualZoom(cfg, h);
-      ResetBlindspotViewer(cfg, h);
+      settings::WriteDefaults(cfg, h);
       if (!active_profile.empty())
         profiles::Save(ctx, active_profile);
       ShowToast(ui, SPF_NOTIFICATION_SUCCESS, loc::Tr("ui.reset.done_toast"));
@@ -1251,6 +902,9 @@ constexpr TabInfo kTabs[] = {
 };
 
 constexpr size_t kTabCount = std::size(kTabs);
+// The first tabs, one per settings group; the rest (Settings, About) aren't
+// effect tabs.
+constexpr size_t kEffectTabCount = 4;
 
 std::string TabTitle(const TabInfo &tab) {
   return WithIcon(tab.icon, loc::Tr(tab.title_key));
@@ -1388,8 +1042,7 @@ void FitWindowSize(SPF_UI_API *ui, const TabMetrics &m) {
   // region, so its scrollbar never narrows the tab bar).
   const float target_w = std::round(m.total + win_pad_x * 2.0f);
 
-  float target_h =
-      std::max(static_cast<float>(defaults::kWindowHeight), g_about_fit_h);
+  float target_h = std::max(static_cast<float>(kWindowHeight), g_about_fit_h);
   float vp_w = 0.0f, vp_h = 0.0f;
   ui->UI_GetMainViewportSize(&vp_w, &vp_h);
   if (vp_h > 0.0f)
@@ -1442,41 +1095,17 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
     return;
   }
 
-  if (BeginTab(ui, kTabs[0], tab_widths[0], tab_metrics)) {
-    BeginTabContent(ui, kTabs[0], true);
-    DrawHeadMotion(ui, cfg, h);
-    DrawBodyDynamics(ui, cfg, h);
-    DrawSteeringCamera(ui, cfg, h);
-    ui->UI_EndChild();
-    ui->UI_EndTabItem();
-  }
-
-  if (BeginTab(ui, kTabs[1], tab_widths[1], tab_metrics)) {
-    BeginTabContent(ui, kTabs[1], true);
-    DrawSuspension(ui, cfg, h);
-    DrawRoadIrregularity(ui, cfg, h);
-    DrawSpeedShake(ui, cfg, h);
-    ui->UI_EndChild();
-    ui->UI_EndTabItem();
-  }
-
-  if (BeginTab(ui, kTabs[2], tab_widths[2], tab_metrics)) {
-    BeginTabContent(ui, kTabs[2], true);
-    DrawIdleBreathing(ui, cfg, h);
-    DrawEngineVibration(ui, cfg, h);
-    DrawEngineStartStop(ui, cfg, h);
-    ui->UI_EndChild();
-    ui->UI_EndTabItem();
-  }
-
-  const bool manual_tab_open =
-      BeginTab(ui, kTabs[3], tab_widths[3], tab_metrics);
-  if (manual_tab_open) {
-    BeginTabContent(ui, kTabs[3], true);
-    DrawMirrorCheck(ui, cfg, h);
-    DrawManualLook(ui, cfg, h);
-    DrawManualZoom(ui, cfg, h);
-    DrawBlindspotViewer(ui, cfg, h);
+  // The effect tabs: each one's id is its settings group.
+  for (size_t i = 0; i < kEffectTabCount; ++i) {
+    if (!BeginTab(ui, kTabs[i], tab_widths[i], tab_metrics))
+      continue;
+    BeginTabContent(ui, kTabs[i], true);
+    const std::string group_prefix =
+        std::string("settings.") + kTabs[i].id + ".";
+    for (const EffectUi &effect : kEffects) {
+      if (std::string_view(effect.prefix).starts_with(group_prefix))
+        DrawEffect(ui, cfg, h, effect);
+    }
     ui->UI_EndChild();
     ui->UI_EndTabItem();
   }

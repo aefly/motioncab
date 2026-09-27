@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
 
@@ -37,11 +38,16 @@ private:
 
   void ApplySmoothing();
 
-  float intensity_ = 1.0f;
-  float smoothing_ = 0.30f; // seconds, slow-band low-pass time constant
-  float rotation_ = 1.0f;   // multiplier on yaw/pitch/roll only
-  float vertical_ = 1.0f;   // multiplier on the up/down bounce only
-  float roughness_ = 0.5f;  // 0..1, depth of the slow amplitude envelope
+  float intensity_ = settings::Default("settings.road.speed_shake.intensity");
+  // seconds, slow-band low-pass time constant
+  float smoothing_ =
+      settings::Default("settings.road.speed_shake.smoothing_time");
+  // multiplier on yaw/pitch/roll only
+  float rotation_ = settings::Default("settings.road.speed_shake.rotation");
+  // multiplier on the up/down bounce only
+  float vertical_ = settings::Default("settings.road.speed_shake.vertical");
+  // 0..1, depth of the slow amplitude envelope
+  float roughness_ = settings::Default("settings.road.speed_shake.roughness");
 
   uint32_t seed_;
   std::array<float, kBands> phase_{}; // noise-domain time per band

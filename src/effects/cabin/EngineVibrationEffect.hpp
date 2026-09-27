@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 
 namespace motioncab {
@@ -31,7 +32,8 @@ public:
 private:
   void LoadSettings() override;
 
-  float intensity_ = 1.0f;
+  float intensity_ =
+      settings::Default("settings.cabin.engine_vibration.intensity");
 
   bool is_electric_ = false;
   float rpm_limit_ =

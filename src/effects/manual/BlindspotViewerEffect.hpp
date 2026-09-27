@@ -1,11 +1,11 @@
 #pragma once
 
 #include "core/Keybinds.hpp"
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
 
 #include "SPF_KeyBinds_API.h"
-#include "ui/SettingsDefaults.hpp"
 
 namespace motioncab {
 
@@ -41,17 +41,24 @@ private:
   SPF_KeyBinds_API *keybinds_api_;
   SPF_KeyBinds_Handle *keybinds_handle_;
 
-  float pos_x_ = defaults::kBlindspotViewerPosX; // meters, cabin-local
-  float pos_y_ = defaults::kBlindspotViewerPosY;
-  float pos_z_ = defaults::kBlindspotViewerPosZ;
-  float yaw_deg_ = defaults::kBlindspotViewerYaw;
-  float pitch_deg_ = defaults::kBlindspotViewerPitch;
-  float roll_deg_ = defaults::kBlindspotViewerRoll;
-  float fov_offset_deg_ = defaults::kBlindspotViewerFovOffset;
+  // meters, cabin-local
+  float pos_x_ = settings::Default("settings.manual.blindspot_viewer.pos_x");
+  float pos_y_ = settings::Default("settings.manual.blindspot_viewer.pos_y");
+  float pos_z_ = settings::Default("settings.manual.blindspot_viewer.pos_z");
+  float yaw_deg_ =
+      settings::Default("settings.manual.blindspot_viewer.yaw_deg");
+  float pitch_deg_ =
+      settings::Default("settings.manual.blindspot_viewer.pitch_deg");
+  float roll_deg_ =
+      settings::Default("settings.manual.blindspot_viewer.roll_deg");
+  float fov_offset_deg_ =
+      settings::Default("settings.manual.blindspot_viewer.fov_offset_deg");
+  // seconds, motion duration
   float smoothing_time_ =
-      defaults::kBlindspotViewerSmoothing; // seconds, motion duration
+      settings::Default("settings.manual.blindspot_viewer.smoothing_time");
+  // false = press/hold, true = toggle
   bool toggle_mode_ =
-      defaults::kBlindspotViewerToggleMode; // false = press/hold, true = toggle
+      settings::DefaultBool("settings.manual.blindspot_viewer.toggle_mode");
 
   bool peeking_ = false; // toggle-mode target
   keybinds::PressEdge press_edge_;

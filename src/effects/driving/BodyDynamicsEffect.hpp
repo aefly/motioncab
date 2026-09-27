@@ -1,9 +1,8 @@
 #pragma once
 
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
-
-#include "ui/SettingsDefaults.hpp"
 
 namespace motioncab {
 
@@ -29,10 +28,13 @@ public:
 private:
   void LoadSettings() override;
 
-  float lean_strength_ = defaults::kBodyDynamicsLeanStrength;
-  float nod_strength_ = defaults::kBodyDynamicsNodStrength;
+  float lean_strength_ =
+      settings::Default("settings.driving.body_dynamics.lean_strength");
+  float nod_strength_ =
+      settings::Default("settings.driving.body_dynamics.nod_strength");
+  // seconds, spring time constant
   float smoothing_time_ =
-      defaults::kBodyDynamicsSmoothing; // seconds, spring time constant
+      settings::Default("settings.driving.body_dynamics.smoothing_time");
 
   math::SpringDamper1D roll_;
   math::SpringDamper1D pitch_;

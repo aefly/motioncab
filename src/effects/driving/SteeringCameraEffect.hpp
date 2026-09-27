@@ -1,9 +1,8 @@
 #pragma once
 
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
-
-#include "ui/SettingsDefaults.hpp"
 
 #include <array>
 
@@ -58,14 +57,18 @@ private:
   float GetDelayedSteering(float target_time_s) const;
 
   // Max yaw at full steering lock, in degrees.
-  float rotation_left_deg_ = defaults::kSteeringCameraRotationLeft;
-  float rotation_right_deg_ = defaults::kSteeringCameraRotationRight;
+  float rotation_left_deg_ =
+      settings::Default("settings.driving.steering_camera.rotation_left_deg");
+  float rotation_right_deg_ =
+      settings::Default("settings.driving.steering_camera.rotation_right_deg");
+  // seconds, spring time constant
   float smoothing_time_ =
-      defaults::kSteeringCameraSmoothing; // seconds, spring time constant
+      settings::Default("settings.driving.steering_camera.smoothing_time");
+  // seconds, reaction delay before motion starts
   float delay_seconds_ =
-      defaults::kSteeringCameraReactionDelay; // seconds, reaction delay
-                                              // before motion starts
-  bool disable_in_reverse_ = defaults::kSteeringCameraDisableInReverse;
+      settings::Default("settings.driving.steering_camera.delay_seconds");
+  bool disable_in_reverse_ = settings::DefaultBool(
+      "settings.driving.steering_camera.disable_in_reverse");
 
   math::SpringDamper1D yaw_;
   bool needs_resync_ = false;

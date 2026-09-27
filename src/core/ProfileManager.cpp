@@ -2,14 +2,13 @@
 
 #include "PluginContext.hpp"
 #include "SPF_Environment_API.h"
+#include "SettingsSchema.hpp"
 #include "StringUtil.hpp"
-#include "ui/SettingsDefaults.hpp"
 
 #include <algorithm>
 #include <cctype>
 #include <cmath>
 #include <filesystem>
-#include <iterator>
 
 namespace motioncab::profiles {
 
@@ -30,126 +29,6 @@ struct Cache {
 Cache g_cache;
 
 constexpr size_t kMaxNameLength = 40;
-
-// Config keys are flat dotted strings, not a queryable nested JSON node, so
-// profiles copy every known key individually instead of one bulk JSON blob.
-// Mirrors the key list already spread across Manifest.cpp/SettingsWindow.cpp;
-// defaults reuse the same constants as the reset buttons
-// (ui/SettingsDefaults.hpp).
-struct BoolKey {
-  const char *key;
-  bool default_value;
-};
-struct FloatKey {
-  const char *key;
-  float default_value;
-};
-
-constexpr BoolKey kBoolKeys[] = {
-    {"settings.driving.head_motion.enabled", true},
-    {"settings.driving.steering_camera.enabled", true},
-    {"settings.cabin.idle_breathing.enabled", true},
-    {"settings.road.suspension.enabled", true},
-    {"settings.cabin.engine_vibration.enabled", true},
-    {"settings.manual.mirror_check.enabled", true},
-    {"settings.manual.manual_look.enabled", true},
-    {"settings.road.road_irregularity.enabled", true},
-    {"settings.road.speed_shake.enabled", true},
-    {"settings.cabin.engine_start_stop.enabled", true},
-    {"settings.driving.body_dynamics.enabled", true},
-    {"settings.manual.manual_zoom.enabled", true},
-    {"settings.manual.mirror_check.require_stationary",
-     defaults::kMirrorCheckRequireStationary},
-    {"settings.manual.mirror_check.ignore_after_moving_signal",
-     defaults::kMirrorCheckIgnoreAfterMovingSignal},
-    {"settings.manual.manual_look.toggle_mode",
-     defaults::kManualLookToggleMode},
-    {"settings.driving.steering_camera.disable_in_reverse",
-     defaults::kSteeringCameraDisableInReverse},
-    {"settings.manual.blindspot_viewer.enabled", true},
-    {"settings.manual.blindspot_viewer.toggle_mode",
-     defaults::kBlindspotViewerToggleMode},
-};
-
-constexpr FloatKey kFloatKeys[] = {
-    {"settings.driving.head_motion.sway_strength",
-     defaults::kHeadMotionSwayStrength},
-    {"settings.driving.head_motion.tilt_strength",
-     defaults::kHeadMotionTiltStrength},
-    {"settings.driving.head_motion.smoothing_time",
-     defaults::kHeadMotionSmoothing},
-    {"settings.driving.steering_camera.rotation_left_deg",
-     defaults::kSteeringCameraRotationLeft},
-    {"settings.driving.steering_camera.rotation_right_deg",
-     defaults::kSteeringCameraRotationRight},
-    {"settings.driving.steering_camera.smoothing_time",
-     defaults::kSteeringCameraSmoothing},
-    {"settings.driving.steering_camera.delay_seconds",
-     defaults::kSteeringCameraReactionDelay},
-    {"settings.cabin.idle_breathing.vertical_amplitude",
-     defaults::kIdleBreathingVerticalAmount},
-    {"settings.cabin.idle_breathing.pitch_amplitude_deg",
-     defaults::kIdleBreathingHeadNodAmount},
-    {"settings.cabin.idle_breathing.breathing_rate_bpm",
-     defaults::kIdleBreathingRate},
-    {"settings.cabin.idle_breathing.fade_start_kmh",
-     defaults::kIdleBreathingFadeStart},
-    {"settings.cabin.idle_breathing.fade_end_kmh",
-     defaults::kIdleBreathingFadeEnd},
-    {"settings.road.suspension.vertical_strength",
-     defaults::kSuspensionVerticalStrength},
-    {"settings.road.suspension.reactivity", defaults::kSuspensionReactivity},
-    {"settings.road.suspension.grade_strength",
-     defaults::kSuspensionGradeStrength},
-    {"settings.cabin.engine_vibration.intensity",
-     defaults::kEngineVibrationIntensity},
-    {"settings.manual.mirror_check.look_angle_deg",
-     defaults::kMirrorCheckLookAngle},
-    {"settings.manual.mirror_check.pitch_offset_deg",
-     defaults::kMirrorCheckPitchOffset},
-    {"settings.manual.mirror_check.smoothing_time",
-     defaults::kMirrorCheckSmoothing},
-    {"settings.manual.manual_look.look_angle_deg",
-     defaults::kManualLookLookAngle},
-    {"settings.manual.manual_look.smoothing_time",
-     defaults::kManualLookSmoothing},
-    {"settings.road.road_irregularity.intensity",
-     defaults::kRoadIrregularityIntensity},
-    {"settings.road.road_irregularity.reactivity",
-     defaults::kRoadIrregularityReactivity},
-    {"settings.road.speed_shake.intensity", defaults::kSpeedShakeIntensity},
-    {"settings.road.speed_shake.smoothing_time",
-     defaults::kSpeedShakeSmoothing},
-    {"settings.road.speed_shake.rotation", defaults::kSpeedShakeRotation},
-    {"settings.road.speed_shake.vertical", defaults::kSpeedShakeVertical},
-    {"settings.road.speed_shake.roughness", defaults::kSpeedShakeRoughness},
-    {"settings.driving.body_dynamics.lean_strength",
-     defaults::kBodyDynamicsLeanStrength},
-    {"settings.driving.body_dynamics.nod_strength",
-     defaults::kBodyDynamicsNodStrength},
-    {"settings.driving.body_dynamics.smoothing_time",
-     defaults::kBodyDynamicsSmoothing},
-    {"settings.cabin.engine_start_stop.intensity",
-     defaults::kEngineStartStopIntensity},
-    {"settings.cabin.engine_start_stop.duration",
-     defaults::kEngineStartStopDuration},
-    {"settings.manual.manual_zoom.zoom_fov_deg",
-     defaults::kManualZoomZoomLevel},
-    {"settings.manual.manual_zoom.smoothing_time",
-     defaults::kManualZoomSmoothing},
-    {"settings.manual.blindspot_viewer.pos_x", defaults::kBlindspotViewerPosX},
-    {"settings.manual.blindspot_viewer.pos_y", defaults::kBlindspotViewerPosY},
-    {"settings.manual.blindspot_viewer.pos_z", defaults::kBlindspotViewerPosZ},
-    {"settings.manual.blindspot_viewer.yaw_deg", defaults::kBlindspotViewerYaw},
-    {"settings.manual.blindspot_viewer.pitch_deg",
-     defaults::kBlindspotViewerPitch},
-    {"settings.manual.blindspot_viewer.roll_deg",
-     defaults::kBlindspotViewerRoll},
-    {"settings.manual.blindspot_viewer.fov_offset_deg",
-     defaults::kBlindspotViewerFovOffset},
-    {"settings.manual.blindspot_viewer.smoothing_time",
-     defaults::kBlindspotViewerSmoothing},
-};
 
 // Float settings renamed/split since a released version: the old key's value
 // is copied into every new key, then the old key is removed (settings.json
@@ -225,13 +104,19 @@ bool ProfileFileExists(PluginContext &ctx, const std::string &name) {
   return !path.empty() && fs::exists(path, ec);
 }
 
+// Config keys are flat dotted strings, not a queryable nested JSON node, so
+// profiles copy every setting of settings::kAll individually instead of one
+// bulk JSON blob.
 void CopyAllKeys(SPF_Config_API *cfg, SPF_Config_Handle *from,
                  SPF_Config_Handle *to) {
-  for (const BoolKey &k : kBoolKeys)
-    cfg->Cfg_SetBool(to, k.key, cfg->Cfg_GetBool(from, k.key, k.default_value));
-  for (const FloatKey &k : kFloatKeys)
-    cfg->Cfg_SetFloat(to, k.key,
-                      cfg->Cfg_GetFloat(from, k.key, k.default_value));
+  for (const settings::Setting &s : settings::kAll) {
+    if (s.type == settings::Type::kBool)
+      cfg->Cfg_SetBool(to, s.key,
+                       cfg->Cfg_GetBool(from, s.key, s.default_bool()));
+    else
+      cfg->Cfg_SetFloat(to, s.key,
+                        cfg->Cfg_GetFloat(from, s.key, s.default_value));
+  }
 }
 
 SPF_Config_Handle *OpenProfileContext(PluginContext &ctx,
@@ -263,16 +148,6 @@ void MigrateLegacySettings(PluginContext &ctx) {
     return;
   ctx.core->config->Cfg_Save(ctx.config_handle);
   ctx.Log(SPF_LOG_INFO, "Migrated settings from an older version");
-}
-
-std::vector<const char *> AllSettingKeys() {
-  std::vector<const char *> keys;
-  keys.reserve(std::size(kBoolKeys) + std::size(kFloatKeys));
-  for (const BoolKey &k : kBoolKeys)
-    keys.push_back(k.key);
-  for (const FloatKey &k : kFloatKeys)
-    keys.push_back(k.key);
-  return keys;
 }
 
 std::string Sanitize(const std::string &name) {
@@ -420,10 +295,7 @@ void EnsureDefaultExists(PluginContext &ctx) {
     return;
 
   SPF_Config_API *cfg = ctx.core->config;
-  for (const BoolKey &k : kBoolKeys)
-    cfg->Cfg_SetBool(profile_h, k.key, k.default_value);
-  for (const FloatKey &k : kFloatKeys)
-    cfg->Cfg_SetFloat(profile_h, k.key, k.default_value);
+  settings::WriteDefaults(cfg, profile_h);
   cfg->Cfg_Save(profile_h);
   g_cache.profile_list_dirty = true;
   g_cache.matches_dirty = true;
@@ -461,17 +333,18 @@ bool MatchesUncached(PluginContext &ctx, const std::string &name) {
     return false;
 
   SPF_Config_API *cfg = ctx.core->config;
-  for (const BoolKey &k : kBoolKeys) {
-    if (cfg->Cfg_GetBool(ctx.config_handle, k.key, k.default_value) !=
-        cfg->Cfg_GetBool(profile_h, k.key, k.default_value))
-      return false;
-  }
-  for (const FloatKey &k : kFloatKeys) {
-    const double live =
-        cfg->Cfg_GetFloat(ctx.config_handle, k.key, k.default_value);
-    const double saved = cfg->Cfg_GetFloat(profile_h, k.key, k.default_value);
-    if (std::fabs(live - saved) > 1e-4)
-      return false;
+  for (const settings::Setting &s : settings::kAll) {
+    if (s.type == settings::Type::kBool) {
+      if (cfg->Cfg_GetBool(ctx.config_handle, s.key, s.default_bool()) !=
+          cfg->Cfg_GetBool(profile_h, s.key, s.default_bool()))
+        return false;
+    } else {
+      const double live =
+          cfg->Cfg_GetFloat(ctx.config_handle, s.key, s.default_value);
+      const double saved = cfg->Cfg_GetFloat(profile_h, s.key, s.default_value);
+      if (std::fabs(live - saved) > 1e-4)
+        return false;
+    }
   }
   return true;
 }

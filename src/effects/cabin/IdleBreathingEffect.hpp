@@ -1,8 +1,7 @@
 #pragma once
 
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
-
-#include "ui/SettingsDefaults.hpp"
 
 #include <random>
 
@@ -26,14 +25,21 @@ public:
 private:
   void LoadSettings() override;
 
-  float vertical_amplitude_ = defaults::kIdleBreathingVerticalAmount; // meters
-  float pitch_amplitude_deg_ = defaults::kIdleBreathingHeadNodAmount; // degrees
+  // meters
+  float vertical_amplitude_ =
+      settings::Default("settings.cabin.idle_breathing.vertical_amplitude");
+  // degrees
+  float pitch_amplitude_deg_ =
+      settings::Default("settings.cabin.idle_breathing.pitch_amplitude_deg");
+  // breaths per minute
   float breathing_rate_bpm_ =
-      defaults::kIdleBreathingRate; // breaths per minute
+      settings::Default("settings.cabin.idle_breathing.breathing_rate_bpm");
+  // full strength at/below this speed
   float fade_start_kmh_ =
-      defaults::kIdleBreathingFadeStart; // full strength at/below this speed
+      settings::Default("settings.cabin.idle_breathing.fade_start_kmh");
+  // fully faded out at/above this speed
   float fade_end_kmh_ =
-      defaults::kIdleBreathingFadeEnd; // fully faded out at/above this speed
+      settings::Default("settings.cabin.idle_breathing.fade_end_kmh");
 
   float phase_ = 0.0f;            // radians
   float cycle_rate_scale_ = 1.0f; // randomized once per breath cycle

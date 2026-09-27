@@ -1,9 +1,8 @@
 #pragma once
 
+#include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
-
-#include "ui/SettingsDefaults.hpp"
 
 namespace motioncab {
 
@@ -34,17 +33,21 @@ public:
 private:
   void LoadSettings() override;
 
+  // yaw toward the mirror, in degrees
   float look_angle_deg_ =
-      defaults::kMirrorCheckLookAngle; // yaw toward the mirror, in degrees
+      settings::Default("settings.manual.mirror_check.look_angle_deg");
+  // mirrors sit a little low
   float pitch_offset_deg_ =
-      defaults::kMirrorCheckPitchOffset; // mirrors sit a little low
+      settings::Default("settings.manual.mirror_check.pitch_offset_deg");
+  // seconds, spring time constant
   float smoothing_time_ =
-      defaults::kMirrorCheckSmoothing; // seconds, spring time constant
+      settings::Default("settings.manual.mirror_check.smoothing_time");
+  // ignore blinkers while the truck is moving
   bool require_stationary_ =
-      defaults::kMirrorCheckRequireStationary; // ignore blinkers while the
-                                               // truck is moving
-  bool ignore_after_moving_signal_ =
-      defaults::kMirrorCheckIgnoreAfterMovingSignal; // see class comment
+      settings::DefaultBool("settings.manual.mirror_check.require_stationary");
+  // see class comment
+  bool ignore_after_moving_signal_ = settings::DefaultBool(
+      "settings.manual.mirror_check.ignore_after_moving_signal");
 
   bool prev_lblinker_ = false;
   bool prev_rblinker_ = false;
