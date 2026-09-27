@@ -76,7 +76,7 @@ inline constexpr Setting kAll[] = {
     Bool("settings.road.suspension.enabled", true),
     Float("settings.road.suspension.vertical_strength", 1.0f, 0.0f, 2.0f,
           "%.2f"),
-    Float("settings.road.suspension.reactivity", 0.25f, 0.02f, 0.3f, "%.2f s"),
+    Float("settings.road.suspension.reactivity", 0.25f, 0.1f, 0.3f, "%.2f s"),
     Float("settings.road.suspension.grade_strength", 0.5f, 0.0f, 1.0f, "%.2f"),
     // road.road_irregularity
     Bool("settings.road.road_irregularity.enabled", true),
@@ -208,6 +208,16 @@ consteval float Default(std::string_view key) {
   for (const Setting &s : kAll) {
     if (key == s.key && s.type == Type::kFloat)
       return s.default_value;
+  }
+  throw "unknown float setting key";
+}
+
+// Slider minimum of `key`, checked the same way: for an effect to floor a
+// value saved before the range was narrowed.
+consteval float Min(std::string_view key) {
+  for (const Setting &s : kAll) {
+    if (key == s.key && s.type == Type::kFloat)
+      return s.min;
   }
   throw "unknown float setting key";
 }
