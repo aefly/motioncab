@@ -36,6 +36,14 @@ public:
   // forgotten; the caller should reset the effects like on cabin entry.
   bool DetectNativeRecenter(SPF_Camera_API *camera, const Pose &pose);
 
+  // True if something else rewrote the seat position since our last write,
+  // e.g. changing a setting in the game's F4 seat menu, which sets the
+  // player's seat as an absolute value and so drops our offset from it.
+  // The applied position is then forgotten for the axes that changed, so
+  // the new value is taken as the player's own seat instead of having an
+  // offset that's no longer there subtracted from it.
+  bool DetectExternalSeatWrite(const Pose &pose);
+
   // Replaces last frame's offset with `offset` in the live pose.
   void Apply(SPF_Camera_API *camera, const Pose &pose,
              const HeadOffset &offset);
@@ -65,6 +73,10 @@ private:
   // recenter's snap apart from free-look passing through the default.
   float last_written_yaw_deg_ = 0.0f, last_written_pitch_deg_ = 0.0f;
   bool has_last_written_rot_ = false;
+  // Seat position we wrote last frame, to spot another writer's changes.
+  float last_written_seat_x_ = 0.0f, last_written_seat_y_ = 0.0f,
+        last_written_seat_z_ = 0.0f;
+  bool has_last_written_seat_ = false;
 };
 
 } // namespace motioncab

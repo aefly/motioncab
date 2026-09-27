@@ -315,6 +315,7 @@ void OnUpdate() {
     return;
   if (ctx.camera_rig.DetectNativeRecenter(camera, *pose))
     ctx.effects.ResetAll();
+  ctx.camera_rig.DetectExternalSeatWrite(*pose);
   const HeadOffset offset = ctx.effects.UpdateAndAccumulate(
       dt, ctx.latest_truck_data, ctx.latest_controls_data);
   ctx.camera_rig.Apply(camera, *pose, offset);

@@ -52,6 +52,32 @@ bool CameraRig::DetectNativeRecenter(SPF_Camera_API *camera, const Pose &pose) {
   return true;
 }
 
+bool CameraRig::DetectExternalSeatWrite(const Pose &pose) {
+  if (!has_last_written_seat_)
+    return false;
+
+  // Far below any change a player or the game makes, far above float
+  // round-trip noise through the setter/getter.
+  constexpr float kEpsilonMeters = 1e-4f;
+  auto rewritten = [&](float live, float written) {
+    return std::fabs(live - written) > kEpsilonMeters;
+  };
+  bool any = false;
+  if (rewritten(pose.seat_x, last_written_seat_x_)) {
+    applied_.pos_x = 0.0f;
+    any = true;
+  }
+  if (rewritten(pose.seat_y, last_written_seat_y_)) {
+    applied_.pos_y = 0.0f;
+    any = true;
+  }
+  if (rewritten(pose.seat_z, last_written_seat_z_)) {
+    applied_.pos_z = 0.0f;
+    any = true;
+  }
+  return any;
+}
+
 void CameraRig::Apply(SPF_Camera_API *camera, const Pose &pose,
                       const HeadOffset &offset) {
   WriteSeat(camera, pose.seat_x, pose.seat_y, pose.seat_z, offset);
@@ -77,9 +103,12 @@ void CameraRig::Remove(SPF_Camera_API *camera) {
 
 void CameraRig::WriteSeat(SPF_Camera_API *camera, float x, float y, float z,
                           const HeadOffset &offset) {
-  camera->Cam_SetInteriorSeatPos(x - applied_.pos_x + offset.pos_x,
-                                 y - applied_.pos_y + offset.pos_y,
-                                 z - applied_.pos_z + offset.pos_z);
+  last_written_seat_x_ = x - applied_.pos_x + offset.pos_x;
+  last_written_seat_y_ = y - applied_.pos_y + offset.pos_y;
+  last_written_seat_z_ = z - applied_.pos_z + offset.pos_z;
+  has_last_written_seat_ = true;
+  camera->Cam_SetInteriorSeatPos(last_written_seat_x_, last_written_seat_y_,
+                                 last_written_seat_z_);
   applied_.pos_x = offset.pos_x;
   applied_.pos_y = offset.pos_y;
   applied_.pos_z = offset.pos_z;
