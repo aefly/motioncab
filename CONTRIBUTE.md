@@ -37,7 +37,7 @@ game's `plugins/spfPlugins/MotionCab/`.
     Quick Settings window. Declare each setting once in `settings::kAll`
     (`src/core/SettingsSchema.hpp`): the manifest, the Quick Settings
     window and the profiles are all generated from it. A new effect also
-    needs its entry in `kEffects` (`src/ui/SettingsWindow.cpp`).
+    needs its entry in `kEffects` (`src/ui/EffectTabs.cpp`).
 - Read the SPF SDK headers in `SPF_API/` before implementing or modifying
   any SDK interaction.
 - Make sure a new feature doesn't conflict with an existing effect before
@@ -103,6 +103,8 @@ language file, then look it up with `loc::Tr()` (see
 `src/core/Localization.hpp`). A setting's title and description live under
 its own config key plus `.title`/`.desc`
 (e.g. `settings.road.suspension.reactivity.title`).
+`check-localization.py` also fails if `en.json` lacks a key the code needs
+for a setting, a settings group or effect, an effect's hint or a keybind.
 
 ## Commit messages
 
