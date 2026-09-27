@@ -121,13 +121,13 @@
       "desc": "Effekte durch Fahrbahnoberfläche, Federung und Geschwindigkeit.",
       "suspension": {
         "title": "Federung",
-        "desc": "Vertikales Nachfedern der Kamera über Bodenwellen, wie ein luftgefederter Sitz: Sie sackt ein, federt zurück und kommt dann zur Ruhe.",
+        "desc": "Nachfedern der Kamera über Bodenwellen, wie ein luftgefederter Sitz: Sie sackt ein, federt zurück und kommt dann zur Ruhe. Bodenwellen unter nur einer Seite neigen deinen Kopf zudem leicht.",
         "enabled": {
           "title": "Federung aktivieren"
         },
         "vertical_strength": {
           "title": "Vertikale Stärke",
-          "desc": "Wie stark Bodenwellen die Kamera auf und ab federn lassen."
+          "desc": "Wie stark Bodenwellen die Kamera federn und neigen lassen."
         },
         "reactivity": {
           "title": "Reaktionsfreude",
@@ -140,7 +140,7 @@
       },
       "road_irregularity": {
         "title": "Fahrbahnunebenheit",
-        "desc": "Strukturiertes Rütteln je nach Untergrund unter den Rädern (Schotter, Kopfsteinpflaster, Erde oder glatter Asphalt), getrennt von echten Federungsstößen. Unebener Boden wie Erde oder Gras schaukelt deinen Kopf außerdem seitlich hin und her.",
+        "desc": "Rütteln je nach Untergrund unter den Rädern (Schotter, Kopfsteinpflaster, Erde). Unebener Boden schaukelt deinen Kopf außerdem seitlich.",
         "enabled": {
           "title": "Fahrbahnunebenheit aktivieren"
         },
@@ -291,7 +291,7 @@
       },
       "manual_zoom": {
         "title": "Manueller Zoom",
-        "desc": "Sanfter Zoom auf einer einzigen eigenen Taste, wie die Zoomtaste des Spiels: gedrückt halten zum Heranzoomen, loslassen zum langsamen Zurückkehren. Unabhängig von den Zoomtasten des Spiels, die das Sichtfeld in festen Schritten ändern und sich nicht direkt glätten lassen.",
+        "desc": "Sanfter Zoom auf einer eigenen Taste: gedrückt halten zum Heranzoomen, loslassen zum langsamen Zurückkehren.",
         "hint": "Diese Taste ist unabhängig von der spieleigenen Taste „Innenkamera zoomen“.",
         "enabled": {
           "title": "Manuellen Zoom aktivieren"

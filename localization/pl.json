@@ -121,13 +121,13 @@
       "desc": "Efekty wywołane nawierzchnią, zawieszeniem i prędkością.",
       "suspension": {
         "title": "Zawieszenie",
-        "desc": "Pionowe bujanie kamery na nierównościach, jak fotel z pneumatycznym zawieszeniem: opada, odbija się, a potem wraca na miejsce.",
+        "desc": "Bujanie kamery na nierównościach, jak fotel z pneumatycznym zawieszeniem: opada, odbija się, a potem wraca na miejsce. Nierówności pod jedną stroną lekko przechylają też głowę.",
         "enabled": {
           "title": "Włącz zawieszenie"
         },
         "vertical_strength": {
           "title": "Siła pionowa",
-          "desc": "Jak mocno nierówności drogi podrzucają kamerę w górę i w dół."
+          "desc": "Jak mocno nierówności drogi podrzucają i przechylają kamerę."
         },
         "reactivity": {
           "title": "Reaktywność",
@@ -140,7 +140,7 @@
       },
       "road_irregularity": {
         "title": "Nierówności drogi",
-        "desc": "Drgania zależne od podłoża pod kołami (żwir, kocie łby, ziemia lub gładki asfalt), niezależne od prawdziwych wstrząsów zawieszenia. Nierówny teren, jak ziemia czy trawa, dodatkowo kołysze głową na boki.",
+        "desc": "Drgania zależne od podłoża pod kołami (żwir, kocie łby, ziemia). Nierówny teren dodatkowo kołysze głową na boki.",
         "enabled": {
           "title": "Włącz nierówności drogi"
         },
@@ -291,7 +291,7 @@
       },
       "manual_zoom": {
         "title": "Ręczne przybliżenie",
-        "desc": "Płynne przybliżenie pod jednym osobnym klawiszem, jak natywny klawisz zoomu: przytrzymaj, aby przybliżyć, puść, aby stopniowo wrócić do normalnego widoku. Niezależne od natywnych klawiszy zoomu, które zmieniają pole widzenia skokowo i nie dają się bezpośrednio wygładzić.",
+        "desc": "Płynne przybliżenie pod osobnym klawiszem: przytrzymaj, aby przybliżyć, puść, aby stopniowo wrócić do normalnego widoku.",
         "hint": "Ten klawisz jest niezależny od klawisza gry „Przybliżenie kamery wewnętrznej”.",
         "enabled": {
           "title": "Włącz ręczne przybliżenie"

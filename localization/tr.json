@@ -121,13 +121,13 @@
       "desc": "Yol yüzeyi, süspansiyon ve hızdan kaynaklanan efektler.",
       "suspension": {
         "title": "Süspansiyon",
-        "desc": "Tümseklerde kameranın dikey olarak yaylanması, havalı süspansiyonlu bir koltuk gibi: aşağı iner, geri seker ve ardından eski konumuna döner.",
+        "desc": "Tümseklerde kameranın yaylanması, havalı süspansiyonlu bir koltuk gibi: aşağı iner, geri seker ve ardından eski konumuna döner. Yalnızca bir taraftaki tümsekler kafanızı da hafifçe yatırır.",
         "enabled": {
           "title": "Süspansiyonu etkinleştir"
         },
         "vertical_strength": {
           "title": "Dikey güç",
-          "desc": "Yoldaki tümseklerin kamerayı ne kadar aşağı yukarı zıplattığı."
+          "desc": "Yoldaki tümseklerin kamerayı ne kadar zıplattığı ve yatırdığı."
         },
         "reactivity": {
           "title": "Tepkisellik",
@@ -140,7 +140,7 @@
       },
       "road_irregularity": {
         "title": "Yol pürüzlülüğü",
-        "desc": "Tekerleklerin altındaki zemin malzemesine göre dokulu titreşim (çakıl, parke taşı, toprak veya düz asfalt), gerçek süspansiyon darbelerinden ayrıdır. Toprak veya çim gibi engebeli zemin kafanızı ayrıca iki yana sallar.",
+        "desc": "Tekerleklerin altındaki zemine göre titreşim (çakıl, parke taşı, toprak). Engebeli zemin kafanızı ayrıca iki yana sallar.",
         "enabled": {
           "title": "Yol pürüzlülüğünü etkinleştir"
         },
@@ -291,7 +291,7 @@
       },
       "manual_zoom": {
         "title": "Manuel yakınlaştırma",
-        "desc": "Oyunun yakınlaştırma tuşu gibi tek bir özel tuşta yumuşak yakınlaştırma: yakınlaştırmak için basılı tutun, yavaşça normale dönmek için bırakın. Görüş alanını sabit adımlarla değiştiren ve doğrudan yumuşatılamayan oyunun yakınlaştırma tuşlarından bağımsızdır.",
+        "desc": "Özel bir tuşta yumuşak yakınlaştırma: yakınlaştırmak için basılı tutun, yavaşça normale dönmek için bırakın.",
         "hint": "Bu tuş, oyunun \"İç kamerayı yakınlaştır\" tuşundan bağımsızdır.",
         "enabled": {
           "title": "Manuel yakınlaştırmayı etkinleştir"

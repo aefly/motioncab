@@ -121,13 +121,13 @@
       "desc": "Effects driven by the road surface, suspension and speed.",
       "suspension": {
         "title": "Suspension",
-        "desc": "Vertical camera bounce over road bumps, like an air-suspended seat: it dips, rebounds, then settles back.",
+        "desc": "Camera bounce over road bumps, like an air-suspended seat: it dips, rebounds, then settles back. Bumps under one side also tilt your head slightly.",
         "enabled": {
           "title": "Enable Suspension"
         },
         "vertical_strength": {
           "title": "Vertical Strength",
-          "desc": "How much bumps in the road bounce the camera up and down."
+          "desc": "How much bumps in the road bounce and tilt the camera."
         },
         "reactivity": {
           "title": "Reactivity",
@@ -140,7 +140,7 @@
       },
       "road_irregularity": {
         "title": "Road Irregularity",
-        "desc": "Textured chatter based on the ground material under the wheels (gravel, cobblestone, dirt vs. smooth asphalt), separate from real suspension bumps. Uneven ground like dirt or grass also rocks your head from side to side.",
+        "desc": "Chatter from the ground under the wheels (gravel, cobblestone, dirt). Uneven ground also rocks your head side to side.",
         "enabled": {
           "title": "Enable Road Irregularity"
         },
@@ -291,7 +291,7 @@
       },
       "manual_zoom": {
         "title": "Manual Zoom",
-        "desc": "Smooth zoom on a single dedicated key, like the native zoom key: hold to zoom in, release to ease back to normal. Independent of the native zoom keys, which jump the FOV in fixed steps and can't be smoothed directly.",
+        "desc": "Smooth zoom on a dedicated key: hold to zoom in, release to ease back to normal.",
         "hint": "This key is separate from the game's native \"Zoom Interior Camera\" key.",
         "enabled": {
           "title": "Enable Manual Zoom"

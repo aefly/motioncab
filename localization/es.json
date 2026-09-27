@@ -121,13 +121,13 @@
       "desc": "Efectos causados por el firme, la suspensión y la velocidad.",
       "suspension": {
         "title": "Suspensión",
-        "desc": "Rebote vertical de la cámara sobre los baches, como un asiento con suspensión neumática: se hunde, rebota y luego vuelve a su sitio.",
+        "desc": "Rebote de la cámara sobre los baches, como un asiento con suspensión neumática: se hunde, rebota y luego vuelve a su sitio. Los baches de un solo lado también inclinan ligeramente tu cabeza.",
         "enabled": {
           "title": "Activar suspensión"
         },
         "vertical_strength": {
           "title": "Fuerza vertical",
-          "desc": "Cuánto hacen rebotar la cámara los baches de la carretera."
+          "desc": "Cuánto hacen rebotar e inclinar la cámara los baches de la carretera."
         },
         "reactivity": {
           "title": "Reactividad",
@@ -140,7 +140,7 @@
       },
       "road_irregularity": {
         "title": "Irregularidad del terreno",
-        "desc": "Vibración según el material del suelo bajo las ruedas (grava, adoquines, tierra o asfalto liso), independiente de los baches reales de la suspensión. El terreno irregular, como la tierra o la hierba, también balancea tu cabeza de lado a lado.",
+        "desc": "Vibración según el suelo bajo las ruedas (grava, adoquines, tierra). El terreno irregular también balancea tu cabeza de lado a lado.",
         "enabled": {
           "title": "Activar irregularidad del terreno"
         },
@@ -291,7 +291,7 @@
       },
       "manual_zoom": {
         "title": "Zoom manual",
-        "desc": "Zoom suave en una sola tecla dedicada, como la tecla de zoom nativa: mantén pulsado para acercar y suelta para volver poco a poco a la vista normal. Independiente de las teclas de zoom nativas, que cambian el campo de visión a saltos fijos y no se pueden suavizar directamente.",
+        "desc": "Zoom suave en una tecla dedicada: mantén pulsado para acercar y suelta para volver poco a poco a la vista normal.",
         "hint": "Esta tecla es independiente de la tecla nativa del juego «Zoom de la cámara interior».",
         "enabled": {
           "title": "Activar zoom manual"

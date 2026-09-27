@@ -121,13 +121,13 @@
       "desc": "Effecten door het wegdek, de vering en de snelheid.",
       "suspension": {
         "title": "Vering",
-        "desc": "Verticaal meeveren van de camera over hobbels, zoals een luchtgeveerde stoel: zakt in, veert terug en komt dan tot rust.",
+        "desc": "Meeveren van de camera over hobbels, zoals een luchtgeveerde stoel: zakt in, veert terug en komt dan tot rust. Hobbels onder één kant kantelen je hoofd ook licht.",
         "enabled": {
           "title": "Vering inschakelen"
         },
         "vertical_strength": {
           "title": "Verticale sterkte",
-          "desc": "Hoeveel oneffenheden in de weg de camera op en neer laten veren."
+          "desc": "Hoeveel oneffenheden in de weg de camera laten veren en kantelen."
         },
         "reactivity": {
           "title": "Reactiesnelheid",
@@ -140,7 +140,7 @@
       },
       "road_irregularity": {
         "title": "Wegoneffenheid",
-        "desc": "Getextureerd trillen afhankelijk van de ondergrond onder de wielen (grind, kinderkopjes, zand of glad asfalt), los van echte veringsschokken. Ongelijke ondergrond zoals zand of gras laat je hoofd ook zijwaarts schommelen.",
+        "desc": "Trillen afhankelijk van de ondergrond onder de wielen (grind, kinderkopjes, zand). Ongelijke ondergrond laat je hoofd ook zijwaarts schommelen.",
         "enabled": {
           "title": "Wegoneffenheid inschakelen"
         },
@@ -291,7 +291,7 @@
       },
       "manual_zoom": {
         "title": "Handmatige zoom",
-        "desc": "Vloeiende zoom op één eigen toets, zoals de standaard zoomtoets: ingedrukt houden om in te zoomen, loslaten om geleidelijk terug te keren naar normaal. Los van de standaard zoomtoetsen, die het gezichtsveld in vaste stappen veranderen en niet direct vloeiend te maken zijn.",
+        "desc": "Vloeiende zoom op een eigen toets: ingedrukt houden om in te zoomen, loslaten om geleidelijk terug te keren naar normaal.",
         "hint": "Deze toets staat los van de standaardtoets 'Binnencamera zoomen' van het spel.",
         "enabled": {
           "title": "Handmatige zoom inschakelen"

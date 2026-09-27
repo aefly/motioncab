@@ -121,13 +121,13 @@
       "desc": "Efekty způsobené povrchem vozovky, odpružením a rychlostí.",
       "suspension": {
         "title": "Odpružení",
-        "desc": "Svislé pohupování kamery na nerovnostech, jako vzduchem odpružené sedadlo: klesne, odrazí se a pak se vrátí na místo.",
+        "desc": "Pohupování kamery na nerovnostech, jako vzduchem odpružené sedadlo: klesne, odrazí se a pak se vrátí na místo. Nerovnosti pod jednou stranou také mírně nakloní hlavu.",
         "enabled": {
           "title": "Zapnout odpružení"
         },
         "vertical_strength": {
           "title": "Svislá síla",
-          "desc": "Jak moc nerovnosti na silnici nadhazují kameru nahoru a dolů."
+          "desc": "Jak moc nerovnosti na silnici nadhazují a naklánějí kameru."
         },
         "reactivity": {
           "title": "Reaktivita",
@@ -140,7 +140,7 @@
       },
       "road_irregularity": {
         "title": "Nerovnosti vozovky",
-        "desc": "Drnčení podle povrchu pod koly (štěrk, dlažební kostky, hlína nebo hladký asfalt), oddělené od skutečných rázů odpružení. Nerovný terén jako hlína nebo tráva navíc kolébá hlavou ze strany na stranu.",
+        "desc": "Drnčení podle povrchu pod koly (štěrk, dlažební kostky, hlína). Nerovný terén navíc kolébá hlavou ze strany na stranu.",
         "enabled": {
           "title": "Zapnout nerovnosti vozovky"
         },
@@ -291,7 +291,7 @@
       },
       "manual_zoom": {
         "title": "Ruční přiblížení",
-        "desc": "Plynulé přiblížení na jedné vyhrazené klávese, podobně jako herní klávesa přiblížení: podržením přiblížíte, uvolněním se pohled postupně vrátí do normálu. Nezávislé na herních klávesách přiblížení, které mění zorné pole skokově a nelze je přímo vyhladit.",
+        "desc": "Plynulé přiblížení na vyhrazené klávese: podržením přiblížíte, uvolněním se pohled postupně vrátí do normálu.",
         "hint": "Tato klávesa je nezávislá na herní klávese „Přiblížení vnitřní kamery“.",
         "enabled": {
           "title": "Zapnout ruční přiblížení"

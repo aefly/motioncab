@@ -121,13 +121,13 @@
       "desc": "Efeitos causados pelo piso, pela suspensão e pela velocidade.",
       "suspension": {
         "title": "Suspensão",
-        "desc": "Balanço vertical da câmera nos buracos, como um banco com suspensão a ar: afunda, quica e depois volta ao lugar.",
+        "desc": "Balanço da câmera nos buracos, como um banco com suspensão a ar: afunda, quica e depois volta ao lugar. Buracos de um lado só também inclinam levemente sua cabeça.",
         "enabled": {
           "title": "Ativar suspensão"
         },
         "vertical_strength": {
           "title": "Força vertical",
-          "desc": "Quanto os buracos da estrada fazem a câmera quicar para cima e para baixo."
+          "desc": "Quanto os buracos da estrada fazem a câmera quicar e inclinar."
         },
         "reactivity": {
           "title": "Reatividade",
@@ -140,7 +140,7 @@
       },
       "road_irregularity": {
         "title": "Irregularidade do piso",
-        "desc": "Trepidação de acordo com o material do solo sob as rodas (cascalho, paralelepípedo, terra ou asfalto liso), separada dos impactos reais da suspensão. Terrenos irregulares como terra ou grama também balançam sua cabeça de um lado para o outro.",
+        "desc": "Trepidação de acordo com o solo sob as rodas (cascalho, paralelepípedo, terra). Terrenos irregulares também balançam sua cabeça de um lado para o outro.",
         "enabled": {
           "title": "Ativar irregularidade do piso"
         },
@@ -291,7 +291,7 @@
       },
       "manual_zoom": {
         "title": "Zoom manual",
-        "desc": "Zoom suave em uma única tecla dedicada, como a tecla de zoom nativa: segure para aproximar, solte para voltar aos poucos ao normal. Independente das teclas de zoom nativas, que mudam o campo de visão em passos fixos e não podem ser suavizadas diretamente.",
+        "desc": "Zoom suave em uma tecla dedicada: segure para aproximar, solte para voltar aos poucos ao normal.",
         "hint": "Esta tecla é separada da tecla nativa do jogo \"Zoom da câmera interna\".",
         "enabled": {
           "title": "Ativar zoom manual"

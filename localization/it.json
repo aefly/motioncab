@@ -121,13 +121,13 @@
       "desc": "Effetti dovuti al manto stradale, alle sospensioni e alla velocità.",
       "suspension": {
         "title": "Sospensioni",
-        "desc": "Rimbalzo verticale della telecamera sulle buche, come un sedile a sospensione pneumatica: affonda, rimbalza e poi torna in posizione.",
+        "desc": "Rimbalzo della telecamera sulle buche, come un sedile a sospensione pneumatica: affonda, rimbalza e poi torna in posizione. Le buche su un solo lato inclinano anche leggermente la testa.",
         "enabled": {
           "title": "Attiva sospensioni"
         },
         "vertical_strength": {
           "title": "Intensità verticale",
-          "desc": "Quanto le buche della strada fanno sobbalzare la telecamera su e giù."
+          "desc": "Quanto le buche della strada fanno sobbalzare e inclinare la telecamera."
         },
         "reactivity": {
           "title": "Reattività",
@@ -140,7 +140,7 @@
       },
       "road_irregularity": {
         "title": "Irregolarità stradale",
-        "desc": "Vibrazione in base al materiale del terreno sotto le ruote (ghiaia, pavé, sterrato o asfalto liscio), separata dalle vere sollecitazioni delle sospensioni. Il terreno irregolare come sterrato o erba fa anche dondolare la testa da un lato all'altro.",
+        "desc": "Vibrazione in base al terreno sotto le ruote (ghiaia, pavé, sterrato). Il terreno irregolare fa anche dondolare la testa da un lato all'altro.",
         "enabled": {
           "title": "Attiva irregolarità stradale"
         },
@@ -291,7 +291,7 @@
       },
       "manual_zoom": {
         "title": "Zoom manuale",
-        "desc": "Zoom morbido su un unico tasto dedicato, come il tasto zoom nativo: tieni premuto per ingrandire, rilascia per tornare gradualmente alla vista normale. Indipendente dai tasti zoom nativi, che cambiano il campo visivo a scatti fissi e non possono essere smorzati direttamente.",
+        "desc": "Zoom morbido su un tasto dedicato: tieni premuto per ingrandire, rilascia per tornare gradualmente alla vista normale.",
         "hint": "Questo tasto è separato dal tasto nativo del gioco «Zoom telecamera interna».",
         "enabled": {
           "title": "Attiva zoom manuale"

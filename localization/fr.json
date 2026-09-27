@@ -121,13 +121,13 @@
       "desc": "Effets liés au revêtement de la route, à la suspension et à la vitesse.",
       "suspension": {
         "title": "Suspension",
-        "desc": "Rebond vertical de la caméra sur les bosses, comme un siège à suspension pneumatique : elle s'enfonce, rebondit, puis revient en place.",
+        "desc": "Rebond de la caméra sur les bosses, comme un siège à suspension pneumatique : elle s'enfonce, rebondit, puis revient en place. Les bosses d'un seul côté inclinent aussi légèrement la tête.",
         "enabled": {
           "title": "Activer la suspension"
         },
         "vertical_strength": {
           "title": "Force verticale",
-          "desc": "À quel point les bosses de la route font rebondir la caméra de haut en bas."
+          "desc": "À quel point les bosses de la route font rebondir et pencher la caméra."
         },
         "reactivity": {
           "title": "Réactivité",
@@ -140,7 +140,7 @@
       },
       "road_irregularity": {
         "title": "Irrégularités de la route",
-        "desc": "Vibrations texturées selon le sol sous les roues (gravier, pavés, terre ou asphalte lisse), distinctes des vraies bosses de suspension. Les sols irréguliers comme la terre ou l'herbe font aussi balancer votre tête d'un côté à l'autre.",
+        "desc": "Vibrations selon le sol sous les roues (gravier, pavés, terre). Les sols irréguliers balancent aussi votre tête d'un côté à l'autre.",
         "enabled": {
           "title": "Activer les irrégularités de la route"
         },
@@ -291,7 +291,7 @@
       },
       "manual_zoom": {
         "title": "Zoom manuel",
-        "desc": "Zoom fluide sur une seule touche dédiée, comme la touche de zoom native : maintenir pour zoomer, relâcher pour revenir progressivement à la normale. Indépendant des touches de zoom natives, qui changent le champ de vision par paliers et ne peuvent pas être lissées directement.",
+        "desc": "Zoom fluide sur une touche dédiée : maintenir pour zoomer, relâcher pour revenir progressivement à la normale.",
         "hint": "Cette touche est indépendante de la touche native « Zoom caméra intérieure » du jeu.",
         "enabled": {
           "title": "Activer le zoom manuel"
