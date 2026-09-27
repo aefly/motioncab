@@ -9,13 +9,13 @@ namespace motioncab {
 // on top of the user's own SPF seat/head-rotation settings.
 struct HeadOffset {
   float pos_x = 0.0f, pos_y = 0.0f, pos_z = 0.0f; // meters, cabin-local
-  // Degrees, not radians. Plugin.cpp converts at the Cam_SetInteriorHeadRot
+  // Degrees, not radians. CameraRig converts at the Cam_SetInteriorHeadRot
   // call site, to stay consistent with Cam_SetInteriorRotationDefaults
   // (degrees; a default pitch of -7.0 only makes sense as such).
   float yaw = 0.0f, pitch = 0.0f;
   // Degrees, head tilt to either side (Cam_SetInteriorRoll takes degrees).
   float roll = 0.0f;
-  // Degrees added to the interior FOV, layered by Plugin.cpp on top of the
+  // Degrees added to the interior FOV, layered by CameraRig on top of the
   // player's FOV (and ManualZoomEffect's zoom, see its class comment).
   float fov = 0.0f;
 };
@@ -27,7 +27,6 @@ class Effect {
 public:
   virtual ~Effect() = default;
 
-  virtual const char *Name() const = 0;
   virtual bool IsEnabled() const = 0;
   virtual void SetEnabled(bool enabled) = 0;
 

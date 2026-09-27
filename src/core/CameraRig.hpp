@@ -1,0 +1,70 @@
+#pragma once
+
+#include "SPF_Camera_API.h"
+#include "effects/Effect.hpp"
+
+#include <optional>
+
+namespace motioncab {
+
+// Writes the effects' summed HeadOffset into the interior camera without
+// owning the pose ("differential write"): each frame it subtracts the
+// offset it applied last frame from the live pose, recovering the player's
+// own seat/head pose and FOV, then adds the new offset on top. Free-look
+// and the player's SPF seat settings keep working underneath.
+//
+// The engine keeps the last offset written even while the camera isn't
+// the interior one, so applied() stays valid across view switches and
+// must not be zeroed there. Remove() takes it back out for good.
+class CameraRig {
+public:
+  // The live seat position and head rotation, read before the effects
+  // update so the recenter check and the write use the same frame's pose.
+  struct Pose {
+    float seat_x, seat_y, seat_z;
+    float yaw_rad, pitch_rad;
+  };
+
+  // Empty if the camera isn't resolved yet (getters fail): the frame must
+  // then be skipped entirely, since a bogus reading would ratchet the seat
+  // through a bad applied offset.
+  std::optional<Pose> ReadPose(SPF_Camera_API *camera) const;
+
+  // True if the native "recenter camera" hotkey just snapped the head
+  // rotation to its default, which drops our rotation offset from the
+  // live pose without any event to hook. The applied yaw/pitch are then
+  // forgotten; the caller should reset the effects like on cabin entry.
+  bool DetectNativeRecenter(SPF_Camera_API *camera, const Pose &pose);
+
+  // Replaces last frame's offset with `offset` in the live pose.
+  void Apply(SPF_Camera_API *camera, const Pose &pose,
+             const HeadOffset &offset);
+
+  // Takes the applied offset back out of the live pose (plugin unload). A
+  // reloaded plugin starts from a zero applied offset and could never
+  // subtract it, so e.g. unloading mid Blindspot Viewer peek would leave
+  // the seat leaned forward for good.
+  void Remove(SPF_Camera_API *camera);
+
+  // The offset currently in the live pose.
+  const HeadOffset &applied() const { return applied_; }
+
+private:
+  // Each writes one channel from its live value, then records `offset` as
+  // applied for it. Roll and FOV read their own live value, and keep their
+  // applied value if that read fails.
+  void WriteSeat(SPF_Camera_API *camera, float x, float y, float z,
+                 const HeadOffset &offset);
+  void WriteHeadRot(SPF_Camera_API *camera, float yaw_rad, float pitch_rad,
+                    const HeadOffset &offset);
+  void WriteRoll(SPF_Camera_API *camera, const HeadOffset &offset);
+  void WriteFov(SPF_Camera_API *camera, const HeadOffset &offset);
+
+  HeadOffset applied_{};
+  // Head rotation we wrote last frame (degrees), to tell the native
+  // recenter's snap apart from free-look passing through the default.
+  float last_written_yaw_deg_ = 0.0f, last_written_pitch_deg_ = 0.0f;
+  bool has_last_written_rot_ = false;
+};
+
+} // namespace motioncab

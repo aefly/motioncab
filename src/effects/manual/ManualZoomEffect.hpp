@@ -16,7 +16,7 @@ namespace motioncab {
 // (drives FOV, not head pose), so it isn't part of EffectManager.
 //
 // Works on the FOV without the HeadOffset effects' own additive FOV offset
-// (e.g. BlindspotViewerEffect's), which Plugin.cpp layers on top every frame:
+// (e.g. BlindspotViewerEffect's), which CameraRig layers on top every frame:
 // its reads subtract `*extra_fov_deg`, the offset currently in the live
 // FOV, and its writes add it back. Otherwise a zoom started mid-peek would
 // take the peek's offset as the player's own FOV and return to it.

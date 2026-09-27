@@ -59,6 +59,7 @@ set(PLUGIN_SOURCES
     "src/Plugin.cpp"
     "src/core/Manifest.cpp"
     "src/core/PluginContext.cpp"
+    "src/core/CameraRig.cpp"
     "src/core/Localization.cpp"
     "src/core/ProfileManager.cpp"
     "src/core/SettingsSchema.cpp"
@@ -77,6 +78,10 @@ set(PLUGIN_SOURCES
     "src/effects/manual/ManualZoomEffect.cpp"
     "src/effects/manual/BlindspotViewerEffect.cpp"
     "src/ui/SettingsWindow.cpp"
+    "src/ui/Widgets.cpp"
+    "src/ui/EffectTabs.cpp"
+    "src/ui/SettingsTab.cpp"
+    "src/ui/AboutTab.cpp"
     "src/ui/OpenUrl.cpp"
 )
 

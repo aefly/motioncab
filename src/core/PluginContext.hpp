@@ -9,6 +9,7 @@
 #include "SPF_Plugin.h"
 #include "SPF_TelemetryData.h"
 #include "SPF_Telemetry_API.h"
+#include "core/CameraRig.hpp"
 #include "effects/EffectManager.hpp"
 #include "effects/manual/ManualZoomEffect.hpp"
 
@@ -45,16 +46,10 @@ struct PluginContext {
   SPF_Controls latest_controls_data{};
   std::atomic<bool> has_controls_data{false};
 
-  // Our own offset added to the interior seat/head pose last frame.
-  // Subtracted from the live pose each frame to recover the underlying
-  // pose before adding the new offset (see the differential write in
-  // Plugin.cpp).
-  HeadOffset last_applied_offset{};
+  // Writes the effects' offset into the interior camera (differential
+  // write) and remembers what it applied.
+  CameraRig camera_rig;
   bool was_interior_last_frame = false;
-  // Head rotation we wrote last frame (degrees), to tell the native
-  // recenter's snap apart from free-look passing through the default.
-  float last_written_yaw_deg = 0.0f, last_written_pitch_deg = 0.0f;
-  bool has_last_written_rot = false;
 
   std::chrono::steady_clock::time_point last_update_time{};
   bool has_last_update_time = false;

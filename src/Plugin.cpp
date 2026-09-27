@@ -25,13 +25,12 @@
 #include "effects/road/RoadIrregularityEffect.hpp"
 #include "effects/road/SpeedShakeEffect.hpp"
 #include "effects/road/SuspensionEffect.hpp"
-#include "math/Units.hpp"
 #include "ui/SettingsWindow.hpp"
 
 #include <chrono>
-#include <cmath>
 #include <cstring>
 #include <memory>
+#include <optional>
 
 using namespace motioncab;
 
@@ -110,31 +109,11 @@ void OnUnload() {
     Context().manual_zoom->RestoreDynamicFov();
   }
   // Take our offset back out of the interior pose, which the engine keeps
-  // after we're gone. A reloaded plugin starts from a zero
-  // last_applied_offset and could never subtract it, so e.g. unloading
-  // mid blindspot viewer would leave the seat leaned forward for good.
+  // after we're gone. After ManualZoomEffect's RestoreFov above, which
+  // adds the applied FOV offset back on.
   PluginContext &ctx = Context();
-  if (ctx.core && ctx.core->camera) {
-    SPF_Camera_API *camera = ctx.core->camera;
-    const HeadOffset &applied = ctx.last_applied_offset;
-    using math::kDegToRad;
-    float x, y, z;
-    if (camera->Cam_GetInteriorSeatPos(&x, &y, &z))
-      camera->Cam_SetInteriorSeatPos(x - applied.pos_x, y - applied.pos_y,
-                                     z - applied.pos_z);
-    float yaw_rad, pitch_rad;
-    if (camera->Cam_GetInteriorHeadRot(&yaw_rad, &pitch_rad))
-      camera->Cam_SetInteriorHeadRot(yaw_rad - applied.yaw * kDegToRad,
-                                     pitch_rad - applied.pitch * kDegToRad);
-    float roll_deg;
-    if (camera->Cam_GetInteriorRoll(&roll_deg))
-      camera->Cam_SetInteriorRoll(roll_deg - applied.roll);
-    // After ManualZoomEffect's RestoreFov above, which adds this back on.
-    float fov_deg;
-    if (applied.fov != 0.0f && camera->Cam_GetInteriorFov(&fov_deg))
-      camera->Cam_SetInteriorFov(fov_deg - applied.fov);
-    ctx.last_applied_offset = {};
-  }
+  if (ctx.core && ctx.core->camera)
+    ctx.camera_rig.Remove(ctx.core->camera);
   // The About tab's logo texture is the one thing this plugin allocates
   // through the UI API that SPF doesn't free on its own.
   if (Context().core && Context().core->ui)
@@ -218,7 +197,7 @@ void OnActivated(const SPF_Core_API *core_api) {
       ctx.keybinds_handle));
   ctx.manual_zoom = std::make_unique<ManualZoomEffect>(
       core_api->config, ctx.config_handle, core_api->keybinds,
-      ctx.keybinds_handle, &ctx.last_applied_offset.fov);
+      ctx.keybinds_handle, &ctx.camera_rig.applied().fov);
   ctx.ReloadEffectsConfig();
 
   ctx.telemetry_handle =
@@ -308,11 +287,11 @@ void OnUpdate() {
   }
 
   if (!ctx.was_interior_last_frame) {
-    // Resets smoothing state on cabin re-entry, but not
-    // ctx.last_applied_offset: the engine keeps our last-written offset
-    // even while inactive, so it's still what must be subtracted below on
-    // the first frame back. Zeroing it would bake the stale offset into the
-    // live pose, compounding on every view switch.
+    // Resets smoothing state on cabin re-entry, but not the camera rig's
+    // applied offset: the engine keeps our last-written offset even while
+    // inactive, so it's still what must be subtracted below on the first
+    // frame back. Zeroing it would bake the stale offset into the live
+    // pose, compounding on every view switch.
     ctx.ResetEffects();
     ctx.was_interior_last_frame = true;
   }
@@ -328,101 +307,17 @@ void OnUpdate() {
   if (ctx.manual_zoom && ctx.manual_zoom->IsEnabled())
     ctx.manual_zoom->Update(dt, ctx.core->camera);
 
-  // Differential write: subtract our last offset from the live pose, then
-  // layer the new one on top, so we don't fight free-look. Skip entirely
-  // if the getters fail (e.g. camera not resolved yet), since a bogus
-  // reading would ratchet the seat via a bad last_applied_offset.
-  float seat_x, seat_y, seat_z;
-  float yaw_rad, pitch_rad;
-  const bool got_seat =
-      ctx.core->camera->Cam_GetInteriorSeatPos(&seat_x, &seat_y, &seat_z);
-  const bool got_rot =
-      ctx.core->camera->Cam_GetInteriorHeadRot(&yaw_rad, &pitch_rad);
-  if (!got_seat || !got_rot)
+  // Differential write (see CameraRig), skipped entirely while the camera
+  // isn't resolved yet.
+  SPF_Camera_API *camera = ctx.core->camera;
+  const std::optional<CameraRig::Pose> pose = ctx.camera_rig.ReadPose(camera);
+  if (!pose)
     return;
-
-  using math::kDegToRad;
-
-  // Detect the native "recenter camera" hotkey: it snaps rotation straight
-  // to the raw default with no event to hook, so infer it heuristically
-  // instead (our contribution is non-trivial, and rotation jumps away from
-  // what we wrote to land exactly on default) and resync like a fresh
-  // cabin entry. Landing on default alone isn't enough: free-look sweeping
-  // through the default while an effect is active (e.g. steering camera)
-  // passes within epsilon of it, and a false positive re-bases the pose,
-  // snapping the player's own look back to center.
-  float default_yaw_deg, default_pitch_deg;
-  if (ctx.has_last_written_rot &&
-      ctx.core->camera->Cam_GetInteriorRotationDefaults(&default_yaw_deg,
-                                                        &default_pitch_deg)) {
-    constexpr float kEpsilonDeg = 0.01f;
-    constexpr float kMeaningfulOffsetDeg = 0.5f;
-    auto was_reset = [&](float live_deg, float default_deg, float written_deg,
-                         float offset_deg) {
-      return std::fabs(offset_deg) > kMeaningfulOffsetDeg &&
-             std::fabs(live_deg - written_deg) > kMeaningfulOffsetDeg &&
-             std::fabs(live_deg - default_deg) < kEpsilonDeg;
-    };
-    const bool yaw_was_reset =
-        was_reset(yaw_rad / kDegToRad, default_yaw_deg,
-                  ctx.last_written_yaw_deg, ctx.last_applied_offset.yaw);
-    const bool pitch_was_reset =
-        was_reset(pitch_rad / kDegToRad, default_pitch_deg,
-                  ctx.last_written_pitch_deg, ctx.last_applied_offset.pitch);
-    if (yaw_was_reset || pitch_was_reset) {
-      ctx.effects.ResetAll();
-      ctx.last_applied_offset.yaw = 0.0f;
-      ctx.last_applied_offset.pitch = 0.0f;
-    }
-  }
-
+  if (ctx.camera_rig.DetectNativeRecenter(camera, *pose))
+    ctx.effects.ResetAll();
   const HeadOffset offset = ctx.effects.UpdateAndAccumulate(
       dt, ctx.latest_truck_data, ctx.latest_controls_data);
-
-  const float base_seat_x = seat_x - ctx.last_applied_offset.pos_x;
-  const float base_seat_y = seat_y - ctx.last_applied_offset.pos_y;
-  const float base_seat_z = seat_z - ctx.last_applied_offset.pos_z;
-  ctx.core->camera->Cam_SetInteriorSeatPos(base_seat_x + offset.pos_x,
-                                           base_seat_y + offset.pos_y,
-                                           base_seat_z + offset.pos_z);
-
-  // HeadOffset.yaw/pitch are degrees (see Effect.hpp); Cam_SetInteriorHeadRot
-  // is documented (and its own usage example confirms) to take radians.
-  const float base_yaw_rad = yaw_rad - ctx.last_applied_offset.yaw * kDegToRad;
-  const float base_pitch_rad =
-      pitch_rad - ctx.last_applied_offset.pitch * kDegToRad;
-  const float new_yaw_rad = base_yaw_rad + offset.yaw * kDegToRad;
-  const float new_pitch_rad = base_pitch_rad + offset.pitch * kDegToRad;
-  ctx.core->camera->Cam_SetInteriorHeadRot(new_yaw_rad, new_pitch_rad);
-  ctx.last_written_yaw_deg = new_yaw_rad / kDegToRad;
-  ctx.last_written_pitch_deg = new_pitch_rad / kDegToRad;
-  ctx.has_last_written_rot = true;
-
-  float roll_deg = 0.0f;
-  if (ctx.core->camera->Cam_GetInteriorRoll(&roll_deg)) {
-    const float base_roll_deg = roll_deg - ctx.last_applied_offset.roll;
-    ctx.core->camera->Cam_SetInteriorRoll(base_roll_deg + offset.roll);
-    ctx.last_applied_offset.roll = offset.roll;
-  }
-
-  // FOV gets the same differential write. ManualZoomEffect wrote this
-  // frame's FOV (if zooming) with last_applied_offset.fov already added,
-  // so subtracting it still recovers the right base. Skipped when neither
-  // frame has an offset, to leave the FOV alone for the game's F4 slider.
-  if (offset.fov != 0.0f || ctx.last_applied_offset.fov != 0.0f) {
-    float fov_deg = 0.0f;
-    if (ctx.core->camera->Cam_GetInteriorFov(&fov_deg)) {
-      const float base_fov_deg = fov_deg - ctx.last_applied_offset.fov;
-      ctx.core->camera->Cam_SetInteriorFov(base_fov_deg + offset.fov);
-      ctx.last_applied_offset.fov = offset.fov;
-    }
-  }
-
-  ctx.last_applied_offset.pos_x = offset.pos_x;
-  ctx.last_applied_offset.pos_y = offset.pos_y;
-  ctx.last_applied_offset.pos_z = offset.pos_z;
-  ctx.last_applied_offset.yaw = offset.yaw;
-  ctx.last_applied_offset.pitch = offset.pitch;
+  ctx.camera_rig.Apply(camera, *pose, offset);
 }
 
 void OnGameWorldReady() {
