@@ -28,10 +28,9 @@
 - [ ] Effect is toggleable via its own "enabled" setting
 - [ ] Effect is active in cabin view only
 - [ ] Effect doesn't conflict with existing effects
-- [ ] Setting/config added to the native SPF settings UI (`Manifest.cpp`)
-- [ ] Same setting mirrored in the Quick Settings window (`SettingsWindow.cpp`)
+- [ ] Setting declared in `settings::kAll` (`src/core/SettingsSchema.hpp`)
+- [ ] New effect listed in `kEffects` (`src/ui/SettingsWindow.cpp`)
 - [ ] Text added to every `localization/*.json` file
-- [ ] Default value mirrored in `src/ui/SettingsDefaults.hpp`
 - [ ] Checked `./SPF_API` docs before implementing/modifying an SDK interaction
 
 ## Test plan

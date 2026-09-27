@@ -183,6 +183,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── Manifest.cpp / .hpp       Plugin identity, settings defaults, keybinds, UI metadata
 │   │   ├── PluginContext.cpp / .hpp  Shared plugin state
 │   │   ├── ProfileManager.cpp / .hpp Create/save/switch named presets
+│   │   ├── SettingsSchema.cpp / .hpp Every setting: key, default, slider range
 │   │   ├── Localization.cpp / .hpp   Translated string lookup (loc::Tr)
 │   │   ├── Keybinds.hpp              Keybind action names and key polling helpers
 │   │   ├── StringUtil.hpp            Case-insensitive string helpers
@@ -202,8 +203,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   └── manual/                   MirrorCheck, ManualLook, ManualZoom, BlindspotViewer
 │   └── ui/
 │       ├── SettingsWindow.cpp / .hpp MotionCab Quick Settings window
-│       ├── OpenUrl.cpp / .hpp        Opens a URL in the system browser
-│       └── SettingsDefaults.hpp      Shared default values
+│       └── OpenUrl.cpp / .hpp        Opens a URL in the system browser
 ├── data/
 │   └── logo.png                      About tab logo
 ├── localization/

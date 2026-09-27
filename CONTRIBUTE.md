@@ -33,8 +33,11 @@ game's `plugins/spfPlugins/MotionCab/`.
 - Every effect must be:
   - Independently toggleable and customizable.
   - Active in the interior (cabin) camera view only.
-  - Wired into **both** the native SPF settings UI (`Manifest.cpp`) and
-    MotionCab's own Quick Settings window (`src/ui/SettingsWindow.cpp`).
+  - Shown in **both** the native SPF settings UI and MotionCab's own
+    Quick Settings window. Declare each setting once in `settings::kAll`
+    (`src/core/SettingsSchema.hpp`): the manifest, the Quick Settings
+    window and the profiles are all generated from it. A new effect also
+    needs its entry in `kEffects` (`src/ui/SettingsWindow.cpp`).
 - Read the SPF SDK headers in `SPF_API/` before implementing or modifying
   any SDK interaction.
 - Make sure a new feature doesn't conflict with an existing effect before
