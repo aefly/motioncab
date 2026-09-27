@@ -41,7 +41,6 @@ private:
 // own tunables, in LoadSettings().
 class ConfigurableEffect : public Effect {
 public:
-  const char *Name() const override { return name_; }
   bool IsEnabled() const override { return enabled_; }
   void SetEnabled(bool enabled) override { enabled_ = enabled; }
 
@@ -56,7 +55,7 @@ protected:
   ConfigurableEffect(SPF_Config_API *config_api,
                      SPF_Config_Handle *config_handle, const char *group,
                      const char *name)
-      : name_(name), config_(config_api, config_handle, group, name) {}
+      : config_(config_api, config_handle, group, name) {}
 
   // Reads the effect's own tunables (everything but "enabled") with Float()
   // and Bool(), and applies them, e.g. to its springs' time constants.
@@ -70,7 +69,6 @@ protected:
   }
 
 private:
-  const char *name_;
   EffectConfig config_;
   bool enabled_ = true;
 };
