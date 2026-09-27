@@ -178,9 +178,10 @@ game's `plugins/spfPlugins/MotionCab/`.
 
 ```txt
 ├── src/
-│   ├── Plugin.cpp                    Lifecycle callbacks, telemetry wiring, camera application
+│   ├── Plugin.cpp                    Lifecycle callbacks, telemetry wiring, per-frame driver
 │   ├── core/
 │   │   ├── Manifest.cpp / .hpp       Plugin identity, settings defaults, keybinds, UI metadata
+│   │   ├── CameraRig.cpp / .hpp      Writes the effects' offset into the interior camera
 │   │   ├── PluginContext.cpp / .hpp  Shared plugin state
 │   │   ├── ProfileManager.cpp / .hpp Create/save/switch named presets
 │   │   ├── SettingsSchema.cpp / .hpp Every setting: key, default, slider range
@@ -203,6 +204,10 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   └── manual/                   MirrorCheck, ManualLook, ManualZoom, BlindspotViewer
 │   └── ui/
 │       ├── SettingsWindow.cpp / .hpp MotionCab Quick Settings window
+│       ├── EffectTabs.cpp / .hpp     Driving/Road/Cabin/Manual tabs
+│       ├── SettingsTab.cpp / .hpp    Settings tab: keybind, profiles, reset
+│       ├── AboutTab.cpp / .hpp       About tab
+│       ├── Widgets.cpp / .hpp        Shared look and widgets
 │       └── OpenUrl.cpp / .hpp        Opens a URL in the system browser
 ├── data/
 │   └── logo.png                      About tab logo

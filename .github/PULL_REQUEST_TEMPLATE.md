@@ -29,7 +29,7 @@
 - [ ] Effect is active in cabin view only
 - [ ] Effect doesn't conflict with existing effects
 - [ ] Setting declared in `settings::kAll` (`src/core/SettingsSchema.hpp`)
-- [ ] New effect listed in `kEffects` (`src/ui/SettingsWindow.cpp`)
+- [ ] New effect listed in `kEffects` (`src/ui/EffectTabs.cpp`)
 - [ ] Text added to every `localization/*.json` file
 - [ ] Checked `./SPF_API` docs before implementing/modifying an SDK interaction
 
