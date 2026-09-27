@@ -42,6 +42,7 @@ private:
       settings::Default("settings.road.suspension.vertical_strength");
   // seconds; how quickly the seat settles after a bump (sets its stiffness)
   float reactivity_ = settings::Default("settings.road.suspension.reactivity");
+  float seat_omega_ = 0.0f; // rad/s, from reactivity_ in LoadSettings()
   // 0 = disabled; see class comment
   float grade_strength_ =
       settings::Default("settings.road.suspension.grade_strength");
@@ -71,7 +72,6 @@ private:
   math::SpringDamper1D delta_baseline_; // front-minus-rear deflection at
                                         // the last stop
 
-  bool has_accel_baseline_ = false;          // also seeds the filters below
   math::SpringDamper1D accel_y_filter_;      // short smoothing of raw input
   math::SpringDamper1D accel_roll_filter_;   // same, for roll
   math::SpringDamper1D accel_y_baseline_;    // slow average, the high-pass

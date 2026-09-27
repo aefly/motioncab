@@ -44,15 +44,21 @@ constexpr float kMaxSeatTravel = 0.04f; // meters, either way
 // Small ones stay nearly linear (90% passes at half this level).
 constexpr float kAccelSoftLimit = 1.5f; // m/s^2
 
+// SPF passes the SCS telemetry through unconverted (see orientation.pitch
+// below), and the SCS SDK gives angular acceleration in rotations/s^2,
+// whatever SPF_TelemetryData.h says. Converted to rad/s^2 on read.
+constexpr float kRotationsToRadians = math::kTwoPi;
+
 // Head roll: the neck and torso are stiffer and better damped than the seat.
 constexpr float kRollOmega = 12.0f; // rad/s, ~1.9 Hz
 constexpr float kRollDamping = 0.4f;
-// Degrees of head roll per rad/s^2 of sustained chassis roll acceleration.
-constexpr float kRollDegPerAngularAccel = 2.0f;
+// Degrees of head roll per rad/s^2 of sustained chassis roll acceleration
+// (2 degrees per rotation/s^2, as tuned before the unit conversion).
+constexpr float kRollDegPerAngularAccel = 2.0f / math::kTwoPi;
 constexpr float kMaxRollDeg = 2.0f;
-// Roll direction: +1 tilts the head toward the side that rose, the body
-// staying upright while the cabin rocks (assuming positive roll is a tilt
-// to the right). Flip if it feels inverted.
+// Roll direction, the body staying upright while the cabin rocks. Positive
+// chassis roll lifts the right side (SCS vehicle space: X = right, Z =
+// backward), so the truck leans left. Flip if the head tilt feels inverted.
 constexpr float kRollSign = 1.0f;
 
 // The high-pass on both accelerations, a safety net so the head always
@@ -85,7 +91,12 @@ void SuspensionEffect::LoadSettings() {
   reactivity_ = Float("reactivity", reactivity_);
   grade_strength_ = Float("grade_strength", grade_strength_);
 
-  seat_y_.Configure(2.0f / std::max(reactivity_, 0.01f), kSeatDamping);
+  // Floored to the slider's minimum: a value saved under the old, wider
+  // range would make the seat buzz.
+  seat_omega_ =
+      2.0f / std::max(reactivity_,
+                      settings::Min("settings.road.suspension.reactivity"));
+  seat_y_.Configure(seat_omega_, kSeatDamping);
   seat_roll_.Configure(kRollOmega, kRollDamping);
   grade_y_.SetTimeConstant(kGradeTimeConstant);
   accel_y_filter_.SetTimeConstant(kAccelFilterTimeConstant);
@@ -99,9 +110,14 @@ void SuspensionEffect::Reset() {
   seat_y_.Reset();
   seat_roll_.Reset();
   grade_y_.Reset();
-  // Re-seeded from the next reading: the accelerations weren't followed
-  // while the effect wasn't updating (outside the cabin).
-  has_accel_baseline_ = false;
+  // Restarted from 0 rather than from the next reading: that reading may
+  // land mid-bump, and the slow baseline would then hold the head off its
+  // seat for seconds. A truck can't sustain a vertical acceleration (the
+  // game leaves gravity out), so 0 is where both settle anyway.
+  accel_y_filter_.Reset();
+  accel_roll_filter_.Reset();
+  accel_y_baseline_.Reset();
+  accel_roll_baseline_.Reset();
   stationary_elapsed_ = 0.0f;
   // The dive baseline intentionally is NOT reset here: it tracks the
   // truck's actual resting geometry.
@@ -199,21 +215,14 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
   // alpha.z * r.x - alpha.x * r.z. Pitching lifts the front (where the
   // driver sits) and rolling lifts the driver's side.
   const SPF_FVector &alpha = truck.local_angular_acceleration;
-  const float alpha_x =
-      std::clamp(alpha.x, -kMaxAngularAccel, kMaxAngularAccel);
-  const float alpha_z =
-      std::clamp(alpha.z, -kMaxAngularAccel, kMaxAngularAccel);
+  const float alpha_x = std::clamp(alpha.x * kRotationsToRadians,
+                                   -kMaxAngularAccel, kMaxAngularAccel);
+  const float alpha_z = std::clamp(alpha.z * kRotationsToRadians,
+                                   -kMaxAngularAccel, kMaxAngularAccel);
   const float accel_y = std::clamp(truck.local_linear_acceleration.y +
                                        alpha_z * head_x_ - alpha_x * head_z_,
                                    -kMaxAccel, kMaxAccel);
 
-  if (!has_accel_baseline_) {
-    accel_y_filter_.Reset(accel_y);
-    accel_roll_filter_.Reset(alpha_z);
-    accel_y_baseline_.Reset(accel_y);
-    accel_roll_baseline_.Reset(alpha_z);
-    has_accel_baseline_ = true;
-  }
   const float accel_y_lp = accel_y_filter_.Update(accel_y, dt);
   const float alpha_z_lp = accel_roll_filter_.Update(alpha_z, dt);
   const float accel_y_hp =
@@ -224,11 +233,10 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
   // The body lags behind the cabin: a jolt upward drops the head relative
   // to it, hence the negated drive. Scaled by omega^2 so the size doesn't
   // depend on the spring's stiffness (see kSeatTravelPerAccel).
-  const float seat_omega = 2.0f / std::max(reactivity_, 0.01f);
   const float seat_y = seat_y_.Update(
       -SoftLimit(FadeNoiseFloor(accel_y_hp, kAccelNoiseFloor), kAccelSoftLimit),
       dt);
-  offset.pos_y = std::clamp(seat_y * seat_omega * seat_omega *
+  offset.pos_y = std::clamp(seat_y * seat_omega_ * seat_omega_ *
                                 kSeatTravelPerAccel * vertical_strength_,
                             -kMaxSeatTravel, kMaxSeatTravel);
 
@@ -277,6 +285,10 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
           ? delta_baseline_.Update(front_rear_delta, dt)
           : delta_baseline_.value();
 
+  // Still followed at 0 strength, easing to 0, so turning Grade Follow off
+  // fades the offset out instead of dropping it, and turning it back on
+  // starts from 0 rather than a stale value.
+  float grade_target = 0.0f;
   if (grade_strength_ != 0.0f) {
     // orientation.pitch is a unit-circle fraction (<-0.25,0.25> = <-90,90>
     // degrees, positive = nose up), not radians. Convert before gaining.
@@ -296,9 +308,9 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
 
     // Downhill (nose down, negative) should raise the head; uphill (nose
     // up, positive) should lower it, hence the negation.
-    offset.pos_y +=
-        grade_y_.Update(-pitch_radians * kGradeGain * grade_strength_, dt);
+    grade_target = -pitch_radians * kGradeGain * grade_strength_;
   }
+  offset.pos_y += grade_y_.Update(grade_target, dt);
   return offset;
 }
 
