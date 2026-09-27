@@ -1,5 +1,7 @@
 #include "EffectManager.hpp"
 
+#include "math/Units.hpp"
+
 #include <algorithm>
 
 namespace motioncab {
@@ -39,8 +41,7 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
       }
     }
     const HeadOffset contribution = effect.Update(dt, truck, controls);
-    const float t = slot.fade;
-    const float weight = t * t * (3.0f - 2.0f * t); // smoothstep
+    const float weight = math::SmoothStep(slot.fade);
     total.pos_x += contribution.pos_x * weight;
     total.pos_y += contribution.pos_y * weight;
     total.pos_z += contribution.pos_z * weight;
