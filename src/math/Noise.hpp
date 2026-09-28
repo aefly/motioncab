@@ -7,12 +7,7 @@ namespace motioncab::math {
 
 // Deterministic 1D gradient (Perlin-style) noise, output in about [-1, 1].
 // Continuous and differentiable, so it can be sampled directly every frame
-// without any smoothing pass.
-//
-// Periodic over kNoisePeriod cells, so a phase that runs for the whole
-// session can be wrapped (WrapNoisePhase) without a jump. Left to grow, a
-// float phase loses the precision its per-frame step needs after a few
-// hours, and the motion turns jerky.
+// without any smoothing pass. Periodic over kNoisePeriod cells, see below.
 inline float Hash01(uint32_t x) {
   x ^= x >> 16;
   x *= 0x7feb352dU;
@@ -22,6 +17,10 @@ inline float Hash01(uint32_t x) {
   return static_cast<float>(x & 0xFFFFFFu) / static_cast<float>(0xFFFFFFu);
 }
 
+// The noise repeats every kNoisePeriod cells, so a phase that runs for the
+// whole session can be wrapped (WrapNoisePhase) without a jump. Left to
+// grow, a float phase loses the precision its per-frame step needs after a
+// few hours, and the motion turns jerky.
 inline constexpr uint32_t kNoisePeriod = 4096; // cells, a power of two
 
 // Keeps a noise phase (in cells, >= 0) within one period. Held in double so
