@@ -121,11 +121,11 @@ HeadOffset SpeedShakeEffect::Update(float dt, const SPF_TruckData &truck,
   // calm (29% at 50 km/h) and it comes in fully toward highway speed.
   const float speed_amount = ramp * ramp;
 
-  envelope_phase_ += dt * kEnvelopeRate;
+  envelope_phase_ = math::WrapNoisePhase(envelope_phase_ + dt * kEnvelopeRate);
+  const float envelope_noise = math::GradientNoise1D(
+      static_cast<float>(envelope_phase_), seed_ + kEnvelopeSeedOffset);
   const float envelope =
-      std::clamp(1.0f + roughness_ * kEnvelopeDepthMax *
-                            math::GradientNoise1D(envelope_phase_,
-                                                  seed_ + kEnvelopeSeedOffset),
+      std::clamp(1.0f + roughness_ * kEnvelopeDepthMax * envelope_noise,
                  kEnvelopeMin, kEnvelopeMax);
 
   float ground_target = 1.0f;
@@ -147,10 +147,12 @@ HeadOffset SpeedShakeEffect::Update(float dt, const SPF_TruckData &truck,
   // Mix the three bands of each channel into one value of about unit RMS.
   std::array<float, kChannels> mixed{};
   for (int b = 0; b < kBands; ++b) {
-    phase_[b] += dt * kBandRate[b] * rate_scale;
+    phase_[b] =
+        math::WrapNoisePhase(phase_[b] + dt * kBandRate[b] * rate_scale);
     for (int c = 0; c < kChannels; ++c) {
       const float noise = math::GradientNoise1D(
-          phase_[b], seed_ + static_cast<uint32_t>(b * kChannels + c) * 7919U);
+          static_cast<float>(phase_[b]),
+          seed_ + static_cast<uint32_t>(b * kChannels + c) * 7919U);
       mixed[c] += kBandWeight[c][b] * noise / kMixRms;
     }
   }

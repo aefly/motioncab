@@ -62,8 +62,9 @@ private:
   uint32_t seed_;
   // Noise-domain time per band, not reset either, so each cabin entry picks
   // up a new stretch of noise instead of replaying the same one.
-  std::array<float, kBands> phase_{};
-  float envelope_phase_ = 0.0f;       // not reset: keeps the roughness varying
+  // Both wrapped with math::WrapNoisePhase.
+  std::array<double, kBands> phase_{};
+  double envelope_phase_ = 0.0;       // not reset: keeps the roughness varying
   math::SpringDamper1D entry_fade_;   // 0 -> 1 after Reset(), no pop
   math::SpringDamper1D surface_gain_; // amplitude factor from the ground
 };
