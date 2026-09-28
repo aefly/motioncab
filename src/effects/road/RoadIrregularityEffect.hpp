@@ -2,9 +2,9 @@
 
 #include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
+#include "effects/road/Surface.hpp"
 #include "math/SpringDamper.hpp"
 
-#include <array>
 #include <random>
 
 namespace motioncab {
@@ -16,12 +16,8 @@ namespace motioncab {
 //
 // Off-road (dirt, grass, soft ground) it also rocks the head from side to
 // side (roll), a slower motion than the chatter, since that ground is
-// uneven and not just rough. Asphalt, even coarse, only chatters.
-//
-// SPF_API only exposes each surface as a name string (SPF_CommonData
-// substances[]), no numeric roughness value, so material names are
-// heuristically classified into a rough/smooth scale, with unknown/modded
-// names defaulting to smooth to avoid unexpected buzzing.
+// uneven and not just rough. Asphalt, even coarse, only chatters. See
+// Surface.hpp for how the ground is classified.
 class RoadIrregularityEffect final : public ConfigurableEffect {
 public:
   RoadIrregularityEffect(SPF_Config_API *config_api,
@@ -36,12 +32,6 @@ public:
 private:
   void LoadSettings() override;
 
-  struct SurfaceTraits {
-    float roughness = 0.0f;  // 0..1, fine chatter
-    float unevenness = 0.0f; // 0..1, side-to-side rocking (roll)
-  };
-  static SurfaceTraits ClassifySurface(const char *substance_name);
-
   // scales both the chatter and the rocking
   float intensity_ =
       settings::Default("settings.road.road_irregularity.intensity");
@@ -50,9 +40,7 @@ private:
       settings::Default("settings.road.road_irregularity.reactivity");
 
   uint32_t wheel_count_ = 0;
-  std::array<SurfaceTraits, SPF_TELEMETRY_SUBSTANCE_MAX_COUNT>
-      substance_traits_{};
-  uint32_t substance_count_ = 0;
+  road::SurfaceMap surfaces_;
 
   std::minstd_rand rng_;
   math::SpringDamper1D noise_x_;

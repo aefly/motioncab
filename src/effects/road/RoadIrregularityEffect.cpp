@@ -1,6 +1,5 @@
 #include "RoadIrregularityEffect.hpp"
 
-#include "core/StringUtil.hpp"
 #include "effects/TelemetryUtil.hpp"
 #include "math/Noise.hpp"
 
@@ -32,27 +31,6 @@ constexpr float kRollDetailWeight = 0.35f; // share of the amplitude
 constexpr uint32_t kRollDetailSeedOffset = 0x51DE;
 // How fast the rocking fades in/out when the ground changes.
 constexpr float kUnevennessSmoothing = 0.4f; // seconds
-
-struct SurfaceEntry {
-  const char *name;
-  float roughness;  // fine chatter
-  float unevenness; // side-to-side rocking
-};
-
-// Exact names confirmed empirically from SPF_CommonData.substances[] at
-// runtime (ETS2)
-constexpr SurfaceEntry kSurfaceTable[] = {
-    {"road", 0.0f, 0.0f},        {"road_smooth", 0.0f, 0.0f},
-    {"road_coarse", 0.5f, 0.0f}, {"road_dirt", 0.7f, 0.6f},
-    {"road_snow", 0.5f, 0.2f},   {"dirt", 0.9f, 1.0f},
-    {"gravel", 1.0f, 0.5f},      {"grass", 0.5f, 0.9f},
-    {"snow", 0.4f, 0.6f},        {"soft", 0.3f, 0.8f},
-    {"concrete", 0.15f, 0.0f},   {"metal", 0.2f, 0.0f},
-    {"wood", 0.2f, 0.0f},        {"rumble_stripe", 1.0f, 0.0f},
-    {"ice", 0.0f, 0.0f},         {"static", 0.0f, 0.0f},
-    {"invis", 0.0f, 0.0f},       {"rubber", 0.0f, 0.0f},
-    {"plastic", 0.0f, 0.0f},     {"glass", 0.0f, 0.0f},
-};
 } // namespace
 
 RoadIrregularityEffect::RoadIrregularityEffect(SPF_Config_API *config_api,
@@ -61,18 +39,6 @@ RoadIrregularityEffect::RoadIrregularityEffect(SPF_Config_API *config_api,
                          "road_irregularity"),
       rng_(std::random_device{}()), roll_seed_(std::random_device{}()) {
   unevenness_.SetTimeConstant(kUnevennessSmoothing);
-}
-
-RoadIrregularityEffect::SurfaceTraits
-RoadIrregularityEffect::ClassifySurface(const char *substance_name) {
-  if (!substance_name || !substance_name[0])
-    return {};
-
-  for (const auto &entry : kSurfaceTable) {
-    if (util::EqualsIgnoreCase(substance_name, entry.name))
-      return {entry.roughness, entry.unevenness};
-  }
-  return {}; // unrecognized name (other map/mod): default to smooth
 }
 
 void RoadIrregularityEffect::LoadSettings() {
@@ -95,31 +61,17 @@ void RoadIrregularityEffect::OnTruckConstantsChanged(
 }
 
 void RoadIrregularityEffect::OnCommonDataChanged(const SPF_CommonData &data) {
-  substance_count_ = data.substance_count;
-  if (substance_count_ > SPF_TELEMETRY_SUBSTANCE_MAX_COUNT)
-    substance_count_ = SPF_TELEMETRY_SUBSTANCE_MAX_COUNT;
-  for (uint32_t i = 0; i < substance_count_; ++i) {
-    substance_traits_[i] = ClassifySurface(data.substances[i]);
-  }
+  surfaces_.SetSubstances(data);
 }
 
 HeadOffset RoadIrregularityEffect::Update(float dt, const SPF_TruckData &truck,
                                           const SPF_Controls & /*controls*/) {
-  if (wheel_count_ == 0 || substance_count_ == 0)
+  if (wheel_count_ == 0 || surfaces_.empty())
     return {};
 
-  float roughness_sum = 0.0f;
-  float unevenness_sum = 0.0f;
-  for (uint32_t i = 0; i < wheel_count_; ++i) {
-    const uint32_t substance_index = truck.wheels[i].substance;
-    if (substance_index < substance_count_) {
-      roughness_sum += substance_traits_[substance_index].roughness;
-      unevenness_sum += substance_traits_[substance_index].unevenness;
-    }
-  }
-  const float roughness = roughness_sum / static_cast<float>(wheel_count_);
-  const float unevenness =
-      unevenness_.Update(unevenness_sum / static_cast<float>(wheel_count_), dt);
+  const road::SurfaceTraits surface = surfaces_.Average(truck, wheel_count_);
+  const float roughness = surface.roughness;
+  const float unevenness = unevenness_.Update(surface.unevenness, dt);
   const float speed_kmh = telemetry::SpeedKmh(truck);
 
   HeadOffset offset;
