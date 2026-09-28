@@ -44,10 +44,8 @@ camera control, keybind rebinding, and the in-game settings UI.
 - **Engine Vibration** — RPM-scaled engine buzz
 - **Mirror Check** — looks toward the mirror on turn signal
 - **Manual Look** — smooth look-left/look-right
-- **Road Irregularity** — chatter based on the ground material under the
-  wheels, plus side-to-side rocking on uneven ground (dirt, grass)
-- **Speed Shake** — speed-driven body sway with slow, bounce, and fine
-  vibration bands
+- **Road Irregularity** — ground chatter, plus rocking off-road
+- **Speed Shake** — body sway growing with speed and rough ground
 - **Body Dynamics** — head leans outward in corners and nods forward when
   braking
 - **Engine Start/Stop** — mechanical shudder when the engine catches or
@@ -191,6 +189,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   ├── math/
 │   │   ├── SpringDamper.hpp          Critically-damped spring, the core smoothing primitive
 │   │   ├── Noise.hpp                 Deterministic gradient noise
+│   │   ├── Oscillator.hpp            Damped spring that can overshoot and ring
 │   │   └── Units.hpp                 Unit conversions, SmoothStep, phase wrapping
 │   ├── effects/
 │   │   ├── Effect.hpp                Base effect interface + HeadOffset struct
@@ -198,7 +197,8 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── EffectManager.cpp / .hpp  Owns/drives all HeadOffset-based effects
 │   │   ├── TelemetryUtil.hpp         Telemetry readings shared by effects
 │   │   ├── driving/                  HeadMotion, BodyDynamics, SteeringCamera
-│   │   ├── road/                     Suspension, RoadIrregularity, SpeedShake
+│   │   ├── road/                     Suspension, RoadIrregularity, SpeedShake,
+│   │   │                             Surface (ground classification)
 │   │   ├── cabin/                    IdleBreathing, EngineVibration, EngineStartStop
 │   │   └── manual/                   MirrorCheck, ManualLook, ManualZoom, BlindspotViewer
 │   └── ui/
