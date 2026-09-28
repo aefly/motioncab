@@ -45,16 +45,19 @@ public:
 private:
   void LoadSettings() override;
 
+  // Time is kept in double: a float clock loses sub-millisecond precision
+  // after a couple of hours in the cabin, and the delay line then
+  // interpolates between misplaced samples (a shortened, jittery delay).
   struct Sample {
-    float time_s = 0.0f;
+    double time_s = 0.0;
     float steering = 0.0f;
   };
 
   static constexpr int kDelayBufferCapacity =
       300; // ample headroom for any supported delay/frame rate
 
-  void PushSample(float time_s, float steering);
-  float GetDelayedSteering(float target_time_s) const;
+  void PushSample(double time_s, float steering);
+  float GetDelayedSteering(double target_time_s) const;
 
   // Max yaw at full steering lock, in degrees.
   float rotation_left_deg_ =
@@ -73,7 +76,7 @@ private:
   math::SpringDamper1D yaw_;
   bool needs_resync_ = false;
 
-  float elapsed_time_s_ = 0.0f;
+  double elapsed_time_s_ = 0.0;
   std::array<Sample, kDelayBufferCapacity> delay_buffer_{};
   int delay_head_ = 0;
   int delay_count_ = 0;

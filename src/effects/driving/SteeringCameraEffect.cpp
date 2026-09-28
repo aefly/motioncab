@@ -50,19 +50,19 @@ void SteeringCameraEffect::Reset() {
   // caught up. needs_resync_ instead re-anchors the spring to whatever the
   // wheel's current angle already is, on the very first frame back.
   needs_resync_ = true;
-  elapsed_time_s_ = 0.0f;
+  elapsed_time_s_ = 0.0;
   delay_head_ = 0;
   delay_count_ = 0;
 }
 
-void SteeringCameraEffect::PushSample(float time_s, float steering) {
+void SteeringCameraEffect::PushSample(double time_s, float steering) {
   delay_buffer_[delay_head_] = {time_s, steering};
   delay_head_ = (delay_head_ + 1) % kDelayBufferCapacity;
   if (delay_count_ < kDelayBufferCapacity)
     ++delay_count_;
 }
 
-float SteeringCameraEffect::GetDelayedSteering(float target_time_s) const {
+float SteeringCameraEffect::GetDelayedSteering(double target_time_s) const {
   if (delay_count_ == 0)
     return 0.0f;
 
@@ -76,9 +76,11 @@ float SteeringCameraEffect::GetDelayedSteering(float target_time_s) const {
     const Sample older = delay_buffer_[older_index];
 
     if (older.time_s <= target_time_s) {
-      const float span = newer.time_s - older.time_s;
+      const double span = newer.time_s - older.time_s;
       const float t =
-          span > 1e-6f ? (target_time_s - older.time_s) / span : 0.0f;
+          span > 1e-6
+              ? static_cast<float>((target_time_s - older.time_s) / span)
+              : 0.0f;
       return older.steering + (newer.steering - older.steering) * t;
     }
 
