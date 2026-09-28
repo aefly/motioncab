@@ -8,9 +8,9 @@
 
 <!-- markdownlint-disable MD013 -->
 <p align="center">
-  <img alt="GitHub License" src="https://img.shields.io/github/license/aefly/motioncab?style=flat&logo=github&logoColor=white&labelColor=black&color=%23B82728" />
-  <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/aefly/motioncab/build.yaml?style=flat&logo=githubactions&logoColor=white&labelColor=black&color=%23B82728" />
-  <img alt="GitHub Release" src="https://img.shields.io/github/v/release/aefly/motioncab?sort=semver&display_name=release&style=flat&logo=semver&logoColor=white&labelColor=black&color=%23B82728" />
+  <a href="./LICENSE"><img alt="GitHub License" src="https://img.shields.io/github/license/aefly/motioncab?style=flat&logo=github&logoColor=white&labelColor=black&color=%23B82728" /></a>
+  <a href="https://github.com/aefly/motioncab/actions"><img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/aefly/motioncab/build.yaml?style=flat&logo=githubactions&logoColor=white&labelColor=black&color=%23B82728" /></a>
+  <a href="https://github.com/aefly/motioncab/releases/latest"><img alt="GitHub Release" src="https://img.shields.io/github/v/release/aefly/motioncab?sort=semver&display_name=release&style=flat&logo=semver&logoColor=white&labelColor=black&color=%23B82728" /></a>
 </p>
 <!-- markdownlint-enable MD013 -->
 
