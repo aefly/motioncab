@@ -47,7 +47,11 @@ private:
   math::SpringDamper1D noise_y_;
 
   uint32_t roll_seed_;
-  float roll_phase_ = 0.0f; // noise-domain time, not reset
+  // Noise-domain time, not reset, wrapped with math::WrapNoisePhase. The
+  // detail octave keeps its own phase: a multiple of a wrapped phase would
+  // jump at each wrap.
+  double roll_phase_ = 0.0;
+  double roll_detail_phase_ = 0.0;
   // Fades the rocking in/out when the ground changes.
   math::SpringDamper1D unevenness_;
 };

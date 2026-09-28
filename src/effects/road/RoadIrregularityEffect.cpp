@@ -82,12 +82,15 @@ HeadOffset RoadIrregularityEffect::Update(float dt, const SPF_TruckData &truck,
   const float rate_t = std::min(speed_kmh / kRollRateRefKmh, 1.0f);
   const float rate = kRollRateMin + (kRollRateMax - kRollRateMin) * rate_t;
   const float roll_speed_factor = std::min(speed_kmh / kRollSpeedRampKmh, 1.0f);
-  roll_phase_ += rate * roll_speed_factor * dt;
+  const double roll_step = rate * roll_speed_factor * dt;
+  roll_phase_ = math::WrapNoisePhase(roll_phase_ + roll_step);
+  roll_detail_phase_ =
+      math::WrapNoisePhase(roll_detail_phase_ + roll_step * kRollDetailRatio);
   const float roll_noise =
       (1.0f - kRollDetailWeight) *
-          math::GradientNoise1D(roll_phase_, roll_seed_) +
+          math::GradientNoise1D(static_cast<float>(roll_phase_), roll_seed_) +
       kRollDetailWeight *
-          math::GradientNoise1D(roll_phase_ * kRollDetailRatio,
+          math::GradientNoise1D(static_cast<float>(roll_detail_phase_),
                                 roll_seed_ + kRollDetailSeedOffset);
   offset.roll = roll_noise * kRollAmplitudeDeg * intensity_ * unevenness *
                 roll_speed_factor;
