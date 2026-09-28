@@ -155,7 +155,7 @@
       },
       "speed_shake": {
         "title": "Třes od rychlosti",
-        "desc": "Realistické kývání hlavy za jízdy, které roste s rychlostí kamionu.",
+        "desc": "Realistické kývání hlavy za jízdy, které roste s rychlostí a na nerovném povrchu.",
         "enabled": {
           "title": "Zapnout třes od rychlosti"
         },

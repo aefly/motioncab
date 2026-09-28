@@ -155,7 +155,7 @@
       },
       "speed_shake": {
         "title": "Temblor por velocidad",
-        "desc": "Balanceo realista de la cabeza al conducir, que aumenta con la velocidad del camión.",
+        "desc": "Balanceo realista de la cabeza al conducir, que aumenta con la velocidad y el terreno irregular.",
         "enabled": {
           "title": "Activar temblor por velocidad"
         },

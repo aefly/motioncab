@@ -155,7 +155,7 @@
       },
       "speed_shake": {
         "title": "Drgania od prędkości",
-        "desc": "Realistyczne kołysanie głowy podczas jazdy, rosnące wraz z prędkością ciężarówki.",
+        "desc": "Realistyczne kołysanie głowy podczas jazdy, rosnące wraz z prędkością i na nierównym podłożu.",
         "enabled": {
           "title": "Włącz drgania od prędkości"
         },

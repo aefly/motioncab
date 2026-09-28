@@ -155,7 +155,7 @@
       },
       "speed_shake": {
         "title": "Tremor de velocidade",
-        "desc": "Balanço realista da cabeça ao dirigir, que aumenta com a velocidade do caminhão.",
+        "desc": "Balanço realista da cabeça ao dirigir, que aumenta com a velocidade e o terreno irregular.",
         "enabled": {
           "title": "Ativar tremor de velocidade"
         },

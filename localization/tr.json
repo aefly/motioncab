@@ -155,7 +155,7 @@
       },
       "speed_shake": {
         "title": "Hız sarsıntısı",
-        "desc": "Sürüş sırasında tırın hızıyla artan gerçekçi kafa sallanması.",
+        "desc": "Sürüş sırasında hız ve bozuk zeminle artan gerçekçi kafa sallanması.",
         "enabled": {
           "title": "Hız sarsıntısını etkinleştir"
         },

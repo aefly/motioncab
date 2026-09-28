@@ -155,7 +155,7 @@
       },
       "speed_shake": {
         "title": "Snelheidstrilling",
-        "desc": "Realistisch hoofdschommelen tijdens het rijden, dat toeneemt met de snelheid van de truck.",
+        "desc": "Realistisch hoofdschommelen tijdens het rijden, dat toeneemt met snelheid en ruwe ondergrond.",
         "enabled": {
           "title": "Snelheidstrilling inschakelen"
         },

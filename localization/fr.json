@@ -155,7 +155,7 @@
       },
       "speed_shake": {
         "title": "Tremblement de vitesse",
-        "desc": "Balancement réaliste de la tête en roulant, qui augmente avec la vitesse du camion.",
+        "desc": "Balancement réaliste de la tête en roulant, qui augmente avec la vitesse et les sols accidentés.",
         "enabled": {
           "title": "Activer le tremblement de vitesse"
         },

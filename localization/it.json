@@ -155,7 +155,7 @@
       },
       "speed_shake": {
         "title": "Tremolio da velocità",
-        "desc": "Oscillazione realistica della testa durante la guida, che aumenta con la velocità del camion.",
+        "desc": "Oscillazione realistica della testa durante la guida, che aumenta con la velocità e il fondo irregolare.",
         "enabled": {
           "title": "Attiva tremolio da velocità"
         },

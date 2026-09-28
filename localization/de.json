@@ -155,7 +155,7 @@
       },
       "speed_shake": {
         "title": "Geschwindigkeitswackeln",
-        "desc": "Realistisches Kopfschwanken während der Fahrt, das mit der Geschwindigkeit zunimmt.",
+        "desc": "Realistisches Kopfschwanken während der Fahrt, das mit Geschwindigkeit und rauem Untergrund zunimmt.",
         "enabled": {
           "title": "Geschwindigkeitswackeln aktivieren"
         },

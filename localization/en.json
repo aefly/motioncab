@@ -155,7 +155,7 @@
       },
       "speed_shake": {
         "title": "Speed Shake",
-        "desc": "Realistic head sway while driving, growing with truck speed.",
+        "desc": "Realistic head sway while driving, growing with speed and rough ground.",
         "enabled": {
           "title": "Enable Speed Shake"
         },
