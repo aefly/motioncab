@@ -46,8 +46,9 @@ game's `plugins/spfPlugins/MotionCab/`.
   (`src/effects/ConfigurableEffect.hpp`), which handles its `enabled`
   toggle and reads its settings by name.
 - Reuse the shared helpers (`src/math/Units.hpp`,
-  `src/effects/TelemetryUtil.hpp`, `src/core/Keybinds.hpp`) rather than
-  duplicating their logic in an effect.
+  `src/effects/TelemetryUtil.hpp`, `src/effects/road/Surface.hpp`,
+  `src/core/Keybinds.hpp`) rather than duplicating their logic in an
+  effect.
 
 ## Localization
 
