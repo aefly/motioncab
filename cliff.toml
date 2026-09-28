@@ -7,6 +7,7 @@ body = """
 {%- set semver = version | trim_start_matches(pat="v") -%}
 {%- set spf = get_env(name="SPF_MIN_VERSION", default="") -%}
 {%- set dll_sha = get_env(name="DLL_SHA256", default="") -%}
+{%- set attestation = get_env(name="ATTESTATION_URL", default=gh ~ "/attestations") -%}
 {%- set zip = gh ~ "/releases/download/" ~ version ~ "/motioncab-" ~ semver ~ ".zip" -%}
 <p align="center">
   <img src="{{ gh }}/blob/main/.img/release-banner.png?raw=true" alt="What's new in MotionCab" width="100%" />
@@ -52,6 +53,11 @@ your game's `bin/win_x64/` folder.
 3. Start your game and enable **MotionCab** in SPF's plugin manager.
 {% if dll_sha %}
 ### 🔒 Verification
+
+[![Build provenance: verified](https://img.shields.io/badge/build%20provenance-verified-2ea44f?style=flat&labelColor=black&logo=data:image/svg%2bxml;base64,PHN2ZyBmaWxsPSJ3aGl0ZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggZD0ibTguNTMzLjEzMyA1LjI1IDEuNjhBMS43NSAxLjc1IDAgMCAxIDE1IDMuNDhWN2MwIDEuNTY2LS4zMiAzLjE4Mi0xLjMwMyA0LjY4Mi0uOTgzIDEuNDk4LTIuNTg1IDIuODEzLTUuMDMyIDMuODU1YTEuNjk3IDEuNjk3IDAgMCAxLTEuMzMgMGMtMi40NDctMS4wNDItNC4wNDktMi4zNTctNS4wMzItMy44NTVDMS4zMiAxMC4xODIgMSA4LjU2NiAxIDdWMy40OGExLjc1IDEuNzUgMCAwIDEgMS4yMTctMS42NjdsNS4yNS0xLjY4YTEuNzQ4IDEuNzQ4IDAgMCAxIDEuMDY2IDBabS0uNjEgMS40MjkuMDAxLjAwMS01LjI1IDEuNjhhLjI1MS4yNTEgMCAwIDAtLjE3NC4yMzdWN2MwIDEuMzYuMjc1IDIuNjY2IDEuMDU3IDMuODU5Ljc4NCAxLjE5NCAyLjEyMSAyLjM0MiA0LjM2NiAzLjI5OGEuMTk2LjE5NiAwIDAgMCAuMTU0IDBjMi4yNDUtLjk1NyAzLjU4Mi0yLjEwMyA0LjM2Ni0zLjI5N0MxMy4yMjUgOS42NjYgMTMuNSA4LjM1OCAxMy41IDdWMy40OGEuMjUuMjUgMCAwIDAtLjE3NC0uMjM4bC01LjI1LTEuNjhhLjI1LjI1IDAgMCAwLS4xNTMgMFpNMTEuMjggNi4yOGwtMy41IDMuNWEuNzUuNzUgMCAwIDEtMS4wNiAwbC0xLjUtMS41YS43NDkuNzQ5IDAgMCAxIC4zMjYtMS4yNzUuNzQ5Ljc0OSAwIDAgMSAuNzM0LjIxNWwuOTcuOTcgMi45Ny0yLjk3YS43NTEuNzUxIDAgMCAxIDEuMDQyLjAxOC43NTEuNzUxIDAgMCAxIC4wMTggMS4wNDJaIi8+PC9zdmc+)]({{ attestation }})
+
+Check it with the [GitHub CLI](https://cli.github.com/): \
+`gh attestation verify motioncab.dll --repo {{ remote.github.owner }}/{{ remote.github.repo }}`
 
 | File | SHA-256 |
 | --- | --- |

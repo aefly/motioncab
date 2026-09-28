@@ -130,6 +130,9 @@ jobs:
     permissions:
       contents: write
       pull-requests: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
 
     steps:
       - uses: actions/checkout@v7
@@ -151,6 +154,14 @@ jobs:
           zip -r "motioncab-$version.zip" "plugins"
           echo "DLL_SHA256=$(sha256sum motioncab.dll | cut -d' ' -f1)" >> "$GITHUB_ENV"
 
+      - name: Attest build provenance
+        id: attest
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            motioncab.dll
+            motioncab-*.zip
+
       - name: Read minimum SPF version
         run: |
           spf="$(grep -oP 'Info_SetMinFrameworkVersion\(h, "\K[^"]+' src/core/Manifest.cpp)"
@@ -166,6 +177,7 @@ jobs:
           args: --latest
         env:
           GITHUB_REPO: ${{ github.repository }}
+          ATTESTATION_URL: ${{ steps.attest.outputs.attestation-url }}
           OUTPUT: release-notes.md
 
       - name: Create release
