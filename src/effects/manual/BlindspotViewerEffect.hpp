@@ -32,6 +32,7 @@ public:
         keybinds_api_(keybinds_api), keybinds_handle_(keybinds_handle) {}
 
   void Reset() override;
+  bool NeedsDriverSeat() const override { return true; }
   HeadOffset Update(float dt, const SPF_TruckData &truck,
                     const SPF_Controls &controls) override;
 

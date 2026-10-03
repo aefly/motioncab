@@ -24,6 +24,9 @@ public:
                          SPF_Config_Handle *config_handle);
 
   void Reset() override;
+  // Road motion is for driving: standing in the parked truck, it'd be idle
+  // noise.
+  bool NeedsDriverSeat() const override { return true; }
   HeadOffset Update(float dt, const SPF_TruckData &truck,
                     const SPF_Controls &controls) override;
   void OnTruckConstantsChanged(const SPF_TruckConstants &constants) override;

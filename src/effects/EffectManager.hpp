@@ -24,6 +24,11 @@ public:
   // disabled ones), since the camera is being resynced anyway.
   void ResetAll();
 
+  // Whether the player is in the driver's seat. Effects that need it
+  // (Effect::NeedsDriverSeat) fade out over kFadeSeconds when they leave
+  // it, and are Reset() once faded out, so they come back from rest.
+  void SetAtWheel(bool at_wheel) { at_wheel_ = at_wheel; }
+
   // Advances every enabled (or still fading out) effect and returns the
   // summed, fade-weighted offset to apply.
   HeadOffset UpdateAndAccumulate(float dt, const SPF_TruckData &truck,
@@ -45,9 +50,12 @@ private:
 
   struct Slot {
     std::unique_ptr<Effect> effect;
-    float fade = 1.0f; // 0 = contributes nothing, 1 = full contribution
+    float fade = 1.0f;       // 0 = contributes nothing, 1 = full contribution
+    bool seat_reset = false; // Reset() since the driver's seat was left
   };
   std::vector<Slot> effects_;
+  bool at_wheel_ = true;
+  float seat_fade_ = 1.0f; // same as Slot::fade, for NeedsDriverSeat effects
 };
 
 } // namespace motioncab
