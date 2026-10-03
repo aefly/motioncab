@@ -243,7 +243,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 ## Contributing
 
 Bug reports, feature requests, pull requests and translation fixes are
-welcome — see [CONTRIBUTE.md](./CONTRIBUTE.md) for build instructions,
+welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md) for build instructions,
 coding standards, how to improve a translation or add a language, and
 how to submit a change.
 
