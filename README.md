@@ -43,7 +43,7 @@ camera control, keybind rebinding, and the in-game settings UI.
 - **Suspension** — seat bounce and head tilt over bumps, plus grade follow
 - **Engine Vibration** — RPM-scaled engine buzz
 - **Mirror Check** — looks toward the mirror on turn signal
-- **Manual Look** — smooth look-left/look-right
+- **Manual Look** — smooth look-left/look-right and mirror glances
 - **Road Irregularity** — ground chatter, plus rocking off-road
 - **Speed Shake** — body sway growing with speed and rough ground
 - **Body Dynamics** — head leans outward in corners and nods forward when
@@ -70,16 +70,18 @@ active while in the interior (cabin) camera view.
 
 ## Controls
 
-| Action              | Default key | Behavior                                                                              |
-| ------------------- | ----------- | ------------------------------------------------------------------------------------- |
-| Toggle Window       | F9          | Shows/hides the MotionCab Quick Settings window                                       |
-| Look Left           | Numpad /    | Manual Look — hold or toggle to look left                                             |
-| Look Right          | Numpad *    | Manual Look — hold or toggle to look right                                            |
-| Zoom                | Numpad -    | Manual Zoom — hold to zoom in, release to return to normal                            |
-| Blindspot Viewer    | F10         | Blindspot Viewer — Toggle or hold to lean forward and look up                         |
-| Stand Up / Sit Down | Page Up     | Cabin Walk — get up; tap to sit at the seat you look at, hold to go back to the wheel |
-| Walk                | W/S/A/D     | Cabin Walk — walk forward, back and sideways while standing                           |
-| Crouch              | C           | Cabin Walk — crouch while standing                                                    |
+| Action                 | Default key | Behavior                                                                              |
+| ---------------------- | ----------- | ------------------------------------------------------------------------------------- |
+| Toggle Window          | F9          | Shows/hides the MotionCab Quick Settings window                                       |
+| Look Left              | Numpad /    | Manual Look — hold or toggle to look left                                             |
+| Look Right             | Numpad *    | Manual Look — hold or toggle to look right                                            |
+| Glance at Left Mirror  | Numpad 7    | Manual Look — hold or toggle to glance at the left mirror                             |
+| Glance at Right Mirror | Numpad 9    | Manual Look — hold or toggle to glance at the right mirror                            |
+| Zoom                   | Numpad -    | Manual Zoom — hold to zoom in, release to return to normal                            |
+| Blindspot Viewer       | F10         | Blindspot Viewer — Toggle or hold to lean forward and look up                         |
+| Stand Up / Sit Down    | Page Up     | Cabin Walk — get up; tap to sit at the seat you look at, hold to go back to the wheel |
+| Walk                   | W/S/A/D     | Cabin Walk — walk forward, back and sideways while standing                           |
+| Crouch                 | C           | Cabin Walk — crouch while standing                                                    |
 
 ## Configuration
 
@@ -119,7 +121,11 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `require_stationary`         | true    | Only check the mirror when the truck is stopped.                                                                                     |
 | `ignore_after_moving_signal` | true    | Don't check the mirror for a turn signal you switched on while already driving, even after you stop.                                 |
 | **Manual Look**              |         |                                                                                                                                      |
-| `look_angle_deg`             | 45.0    | How far your head turns when you look left or right.                                                                                 |
+| `look_left_deg`              | 45.0    | How far your head turns when you look left.                                                                                          |
+| `look_right_deg`             | 45.0    | How far your head turns when you look right.                                                                                         |
+| `glance_left_deg`            | 20.0    | How far your head turns when you glance at the left mirror.                                                                          |
+| `glance_right_deg`           | 30.0    | How far your head turns when you glance at the right mirror.                                                                         |
+| `glance_pitch_deg`           | 3.0     | How much your head tilts down while glancing at a mirror.                                                                            |
 | `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                            |
 | `toggle_mode`                | false   | On: press once to look, press again to look back. Off: look while held, let go to look back.                                         |
 | **Road Irregularity**        |         |                                                                                                                                      |

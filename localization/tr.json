@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "Sola bak",
-      "desc": "Yumuşak bir şekilde sol cama/aynaya bakar."
+      "desc": "Kavşaktaki trafiği kontrol etmek için kafanızı yumuşakça sola doğru geniş çevirir."
     },
     "look_right": {
       "title": "Sağa bak",
-      "desc": "Yumuşak bir şekilde sağ cama/aynaya bakar."
+      "desc": "Kavşaktaki trafiği kontrol etmek için kafanızı yumuşakça sağa doğru geniş çevirir."
+    },
+    "glance_left": {
+      "title": "Sol aynaya göz at",
+      "desc": "Örneğin şeride girerken yumuşakça sol aynaya göz atar."
+    },
+    "glance_right": {
+      "title": "Sağ aynaya göz at",
+      "desc": "Örneğin şeride girerken yumuşakça sağ aynaya göz atar."
     },
     "zoom": {
       "title": "Yakınlaştırma",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "Manuel bakış",
         "hint": "Bu tuşlar oyunun kendi kontrollerinden bağımsızdır.",
-        "look_angle_deg": {
-          "title": "Bakış açısı",
-          "desc": "Sola veya sağa baktığınızda kafanızın ne kadar döndüğü."
+        "look_left_deg": {
+          "title": "Sola bakış açısı",
+          "desc": "Sola baktığınızda kafanızın ne kadar döndüğü."
+        },
+        "look_right_deg": {
+          "title": "Sağa bakış açısı",
+          "desc": "Sağa baktığınızda kafanızın ne kadar döndüğü."
+        },
+        "glance_left_deg": {
+          "title": "Sol göz atma açısı",
+          "desc": "Sol aynaya göz attığınızda kafanızın ne kadar döndüğü."
+        },
+        "glance_right_deg": {
+          "title": "Sağ göz atma açısı",
+          "desc": "Sağ aynaya göz attığınızda kafanızın ne kadar döndüğü."
+        },
+        "glance_pitch_deg": {
+          "title": "Göz atma eğimi",
+          "desc": "Bir aynaya göz atarken kafanızın ne kadar aşağı eğildiği."
         },
         "smoothing_time": {
           "title": "Yumuşatma",

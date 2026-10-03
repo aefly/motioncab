@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "Spójrz w lewo",
-      "desc": "Płynnie spogląda w stronę lewej szyby/lusterka."
+      "desc": "Płynnie obraca głowę mocno w lewo, aby sprawdzić ruch poprzeczny."
     },
     "look_right": {
       "title": "Spójrz w prawo",
-      "desc": "Płynnie spogląda w stronę prawej szyby/lusterka."
+      "desc": "Płynnie obraca głowę mocno w prawo, aby sprawdzić ruch poprzeczny."
+    },
+    "glance_left": {
+      "title": "Zerknij w lewe lusterko",
+      "desc": "Płynnie zerka w lewe lusterko, np. podczas włączania się do ruchu."
+    },
+    "glance_right": {
+      "title": "Zerknij w prawe lusterko",
+      "desc": "Płynnie zerka w prawe lusterko, np. podczas włączania się do ruchu."
     },
     "zoom": {
       "title": "Przybliżenie",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "Ręczne spojrzenie",
         "hint": "Te klawisze są niezależne od sterowania w grze.",
-        "look_angle_deg": {
-          "title": "Kąt spojrzenia",
-          "desc": "Jak daleko obraca się głowa, gdy patrzysz w lewo lub w prawo."
+        "look_left_deg": {
+          "title": "Kąt spojrzenia w lewo",
+          "desc": "Jak daleko obraca się głowa, gdy patrzysz w lewo."
+        },
+        "look_right_deg": {
+          "title": "Kąt spojrzenia w prawo",
+          "desc": "Jak daleko obraca się głowa, gdy patrzysz w prawo."
+        },
+        "glance_left_deg": {
+          "title": "Kąt zerknięcia w lewo",
+          "desc": "Jak daleko obraca się głowa, gdy zerkasz w lewe lusterko."
+        },
+        "glance_right_deg": {
+          "title": "Kąt zerknięcia w prawo",
+          "desc": "Jak daleko obraca się głowa, gdy zerkasz w prawe lusterko."
+        },
+        "glance_pitch_deg": {
+          "title": "Pochylenie przy zerknięciu",
+          "desc": "Jak mocno głowa pochyla się w dół podczas zerkania w lusterko."
         },
         "smoothing_time": {
           "title": "Wygładzanie",

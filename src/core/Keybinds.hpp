@@ -23,6 +23,12 @@ inline constexpr Action kLookLeft{"ManualLook", "look_left",
 inline constexpr Action kLookRight{"ManualLook", "look_right",
                                    "ManualLook.look_right",
                                    "keybinds.look_right", "KEY_MULTIPLY"};
+inline constexpr Action kGlanceLeft{"ManualLook", "glance_left",
+                                    "ManualLook.glance_left",
+                                    "keybinds.glance_left", "KEY_NUMPAD7"};
+inline constexpr Action kGlanceRight{"ManualLook", "glance_right",
+                                     "ManualLook.glance_right",
+                                     "keybinds.glance_right", "KEY_NUMPAD9"};
 inline constexpr Action kZoom{"ManualZoom", "zoom", "ManualZoom.zoom",
                               "keybinds.zoom", "KEY_SUBTRACT"};
 inline constexpr Action kBlindspotPeek{"BlindspotViewer", "peek",
@@ -52,15 +58,16 @@ inline constexpr Action kCrouch{"CabinWalk", "crouch", "CabinWalk.crouch",
 
 // Every action, in the order the manifest declares them.
 inline constexpr Action kAllActions[] = {
-    kLookLeft,     kLookRight, kZoom,        kBlindspotPeek,
-    kToggleWindow, kStandSit,  kWalkForward, kWalkBack,
-    kWalkLeft,     kWalkRight, kCrouch};
+    kLookLeft,      kLookRight,    kGlanceLeft, kGlanceRight, kZoom,
+    kBlindspotPeek, kToggleWindow, kStandSit,   kWalkForward, kWalkBack,
+    kWalkLeft,      kWalkRight,    kCrouch};
 
 // Actions the effects poll every frame via IsHeld() instead of reacting to
 // a Kbind_Register callback.
 inline constexpr Action kPolledActions[] = {
-    kLookLeft,    kLookRight, kZoom,     kBlindspotPeek, kStandSit,
-    kWalkForward, kWalkBack,  kWalkLeft, kWalkRight,     kCrouch};
+    kLookLeft, kLookRight,     kGlanceLeft, kGlanceRight,
+    kZoom,     kBlindspotPeek, kStandSit,   kWalkForward,
+    kWalkBack, kWalkLeft,      kWalkRight,  kCrouch};
 
 // Actions on keys the game drives with: declared with the "manual" consume
 // policy, so CabinWalkEffect decides when the game stops seeing them.
@@ -79,6 +86,19 @@ inline bool IsWalkAction(const Action &action) {
 inline bool IsHeld(SPF_KeyBinds_API *api, SPF_KeyBinds_Handle *handle,
                    const Action &action) {
   return api->Kbind_GetActionValue(handle, action.id) > 0.5f;
+}
+
+// Whether a key combination (e.g. LB + D-pad left) is bound to the action.
+// Kbind_GetActionValue doesn't give a combination priority over its own
+// keys bound alone, as SPF does for the callbacks: an effect polling
+// several actions has to.
+inline bool HasChord(SPF_KeyBinds_API *api, SPF_KeyBinds_Handle *handle,
+                     const Action &action) {
+  const int count = api->Kbind_GetBindingCount(handle, action.id);
+  for (int i = 0; i < count; ++i)
+    if (api->Kbind_GetBindingType(handle, action.id, i) == SPF_BINDING_CHORD)
+      return true;
+  return false;
 }
 
 // The action's value in [0, 1]: 0/1 for a key, the deflection for an

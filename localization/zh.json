@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "向左看",
-      "desc": "平滑地看向左侧车窗/后视镜。"
+      "desc": "平滑地将头大幅转向左侧，以查看横向来车。"
     },
     "look_right": {
       "title": "向右看",
-      "desc": "平滑地看向右侧车窗/后视镜。"
+      "desc": "平滑地将头大幅转向右侧，以查看横向来车。"
+    },
+    "glance_left": {
+      "title": "瞥一眼左后视镜",
+      "desc": "平滑地瞥一眼左后视镜，例如在汇入车流时。"
+    },
+    "glance_right": {
+      "title": "瞥一眼右后视镜",
+      "desc": "平滑地瞥一眼右后视镜，例如在汇入车流时。"
     },
     "zoom": {
       "title": "缩放",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "手动观察",
         "hint": "这些按键独立于游戏的原生控制。",
-        "look_angle_deg": {
-          "title": "观察角度",
-          "desc": "向左或向右看时头部转动的角度。"
+        "look_left_deg": {
+          "title": "向左观察角度",
+          "desc": "向左看时头部转动的角度。"
+        },
+        "look_right_deg": {
+          "title": "向右观察角度",
+          "desc": "向右看时头部转动的角度。"
+        },
+        "glance_left_deg": {
+          "title": "左后视镜瞥视角度",
+          "desc": "瞥一眼左后视镜时头部转动的角度。"
+        },
+        "glance_right_deg": {
+          "title": "右后视镜瞥视角度",
+          "desc": "瞥一眼右后视镜时头部转动的角度。"
+        },
+        "glance_pitch_deg": {
+          "title": "瞥视俯仰偏移",
+          "desc": "瞥一眼后视镜时头部向下倾斜的幅度。"
         },
         "smoothing_time": {
           "title": "平滑",

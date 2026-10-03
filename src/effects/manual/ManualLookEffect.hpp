@@ -1,6 +1,5 @@
 #pragma once
 
-#include "core/Keybinds.hpp"
 #include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
@@ -9,17 +8,23 @@
 
 namespace motioncab {
 
-// Lets the player glance left or right on demand, spring-eased into place
-// and back. Polls the raw key state every frame via Kbind_GetActionValue
-// rather than reacting to the one-shot Kbind_Register callback, since
-// press/hold mode needs to know the key is still down.
+// Lets the player look left or right on demand, spring-eased into place
+// and back. Two looks per side, each on its own key: a wide one (cross
+// traffic at a junction) and a mirror glance (a smaller turn, tilted down,
+// e.g. merging onto a highway). Every angle is set per side, since the
+// passenger mirror is further away than the driver's. Polls the raw key
+// state every frame via Kbind_GetActionValue rather than reacting to the
+// one-shot Kbind_Register callback, since press/hold mode needs to know the
+// key is still down.
 //
 // `toggle_mode_` selects between two behaviors: press/hold (default, look
-// while held, recenter on release) and toggle (press to look, press again
-// or the other side to recenter/switch). Either way the spring handles the
-// easing.
+// while held, recenter on release; between plain keys, a wide look wins
+// over a glance) and toggle (press to look, press again to recenter, or
+// another look's key to switch). Either way the springs handle the easing.
 class ManualLookEffect final : public ConfigurableEffect {
 public:
+  enum class Look { kCenter, kLeft, kRight, kGlanceLeft, kGlanceRight };
+
   ManualLookEffect(SPF_Config_API *config_api, SPF_Config_Handle *config_handle,
                    SPF_KeyBinds_API *keybinds_api,
                    SPF_KeyBinds_Handle *keybinds_handle)
@@ -37,9 +42,23 @@ private:
   SPF_KeyBinds_API *keybinds_api_;
   SPF_KeyBinds_Handle *keybinds_handle_;
 
-  // yaw when looking left/right, in degrees
-  float look_angle_deg_ =
-      settings::Default("settings.manual.manual_look.look_angle_deg");
+  // The held look, a combination's first, kCenter if none.
+  Look HeldLook() const;
+  bool HasChord(Look look) const;
+
+  // yaw of the wide looks, in degrees
+  float look_left_deg_ =
+      settings::Default("settings.manual.manual_look.look_left_deg");
+  float look_right_deg_ =
+      settings::Default("settings.manual.manual_look.look_right_deg");
+  // yaw of the mirror glances, in degrees
+  float glance_left_deg_ =
+      settings::Default("settings.manual.manual_look.glance_left_deg");
+  float glance_right_deg_ =
+      settings::Default("settings.manual.manual_look.glance_right_deg");
+  // the mirrors sit a little low
+  float glance_pitch_deg_ =
+      settings::Default("settings.manual.manual_look.glance_pitch_deg");
   // seconds, spring time constant
   float smoothing_time_ =
       settings::Default("settings.manual.manual_look.smoothing_time");
@@ -48,11 +67,15 @@ private:
       settings::DefaultBool("settings.manual.manual_look.toggle_mode");
 
   math::SpringDamper1D yaw_;
+  math::SpringDamper1D pitch_;
 
-  // Toggle-mode state: -1 = looking right, 0 = center, 1 = looking left.
-  int toggle_direction_ = 0;
-  keybinds::PressEdge left_edge_;
-  keybinds::PressEdge right_edge_;
+  // The look of the keys held right now, kept until they're all released
+  // unless a combination look comes on top.
+  Look pressed_ = Look::kCenter;
+  // Toggle-mode state: the look held until pressed again, and what it was
+  // when the keys held now were pressed.
+  Look toggled_ = Look::kCenter;
+  Look toggled_before_press_ = Look::kCenter;
 };
 
 } // namespace motioncab

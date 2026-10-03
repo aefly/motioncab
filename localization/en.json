@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "Look Left",
-      "desc": "Smoothly looks toward the left window/mirror."
+      "desc": "Smoothly turns your head wide to the left, to check cross traffic."
     },
     "look_right": {
       "title": "Look Right",
-      "desc": "Smoothly looks toward the right window/mirror."
+      "desc": "Smoothly turns your head wide to the right, to check cross traffic."
+    },
+    "glance_left": {
+      "title": "Glance at Left Mirror",
+      "desc": "Smoothly glances at the left mirror, e.g. when merging."
+    },
+    "glance_right": {
+      "title": "Glance at Right Mirror",
+      "desc": "Smoothly glances at the right mirror, e.g. when merging."
     },
     "zoom": {
       "title": "Zoom",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "Manual Look",
         "hint": "These keys are separate from the game's native controls.",
-        "look_angle_deg": {
-          "title": "Look Angle",
-          "desc": "How far your head turns when you look left or right."
+        "look_left_deg": {
+          "title": "Look Left Angle",
+          "desc": "How far your head turns when you look left."
+        },
+        "look_right_deg": {
+          "title": "Look Right Angle",
+          "desc": "How far your head turns when you look right."
+        },
+        "glance_left_deg": {
+          "title": "Left Glance Angle",
+          "desc": "How far your head turns when you glance at the left mirror."
+        },
+        "glance_right_deg": {
+          "title": "Right Glance Angle",
+          "desc": "How far your head turns when you glance at the right mirror."
+        },
+        "glance_pitch_deg": {
+          "title": "Glance Pitch",
+          "desc": "How much your head tilts down while glancing at a mirror."
         },
         "smoothing_time": {
           "title": "Smoothing",

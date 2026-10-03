@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "Nach links schauen",
-      "desc": "Schaut sanft zum linken Fenster/Spiegel."
+      "desc": "Dreht den Kopf sanft weit nach links, um den Querverkehr zu prüfen."
     },
     "look_right": {
       "title": "Nach rechts schauen",
-      "desc": "Schaut sanft zum rechten Fenster/Spiegel."
+      "desc": "Dreht den Kopf sanft weit nach rechts, um den Querverkehr zu prüfen."
+    },
+    "glance_left": {
+      "title": "Blick in den linken Spiegel",
+      "desc": "Wirft sanft einen Blick in den linken Spiegel, z. B. beim Einfädeln."
+    },
+    "glance_right": {
+      "title": "Blick in den rechten Spiegel",
+      "desc": "Wirft sanft einen Blick in den rechten Spiegel, z. B. beim Einfädeln."
     },
     "zoom": {
       "title": "Zoom",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "Manueller Blick",
         "hint": "Diese Tasten sind unabhängig von der Steuerung des Spiels.",
-        "look_angle_deg": {
-          "title": "Blickwinkel",
-          "desc": "Wie weit sich dein Kopf beim Blick nach links oder rechts dreht."
+        "look_left_deg": {
+          "title": "Blickwinkel links",
+          "desc": "Wie weit sich dein Kopf beim Blick nach links dreht."
+        },
+        "look_right_deg": {
+          "title": "Blickwinkel rechts",
+          "desc": "Wie weit sich dein Kopf beim Blick nach rechts dreht."
+        },
+        "glance_left_deg": {
+          "title": "Spiegelblick links",
+          "desc": "Wie weit sich dein Kopf beim Blick in den linken Spiegel dreht."
+        },
+        "glance_right_deg": {
+          "title": "Spiegelblick rechts",
+          "desc": "Wie weit sich dein Kopf beim Blick in den rechten Spiegel dreht."
+        },
+        "glance_pitch_deg": {
+          "title": "Neigung beim Spiegelblick",
+          "desc": "Wie stark dein Kopf beim Blick in einen Spiegel nach unten kippt."
         },
         "smoothing_time": {
           "title": "Glättung",

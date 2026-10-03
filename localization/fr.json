@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "Regarder à gauche",
-      "desc": "Tourne doucement la tête vers la vitre/le rétroviseur gauche."
+      "desc": "Tourne largement la tête vers la gauche, pour vérifier la circulation transversale."
     },
     "look_right": {
       "title": "Regarder à droite",
-      "desc": "Tourne doucement la tête vers la vitre/le rétroviseur droit."
+      "desc": "Tourne largement la tête vers la droite, pour vérifier la circulation transversale."
+    },
+    "glance_left": {
+      "title": "Coup d'œil au rétro gauche",
+      "desc": "Jette un coup d'œil au rétroviseur gauche, par exemple pour s'insérer."
+    },
+    "glance_right": {
+      "title": "Coup d'œil au rétro droit",
+      "desc": "Jette un coup d'œil au rétroviseur droit, par exemple pour s'insérer."
     },
     "zoom": {
       "title": "Zoom",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "Regard manuel",
         "hint": "Ces touches sont indépendantes des commandes natives du jeu.",
-        "look_angle_deg": {
-          "title": "Angle de regard",
-          "desc": "De combien votre tête tourne quand vous regardez à gauche ou à droite."
+        "look_left_deg": {
+          "title": "Angle de regard à gauche",
+          "desc": "De combien votre tête tourne quand vous regardez à gauche."
+        },
+        "look_right_deg": {
+          "title": "Angle de regard à droite",
+          "desc": "De combien votre tête tourne quand vous regardez à droite."
+        },
+        "glance_left_deg": {
+          "title": "Angle du coup d'œil gauche",
+          "desc": "De combien votre tête tourne quand vous jetez un coup d'œil au rétroviseur gauche."
+        },
+        "glance_right_deg": {
+          "title": "Angle du coup d'œil droit",
+          "desc": "De combien votre tête tourne quand vous jetez un coup d'œil au rétroviseur droit."
+        },
+        "glance_pitch_deg": {
+          "title": "Inclinaison du coup d'œil",
+          "desc": "De combien votre tête s'abaisse pendant un coup d'œil au rétroviseur."
         },
         "smoothing_time": {
           "title": "Lissage",

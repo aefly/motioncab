@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "Mirar a la izquierda",
-      "desc": "Mira suavemente hacia la ventana/el espejo izquierdo."
+      "desc": "Gira suavemente la cabeza bien a la izquierda, para comprobar el tráfico cruzado."
     },
     "look_right": {
       "title": "Mirar a la derecha",
-      "desc": "Mira suavemente hacia la ventana/el espejo derecho."
+      "desc": "Gira suavemente la cabeza bien a la derecha, para comprobar el tráfico cruzado."
+    },
+    "glance_left": {
+      "title": "Vistazo al espejo izquierdo",
+      "desc": "Echa suavemente un vistazo al espejo izquierdo, por ejemplo al incorporarte."
+    },
+    "glance_right": {
+      "title": "Vistazo al espejo derecho",
+      "desc": "Echa suavemente un vistazo al espejo derecho, por ejemplo al incorporarte."
     },
     "zoom": {
       "title": "Zoom",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "Mirada manual",
         "hint": "Estas teclas son independientes de los controles nativos del juego.",
-        "look_angle_deg": {
-          "title": "Ángulo de mirada",
-          "desc": "Cuánto gira tu cabeza al mirar a la izquierda o a la derecha."
+        "look_left_deg": {
+          "title": "Ángulo de mirada izquierda",
+          "desc": "Cuánto gira tu cabeza al mirar a la izquierda."
+        },
+        "look_right_deg": {
+          "title": "Ángulo de mirada derecha",
+          "desc": "Cuánto gira tu cabeza al mirar a la derecha."
+        },
+        "glance_left_deg": {
+          "title": "Ángulo del vistazo izquierdo",
+          "desc": "Cuánto gira tu cabeza al echar un vistazo al espejo izquierdo."
+        },
+        "glance_right_deg": {
+          "title": "Ángulo del vistazo derecho",
+          "desc": "Cuánto gira tu cabeza al echar un vistazo al espejo derecho."
+        },
+        "glance_pitch_deg": {
+          "title": "Inclinación del vistazo",
+          "desc": "Cuánto baja tu cabeza al echar un vistazo a un espejo."
         },
         "smoothing_time": {
           "title": "Suavizado",

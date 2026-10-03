@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "Podívat se doleva",
-      "desc": "Plynule se podívá k levému oknu/zrcátku."
+      "desc": "Plynule otočí hlavu daleko doleva, ke kontrole příčného provozu."
     },
     "look_right": {
       "title": "Podívat se doprava",
-      "desc": "Plynule se podívá k pravému oknu/zrcátku."
+      "desc": "Plynule otočí hlavu daleko doprava, ke kontrole příčného provozu."
+    },
+    "glance_left": {
+      "title": "Pohled do levého zrcátka",
+      "desc": "Plynule se podívá do levého zrcátka, např. při připojování."
+    },
+    "glance_right": {
+      "title": "Pohled do pravého zrcátka",
+      "desc": "Plynule se podívá do pravého zrcátka, např. při připojování."
     },
     "zoom": {
       "title": "Přiblížení",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "Ruční pohled",
         "hint": "Tyto klávesy jsou nezávislé na ovládání hry.",
-        "look_angle_deg": {
-          "title": "Úhel pohledu",
-          "desc": "Jak daleko se hlava otočí při pohledu doleva nebo doprava."
+        "look_left_deg": {
+          "title": "Úhel pohledu doleva",
+          "desc": "Jak daleko se hlava otočí při pohledu doleva."
+        },
+        "look_right_deg": {
+          "title": "Úhel pohledu doprava",
+          "desc": "Jak daleko se hlava otočí při pohledu doprava."
+        },
+        "glance_left_deg": {
+          "title": "Úhel pohledu do levého zrcátka",
+          "desc": "Jak daleko se hlava otočí při pohledu do levého zrcátka."
+        },
+        "glance_right_deg": {
+          "title": "Úhel pohledu do pravého zrcátka",
+          "desc": "Jak daleko se hlava otočí při pohledu do pravého zrcátka."
+        },
+        "glance_pitch_deg": {
+          "title": "Sklon při pohledu do zrcátka",
+          "desc": "Jak moc se hlava při pohledu do zrcátka skloní dolů."
         },
         "smoothing_time": {
           "title": "Vyhlazení",

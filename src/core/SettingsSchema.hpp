@@ -123,7 +123,15 @@ inline constexpr Setting kAll[] = {
     Bool("settings.manual.mirror_check.ignore_after_moving_signal", true),
     // manual.manual_look
     Bool("settings.manual.manual_look.enabled", true),
-    Float("settings.manual.manual_look.look_angle_deg", 45.0f, 20.0f, 90.0f,
+    Float("settings.manual.manual_look.look_left_deg", 45.0f, 20.0f, 90.0f,
+          "%.0f deg"),
+    Float("settings.manual.manual_look.look_right_deg", 45.0f, 20.0f, 90.0f,
+          "%.0f deg"),
+    Float("settings.manual.manual_look.glance_left_deg", 20.0f, 5.0f, 45.0f,
+          "%.0f deg"),
+    Float("settings.manual.manual_look.glance_right_deg", 30.0f, 5.0f, 45.0f,
+          "%.0f deg"),
+    Float("settings.manual.manual_look.glance_pitch_deg", 3.0f, 0.0f, 10.0f,
           "%.0f deg"),
     Float("settings.manual.manual_look.smoothing_time", 0.35f, 0.0f, 0.7f,
           "%.2f s"),
@@ -238,7 +246,6 @@ const Setting *Find(std::string_view key);
 // The manifest's default settings JSON (Settings_SetJson), without the
 // "settings." root.
 std::string DefaultsJson();
-
 
 // Writes every setting's default value into `handle`: the live config for
 // "Reset to Defaults", or a new profile file.

@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "Olhar para a esquerda",
-      "desc": "Olha suavemente para a janela/o espelho esquerdo."
+      "desc": "Gira suavemente a cabeça bem para a esquerda, para verificar o tráfego cruzado."
     },
     "look_right": {
       "title": "Olhar para a direita",
-      "desc": "Olha suavemente para a janela/o espelho direito."
+      "desc": "Gira suavemente a cabeça bem para a direita, para verificar o tráfego cruzado."
+    },
+    "glance_left": {
+      "title": "Espiar o espelho esquerdo",
+      "desc": "Dá suavemente uma espiada no espelho esquerdo, por exemplo ao entrar na rodovia."
+    },
+    "glance_right": {
+      "title": "Espiar o espelho direito",
+      "desc": "Dá suavemente uma espiada no espelho direito, por exemplo ao entrar na rodovia."
     },
     "zoom": {
       "title": "Zoom",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "Olhar manual",
         "hint": "Estas teclas são separadas dos controles nativos do jogo.",
-        "look_angle_deg": {
-          "title": "Ângulo do olhar",
-          "desc": "Quanto sua cabeça gira ao olhar para a esquerda ou para a direita."
+        "look_left_deg": {
+          "title": "Ângulo do olhar à esquerda",
+          "desc": "Quanto sua cabeça gira ao olhar para a esquerda."
+        },
+        "look_right_deg": {
+          "title": "Ângulo do olhar à direita",
+          "desc": "Quanto sua cabeça gira ao olhar para a direita."
+        },
+        "glance_left_deg": {
+          "title": "Ângulo da espiada à esquerda",
+          "desc": "Quanto sua cabeça gira ao espiar o espelho esquerdo."
+        },
+        "glance_right_deg": {
+          "title": "Ângulo da espiada à direita",
+          "desc": "Quanto sua cabeça gira ao espiar o espelho direito."
+        },
+        "glance_pitch_deg": {
+          "title": "Inclinação da espiada",
+          "desc": "Quanto sua cabeça abaixa ao espiar um espelho."
         },
         "smoothing_time": {
           "title": "Suavização",

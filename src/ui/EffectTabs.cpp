@@ -203,8 +203,9 @@ struct EffectUi {
   void (*extra)(SPF_UI_API *ui) = nullptr;
 };
 
-constexpr keybinds::Action kManualLookKeybinds[] = {keybinds::kLookLeft,
-                                                    keybinds::kLookRight};
+constexpr keybinds::Action kManualLookKeybinds[] = {
+    keybinds::kLookLeft, keybinds::kLookRight, keybinds::kGlanceLeft,
+    keybinds::kGlanceRight};
 constexpr keybinds::Action kCabinWalkKeybinds[] = {
     keybinds::kStandSit, keybinds::kWalkForward, keybinds::kWalkBack,
     keybinds::kWalkLeft, keybinds::kWalkRight,   keybinds::kCrouch};

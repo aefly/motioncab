@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "Guarda a sinistra",
-      "desc": "Guarda dolcemente verso il finestrino/lo specchietto sinistro."
+      "desc": "Gira dolcemente la testa tutta a sinistra, per controllare il traffico trasversale."
     },
     "look_right": {
       "title": "Guarda a destra",
-      "desc": "Guarda dolcemente verso il finestrino/lo specchietto destro."
+      "desc": "Gira dolcemente la testa tutta a destra, per controllare il traffico trasversale."
+    },
+    "glance_left": {
+      "title": "Occhiata allo specchietto sinistro",
+      "desc": "Dà dolcemente un'occhiata allo specchietto sinistro, ad esempio quando ti immetti."
+    },
+    "glance_right": {
+      "title": "Occhiata allo specchietto destro",
+      "desc": "Dà dolcemente un'occhiata allo specchietto destro, ad esempio quando ti immetti."
     },
     "zoom": {
       "title": "Zoom",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "Sguardo manuale",
         "hint": "Questi tasti sono separati dai comandi nativi del gioco.",
-        "look_angle_deg": {
-          "title": "Angolo dello sguardo",
-          "desc": "Quanto ruota la tua testa quando guardi a sinistra o a destra."
+        "look_left_deg": {
+          "title": "Angolo dello sguardo a sinistra",
+          "desc": "Quanto ruota la tua testa quando guardi a sinistra."
+        },
+        "look_right_deg": {
+          "title": "Angolo dello sguardo a destra",
+          "desc": "Quanto ruota la tua testa quando guardi a destra."
+        },
+        "glance_left_deg": {
+          "title": "Angolo dell'occhiata a sinistra",
+          "desc": "Quanto ruota la tua testa quando dai un'occhiata allo specchietto sinistro."
+        },
+        "glance_right_deg": {
+          "title": "Angolo dell'occhiata a destra",
+          "desc": "Quanto ruota la tua testa quando dai un'occhiata allo specchietto destro."
+        },
+        "glance_pitch_deg": {
+          "title": "Inclinazione dell'occhiata",
+          "desc": "Quanto si abbassa la tua testa mentre dai un'occhiata a uno specchietto."
         },
         "smoothing_time": {
           "title": "Smorzamento",

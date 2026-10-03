@@ -30,11 +30,19 @@
     },
     "look_left": {
       "title": "Naar links kijken",
-      "desc": "Kijkt vloeiend naar het linkerraam/de linkerspiegel."
+      "desc": "Draait je hoofd vloeiend ver naar links, om kruisend verkeer te controleren."
     },
     "look_right": {
       "title": "Naar rechts kijken",
-      "desc": "Kijkt vloeiend naar het rechterraam/de rechterspiegel."
+      "desc": "Draait je hoofd vloeiend ver naar rechts, om kruisend verkeer te controleren."
+    },
+    "glance_left": {
+      "title": "Blik in linkerspiegel",
+      "desc": "Werpt vloeiend een blik in de linkerspiegel, bijvoorbeeld bij het invoegen."
+    },
+    "glance_right": {
+      "title": "Blik in rechterspiegel",
+      "desc": "Werpt vloeiend een blik in de rechterspiegel, bijvoorbeeld bij het invoegen."
     },
     "zoom": {
       "title": "Zoom",
@@ -254,9 +262,25 @@
       "manual_look": {
         "title": "Handmatig kijken",
         "hint": "Deze toetsen staan los van de standaardbediening van het spel.",
-        "look_angle_deg": {
-          "title": "Kijkhoek",
-          "desc": "Hoe ver je hoofd draait als je naar links of rechts kijkt."
+        "look_left_deg": {
+          "title": "Kijkhoek links",
+          "desc": "Hoe ver je hoofd draait als je naar links kijkt."
+        },
+        "look_right_deg": {
+          "title": "Kijkhoek rechts",
+          "desc": "Hoe ver je hoofd draait als je naar rechts kijkt."
+        },
+        "glance_left_deg": {
+          "title": "Spiegelblik links",
+          "desc": "Hoe ver je hoofd draait als je in de linkerspiegel kijkt."
+        },
+        "glance_right_deg": {
+          "title": "Spiegelblik rechts",
+          "desc": "Hoe ver je hoofd draait als je in de rechterspiegel kijkt."
+        },
+        "glance_pitch_deg": {
+          "title": "Kantelhoek spiegelblik",
+          "desc": "Hoeveel je hoofd omlaag kantelt tijdens een blik in een spiegel."
         },
         "smoothing_time": {
           "title": "Demping",
