@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "Toter-Winkel-Sicht",
       "desc": "Beugt sich sanft vor, um hinter die Scheibensäule zu sehen."
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "Aufstehen / Hinsetzen",
+        "desc": "Steht vom Sitz auf. Tippen, um sich auf den angeschauten Platz zu setzen, halten, um zurück ans Steuer zu gehen."
+      },
+      "forward": {
+        "title": "Vorwärts gehen",
+        "desc": "Geht vorwärts, während du in der Kabine stehst."
+      },
+      "back": {
+        "title": "Rückwärts gehen",
+        "desc": "Geht rückwärts, während du in der Kabine stehst."
+      },
+      "left": {
+        "title": "Schritt nach links",
+        "desc": "Macht einen Seitschritt nach links, während du in der Kabine stehst."
+      },
+      "right": {
+        "title": "Schritt nach rechts",
+        "desc": "Macht einen Seitschritt nach rechts, während du in der Kabine stehst."
+      },
+      "crouch": {
+        "title": "Ducken",
+        "desc": "Duckt sich im Stehen."
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "Manuell",
-      "desc": "Blick- und Zoomeffekte, die du selbst auslöst.",
+      "desc": "Blick-, Zoom- und Laufeffekte, die du selbst auslöst.",
       "mirror_check": {
         "title": "Spiegelblick",
         "desc": "Schaut zum passenden Spiegel, solange ein Blinker an ist, und zentriert wieder, wenn er aus ist.",
@@ -347,6 +373,18 @@
           "title": "Umschaltmodus",
           "desc": "An: einmal drücken zum Vorbeugen, erneut drücken zum Zurücklehnen. Aus: vorbeugen, solange die Taste gehalten wird, loslassen zum Zurücklehnen."
         }
+      },
+      "cabin_walk": {
+        "title": "Kabinenrundgang",
+        "desc": "Steh vom Fahrersitz auf und bewege dich im geparkten Lkw frei durch die Kabine.",
+        "hint": "Die Standardlayouts sind auf die kleinste Schlafkabine jedes Lkw abgestimmt. Andere Kabinen müssen eventuell angepasst werden.",
+        "enabled": {
+          "title": "Kabinenrundgang aktivieren"
+        },
+        "require_parking_brake": {
+          "title": "Feststellbremse erforderlich",
+          "desc": "An: Feststellbremse nötig, Lösen schickt dich zurück. Aus: Stillstand genügt."
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "metric",
       "kmh": "km/h",
       "mph": "mph"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "Zieh die Feststellbremse an, um den Sitz zu verlassen.",
+      "needs_stop": "Halte den Lkw an, um den Sitz zu verlassen.",
+      "back_to_wheel": "Zurück ans Steuer: Der Lkw ist nicht mehr geparkt.",
+      "layout": {
+        "no_truck": "Steig in einen Lkw, um seine Kabine einzurichten.",
+        "truck": "Lkw",
+        "tip": {
+          "floor_z_min": "Wie weit du nach vorn gehen kannst, zur Windschutzscheibe.",
+          "floor_z_max": "Wie weit du nach hinten gehen kannst, zur Rückwand.",
+          "floor_x_min": "Wie weit du zur Fahrertür gehen kannst.",
+          "floor_x_max": "Wie weit du zur Beifahrertür gehen kannst.",
+          "stand_y": "Deine Augenhöhe im Stehen.",
+          "crouch_depth": "Wie weit dein Kopf beim Ducken absinkt.",
+          "passenger_dx": "Seitlich vom Spiegelbild deines Sitzes.",
+          "passenger_dy": "Höher oder tiefer als dein Sitz.",
+          "passenger_dz": "Weiter vorn oder hinten als dein Sitz.",
+          "bunk_sit_x": "Wo du entlang der Liege sitzt.",
+          "bunk_sit_y": "Deine Augenhöhe beim Sitzen auf der Liege.",
+          "bunk_sit_z": "Wie weit hinten die Kante der Liege ist.",
+          "yaw": "Wohin du im Sitzen schaust.",
+          "pitch": "Wie weit du im Sitzen nach oben oder unten schaust.",
+          "has_passenger": "Abwählen, wenn der Beifahrersitz hochgeklappt ist oder fehlt.",
+          "has_bunk": "Abwählen für ein Fahrerhaus ohne Liege."
+        },
+        "group": {
+          "walkway": "Laufbereich",
+          "heights": "Stehhöhe",
+          "passenger": "Beifahrersitz",
+          "bunk": "Liege"
+        },
+        "go": "Hingehen",
+        "usable": "Nutzbar",
+        "advanced": "Erweitert",
+        "reset": "Aufteilung zurücksetzen",
+        "reset_title": "Kabinenaufteilung zurücksetzen",
+        "reset_message": "Zur Standardaufteilung für {truck} zurückkehren?",
+        "reset_confirm": "Ja, zurücksetzen",
+        "floor_x_min": "Linke Grenze",
+        "floor_x_max": "Rechte Grenze",
+        "floor_z_min": "Vordere Grenze",
+        "floor_z_max": "Hintere Grenze",
+        "crouch_depth": "Ducktiefe",
+        "passenger_dx": "Seite",
+        "passenger_dy": "Höhe",
+        "passenger_dz": "Tiefe",
+        "passenger_yaw": "Drehung",
+        "passenger_pitch": "Neigung",
+        "bunk_sit_x": "Seite",
+        "bunk_sit_y": "Höhe",
+        "bunk_sit_z": "Tiefe",
+        "bunk_sit_yaw": "Drehung",
+        "bunk_sit_pitch": "Neigung"
+      }
     }
   }
 }

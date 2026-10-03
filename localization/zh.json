@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "盲区视野",
       "desc": "平滑地身体前倾，看清挡风玻璃立柱后方。"
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "起身 / 坐下",
+        "desc": "从座位起身。点按坐到你看着的座位，按住回到方向盘前。"
+      },
+      "forward": {
+        "title": "向前走",
+        "desc": "在驾驶室内站立时向前走。"
+      },
+      "back": {
+        "title": "向后走",
+        "desc": "在驾驶室内站立时向后走。"
+      },
+      "left": {
+        "title": "向左迈步",
+        "desc": "在驾驶室内站立时向左横移一步。"
+      },
+      "right": {
+        "title": "向右迈步",
+        "desc": "在驾驶室内站立时向右横移一步。"
+      },
+      "crouch": {
+        "title": "下蹲",
+        "desc": "站立时下蹲。"
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "手动",
-      "desc": "由你自己触发的观察和缩放效果。",
+      "desc": "由你亲自触发的观察、缩放和行走效果。",
       "mirror_check": {
         "title": "查看后视镜",
         "desc": "转向灯开启时看向对应的后视镜，关闭后回到中间。",
@@ -347,6 +373,18 @@
           "title": "切换模式",
           "desc": "开启：按一次前倾，再按一次回位。关闭：按住时前倾，松开后回位。"
         }
+      },
+      "cabin_walk": {
+        "title": "驾驶室漫步",
+        "desc": "停车时离开驾驶座，在驾驶室内自由走动。",
+        "hint": "默认布局按每辆卡车最小的卧铺驾驶室设定。其他驾驶室可能需要调整。",
+        "enabled": {
+          "title": "启用驾驶室漫步"
+        },
+        "require_parking_brake": {
+          "title": "需要驻车制动",
+          "desc": "开启：需要拉上驻车制动，松开会让你回去。关闭：停车即可。"
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "metric",
       "kmh": "公里/小时",
       "mph": "英里/小时"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "拉上驻车制动才能离开座位。",
+      "needs_stop": "停下卡车才能离开座位。",
+      "back_to_wheel": "已回到方向盘前：卡车不再处于停车状态。",
+      "layout": {
+        "no_truck": "上一辆卡车来设置它的驾驶室。",
+        "truck": "卡车",
+        "tip": {
+          "floor_z_min": "你能向前走多远，朝向挡风玻璃。",
+          "floor_z_max": "你能向后走多远，朝向后壁。",
+          "floor_x_min": "你能朝驾驶员车门走多远。",
+          "floor_x_max": "你能朝乘客车门走多远。",
+          "stand_y": "站立时的眼睛高度。",
+          "crouch_depth": "下蹲时头部降低的距离。",
+          "passenger_dx": "相对于你座椅的镜像位置横向偏移。",
+          "passenger_dy": "比你的座椅高或低。",
+          "passenger_dz": "比你的座椅靠前或靠后。",
+          "bunk_sit_x": "你沿卧铺坐的位置。",
+          "bunk_sit_y": "坐在卧铺上时的眼睛高度。",
+          "bunk_sit_z": "卧铺边缘在多靠后的位置。",
+          "yaw": "坐下后看向的方向。",
+          "pitch": "坐下后向上或向下看的程度。",
+          "has_passenger": "如果副驾驶座可折叠或不存在，请取消勾选。",
+          "has_bunk": "对于没有卧铺的短驾驶室，请取消勾选。"
+        },
+        "group": {
+          "walkway": "行走区域",
+          "heights": "站立高度",
+          "passenger": "副驾驶座",
+          "bunk": "卧铺"
+        },
+        "go": "前往",
+        "usable": "可用",
+        "advanced": "高级",
+        "reset": "重置布局",
+        "reset_title": "重置驾驶室布局",
+        "reset_message": "将 {truck} 恢复为默认布局？",
+        "reset_confirm": "是，重置",
+        "floor_x_min": "左边界",
+        "floor_x_max": "右边界",
+        "floor_z_min": "前边界",
+        "floor_z_max": "后边界",
+        "crouch_depth": "下蹲深度",
+        "passenger_dx": "左右",
+        "passenger_dy": "高度",
+        "passenger_dz": "前后",
+        "passenger_yaw": "转向",
+        "passenger_pitch": "倾斜",
+        "bunk_sit_x": "左右",
+        "bunk_sit_y": "高度",
+        "bunk_sit_z": "前后",
+        "bunk_sit_yaw": "转向",
+        "bunk_sit_pitch": "倾斜"
+      }
     }
   }
 }

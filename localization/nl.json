@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "Dode-hoekzicht",
       "desc": "Leunt vloeiend naar voren om achter de raamstijl te kijken."
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "Opstaan / Gaan zitten",
+        "desc": "Staat op uit de stoel. Tik om te gaan zitten op de plek waar je naar kijkt, houd vast om terug achter het stuur te gaan."
+      },
+      "forward": {
+        "title": "Vooruit lopen",
+        "desc": "Loopt vooruit terwijl je in de cabine staat."
+      },
+      "back": {
+        "title": "Achteruit lopen",
+        "desc": "Loopt achteruit terwijl je in de cabine staat."
+      },
+      "left": {
+        "title": "Stap naar links",
+        "desc": "Zet een zijstap naar links terwijl je in de cabine staat."
+      },
+      "right": {
+        "title": "Stap naar rechts",
+        "desc": "Zet een zijstap naar rechts terwijl je in de cabine staat."
+      },
+      "crouch": {
+        "title": "Hurken",
+        "desc": "Hurkt terwijl je staat."
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "Handmatig",
-      "desc": "Kijk- en zoomeffecten die je zelf activeert.",
+      "desc": "Kijk-, zoom- en loopeffecten die je zelf activeert.",
       "mirror_check": {
         "title": "Spiegelcontrole",
         "desc": "Kijkt naar de bijbehorende spiegel zolang een richtingaanwijzer aan staat, en centreert weer als hij uit gaat.",
@@ -347,6 +373,18 @@
           "title": "Schakelmodus",
           "desc": "Aan: één keer drukken om naar voren te leunen, nogmaals om terug te gaan. Uit: naar voren leunen zolang de toets ingedrukt is, loslaten om terug te gaan."
         }
+      },
+      "cabin_walk": {
+        "title": "Rondlopen in de cabine",
+        "desc": "Sta op uit de bestuurdersstoel en loop vrij door de cabine als de truck geparkeerd staat.",
+        "hint": "De standaardindelingen zijn afgesteld op de kleinste slaapcabine van elke truck. Andere cabines moeten mogelijk worden bijgesteld.",
+        "enabled": {
+          "title": "Rondlopen in de cabine inschakelen"
+        },
+        "require_parking_brake": {
+          "title": "Parkeerrem vereist",
+          "desc": "Aan: parkeerrem vereist, losmaken stuurt je terug. Uit: stilstaan is genoeg."
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "metric",
       "kmh": "km/u",
       "mph": "mph"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "Zet de parkeerrem aan om de stoel te verlaten.",
+      "needs_stop": "Stop de truck om de stoel te verlaten.",
+      "back_to_wheel": "Terug achter het stuur: de truck staat niet meer geparkeerd.",
+      "layout": {
+        "no_truck": "Stap in een truck om zijn cabine in te stellen.",
+        "truck": "Truck",
+        "tip": {
+          "floor_z_min": "Hoe ver je naar voren kunt lopen, richting de voorruit.",
+          "floor_z_max": "Hoe ver je naar achteren kunt lopen, richting de achterwand.",
+          "floor_x_min": "Hoe ver je richting de bestuurdersdeur kunt lopen.",
+          "floor_x_max": "Hoe ver je richting de bijrijdersdeur kunt lopen.",
+          "stand_y": "Je ooghoogte als je staat.",
+          "crouch_depth": "Hoe ver je hoofd zakt als je hurkt.",
+          "passenger_dx": "Opzij vanaf het spiegelbeeld van je stoel.",
+          "passenger_dy": "Hoger of lager dan je stoel.",
+          "passenger_dz": "Verder naar voren of achteren dan je stoel.",
+          "bunk_sit_x": "Waar je langs de slaapbank zit.",
+          "bunk_sit_y": "Je ooghoogte als je op de slaapbank zit.",
+          "bunk_sit_z": "Hoe ver naar achteren de rand van de slaapbank is.",
+          "yaw": "Waar je kijkt als je zit.",
+          "pitch": "Hoe ver je omhoog of omlaag kijkt als je zit.",
+          "has_passenger": "Uitvinken als de bijrijdersstoel inklapt of ontbreekt.",
+          "has_bunk": "Uitvinken voor een dagcabine zonder slaapbank."
+        },
+        "group": {
+          "walkway": "Loopruimte",
+          "heights": "Stahoogte",
+          "passenger": "Bijrijdersstoel",
+          "bunk": "Slaapbank"
+        },
+        "go": "Ga erheen",
+        "usable": "Bruikbaar",
+        "advanced": "Geavanceerd",
+        "reset": "Indeling resetten",
+        "reset_title": "Cabine-indeling resetten",
+        "reset_message": "Terug naar de standaardindeling voor {truck}?",
+        "reset_confirm": "Ja, resetten",
+        "floor_x_min": "Linkergrens",
+        "floor_x_max": "Rechtergrens",
+        "floor_z_min": "Voorgrens",
+        "floor_z_max": "Achtergrens",
+        "crouch_depth": "Hurkdiepte",
+        "passenger_dx": "Zijkant",
+        "passenger_dy": "Hoogte",
+        "passenger_dz": "Diepte",
+        "passenger_yaw": "Draaiing",
+        "passenger_pitch": "Kanteling",
+        "bunk_sit_x": "Zijkant",
+        "bunk_sit_y": "Hoogte",
+        "bunk_sit_z": "Diepte",
+        "bunk_sit_yaw": "Draaiing",
+        "bunk_sit_pitch": "Kanteling"
+      }
     }
   }
 }

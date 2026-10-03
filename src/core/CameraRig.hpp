@@ -44,6 +44,15 @@ public:
   // offset that's no longer there subtracted from it.
   bool DetectExternalSeatWrite(const Pose &pose);
 
+  // The player's own pose underneath: `pose` minus the applied offset.
+  Pose Base(const Pose &pose) const;
+
+  // Makes the player's own head rotation under `pose` `yaw_rad`/
+  // `pitch_rad`, so the next Apply writes that plus the new offset. For
+  // turning the player's view itself rather than adding to it (Cabin Walk
+  // sitting down), with the mouse blocked meanwhile.
+  void SetBaseRotation(Pose &pose, float yaw_rad, float pitch_rad) const;
+
   // Replaces last frame's offset with `offset` in the live pose.
   void Apply(SPF_Camera_API *camera, const Pose &pose,
              const HeadOffset &offset);
@@ -53,6 +62,12 @@ public:
   // subtract it, so e.g. unloading mid Blindspot Viewer peek would leave
   // the seat leaned forward for good.
   void Remove(SPF_Camera_API *camera);
+
+  // The game rebuilt the interior camera (another truck): the new one holds
+  // the player's own pose, without our offset, so there's nothing to
+  // subtract any more. Roll is kept: SPF remembers the roll it was given
+  // and puts it back on the new camera.
+  void ForgetAppliedPose();
 
   // The offset currently in the live pose.
   const HeadOffset &applied() const { return applied_; }

@@ -4,7 +4,11 @@
 #include "core/Localization.hpp"
 #include "core/PluginContext.hpp"
 
+#include <algorithm>
+#include <cctype>
+#include <cmath>
 #include <cstdint>
+#include <cstring>
 
 namespace motioncab::ui {
 
@@ -67,6 +71,54 @@ int PushBrandRounding(SPF_UI_API *ui) {
   ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_TAB_ROUNDING, 6.0f);
   ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_SCROLLBAR_ROUNDING, 6.0f);
   return 7;
+}
+
+StepperEdit StepperFloat(SPF_UI_API *ui, const char *id, float *value,
+                         float min, float max, float step, const char *format,
+                         float reset_value, const char *tooltip, bool drag) {
+  StepperEdit edit = StepperEdit::kNone;
+  // Square buttons at both ends, the value filling the width between.
+  const float button = ui->UI_GetFrameHeight();
+  constexpr float kGap = 4.0f;
+  float avail_w = 0.0f, avail_h = 0.0f;
+  ui->UI_GetContentRegionAvail(&avail_w, &avail_h);
+  ui->UI_PushID_Str(id);
+  auto step_button = [&](const char *icon, float sign) {
+    if (MutedButton(ui, icon, button)) {
+      *value = std::clamp(*value + sign * step, min, max);
+      edit = StepperEdit::kDone;
+    }
+  };
+  step_button(ICON_FA_MINUS "###minus", -1.0f);
+  ui->UI_SameLine(0.0f, kGap);
+  ui->UI_SetNextItemWidth(std::max(avail_w - 2.0f * (button + kGap), 40.0f));
+  const bool moved =
+      drag ? ui->UI_DragFloat("###value", value, (max - min) / 500.0f, min, max,
+                              format, SPF_SLIDER_FLAG_ALWAYS_CLAMP)
+           : ui->UI_SliderFloat("###value", value, min, max, format,
+                                SPF_SLIDER_FLAG_ALWAYS_CLAMP);
+  if (moved && edit == StepperEdit::kNone)
+    edit = StepperEdit::kLive;
+  if (ui->UI_IsItemDeactivatedAfterEdit())
+    edit = StepperEdit::kDone;
+  if (ui->UI_IsItemClicked(SPF_MOUSE_BUTTON_RIGHT)) {
+    *value = reset_value;
+    edit = StepperEdit::kDone;
+  }
+  if (tooltip)
+    ui->UI_SetItemTooltip(tooltip);
+  ui->UI_SameLine(0.0f, kGap);
+  step_button(ICON_FA_PLUS "###plus", 1.0f);
+  ui->UI_PopID();
+  return edit;
+}
+
+float FormatStep(const char *format) {
+  // "%.<n>f": n decimals.
+  const char *dot = std::strstr(format, "%.");
+  if (!dot || !std::isdigit(static_cast<unsigned char>(dot[2])))
+    return 1.0f;
+  return std::pow(10.0f, -static_cast<float>(dot[2] - '0'));
 }
 
 bool MutedButton(SPF_UI_API *ui, const char *label, float width) {

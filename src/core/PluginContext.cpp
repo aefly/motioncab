@@ -12,6 +12,8 @@ void PluginContext::ReloadEffectsConfig() {
   effects.LoadAllConfig();
   if (manual_zoom)
     manual_zoom->LoadConfig();
+  if (cabin_walk)
+    cabin_walk->LoadConfig();
 }
 
 void PluginContext::ResetEffects() {

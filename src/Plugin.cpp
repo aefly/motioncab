@@ -22,12 +22,15 @@
 #include "effects/manual/ManualLookEffect.hpp"
 #include "effects/manual/ManualZoomEffect.hpp"
 #include "effects/manual/MirrorCheckEffect.hpp"
+#include "effects/manual/cabin_walk/CabinWalkEffect.hpp"
 #include "effects/road/RoadIrregularityEffect.hpp"
 #include "effects/road/SpeedShakeEffect.hpp"
 #include "effects/road/SuspensionEffect.hpp"
 #include "ui/SettingsWindow.hpp"
+#include "ui/Widgets.hpp"
 
 #include <chrono>
+#include <cmath>
 #include <cstring>
 #include <memory>
 #include <optional>
@@ -53,13 +56,25 @@ void OnControlsUpdate(const SPF_Controls *data, void * /*user_data*/) {
 
 void OnTruckConstantsUpdate(const SPF_TruckConstants *data,
                             void * /*user_data*/) {
-  Context().effects.NotifyTruckConstants(*data);
+  PluginContext &ctx = Context();
+  // Another truck (or none, in between two): the game rebuilds the interior
+  // camera with the player's own pose, which holds none of our offset.
+  const std::string truck = std::string(data->brand_id) + "/" + data->id;
+  if (truck != ctx.truck_identity) {
+    ctx.truck_identity = truck;
+    ctx.camera_rig.ForgetAppliedPose();
+    ctx.ResetEffects();
+  }
+  ctx.effects.NotifyTruckConstants(*data);
+  if (ctx.cabin_walk) {
+    ctx.cabin_walk->OnTruckConstantsChanged(*data);
+  }
 
-  // Don't call Cam_SwitchTo here (even deferred): SPF-Framework's native
-  // camera hooks already refresh the pointer via OnActivate/OnDeactivate
-  // during truck reconfiguration, and the interior pos/rot getters are
-  // null-safe meanwhile. Cam_SwitchTo bypasses that guard and can crash
-  // during slow Quick Job reloads (750ms+), so no fixed delay is safe.
+  // Don't call Cam_SwitchTo here (even deferred) to get SPF onto the new
+  // truck's camera: it can crash during slow Quick Job reloads (750ms+),
+  // so no fixed delay is safe. Picking up the rebuilt camera is SPF's job:
+  // older releases only did it on a view change, so a truck switch in the
+  // interior view left them writing to the freed camera.
 }
 
 void OnCommonDataUpdate(const SPF_CommonData *data, void * /*user_data*/) {
@@ -75,6 +90,27 @@ void OnTrailersUpdate(const SPF_Trailer *trailers, uint32_t count,
 // Kbind_GetActionValue instead. Registering is still required though, an
 // unregistered action stays stuck at 0.0 even with a valid manifest binding.
 void OnPolledActionTriggered() {}
+
+// Tells the player why Cabin Walk refused to stand up, or sent them back to
+// the wheel.
+void ShowCabinWalkNotice(PluginContext &ctx) {
+  const char *key = nullptr;
+  switch (ctx.cabin_walk->TakeNotice()) {
+  case CabinWalkEffect::Notice::kNeedsParkingBrake:
+    key = "ui.cabin_walk.needs_parking_brake";
+    break;
+  case CabinWalkEffect::Notice::kNeedsStop:
+    key = "ui.cabin_walk.needs_stop";
+    break;
+  case CabinWalkEffect::Notice::kBackToWheel:
+    key = "ui.cabin_walk.back_to_wheel";
+    break;
+  case CabinWalkEffect::Notice::kNone:
+    break;
+  }
+  if (key && ctx.core->ui)
+    ui::ShowToast(ctx.core->ui, SPF_NOTIFICATION_WARNING, loc::Tr(key));
+}
 
 float ComputeDeltaTimeSeconds(PluginContext &ctx) {
   const auto now = std::chrono::steady_clock::now();
@@ -108,10 +144,15 @@ void OnUnload() {
     Context().manual_zoom->RestoreFov();
     Context().manual_zoom->RestoreDynamicFov();
   }
+  // Give the camera's own limits and the mouse back if the player is up in
+  // the cabin. Their position is part of the offset below.
+  PluginContext &ctx = Context();
+  if (ctx.cabin_walk)
+    ctx.cabin_walk->Shutdown(ctx.core ? ctx.core->camera : nullptr);
+  ctx.cabin_walk_sounds.Shutdown(ctx.core ? ctx.core->sound : nullptr);
   // Take our offset back out of the interior pose, which the engine keeps
   // after we're gone. After ManualZoomEffect's RestoreFov above, which
   // adds the applied FOV offset back on.
-  PluginContext &ctx = Context();
   if (ctx.core && ctx.core->camera)
     ctx.camera_rig.Remove(ctx.core->camera);
   // The About tab's logo texture is the one thing this plugin allocates
@@ -144,6 +185,16 @@ void OnToggleSettingsWindow() {
   const bool new_state =
       !ctx.core->config->Cfg_GetBool(ctx.config_handle, kKey, false);
   ctx.core->config->Cfg_SetBool(ctx.config_handle, kKey, new_state);
+}
+
+// `file` in the plugin's data directory, next to the profiles; empty (the
+// file then isn't used) if the data directory isn't available.
+std::string DataFilePath(PluginContext &ctx, const char *file) {
+  const std::string dir = ctx.PluginDataDir();
+  if (dir.empty() || !ctx.core->environment->Env_CreatePath(
+                         ctx.environment_handle, dir.c_str()))
+    return {};
+  return dir + "/" + file;
 }
 
 void OnActivated(const SPF_Core_API *core_api) {
@@ -198,6 +249,14 @@ void OnActivated(const SPF_Core_API *core_api) {
   ctx.manual_zoom = std::make_unique<ManualZoomEffect>(
       core_api->config, ctx.config_handle, core_api->keybinds,
       ctx.keybinds_handle, &ctx.camera_rig.applied().fov);
+  // The player's own layouts (the presets are compiled in).
+  ctx.cabin_layouts = std::make_unique<CabinLayoutStore>(
+      core_api->config, DataFilePath(ctx, "cabin_layouts.json"));
+  if (const std::string dir = ctx.PluginDataDir(); !dir.empty())
+    ctx.cabin_walk_sounds.SetDirectory(dir + "/sounds");
+  ctx.cabin_walk = std::make_unique<CabinWalkEffect>(
+      core_api->config, ctx.config_handle, core_api->keybinds,
+      ctx.keybinds_handle, core_api->ui, ctx.cabin_layouts.get());
   ctx.ReloadEffectsConfig();
 
   ctx.telemetry_handle =
@@ -216,6 +275,7 @@ void OnActivated(const SPF_Core_API *core_api) {
     core_api->telemetry->Tel_GetTruckConstants(
         ctx.telemetry_handle, &initial_constants, sizeof(initial_constants));
     ctx.effects.NotifyTruckConstants(initial_constants);
+    ctx.cabin_walk->OnTruckConstantsChanged(initial_constants);
     core_api->telemetry->Tel_RegisterForCommonData(ctx.telemetry_handle,
                                                    OnCommonDataUpdate, nullptr);
     core_api->telemetry->Tel_RegisterForTrailers(ctx.telemetry_handle,
@@ -281,6 +341,8 @@ void OnUpdate() {
   if (!is_interior) {
     if (ctx.was_interior_last_frame && ctx.manual_zoom)
       ctx.manual_zoom->RestoreFov();
+    if (ctx.cabin_walk)
+      ctx.cabin_walk->OnLeftInterior();
     ctx.was_interior_last_frame = false;
     ctx.has_last_update_time = false;
     return;
@@ -310,19 +372,45 @@ void OnUpdate() {
   // Differential write (see CameraRig), skipped entirely while the camera
   // isn't resolved yet.
   SPF_Camera_API *camera = ctx.core->camera;
-  const std::optional<CameraRig::Pose> pose = ctx.camera_rig.ReadPose(camera);
+  std::optional<CameraRig::Pose> pose = ctx.camera_rig.ReadPose(camera);
   if (!pose)
     return;
   if (ctx.camera_rig.DetectNativeRecenter(camera, *pose))
     ctx.effects.ResetAll();
   ctx.camera_rig.DetectExternalSeatWrite(*pose);
-  const HeadOffset offset = ctx.effects.UpdateAndAccumulate(
-      dt, ctx.latest_truck_data, ctx.latest_controls_data);
+
+  // Cabin Walk first: whether the player is at the wheel decides which
+  // effects play, and sitting down turns the player's own view.
+  HeadOffset walk{};
+  if (ctx.cabin_walk) {
+    walk = ctx.cabin_walk->Update(dt, ctx.latest_truck_data, camera,
+                                  ctx.camera_rig.Base(*pose));
+    if (const auto &rotation = ctx.cabin_walk->base_rotation())
+      ctx.camera_rig.SetBaseRotation(*pose, rotation->first, rotation->second);
+    ctx.effects.SetAtWheel(ctx.cabin_walk->AtWheel());
+    ShowCabinWalkNotice(ctx);
+    ctx.cabin_walk_sounds.Update(ctx.core->sound);
+    for (float volume : ctx.cabin_walk->TakeFootsteps())
+      ctx.cabin_walk_sounds.PlayFootstep(ctx.core->sound, volume);
+  }
+
+  HeadOffset offset = ctx.effects.UpdateAndAccumulate(dt, ctx.latest_truck_data,
+                                                      ctx.latest_controls_data);
+  offset.pos_x += walk.pos_x;
+  offset.pos_y += walk.pos_y;
+  offset.pos_z += walk.pos_z;
+  offset.yaw += walk.yaw;
+  offset.pitch += walk.pitch;
+  offset.roll += walk.roll;
+  offset.fov += walk.fov;
   ctx.camera_rig.Apply(camera, *pose, offset);
 }
 
 void OnGameWorldReady() {
   PluginContext &ctx = Context();
+  // A new world starts in the driver's seat, with a new camera.
+  if (ctx.cabin_walk)
+    ctx.cabin_walk->SnapToWheel();
   ctx.was_interior_last_frame = false;
   ctx.has_last_update_time = false;
   ctx.has_truck_data.store(false, std::memory_order_relaxed);

@@ -4,6 +4,7 @@
 #include "core/Keybinds.hpp"
 #include "core/Localization.hpp"
 #include "core/SettingsSchema.hpp"
+#include "ui/CabinLayoutPanel.hpp"
 #include "ui/Widgets.hpp"
 
 #include <algorithm>
@@ -129,7 +130,8 @@ void DrawBool(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
     cfg->Cfg_SetBool(h, setting.key, value);
 }
 
-// One label|slider row. Right-click the slider to reset it to default.
+// One label|[-] slider [+] row (StepperFloat), stepped by the format's last
+// decimal. Right-click the slider to reset it to default.
 // `display_scale` shows the value (and the slider's range) multiplied by
 // it, e.g. to show a setting stored in km/h in mph; the stored value
 // doesn't change.
@@ -144,16 +146,11 @@ void DrawSlider(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   ui->UI_TableSetColumnIndex(0);
   ui->UI_Text(SettingTitle(key));
   ui->UI_TableSetColumnIndex(1);
-  char hidden_label[112];
-  std::snprintf(hidden_label, sizeof(hidden_label), "##%s", key);
-  ui->UI_SetNextItemWidth(-1.0f);
-  if (ui->UI_SliderFloat(hidden_label, &value, setting.min * display_scale,
-                         setting.max * display_scale, format,
-                         SPF_SLIDER_FLAG_NONE))
+  if (StepperFloat(ui, key, &value, setting.min * display_scale,
+                   setting.max * display_scale, FormatStep(format), format,
+                   setting.default_value * display_scale,
+                   SettingDesc(key)) != StepperEdit::kNone)
     cfg->Cfg_SetFloat(h, key, value / display_scale);
-  if (ui->UI_IsItemClicked(SPF_MOUSE_BUTTON_RIGHT))
-    cfg->Cfg_SetFloat(h, key, setting.default_value);
-  ui->UI_SetItemTooltip(SettingDesc(key));
 }
 
 // A slider row for a speed setting, stored in km/h but shown in the
@@ -202,10 +199,15 @@ struct EffectUi {
   const char *prefix; // "settings.<group>.<effect>"
   bool has_hint;      // shows the "<prefix>.hint" text under its toggle
   std::span<const keybinds::Action> keybinds;
+  // Drawn under its settings, for what doesn't fit a settings row.
+  void (*extra)(SPF_UI_API *ui) = nullptr;
 };
 
 constexpr keybinds::Action kManualLookKeybinds[] = {keybinds::kLookLeft,
                                                     keybinds::kLookRight};
+constexpr keybinds::Action kCabinWalkKeybinds[] = {
+    keybinds::kStandSit, keybinds::kWalkForward, keybinds::kWalkBack,
+    keybinds::kWalkLeft, keybinds::kWalkRight,   keybinds::kCrouch};
 
 // Every effect, in display order; each tab shows its own group's.
 constexpr EffectUi kEffects[] = {
@@ -232,6 +234,8 @@ constexpr EffectUi kEffects[] = {
      "settings.manual.blindspot_viewer",
      false,
      {&keybinds::kBlindspotPeek, 1}},
+    {ICON_FA_PERSON_WALKING, "settings.manual.cabin_walk", true,
+     kCabinWalkKeybinds, &DrawCabinLayoutPanel},
 };
 
 // Every effect section needs its "enabled" toggle in settings::kAll.
@@ -268,11 +272,14 @@ void DrawEffect(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
     for (const keybinds::Action &action : effect.keybinds)
       DrawKeybindRow(ui, action);
     for (const settings::Setting &s : settings::kAll) {
-      if (settings::InEffect(s, effect.prefix) && !IsEnabledToggle(s))
-        DrawSettingRow(ui, cfg, h, s);
+      if (!settings::InEffect(s, effect.prefix) || IsEnabledToggle(s))
+        continue;
+      DrawSettingRow(ui, cfg, h, s);
     }
     EndSettingsTable(ui);
   }
+  if (effect.extra)
+    effect.extra(ui);
   ui->UI_EndDisabled();
 }
 
@@ -284,8 +291,7 @@ void UpdateLabelColumnWidth(SPF_UI_API *ui) {
 
 void DrawEffectTab(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
                    std::string_view group) {
-  const std::string group_prefix =
-      "settings." + std::string(group) + ".";
+  const std::string group_prefix = "settings." + std::string(group) + ".";
   for (const EffectUi &effect : kEffects) {
     if (std::string_view(effect.prefix).starts_with(group_prefix))
       DrawEffect(ui, cfg, h, effect);

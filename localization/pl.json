@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "Podgląd martwego pola",
       "desc": "Płynnie pochyla się, aby zajrzeć za słupek szyby."
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "Wstań / Usiądź",
+        "desc": "Wstaje z fotela. Stuknij, aby usiąść na miejscu, na które patrzysz, przytrzymaj, aby wrócić za kierownicę."
+      },
+      "forward": {
+        "title": "Idź do przodu",
+        "desc": "Idzie do przodu, gdy stoisz w kabinie."
+      },
+      "back": {
+        "title": "Idź do tyłu",
+        "desc": "Idzie do tyłu, gdy stoisz w kabinie."
+      },
+      "left": {
+        "title": "Krok w lewo",
+        "desc": "Robi krok w bok w lewo, gdy stoisz w kabinie."
+      },
+      "right": {
+        "title": "Krok w prawo",
+        "desc": "Robi krok w bok w prawo, gdy stoisz w kabinie."
+      },
+      "crouch": {
+        "title": "Kucnij",
+        "desc": "Kuca, gdy stoisz."
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "Ręczne",
-      "desc": "Efekty spojrzenia i przybliżenia wywoływane przez ciebie.",
+      "desc": "Efekty patrzenia, przybliżania i chodzenia, które uruchamiasz samodzielnie.",
       "mirror_check": {
         "title": "Sprawdzanie lusterek",
         "desc": "Spogląda w odpowiednie lusterko, gdy włączony jest kierunkowskaz, i wraca na środek po jego wyłączeniu.",
@@ -347,6 +373,18 @@
           "title": "Tryb przełączania",
           "desc": "Wł.: naciśnij raz, aby się pochylić, i ponownie, aby wrócić. Wył.: pochylaj się, dopóki trzymasz klawisz, puść, aby wrócić."
         }
+      },
+      "cabin_walk": {
+        "title": "Chodzenie po kabinie",
+        "desc": "Wstań z fotela kierowcy i swobodnie chodź po kabinie, gdy ciężarówka stoi zaparkowana.",
+        "hint": "Domyślne układy są ustawione dla najmniejszej kabiny sypialnej każdej ciężarówki. Inne kabiny mogą wymagać dostosowania.",
+        "enabled": {
+          "title": "Włącz chodzenie po kabinie"
+        },
+        "require_parking_brake": {
+          "title": "Wymagaj hamulca postojowego",
+          "desc": "Wł.: wymaga hamulca postojowego, zwolnienie go odsyła cię z powrotem. Wył.: wystarczy postój."
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "metric",
       "kmh": "km/h",
       "mph": "mph"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "Zaciągnij hamulec postojowy, aby opuścić fotel.",
+      "needs_stop": "Zatrzymaj ciężarówkę, aby opuścić fotel.",
+      "back_to_wheel": "Z powrotem za kierownicą: ciężarówka nie jest już zaparkowana.",
+      "layout": {
+        "no_truck": "Wsiądź do ciężarówki, aby ustawić jej kabinę.",
+        "truck": "Ciężarówka",
+        "tip": {
+          "floor_z_min": "Jak daleko możesz iść do przodu, w stronę szyby.",
+          "floor_z_max": "Jak daleko możesz iść do tyłu, w stronę tylnej ściany.",
+          "floor_x_min": "Jak daleko możesz iść w stronę drzwi kierowcy.",
+          "floor_x_max": "Jak daleko możesz iść w stronę drzwi pasażera.",
+          "stand_y": "Wysokość twoich oczu na stojąco.",
+          "crouch_depth": "Jak nisko opada głowa podczas kucania.",
+          "passenger_dx": "W bok od odbicia twojego fotela.",
+          "passenger_dy": "Wyżej lub niżej niż twój fotel.",
+          "passenger_dz": "Bardziej z przodu lub z tyłu niż twój fotel.",
+          "bunk_sit_x": "Gdzie siadasz wzdłuż koi.",
+          "bunk_sit_y": "Wysokość twoich oczu, gdy siedzisz na koi.",
+          "bunk_sit_z": "Jak daleko z tyłu jest krawędź koi.",
+          "yaw": "Gdzie patrzysz po usadowieniu się.",
+          "pitch": "Jak bardzo patrzysz w górę lub w dół po usadowieniu się.",
+          "has_passenger": "Odznacz, jeśli fotel pasażera się składa lub go nie ma.",
+          "has_bunk": "Odznacz dla krótkiej kabiny bez koi."
+        },
+        "group": {
+          "walkway": "Obszar chodzenia",
+          "heights": "Wysokość na stojąco",
+          "passenger": "Fotel pasażera",
+          "bunk": "Koja"
+        },
+        "go": "Przejdź tam",
+        "usable": "Dostępne",
+        "advanced": "Zaawansowane",
+        "reset": "Resetuj układ",
+        "reset_title": "Resetuj układ kabiny",
+        "reset_message": "Wrócić do domyślnego układu dla {truck}?",
+        "reset_confirm": "Tak, resetuj",
+        "floor_x_min": "Granica lewa",
+        "floor_x_max": "Granica prawa",
+        "floor_z_min": "Granica przednia",
+        "floor_z_max": "Granica tylna",
+        "crouch_depth": "Głębokość kucania",
+        "passenger_dx": "Bok",
+        "passenger_dy": "Wysokość",
+        "passenger_dz": "Głębokość",
+        "passenger_yaw": "Obrót",
+        "passenger_pitch": "Pochylenie",
+        "bunk_sit_x": "Bok",
+        "bunk_sit_y": "Wysokość",
+        "bunk_sit_z": "Głębokość",
+        "bunk_sit_yaw": "Obrót",
+        "bunk_sit_pitch": "Pochylenie"
+      }
     }
   }
 }

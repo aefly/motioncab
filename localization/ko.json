@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "사각지대 뷰",
       "desc": "부드럽게 몸을 숙여 앞유리 옆 기둥 너머를 봅니다."
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "일어서기 / 앉기",
+        "desc": "자리에서 일어납니다. 누르면 바라보는 자리에 앉고, 길게 누르면 운전석으로 돌아갑니다."
+      },
+      "forward": {
+        "title": "앞으로 걷기",
+        "desc": "캐빈 안에 서 있을 때 앞으로 걷습니다."
+      },
+      "back": {
+        "title": "뒤로 걷기",
+        "desc": "캐빈 안에 서 있을 때 뒤로 걷습니다."
+      },
+      "left": {
+        "title": "왼쪽으로 이동",
+        "desc": "캐빈 안에 서 있을 때 왼쪽으로 옆걸음합니다."
+      },
+      "right": {
+        "title": "오른쪽으로 이동",
+        "desc": "캐빈 안에 서 있을 때 오른쪽으로 옆걸음합니다."
+      },
+      "crouch": {
+        "title": "웅크리기",
+        "desc": "서 있을 때 웅크립니다."
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "수동",
-      "desc": "직접 작동하는 시선 및 확대 효과입니다.",
+      "desc": "직접 작동하는 시선, 줌, 걷기 효과입니다.",
       "mirror_check": {
         "title": "미러 확인",
         "desc": "방향지시등이 켜져 있는 동안 해당 미러를 바라보고, 꺼지면 정면으로 돌아옵니다.",
@@ -347,6 +373,18 @@
           "title": "토글 모드",
           "desc": "켜짐: 한 번 누르면 숙이고, 다시 누르면 돌아옵니다. 꺼짐: 누르고 있는 동안 숙이고, 놓으면 돌아옵니다."
         }
+      },
+      "cabin_walk": {
+        "title": "캐빈 걷기",
+        "desc": "주차 중에 운전석에서 일어나 캐빈 안을 자유롭게 걸어 다닙니다.",
+        "hint": "기본 레이아웃은 각 트럭의 가장 작은 슬리퍼 캐빈에 맞춰져 있습니다. 다른 캐빈은 조정이 필요할 수 있습니다.",
+        "enabled": {
+          "title": "캐빈 걷기 사용"
+        },
+        "require_parking_brake": {
+          "title": "주차 브레이크 필요",
+          "desc": "켜짐: 주차 브레이크가 필요하며, 풀면 돌아갑니다. 꺼짐: 정차만 하면 됩니다."
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "metric",
       "kmh": "km/h",
       "mph": "mph"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "자리를 떠나려면 주차 브레이크를 채우세요.",
+      "needs_stop": "자리를 떠나려면 트럭을 멈추세요.",
+      "back_to_wheel": "운전석으로 복귀: 트럭이 더 이상 주차 상태가 아닙니다.",
+      "layout": {
+        "no_truck": "캐빈을 설정하려면 트럭에 탑승하세요.",
+        "truck": "트럭",
+        "tip": {
+          "floor_z_min": "앞쪽으로 얼마나 걸어갈 수 있는지(앞유리 방향).",
+          "floor_z_max": "뒤쪽으로 얼마나 걸어갈 수 있는지(뒷벽 방향).",
+          "floor_x_min": "운전석 문 쪽으로 얼마나 갈 수 있는지.",
+          "floor_x_max": "조수석 문 쪽으로 얼마나 갈 수 있는지.",
+          "stand_y": "서 있을 때 눈높이.",
+          "crouch_depth": "웅크릴 때 머리가 내려가는 정도입니다.",
+          "passenger_dx": "내 좌석을 반대편에 비춘 위치에서 옆으로 이동.",
+          "passenger_dy": "내 좌석보다 높거나 낮게.",
+          "passenger_dz": "내 좌석보다 앞이나 뒤로.",
+          "bunk_sit_x": "침대 위 어디에 앉는지.",
+          "bunk_sit_y": "침대에 앉았을 때 눈높이.",
+          "bunk_sit_z": "침대 가장자리가 얼마나 뒤에 있는지.",
+          "yaw": "앉았을 때 보는 방향.",
+          "pitch": "앉았을 때 위아래로 보는 정도.",
+          "has_passenger": "조수석이 접히거나 없으면 체크를 해제하세요.",
+          "has_bunk": "침대가 없는 데이 캡이면 체크를 해제하세요."
+        },
+        "group": {
+          "walkway": "보행 영역",
+          "heights": "서 있을 때 높이",
+          "passenger": "조수석",
+          "bunk": "침대"
+        },
+        "go": "그곳으로 이동",
+        "usable": "사용 가능",
+        "advanced": "고급",
+        "reset": "배치 초기화",
+        "reset_title": "캐빈 배치 초기화",
+        "reset_message": "{truck}의 배치를 기본값으로 되돌릴까요?",
+        "reset_confirm": "예, 초기화",
+        "floor_x_min": "왼쪽 경계",
+        "floor_x_max": "오른쪽 경계",
+        "floor_z_min": "앞쪽 경계",
+        "floor_z_max": "뒤쪽 경계",
+        "crouch_depth": "웅크리기 깊이",
+        "passenger_dx": "좌우",
+        "passenger_dy": "높이",
+        "passenger_dz": "앞뒤",
+        "passenger_yaw": "회전",
+        "passenger_pitch": "기울기",
+        "bunk_sit_x": "좌우",
+        "bunk_sit_y": "높이",
+        "bunk_sit_z": "앞뒤",
+        "bunk_sit_yaw": "회전",
+        "bunk_sit_pitch": "기울기"
+      }
     }
   }
 }
