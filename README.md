@@ -83,10 +83,9 @@ active while in the interior (cabin) camera view.
 
 ## Configuration
 
-All parameters are tuned live either through SPF's native in-game settings
-window, or through MotionCab's own **Quick Settings** window, which mirrors
-the same settings and adds a few conveniences: right-click any slider to reset it
-to default, and the **Settings** tab has a button to reset every effect at once.
+All parameters are tuned live in MotionCab's own **Quick Settings** window:
+right-click any slider to reset it to default, and the **Settings** tab has a
+button to reset every effect at once.
 Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/settings.json`.
 
 | Setting                      | Default | Description                                                                                                                          |
@@ -182,7 +181,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 ├── src/
 │   ├── Plugin.cpp                    Lifecycle callbacks, telemetry wiring, per-frame driver
 │   ├── core/
-│   │   ├── Manifest.cpp / .hpp       Plugin identity, settings defaults, keybinds, UI metadata
+│   │   ├── Manifest.cpp / .hpp       Plugin identity, settings defaults, keybinds, window
 │   │   ├── CameraRig.cpp / .hpp      Writes the effects' offset into the interior camera
 │   │   ├── PluginContext.cpp / .hpp  Shared plugin state
 │   │   ├── ProfileManager.cpp / .hpp Create/save/switch named presets
@@ -233,14 +232,14 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   └── check-localization.py         Checks every language file against en.json
 ├── CMakeLists.txt                    Plugin sources, deploy steps
 ├── CMakePresets.json                 Toolchain/build-type presets
-├── CMakeUserPresets.json             Game deploy paths
+├── CMakeUserPresets.json.example     Template for your game deploy paths
 ├── version.rc.in                     Windows version resource
 └── LICENSE                           Project license
 ```
 
 <!-- markdownlint-enable MD013 -->
 
-## Contributing
+## Contribute
 
 Bug reports, feature requests, pull requests and translation fixes are
 welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md) for build instructions,

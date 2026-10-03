@@ -28,22 +28,25 @@
 - [ ] Effect is toggleable via its own "enabled" setting
 - [ ] Effect is active in cabin view only
 - [ ] Effect doesn't conflict with existing effects
+- [ ] Effect overrides `NeedsDriverSeat()`, if it only makes sense in the
+      driver's seat
 - [ ] Setting declared in `settings::kAll` (`src/core/SettingsSchema.hpp`)
 - [ ] New effect listed in `kEffects` (`src/ui/EffectTabs.cpp`)
+- [ ] Keybind declared in `src/core/Keybinds.hpp` (`kAllActions`), if any
 - [ ] Text added to every `localization/*.json` file
+- [ ] `README.md`'s settings table updated, if a setting changed
 - [ ] Checked `./SPF_API` docs before implementing/modifying an SDK interaction
 
 ## Test plan
 
 <!--
 How did you verify this works? e.g. built locally, tested in-game with
-X truck/trailer, checked native UI + Quick Settings window stay in sync.
+X truck/trailer, checked the Quick Settings window.
 -->
 
 - [ ] Built successfully via `cmake --workflow --preset user-mingw-make-release`
 - [ ] Tested in-game
-- [ ] Native settings UI and Quick Settings window both updated, if a
-      setting changed
+- [ ] Quick Settings window checked in-game, if a setting changed
 - [ ] `python3 .github/scripts/check-localization.py` passes, if a
       `localization/*.json` file changed
 - [ ] Changed text checked in-game in that language (reads naturally,
@@ -51,7 +54,8 @@ X truck/trailer, checked native UI + Quick Settings window stay in sync.
 
 ## Screenshots / Videos
 
-<!-- For UI-visible changes (native settings UI, Quick Settings window).
+<!-- For visible changes: a video of the effect in the cabin, or a
+     screenshot of the UI (Quick Settings window, native SPF windows).
      N/A otherwise. -->
 
 ## Commit style

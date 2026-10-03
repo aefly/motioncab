@@ -19,7 +19,7 @@ body:
     id: spf-version
     attributes:
       label: SPF Framework version
-      placeholder: e.g. 1.2.3
+      placeholder: e.g. 1.2.5
     validations:
       required: true
 
