@@ -75,13 +75,8 @@
     "enabled_desc": "Bu efekti açar veya kapatır.",
     "driving": {
       "title": "Sürüş",
-      "desc": "Kafa ve kameranın, tırın hareketine ve direksiyonuna verdiği tepkiler.",
       "head_motion": {
         "title": "Kafa hareketi",
-        "desc": "Dinamik kafa hareketi efekti ayarları.",
-        "enabled": {
-          "title": "Kafa hareketini etkinleştir"
-        },
         "sway_strength": {
           "title": "Sallanma gücü",
           "desc": "Hızlanırken, fren yaparken veya viraja girerken kafanızın ne kadar itildiği."
@@ -97,10 +92,6 @@
       },
       "body_dynamics": {
         "title": "Vücut dinamikleri",
-        "desc": "Tırın hareketine tepki veren bir sürücü gövdesi gibi, kafa virajlarda dışa doğru yatar ve fren yaparken öne eğilir.",
-        "enabled": {
-          "title": "Vücut dinamiklerini etkinleştir"
-        },
         "lean_strength": {
           "title": "Yatma gücü",
           "desc": "Kafanızın virajın dışına doğru ne kadar yattığı."
@@ -116,10 +107,6 @@
       },
       "steering_camera": {
         "title": "Direksiyon kamerası",
-        "desc": "Direksiyonu takip eden yumuşatılmış kamera dönüşü.",
-        "enabled": {
-          "title": "Direksiyon kamerasını etkinleştir"
-        },
         "rotation_left_deg": {
           "title": "Dönüş miktarı (sol)",
           "desc": "Direksiyonu sonuna kadar sola çevirdiğinizde kameranın ne kadar döndüğü."
@@ -144,13 +131,8 @@
     },
     "road": {
       "title": "Yol",
-      "desc": "Yol yüzeyi, süspansiyon ve hızdan kaynaklanan efektler.",
       "suspension": {
         "title": "Süspansiyon",
-        "desc": "Tümseklerde kameranın yaylanması, havalı süspansiyonlu bir koltuk gibi: aşağı iner, geri seker ve ardından eski konumuna döner. Yalnızca bir taraftaki tümsekler kafanızı da hafifçe yatırır.",
-        "enabled": {
-          "title": "Süspansiyonu etkinleştir"
-        },
         "vertical_strength": {
           "title": "Dikey güç",
           "desc": "Yoldaki tümseklerin kamerayı ne kadar zıplattığı ve yatırdığı."
@@ -166,10 +148,6 @@
       },
       "road_irregularity": {
         "title": "Yol pürüzlülüğü",
-        "desc": "Tekerleklerin altındaki zemine göre titreşim (çakıl, parke taşı, toprak). Engebeli zemin kafanızı ayrıca iki yana sallar.",
-        "enabled": {
-          "title": "Yol pürüzlülüğünü etkinleştir"
-        },
         "intensity": {
           "title": "Yoğunluk",
           "desc": "Yol dokusu titreşiminin ve arazideki sallanmanın ne kadar güçlü hissettirdiği."
@@ -181,10 +159,6 @@
       },
       "speed_shake": {
         "title": "Hız sarsıntısı",
-        "desc": "Sürüş sırasında hız ve bozuk zeminle artan gerçekçi kafa sallanması.",
-        "enabled": {
-          "title": "Hız sarsıntısını etkinleştir"
-        },
         "intensity": {
           "title": "Yoğunluk",
           "desc": "Hızlı sürerken hissettiğiniz sarsıntının genel gücü."
@@ -209,13 +183,8 @@
     },
     "cabin": {
       "title": "Kabin",
-      "desc": "Kabin içindeki sürücü ve motor kaynaklı efektler.",
       "idle_breathing": {
         "title": "Beklerken nefes alma",
-        "desc": "Hız arttıkça kaybolan, beklerken hafif nefes alma hareketi.",
-        "enabled": {
-          "title": "Beklerken nefes almayı etkinleştir"
-        },
         "vertical_amplitude": {
           "title": "Dikey genlik",
           "desc": "Kameranın her nefeste ne kadar yükselip alçaldığı."
@@ -239,10 +208,6 @@
       },
       "engine_vibration": {
         "title": "Motor titreşimi",
-        "desc": "Devire göre ölçeklenen ince motor titreşimi. Elektrikli tırlarda otomatik olarak devre dışıdır.",
-        "enabled": {
-          "title": "Motor titreşimini etkinleştir"
-        },
         "intensity": {
           "title": "Yoğunluk",
           "desc": "Motor uğultusunun ne kadar güçlü hissettirdiği."
@@ -250,10 +215,6 @@
       },
       "engine_start_stop": {
         "title": "Motor çalıştırma/durdurma",
-        "desc": "Motor çalıştığında veya stop ettiğinde kısa bir mekanik sarsıntı. Elektrikli tırlarda otomatik olarak devre dışıdır.",
-        "enabled": {
-          "title": "Motor çalıştırma/durdurmayı etkinleştir"
-        },
         "intensity": {
           "title": "Yoğunluk",
           "desc": "Motor çalışırken veya dururken sarsıntının ne kadar güçlü hissettirdiği."
@@ -266,14 +227,9 @@
     },
     "manual": {
       "title": "Manuel",
-      "desc": "Kendin tetiklediğin bakış, yakınlaştırma ve yürüme efektleri.",
       "mirror_check": {
         "title": "Ayna kontrolü",
-        "desc": "Sinyal açıkken ilgili aynaya bakar ve sinyal kapanınca merkeze döner.",
         "hint": "Oyunun \"Sol sinyal\" ve \"Sağ sinyal\" tuşlarının atanmış olmasını gerektirir.",
-        "enabled": {
-          "title": "Ayna kontrolünü etkinleştir"
-        },
         "look_angle_deg": {
           "title": "Bakış açısı",
           "desc": "Aynayı kontrol etmek için kafanızın ne kadar döndüğü."
@@ -297,11 +253,7 @@
       },
       "manual_look": {
         "title": "Manuel bakış",
-        "desc": "İki tuşa atanmış yumuşak sola/sağa bakışlar.",
         "hint": "Bu tuşlar oyunun kendi kontrollerinden bağımsızdır.",
-        "enabled": {
-          "title": "Manuel bakışı etkinleştir"
-        },
         "look_angle_deg": {
           "title": "Bakış açısı",
           "desc": "Sola veya sağa baktığınızda kafanızın ne kadar döndüğü."
@@ -317,11 +269,7 @@
       },
       "manual_zoom": {
         "title": "Manuel yakınlaştırma",
-        "desc": "Özel bir tuşta yumuşak yakınlaştırma: yakınlaştırmak için basılı tutun, yavaşça normale dönmek için bırakın.",
         "hint": "Bu tuş, oyunun \"İç kamerayı yakınlaştır\" tuşundan bağımsızdır.",
-        "enabled": {
-          "title": "Manuel yakınlaştırmayı etkinleştir"
-        },
         "zoom_fov_deg": {
           "title": "Yakınlaştırma seviyesi",
           "desc": "Yakınlaştırma tuşunu basılı tutarken görüntünün ne kadar yakınlaştığı. Düşük = daha fazla yakınlaştırma."
@@ -333,10 +281,6 @@
       },
       "blindspot_viewer": {
         "title": "Kör nokta görüşü",
-        "desc": "Bir tuşla, ön cam direğinin gizlediği trafik ışıklarını görmek için öne eğilir.",
-        "enabled": {
-          "title": "Kör nokta görüşünü etkinleştir"
-        },
         "pos_x": {
           "title": "Yana kayma",
           "desc": "Bakış sırasında başınızın sola veya sağa ne kadar kaydığı."
@@ -376,11 +320,7 @@
       },
       "cabin_walk": {
         "title": "Kabinde Yürüme",
-        "desc": "Park halindeyken sürücü koltuğundan kalk ve kabinde serbestçe dolaş.",
         "hint": "Varsayılan düzenler her kamyonun en küçük yataklı kabinine göre ayarlanmıştır. Diğer kabinlerin ayarlanması gerekebilir.",
-        "enabled": {
-          "title": "Kabinde Yürümeyi Etkinleştir"
-        },
         "require_parking_brake": {
           "title": "El Freni Gereksin",
           "desc": "Açık: el freni gerekir, indirmek seni geri gönderir. Kapalı: durmak yeterlidir."

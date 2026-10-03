@@ -75,13 +75,8 @@
     "enabled_desc": "Włącza lub wyłącza ten efekt.",
     "driving": {
       "title": "Jazda",
-      "desc": "Reakcje głowy i kamery na to, jak ciężarówka się porusza i skręca.",
       "head_motion": {
         "title": "Ruch głowy",
-        "desc": "Ustawienia efektu dynamicznego ruchu głowy.",
-        "enabled": {
-          "title": "Włącz ruch głowy"
-        },
         "sway_strength": {
           "title": "Siła kołysania",
           "desc": "Jak mocno głowa jest popychana przy przyspieszaniu, hamowaniu lub na zakręcie."
@@ -97,10 +92,6 @@
       },
       "body_dynamics": {
         "title": "Dynamika ciała",
-        "desc": "Głowa przechyla się na zewnątrz zakrętów i pochyla do przodu przy hamowaniu, jak ciało kierowcy reagujące na ruch ciężarówki.",
-        "enabled": {
-          "title": "Włącz dynamikę ciała"
-        },
         "lean_strength": {
           "title": "Siła wychylenia",
           "desc": "Jak mocno głowa wychyla się na zewnątrz zakrętu."
@@ -116,10 +107,6 @@
       },
       "steering_camera": {
         "title": "Kamera kierownicy",
-        "desc": "Wygładzony obrót kamery podążający za kierownicą.",
-        "enabled": {
-          "title": "Włącz kamerę kierownicy"
-        },
         "rotation_left_deg": {
           "title": "Zakres obrotu (w lewo)",
           "desc": "Jak daleko obraca się kamera, gdy skręcisz kierownicę do oporu w lewo."
@@ -144,13 +131,8 @@
     },
     "road": {
       "title": "Droga",
-      "desc": "Efekty wywołane nawierzchnią, zawieszeniem i prędkością.",
       "suspension": {
         "title": "Zawieszenie",
-        "desc": "Bujanie kamery na nierównościach, jak fotel z pneumatycznym zawieszeniem: opada, odbija się, a potem wraca na miejsce. Nierówności pod jedną stroną lekko przechylają też głowę.",
-        "enabled": {
-          "title": "Włącz zawieszenie"
-        },
         "vertical_strength": {
           "title": "Siła pionowa",
           "desc": "Jak mocno nierówności drogi podrzucają i przechylają kamerę."
@@ -166,10 +148,6 @@
       },
       "road_irregularity": {
         "title": "Nierówności drogi",
-        "desc": "Drgania zależne od podłoża pod kołami (żwir, kocie łby, ziemia). Nierówny teren dodatkowo kołysze głową na boki.",
-        "enabled": {
-          "title": "Włącz nierówności drogi"
-        },
         "intensity": {
           "title": "Intensywność",
           "desc": "Jak silne są drgania nawierzchni i kołysanie w terenie."
@@ -181,10 +159,6 @@
       },
       "speed_shake": {
         "title": "Drgania od prędkości",
-        "desc": "Realistyczne kołysanie głowy podczas jazdy, rosnące wraz z prędkością i na nierównym podłożu.",
-        "enabled": {
-          "title": "Włącz drgania od prędkości"
-        },
         "intensity": {
           "title": "Intensywność",
           "desc": "Ogólna siła drgań odczuwanych przy szybkiej jeździe."
@@ -209,13 +183,8 @@
     },
     "cabin": {
       "title": "Kabina",
-      "desc": "Efekty kierowcy i silnika wewnątrz kabiny.",
       "idle_breathing": {
         "title": "Oddech na postoju",
-        "desc": "Delikatny ruch oddechu na postoju, który zanika wraz ze wzrostem prędkości.",
-        "enabled": {
-          "title": "Włącz oddech na postoju"
-        },
         "vertical_amplitude": {
           "title": "Amplituda pionowa",
           "desc": "Jak wysoko kamera unosi się i opada przy każdym oddechu."
@@ -239,10 +208,6 @@
       },
       "engine_vibration": {
         "title": "Wibracje silnika",
-        "desc": "Delikatne wibracje silnika zależne od obrotów. Automatycznie wyłączone w ciężarówkach elektrycznych.",
-        "enabled": {
-          "title": "Włącz wibracje silnika"
-        },
         "intensity": {
           "title": "Intensywność",
           "desc": "Jak silnie odczuwalne jest dudnienie silnika."
@@ -250,10 +215,6 @@
       },
       "engine_start_stop": {
         "title": "Start/stop silnika",
-        "desc": "Krótkie mechaniczne szarpnięcie przy uruchamianiu lub gaśnięciu silnika. Automatycznie wyłączone w ciężarówkach elektrycznych.",
-        "enabled": {
-          "title": "Włącz start/stop silnika"
-        },
         "intensity": {
           "title": "Intensywność",
           "desc": "Jak silne jest szarpnięcie przy uruchamianiu lub gaszeniu silnika."
@@ -266,14 +227,9 @@
     },
     "manual": {
       "title": "Ręczne",
-      "desc": "Efekty patrzenia, przybliżania i chodzenia, które uruchamiasz samodzielnie.",
       "mirror_check": {
         "title": "Sprawdzanie lusterek",
-        "desc": "Spogląda w odpowiednie lusterko, gdy włączony jest kierunkowskaz, i wraca na środek po jego wyłączeniu.",
         "hint": "Wymaga przypisania w grze klawiszy „Lewy kierunkowskaz” i „Prawy kierunkowskaz”.",
-        "enabled": {
-          "title": "Włącz sprawdzanie lusterek"
-        },
         "look_angle_deg": {
           "title": "Kąt spojrzenia",
           "desc": "Jak daleko obraca się głowa, aby spojrzeć w lusterko."
@@ -297,11 +253,7 @@
       },
       "manual_look": {
         "title": "Ręczne spojrzenie",
-        "desc": "Płynne spojrzenia w lewo/prawo przypisane do dwóch klawiszy.",
         "hint": "Te klawisze są niezależne od sterowania w grze.",
-        "enabled": {
-          "title": "Włącz ręczne spojrzenie"
-        },
         "look_angle_deg": {
           "title": "Kąt spojrzenia",
           "desc": "Jak daleko obraca się głowa, gdy patrzysz w lewo lub w prawo."
@@ -317,11 +269,7 @@
       },
       "manual_zoom": {
         "title": "Ręczne przybliżenie",
-        "desc": "Płynne przybliżenie pod osobnym klawiszem: przytrzymaj, aby przybliżyć, puść, aby stopniowo wrócić do normalnego widoku.",
         "hint": "Ten klawisz jest niezależny od klawisza gry „Przybliżenie kamery wewnętrznej”.",
-        "enabled": {
-          "title": "Włącz ręczne przybliżenie"
-        },
         "zoom_fov_deg": {
           "title": "Poziom przybliżenia",
           "desc": "Jak bardzo przybliża się widok, gdy trzymasz klawisz zoomu. Niżej = większe przybliżenie."
@@ -333,10 +281,6 @@
       },
       "blindspot_viewer": {
         "title": "Podgląd martwego pola",
-        "desc": "Po naciśnięciu klawisza pochyla się, aby zobaczyć sygnalizację zasłoniętą przez słupek szyby.",
-        "enabled": {
-          "title": "Włącz podgląd martwego pola"
-        },
         "pos_x": {
           "title": "Przesunięcie w bok",
           "desc": "Jak daleko głowa przesuwa się w lewo lub w prawo podczas zerknięcia."
@@ -376,11 +320,7 @@
       },
       "cabin_walk": {
         "title": "Chodzenie po kabinie",
-        "desc": "Wstań z fotela kierowcy i swobodnie chodź po kabinie, gdy ciężarówka stoi zaparkowana.",
         "hint": "Domyślne układy są ustawione dla najmniejszej kabiny sypialnej każdej ciężarówki. Inne kabiny mogą wymagać dostosowania.",
-        "enabled": {
-          "title": "Włącz chodzenie po kabinie"
-        },
         "require_parking_brake": {
           "title": "Wymagaj hamulca postojowego",
           "desc": "Wł.: wymaga hamulca postojowego, zwolnienie go odsyła cię z powrotem. Wył.: wystarczy postój."

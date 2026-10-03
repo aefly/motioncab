@@ -75,13 +75,8 @@
     "enabled_desc": "Activa o desactiva este efecto.",
     "driving": {
       "title": "Conducción",
-      "desc": "Reacciones de la cabeza y la cámara a cómo se mueve y gira el camión.",
       "head_motion": {
         "title": "Movimiento de cabeza",
-        "desc": "Ajustes del efecto de movimiento dinámico de la cabeza.",
-        "enabled": {
-          "title": "Activar movimiento de cabeza"
-        },
         "sway_strength": {
           "title": "Fuerza del balanceo",
           "desc": "Cuánto se desplaza tu cabeza al acelerar, frenar o tomar una curva."
@@ -97,10 +92,6 @@
       },
       "body_dynamics": {
         "title": "Dinámica corporal",
-        "desc": "La cabeza se inclina hacia el exterior de las curvas y cabecea hacia delante al frenar, como el cuerpo de un conductor que reacciona al movimiento del camión.",
-        "enabled": {
-          "title": "Activar dinámica corporal"
-        },
         "lean_strength": {
           "title": "Fuerza de inclinación lateral",
           "desc": "Cuánto se inclina tu cabeza hacia el exterior de una curva."
@@ -116,10 +107,6 @@
       },
       "steering_camera": {
         "title": "Cámara de dirección",
-        "desc": "Rotación suavizada de la cámara que sigue al volante.",
-        "enabled": {
-          "title": "Activar cámara de dirección"
-        },
         "rotation_left_deg": {
           "title": "Cantidad de rotación (izquierda)",
           "desc": "Cuánto gira la cámara cuando giras el volante hasta el tope a la izquierda."
@@ -144,13 +131,8 @@
     },
     "road": {
       "title": "Carretera",
-      "desc": "Efectos causados por el firme, la suspensión y la velocidad.",
       "suspension": {
         "title": "Suspensión",
-        "desc": "Rebote de la cámara sobre los baches, como un asiento con suspensión neumática: se hunde, rebota y luego vuelve a su sitio. Los baches de un solo lado también inclinan ligeramente tu cabeza.",
-        "enabled": {
-          "title": "Activar suspensión"
-        },
         "vertical_strength": {
           "title": "Fuerza vertical",
           "desc": "Cuánto hacen rebotar e inclinar la cámara los baches de la carretera."
@@ -166,10 +148,6 @@
       },
       "road_irregularity": {
         "title": "Irregularidad del terreno",
-        "desc": "Vibración según el suelo bajo las ruedas (grava, adoquines, tierra). El terreno irregular también balancea tu cabeza de lado a lado.",
-        "enabled": {
-          "title": "Activar irregularidad del terreno"
-        },
         "intensity": {
           "title": "Intensidad",
           "desc": "Lo fuerte que se sienten la vibración del firme y el balanceo fuera de la carretera."
@@ -181,10 +159,6 @@
       },
       "speed_shake": {
         "title": "Temblor por velocidad",
-        "desc": "Balanceo realista de la cabeza al conducir, que aumenta con la velocidad y el terreno irregular.",
-        "enabled": {
-          "title": "Activar temblor por velocidad"
-        },
         "intensity": {
           "title": "Intensidad",
           "desc": "Fuerza general del temblor que sientes al conducir rápido."
@@ -209,13 +183,8 @@
     },
     "cabin": {
       "title": "Cabina",
-      "desc": "Efectos del conductor y del motor dentro de la cabina.",
       "idle_breathing": {
         "title": "Respiración en reposo",
-        "desc": "Sutil movimiento de respiración en reposo que se desvanece al aumentar la velocidad.",
-        "enabled": {
-          "title": "Activar respiración en reposo"
-        },
         "vertical_amplitude": {
           "title": "Amplitud vertical",
           "desc": "Cuánto sube y baja la cámara con cada respiración."
@@ -239,10 +208,6 @@
       },
       "engine_vibration": {
         "title": "Vibración del motor",
-        "desc": "Fina vibración del motor según las RPM. Se desactiva automáticamente en camiones eléctricos.",
-        "enabled": {
-          "title": "Activar vibración del motor"
-        },
         "intensity": {
           "title": "Intensidad",
           "desc": "Lo fuerte que se siente el rugido del motor."
@@ -250,10 +215,6 @@
       },
       "engine_start_stop": {
         "title": "Arranque/parada del motor",
-        "desc": "Una breve sacudida mecánica cuando el motor arranca o se apaga. Se desactiva automáticamente en camiones eléctricos.",
-        "enabled": {
-          "title": "Activar arranque/parada del motor"
-        },
         "intensity": {
           "title": "Intensidad",
           "desc": "Lo fuerte que se siente la sacudida al arrancar o parar el motor."
@@ -266,14 +227,9 @@
     },
     "manual": {
       "title": "Manual",
-      "desc": "Efectos de mirada, zoom y caminar que activas tú mismo.",
       "mirror_check": {
         "title": "Mirar los espejos",
-        "desc": "Mira hacia el espejo correspondiente mientras un intermitente está encendido y vuelve al centro cuando se apaga.",
         "hint": "Requiere que las teclas nativas del juego «Intermitente izquierdo» e «Intermitente derecho» estén asignadas.",
-        "enabled": {
-          "title": "Activar mirar los espejos"
-        },
         "look_angle_deg": {
           "title": "Ángulo de mirada",
           "desc": "Cuánto gira tu cabeza para mirar el espejo."
@@ -297,11 +253,7 @@
       },
       "manual_look": {
         "title": "Mirada manual",
-        "desc": "Miradas suaves a la izquierda/derecha asignadas a dos teclas.",
         "hint": "Estas teclas son independientes de los controles nativos del juego.",
-        "enabled": {
-          "title": "Activar mirada manual"
-        },
         "look_angle_deg": {
           "title": "Ángulo de mirada",
           "desc": "Cuánto gira tu cabeza al mirar a la izquierda o a la derecha."
@@ -317,11 +269,7 @@
       },
       "manual_zoom": {
         "title": "Zoom manual",
-        "desc": "Zoom suave en una tecla dedicada: mantén pulsado para acercar y suelta para volver poco a poco a la vista normal.",
         "hint": "Esta tecla es independiente de la tecla nativa del juego «Zoom de la cámara interior».",
-        "enabled": {
-          "title": "Activar zoom manual"
-        },
         "zoom_fov_deg": {
           "title": "Nivel de zoom",
           "desc": "Cuánto se acerca la vista mientras mantienes la tecla de zoom. Más bajo = más zoom."
@@ -333,10 +281,6 @@
       },
       "blindspot_viewer": {
         "title": "Visor de ángulo muerto",
-        "desc": "Se inclina al pulsar una tecla para ver semáforos tapados por el pilar del parabrisas.",
-        "enabled": {
-          "title": "Activar visor de ángulo muerto"
-        },
         "pos_x": {
           "title": "Desplazamiento lateral",
           "desc": "Cuánto se mueve tu cabeza a izquierda o derecha durante el vistazo."
@@ -376,11 +320,7 @@
       },
       "cabin_walk": {
         "title": "Caminar por la cabina",
-        "desc": "Levántate del asiento del conductor y camina libremente por la cabina con el camión aparcado.",
         "hint": "Las distribuciones predeterminadas están ajustadas a la cabina litera más pequeña de cada camión. Las demás cabinas pueden necesitar ajustes.",
-        "enabled": {
-          "title": "Activar Caminar por la cabina"
-        },
         "require_parking_brake": {
           "title": "Exigir freno de estacionamiento",
           "desc": "Activado: requiere el freno de estacionamiento, quitarlo te devuelve. Desactivado: basta con parar."

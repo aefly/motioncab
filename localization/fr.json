@@ -75,13 +75,8 @@
     "enabled_desc": "Active ou désactive cet effet.",
     "driving": {
       "title": "Conduite",
-      "desc": "Réactions de la tête et de la caméra aux mouvements et à la direction du camion.",
       "head_motion": {
         "title": "Mouvement de tête",
-        "desc": "Réglages de l'effet de mouvement de tête dynamique.",
-        "enabled": {
-          "title": "Activer le mouvement de tête"
-        },
         "sway_strength": {
           "title": "Force du balancement",
           "desc": "À quel point votre tête est bousculée quand vous accélérez, freinez ou prenez un virage."
@@ -97,10 +92,6 @@
       },
       "body_dynamics": {
         "title": "Dynamique du corps",
-        "desc": "La tête penche vers l'extérieur des virages et bascule vers l'avant au freinage, comme le corps d'un conducteur qui réagit aux mouvements du camion.",
-        "enabled": {
-          "title": "Activer la dynamique du corps"
-        },
         "lean_strength": {
           "title": "Force de penchement",
           "desc": "À quel point votre tête penche vers l'extérieur d'un virage."
@@ -116,10 +107,6 @@
       },
       "steering_camera": {
         "title": "Caméra de direction",
-        "desc": "Rotation lissée de la caméra qui suit le volant.",
-        "enabled": {
-          "title": "Activer la caméra de direction"
-        },
         "rotation_left_deg": {
           "title": "Amplitude de rotation (gauche)",
           "desc": "Jusqu'où la caméra tourne quand vous braquez le volant à fond vers la gauche."
@@ -144,13 +131,8 @@
     },
     "road": {
       "title": "Route",
-      "desc": "Effets liés au revêtement de la route, à la suspension et à la vitesse.",
       "suspension": {
         "title": "Suspension",
-        "desc": "Rebond de la caméra sur les bosses, comme un siège à suspension pneumatique : elle s'enfonce, rebondit, puis revient en place. Les bosses d'un seul côté inclinent aussi légèrement la tête.",
-        "enabled": {
-          "title": "Activer la suspension"
-        },
         "vertical_strength": {
           "title": "Force verticale",
           "desc": "À quel point les bosses de la route font rebondir et pencher la caméra."
@@ -166,10 +148,6 @@
       },
       "road_irregularity": {
         "title": "Irrégularités de la route",
-        "desc": "Vibrations selon le sol sous les roues (gravier, pavés, terre). Les sols irréguliers balancent aussi votre tête d'un côté à l'autre.",
-        "enabled": {
-          "title": "Activer les irrégularités de la route"
-        },
         "intensity": {
           "title": "Intensité",
           "desc": "Force des vibrations du revêtement et du balancement hors route."
@@ -181,10 +159,6 @@
       },
       "speed_shake": {
         "title": "Tremblement de vitesse",
-        "desc": "Balancement réaliste de la tête en roulant, qui augmente avec la vitesse et les sols accidentés.",
-        "enabled": {
-          "title": "Activer le tremblement de vitesse"
-        },
         "intensity": {
           "title": "Intensité",
           "desc": "Force globale du tremblement ressenti en roulant vite."
@@ -209,13 +183,8 @@
     },
     "cabin": {
       "title": "Cabine",
-      "desc": "Effets du conducteur et du moteur à l'intérieur de la cabine.",
       "idle_breathing": {
         "title": "Respiration au repos",
-        "desc": "Léger mouvement de respiration au repos qui s'estompe quand la vitesse augmente.",
-        "enabled": {
-          "title": "Activer la respiration au repos"
-        },
         "vertical_amplitude": {
           "title": "Amplitude verticale",
           "desc": "De combien la caméra monte et descend à chaque respiration."
@@ -239,10 +208,6 @@
       },
       "engine_vibration": {
         "title": "Vibration du moteur",
-        "desc": "Fine vibration du moteur proportionnelle au régime. Désactivée automatiquement sur les camions électriques.",
-        "enabled": {
-          "title": "Activer la vibration du moteur"
-        },
         "intensity": {
           "title": "Intensité",
           "desc": "Force du grondement du moteur."
@@ -250,10 +215,6 @@
       },
       "engine_start_stop": {
         "title": "Démarrage/arrêt du moteur",
-        "desc": "Une courte secousse mécanique quand le moteur démarre ou cale. Désactivée automatiquement sur les camions électriques.",
-        "enabled": {
-          "title": "Activer le démarrage/arrêt du moteur"
-        },
         "intensity": {
           "title": "Intensité",
           "desc": "Force de la secousse au démarrage ou à l'arrêt du moteur."
@@ -266,14 +227,9 @@
     },
     "manual": {
       "title": "Manuel",
-      "desc": "Effets de regard, de zoom et de marche que vous déclenchez vous-même.",
       "mirror_check": {
         "title": "Contrôle des rétroviseurs",
-        "desc": "Regarde vers le rétroviseur correspondant tant qu'un clignotant est allumé, et se recentre quand il s'éteint.",
         "hint": "Nécessite que les touches natives « Clignotant gauche » et « Clignotant droit » du jeu soient assignées.",
-        "enabled": {
-          "title": "Activer le contrôle des rétroviseurs"
-        },
         "look_angle_deg": {
           "title": "Angle de regard",
           "desc": "De combien votre tête tourne pour regarder le rétroviseur."
@@ -297,11 +253,7 @@
       },
       "manual_look": {
         "title": "Regard manuel",
-        "desc": "Coups d'œil fluides à gauche/à droite assignés à deux touches.",
         "hint": "Ces touches sont indépendantes des commandes natives du jeu.",
-        "enabled": {
-          "title": "Activer le regard manuel"
-        },
         "look_angle_deg": {
           "title": "Angle de regard",
           "desc": "De combien votre tête tourne quand vous regardez à gauche ou à droite."
@@ -317,11 +269,7 @@
       },
       "manual_zoom": {
         "title": "Zoom manuel",
-        "desc": "Zoom fluide sur une touche dédiée : maintenir pour zoomer, relâcher pour revenir progressivement à la normale.",
         "hint": "Cette touche est indépendante de la touche native « Zoom caméra intérieure » du jeu.",
-        "enabled": {
-          "title": "Activer le zoom manuel"
-        },
         "zoom_fov_deg": {
           "title": "Niveau de zoom",
           "desc": "Niveau de zoom atteint en maintenant la touche. Plus bas = zoom plus fort."
@@ -333,10 +281,6 @@
       },
       "blindspot_viewer": {
         "title": "Vue angle mort",
-        "desc": "Se penche en avant d'une touche pour voir les feux cachés par le montant de pare-brise.",
-        "enabled": {
-          "title": "Activer la vue angle mort"
-        },
         "pos_x": {
           "title": "Décalage latéral",
           "desc": "De combien votre tête se déplace vers la gauche ou la droite pendant le coup d'œil."
@@ -376,11 +320,7 @@
       },
       "cabin_walk": {
         "title": "Marche en cabine",
-        "desc": "Quittez le siège conducteur et marchez librement dans la cabine une fois garé.",
         "hint": "Les dispositions par défaut sont réglées sur la plus petite cabine couchette de chaque camion. Les autres cabines peuvent nécessiter un ajustement.",
-        "enabled": {
-          "title": "Activer la marche en cabine"
-        },
         "require_parking_brake": {
           "title": "Exiger le frein de parc",
           "desc": "Activé : frein de parc requis, le desserrer vous ramène au volant. Désactivé : l'arrêt suffit."

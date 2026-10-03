@@ -75,13 +75,8 @@
     "enabled_desc": "Liga ou desliga este efeito.",
     "driving": {
       "title": "Direção",
-      "desc": "Reações da cabeça e da câmera à forma como o caminhão se move e esterça.",
       "head_motion": {
         "title": "Movimento da cabeça",
-        "desc": "Configurações do efeito de movimento dinâmico da cabeça.",
-        "enabled": {
-          "title": "Ativar movimento da cabeça"
-        },
         "sway_strength": {
           "title": "Força do balanço",
           "desc": "Quanto sua cabeça é empurrada ao acelerar, frear ou fazer uma curva."
@@ -97,10 +92,6 @@
       },
       "body_dynamics": {
         "title": "Dinâmica do corpo",
-        "desc": "A cabeça se inclina para fora nas curvas e cai para a frente ao frear, como o corpo de um motorista reagindo ao movimento do caminhão.",
-        "enabled": {
-          "title": "Ativar dinâmica do corpo"
-        },
         "lean_strength": {
           "title": "Força da inclinação lateral",
           "desc": "Quanto sua cabeça se inclina para fora de uma curva."
@@ -116,10 +107,6 @@
       },
       "steering_camera": {
         "title": "Câmera de direção",
-        "desc": "Rotação suavizada da câmera que acompanha o volante.",
-        "enabled": {
-          "title": "Ativar câmera de direção"
-        },
         "rotation_left_deg": {
           "title": "Quantidade de rotação (esquerda)",
           "desc": "Quanto a câmera gira quando você esterça o volante até o fim para a esquerda."
@@ -144,13 +131,8 @@
     },
     "road": {
       "title": "Estrada",
-      "desc": "Efeitos causados pelo piso, pela suspensão e pela velocidade.",
       "suspension": {
         "title": "Suspensão",
-        "desc": "Balanço da câmera nos buracos, como um banco com suspensão a ar: afunda, quica e depois volta ao lugar. Buracos de um lado só também inclinam levemente sua cabeça.",
-        "enabled": {
-          "title": "Ativar suspensão"
-        },
         "vertical_strength": {
           "title": "Força vertical",
           "desc": "Quanto os buracos da estrada fazem a câmera quicar e inclinar."
@@ -166,10 +148,6 @@
       },
       "road_irregularity": {
         "title": "Irregularidade do piso",
-        "desc": "Trepidação de acordo com o solo sob as rodas (cascalho, paralelepípedo, terra). Terrenos irregulares também balançam sua cabeça de um lado para o outro.",
-        "enabled": {
-          "title": "Ativar irregularidade do piso"
-        },
         "intensity": {
           "title": "Intensidade",
           "desc": "Quão forte é a trepidação do piso e o balanço fora de estrada."
@@ -181,10 +159,6 @@
       },
       "speed_shake": {
         "title": "Tremor de velocidade",
-        "desc": "Balanço realista da cabeça ao dirigir, que aumenta com a velocidade e o terreno irregular.",
-        "enabled": {
-          "title": "Ativar tremor de velocidade"
-        },
         "intensity": {
           "title": "Intensidade",
           "desc": "Força geral do tremor que você sente ao dirigir rápido."
@@ -209,13 +183,8 @@
     },
     "cabin": {
       "title": "Cabine",
-      "desc": "Efeitos do motorista e do motor dentro da cabine.",
       "idle_breathing": {
         "title": "Respiração parada",
-        "desc": "Movimento sutil de respiração parado que desaparece conforme a velocidade aumenta.",
-        "enabled": {
-          "title": "Ativar respiração parada"
-        },
         "vertical_amplitude": {
           "title": "Amplitude vertical",
           "desc": "Quanto a câmera sobe e desce a cada respiração."
@@ -239,10 +208,6 @@
       },
       "engine_vibration": {
         "title": "Vibração do motor",
-        "desc": "Vibração fina do motor proporcional à RPM. Desativada automaticamente em caminhões elétricos.",
-        "enabled": {
-          "title": "Ativar vibração do motor"
-        },
         "intensity": {
           "title": "Intensidade",
           "desc": "Quão forte é o ronco do motor."
@@ -250,10 +215,6 @@
       },
       "engine_start_stop": {
         "title": "Partida/parada do motor",
-        "desc": "Um breve tranco mecânico quando o motor liga ou morre. Desativado automaticamente em caminhões elétricos.",
-        "enabled": {
-          "title": "Ativar partida/parada do motor"
-        },
         "intensity": {
           "title": "Intensidade",
           "desc": "Quão forte é o tranco quando o motor liga ou desliga."
@@ -266,14 +227,9 @@
     },
     "manual": {
       "title": "Manual",
-      "desc": "Efeitos de olhar, zoom e caminhada que você mesmo aciona.",
       "mirror_check": {
         "title": "Checagem dos espelhos",
-        "desc": "Olha para o espelho correspondente enquanto uma seta está ligada e volta ao centro quando ela desliga.",
         "hint": "Requer que as teclas nativas do jogo \"Seta para a esquerda\" e \"Seta para a direita\" estejam atribuídas.",
-        "enabled": {
-          "title": "Ativar checagem dos espelhos"
-        },
         "look_angle_deg": {
           "title": "Ângulo do olhar",
           "desc": "Quanto sua cabeça gira para olhar o espelho."
@@ -297,11 +253,7 @@
       },
       "manual_look": {
         "title": "Olhar manual",
-        "desc": "Olhadas suaves para a esquerda/direita atribuídas a duas teclas.",
         "hint": "Estas teclas são separadas dos controles nativos do jogo.",
-        "enabled": {
-          "title": "Ativar olhar manual"
-        },
         "look_angle_deg": {
           "title": "Ângulo do olhar",
           "desc": "Quanto sua cabeça gira ao olhar para a esquerda ou para a direita."
@@ -317,11 +269,7 @@
       },
       "manual_zoom": {
         "title": "Zoom manual",
-        "desc": "Zoom suave em uma tecla dedicada: segure para aproximar, solte para voltar aos poucos ao normal.",
         "hint": "Esta tecla é separada da tecla nativa do jogo \"Zoom da câmera interna\".",
-        "enabled": {
-          "title": "Ativar zoom manual"
-        },
         "zoom_fov_deg": {
           "title": "Nível de zoom",
           "desc": "Quanto a visão se aproxima enquanto você segura a tecla de zoom. Mais baixo = mais zoom."
@@ -333,10 +281,6 @@
       },
       "blindspot_viewer": {
         "title": "Visão do ponto cego",
-        "desc": "Inclina-se ao apertar uma tecla para ver semáforos escondidos pela coluna do para-brisa.",
-        "enabled": {
-          "title": "Ativar visão do ponto cego"
-        },
         "pos_x": {
           "title": "Deslocamento lateral",
           "desc": "Quanto a cabeça se move para a esquerda ou direita durante a espiada."
@@ -376,11 +320,7 @@
       },
       "cabin_walk": {
         "title": "Caminhar na cabine",
-        "desc": "Levante-se do banco do motorista e ande livremente pela cabine com o caminhão estacionado.",
         "hint": "Os layouts padrão são ajustados para a menor cabine leito de cada caminhão. Outras cabines podem precisar de ajuste.",
-        "enabled": {
-          "title": "Ativar Caminhar na cabine"
-        },
         "require_parking_brake": {
           "title": "Exigir freio de estacionamento",
           "desc": "Ativado: exige o freio de estacionamento, soltá-lo leva você de volta. Desativado: basta parar."

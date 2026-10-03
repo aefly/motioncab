@@ -75,13 +75,8 @@
     "enabled_desc": "Attiva o disattiva questo effetto.",
     "driving": {
       "title": "Guida",
-      "desc": "Reazioni della testa e della telecamera al movimento e alla sterzata del camion.",
       "head_motion": {
         "title": "Movimento della testa",
-        "desc": "Impostazioni dell'effetto di movimento dinamico della testa.",
-        "enabled": {
-          "title": "Attiva movimento della testa"
-        },
         "sway_strength": {
           "title": "Intensità dell'oscillazione",
           "desc": "Quanto viene spinta la tua testa quando acceleri, freni o affronti una curva."
@@ -97,10 +92,6 @@
       },
       "body_dynamics": {
         "title": "Dinamica del corpo",
-        "desc": "La testa si inclina verso l'esterno delle curve e si piega in avanti in frenata, come il corpo di un autista che reagisce al movimento del camion.",
-        "enabled": {
-          "title": "Attiva dinamica del corpo"
-        },
         "lean_strength": {
           "title": "Intensità dell'inclinazione laterale",
           "desc": "Quanto si inclina la tua testa verso l'esterno di una curva."
@@ -116,10 +107,6 @@
       },
       "steering_camera": {
         "title": "Telecamera di sterzata",
-        "desc": "Rotazione morbida della telecamera che segue il volante.",
-        "enabled": {
-          "title": "Attiva telecamera di sterzata"
-        },
         "rotation_left_deg": {
           "title": "Ampiezza della rotazione (sinistra)",
           "desc": "Quanto ruota la telecamera quando giri il volante fino in fondo a sinistra."
@@ -144,13 +131,8 @@
     },
     "road": {
       "title": "Strada",
-      "desc": "Effetti dovuti al manto stradale, alle sospensioni e alla velocità.",
       "suspension": {
         "title": "Sospensioni",
-        "desc": "Rimbalzo della telecamera sulle buche, come un sedile a sospensione pneumatica: affonda, rimbalza e poi torna in posizione. Le buche su un solo lato inclinano anche leggermente la testa.",
-        "enabled": {
-          "title": "Attiva sospensioni"
-        },
         "vertical_strength": {
           "title": "Intensità verticale",
           "desc": "Quanto le buche della strada fanno sobbalzare e inclinare la telecamera."
@@ -166,10 +148,6 @@
       },
       "road_irregularity": {
         "title": "Irregolarità stradale",
-        "desc": "Vibrazione in base al terreno sotto le ruote (ghiaia, pavé, sterrato). Il terreno irregolare fa anche dondolare la testa da un lato all'altro.",
-        "enabled": {
-          "title": "Attiva irregolarità stradale"
-        },
         "intensity": {
           "title": "Intensità",
           "desc": "Quanto sono forti la vibrazione del manto e il dondolio fuoristrada."
@@ -181,10 +159,6 @@
       },
       "speed_shake": {
         "title": "Tremolio da velocità",
-        "desc": "Oscillazione realistica della testa durante la guida, che aumenta con la velocità e il fondo irregolare.",
-        "enabled": {
-          "title": "Attiva tremolio da velocità"
-        },
         "intensity": {
           "title": "Intensità",
           "desc": "Intensità complessiva del tremolio percepito guidando veloce."
@@ -209,13 +183,8 @@
     },
     "cabin": {
       "title": "Cabina",
-      "desc": "Effetti del conducente e del motore all'interno della cabina.",
       "idle_breathing": {
         "title": "Respirazione a riposo",
-        "desc": "Leggero movimento di respirazione a riposo che svanisce all'aumentare della velocità.",
-        "enabled": {
-          "title": "Attiva respirazione a riposo"
-        },
         "vertical_amplitude": {
           "title": "Ampiezza verticale",
           "desc": "Quanto sale e scende la telecamera a ogni respiro."
@@ -239,10 +208,6 @@
       },
       "engine_vibration": {
         "title": "Vibrazione del motore",
-        "desc": "Leggera vibrazione del motore in base ai giri. Disattivata automaticamente sui camion elettrici.",
-        "enabled": {
-          "title": "Attiva vibrazione del motore"
-        },
         "intensity": {
           "title": "Intensità",
           "desc": "Quanto è forte il rombo del motore."
@@ -250,10 +215,6 @@
       },
       "engine_start_stop": {
         "title": "Avvio/arresto del motore",
-        "desc": "Un breve scossone meccanico quando il motore si avvia o si spegne. Disattivato automaticamente sui camion elettrici.",
-        "enabled": {
-          "title": "Attiva avvio/arresto del motore"
-        },
         "intensity": {
           "title": "Intensità",
           "desc": "Quanto è forte lo scossone all'avvio o all'arresto del motore."
@@ -266,14 +227,9 @@
     },
     "manual": {
       "title": "Manuale",
-      "desc": "Effetti di sguardo, zoom e camminata che attivi tu stesso.",
       "mirror_check": {
         "title": "Controllo specchietti",
-        "desc": "Guarda verso lo specchietto corrispondente mentre un indicatore di direzione è acceso e torna al centro quando si spegne.",
         "hint": "Richiede che i tasti nativi del gioco «Indicatore di direzione sinistro» e «Indicatore di direzione destro» siano assegnati.",
-        "enabled": {
-          "title": "Attiva controllo specchietti"
-        },
         "look_angle_deg": {
           "title": "Angolo dello sguardo",
           "desc": "Quanto ruota la tua testa per guardare lo specchietto."
@@ -297,11 +253,7 @@
       },
       "manual_look": {
         "title": "Sguardo manuale",
-        "desc": "Sguardi morbidi a sinistra/destra assegnati a due tasti.",
         "hint": "Questi tasti sono separati dai comandi nativi del gioco.",
-        "enabled": {
-          "title": "Attiva sguardo manuale"
-        },
         "look_angle_deg": {
           "title": "Angolo dello sguardo",
           "desc": "Quanto ruota la tua testa quando guardi a sinistra o a destra."
@@ -317,11 +269,7 @@
       },
       "manual_zoom": {
         "title": "Zoom manuale",
-        "desc": "Zoom morbido su un tasto dedicato: tieni premuto per ingrandire, rilascia per tornare gradualmente alla vista normale.",
         "hint": "Questo tasto è separato dal tasto nativo del gioco «Zoom telecamera interna».",
-        "enabled": {
-          "title": "Attiva zoom manuale"
-        },
         "zoom_fov_deg": {
           "title": "Livello di zoom",
           "desc": "Quanto si ingrandisce la vista tenendo premuto il tasto zoom. Più basso = più ingrandito."
@@ -333,10 +281,6 @@
       },
       "blindspot_viewer": {
         "title": "Visuale angolo cieco",
-        "desc": "Si sporge alla pressione di un tasto per vedere i semafori nascosti dal montante del parabrezza.",
-        "enabled": {
-          "title": "Attiva visuale angolo cieco"
-        },
         "pos_x": {
           "title": "Spostamento laterale",
           "desc": "Quanto si sposta la testa a sinistra o a destra durante la sbirciata."
@@ -376,11 +320,7 @@
       },
       "cabin_walk": {
         "title": "Camminata in cabina",
-        "desc": "Alzati dal sedile del conducente e muoviti liberamente nella cabina a camion parcheggiato.",
         "hint": "Le disposizioni predefinite sono impostate sulla cabina con cuccetta più piccola di ogni camion. Le altre cabine potrebbero richiedere una regolazione.",
-        "enabled": {
-          "title": "Attiva Camminata in cabina"
-        },
         "require_parking_brake": {
           "title": "Richiedi freno di stazionamento",
           "desc": "Attivo: serve il freno di stazionamento, toglierlo ti riporta indietro. Disattivo: basta fermarsi."

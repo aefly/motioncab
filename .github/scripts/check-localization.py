@@ -60,12 +60,14 @@ def required_keys():
     setting_keys = re.findall(r'(?:Bool|Float|Speed)\("(settings\.[\w.]+)"', schema)
     for key in setting_keys:
         _, group, effect, name = key.split(".")
-        # Groups and effects have their own title/description (native UI
-        # sections, Quick Settings tabs and headers), like each setting.
-        for path in (f"settings.{group}", f"settings.{group}.{effect}", key):
-            required[f"{path}.title"] = SETTINGS_SCHEMA
-            if path != key or name != "enabled":
-                required[f"{path}.desc"] = SETTINGS_SCHEMA
+        # Groups and effects have their own title (Quick Settings tabs and
+        # headers). Each setting has a title and description, except the
+        # "enabled" toggles, which share ui.enabled and settings.enabled_desc.
+        required[f"settings.{group}.title"] = SETTINGS_SCHEMA
+        required[f"settings.{group}.{effect}.title"] = SETTINGS_SCHEMA
+        if name != "enabled":
+            required[f"{key}.title"] = SETTINGS_SCHEMA
+            required[f"{key}.desc"] = SETTINGS_SCHEMA
 
     keybinds = KEYBINDS.read_text(encoding="utf-8")
     actions = re.findall(r"inline constexpr Action k\w+\{(.*?)\};", keybinds, re.DOTALL)

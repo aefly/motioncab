@@ -75,13 +75,8 @@
     "enabled_desc": "Turn this effect on or off.",
     "driving": {
       "title": "Driving",
-      "desc": "Head and camera reactions to how the truck moves and steers.",
       "head_motion": {
         "title": "Head Motion",
-        "desc": "Dynamic head-motion effect settings.",
-        "enabled": {
-          "title": "Enable Head Motion"
-        },
         "sway_strength": {
           "title": "Sway Strength",
           "desc": "How much your head gets pushed around when you speed up, brake, or take a turn."
@@ -97,10 +92,6 @@
       },
       "body_dynamics": {
         "title": "Body Dynamics",
-        "desc": "Head leans toward the outside of corners and nods forward when braking, like a driver's body reacting to the truck's motion.",
-        "enabled": {
-          "title": "Enable Body Dynamics"
-        },
         "lean_strength": {
           "title": "Lean Strength",
           "desc": "How much your head leans toward the outside of a turn."
@@ -116,10 +107,6 @@
       },
       "steering_camera": {
         "title": "Steering Camera",
-        "desc": "Smoothed camera rotation following the steering wheel.",
-        "enabled": {
-          "title": "Enable Steering Camera"
-        },
         "rotation_left_deg": {
           "title": "Rotation Amount (Left)",
           "desc": "How far the camera turns when you crank the wheel all the way to the left."
@@ -144,13 +131,8 @@
     },
     "road": {
       "title": "Road",
-      "desc": "Effects driven by the road surface, suspension and speed.",
       "suspension": {
         "title": "Suspension",
-        "desc": "Camera bounce over road bumps, like an air-suspended seat: it dips, rebounds, then settles back. Bumps under one side also tilt your head slightly.",
-        "enabled": {
-          "title": "Enable Suspension"
-        },
         "vertical_strength": {
           "title": "Vertical Strength",
           "desc": "How much bumps in the road bounce and tilt the camera."
@@ -166,10 +148,6 @@
       },
       "road_irregularity": {
         "title": "Road Irregularity",
-        "desc": "Chatter from the ground under the wheels (gravel, cobblestone, dirt). Uneven ground also rocks your head side to side.",
-        "enabled": {
-          "title": "Enable Road Irregularity"
-        },
         "intensity": {
           "title": "Intensity",
           "desc": "How strong the road-texture shake and off-road rocking feel."
@@ -181,10 +159,6 @@
       },
       "speed_shake": {
         "title": "Speed Shake",
-        "desc": "Realistic head sway while driving, growing with speed and rough ground.",
-        "enabled": {
-          "title": "Enable Speed Shake"
-        },
         "intensity": {
           "title": "Intensity",
           "desc": "Overall strength of the shake you feel from driving fast."
@@ -209,13 +183,8 @@
     },
     "cabin": {
       "title": "Cabin",
-      "desc": "Effects from the driver and the engine inside the cabin.",
       "idle_breathing": {
         "title": "Idle Breathing",
-        "desc": "Subtle idle breathing motion that fades out as speed increases.",
-        "enabled": {
-          "title": "Enable Idle Breathing"
-        },
         "vertical_amplitude": {
           "title": "Vertical Amount",
           "desc": "How far the camera rises and falls with each breath."
@@ -239,10 +208,6 @@
       },
       "engine_vibration": {
         "title": "Engine Vibration",
-        "desc": "Fine engine vibration scaled by RPM. Automatically disabled on electric trucks.",
-        "enabled": {
-          "title": "Enable Engine Vibration"
-        },
         "intensity": {
           "title": "Intensity",
           "desc": "How strong the engine rumble feels."
@@ -250,10 +215,6 @@
       },
       "engine_start_stop": {
         "title": "Engine Start/Stop",
-        "desc": "A short mechanical shudder when the engine starts or dies. Automatically disabled on electric trucks.",
-        "enabled": {
-          "title": "Enable Engine Start/Stop"
-        },
         "intensity": {
           "title": "Intensity",
           "desc": "How strong the shudder feels when the engine starts or stops."
@@ -266,14 +227,9 @@
     },
     "manual": {
       "title": "Manual",
-      "desc": "Look, zoom and walking effects you trigger yourself.",
       "mirror_check": {
         "title": "Mirror Check",
-        "desc": "Looks toward the corresponding mirror while a turn signal is on, and recenters when it's off.",
         "hint": "Requires the game's native \"Left-Turn Indicator\" and \"Right-Turn Indicator\" keys to be assigned.",
-        "enabled": {
-          "title": "Enable Mirror Check"
-        },
         "look_angle_deg": {
           "title": "Look Angle",
           "desc": "How far your head turns to check the mirror."
@@ -297,11 +253,7 @@
       },
       "manual_look": {
         "title": "Manual Look",
-        "desc": "Smooth manual look-left/look-right glances bound to two keys.",
         "hint": "These keys are separate from the game's native controls.",
-        "enabled": {
-          "title": "Enable Manual Look"
-        },
         "look_angle_deg": {
           "title": "Look Angle",
           "desc": "How far your head turns when you look left or right."
@@ -317,11 +269,7 @@
       },
       "manual_zoom": {
         "title": "Manual Zoom",
-        "desc": "Smooth zoom on a dedicated key: hold to zoom in, release to ease back to normal.",
         "hint": "This key is separate from the game's native \"Zoom Interior Camera\" key.",
-        "enabled": {
-          "title": "Enable Manual Zoom"
-        },
         "zoom_fov_deg": {
           "title": "Zoom Level",
           "desc": "How zoomed in the view gets while holding the zoom key. Lower = more zoomed in."
@@ -333,10 +281,6 @@
       },
       "blindspot_viewer": {
         "title": "Blindspot Viewer",
-        "desc": "Leans forward on a key press to see traffic lights hidden by the windshield pillar.",
-        "enabled": {
-          "title": "Enable Blindspot Viewer"
-        },
         "pos_x": {
           "title": "Sideways Lean",
           "desc": "How far your head moves left or right while peeking."
@@ -376,11 +320,7 @@
       },
       "cabin_walk": {
         "title": "Cabin Walk",
-        "desc": "Get up from the driver's seat and walk freely around the cabin while parked.",
         "hint": "Default layouts are set for each truck's smallest sleeper cabin. Other cabins may need adjustments.",
-        "enabled": {
-          "title": "Enable Cabin Walk"
-        },
         "require_parking_brake": {
           "title": "Require Parking Brake",
           "desc": "On: needs the parking brake, releasing it sends you back. Off: stopping is enough."

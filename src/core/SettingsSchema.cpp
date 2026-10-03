@@ -56,12 +56,6 @@ std::string DefaultsJson() {
   return json;
 }
 
-std::string SliderParamsJson(const Setting &setting) {
-  return std::format(R"({{ "min": {}, "max": {}, "format": "{}" }})",
-                     JsonNumber(setting.min), JsonNumber(setting.max),
-                     setting.format);
-}
-
 void WriteDefaults(SPF_Config_API *cfg, SPF_Config_Handle *handle) {
   for (const Setting &s : kAll) {
     if (s.type == Type::kBool)

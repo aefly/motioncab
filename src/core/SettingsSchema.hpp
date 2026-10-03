@@ -5,9 +5,9 @@
 #include <string>
 #include <string_view>
 
-// Every MotionCab setting, declared once: the manifest's defaults and native
-// UI metadata, the Quick Settings window, the profiles and the effects' own
-// defaults all come from this table.
+// Every MotionCab setting, declared once: the manifest's defaults, the Quick
+// Settings window, the profiles and the effects' own defaults all come from
+// this table.
 namespace motioncab::settings {
 
 enum class Type { kBool, kFloat };
@@ -16,7 +16,7 @@ struct Setting {
   const char *key; // "settings.<group>.<effect>.<name>"
   Type type;
   float default_value; // 0 or 1 for a bool
-  // Float only: the slider both settings UIs show.
+  // Float only: the slider the Quick Settings window shows.
   float min = 0.0f;
   float max = 0.0f;
   const char *format = nullptr; // printf format of the slider's value
@@ -41,9 +41,8 @@ constexpr Setting Speed(const char *key, float default_value, float min,
   return {key, Type::kFloat, default_value, min, max, "%.0f km/h", true};
 }
 
-// In the order of the manifest's default settings JSON, which is the order
-// SPF's native settings UI lists them in. Each group's and each effect's
-// settings must stay together (checked below).
+// In the order of the manifest's default settings JSON. Each group's and
+// each effect's settings must stay together (checked below).
 inline constexpr Setting kAll[] = {
     // driving.head_motion
     Bool("settings.driving.head_motion.enabled", true),
@@ -182,7 +181,7 @@ constexpr bool InEffect(const Setting &setting,
          key[effect_prefix.size()] == '.';
 }
 
-// The manifest's JSON (and SPF's native UI) needs each group's and each
+// The manifest's JSON needs each group's and each
 // effect's settings in one run: a group or effect seen again after another
 // one would be a duplicate JSON key.
 consteval bool SettingsAreGrouped() {
@@ -240,8 +239,6 @@ const Setting *Find(std::string_view key);
 // "settings." root.
 std::string DefaultsJson();
 
-// A float setting's slider, as the widget params of Meta_AddCustomSetting.
-std::string SliderParamsJson(const Setting &setting);
 
 // Writes every setting's default value into `handle`: the live config for
 // "Reset to Defaults", or a new profile file.

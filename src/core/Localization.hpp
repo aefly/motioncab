@@ -6,9 +6,8 @@
 #include <utility>
 
 // Runtime access to the translations in localization/<lang>.json, through
-// SPF's Localization API. The manifest passes the same keys straight to
-// SPF, so the native settings UI and the Quick Settings window share one
-// set of strings.
+// SPF's Localization API. The manifest passes keys straight to SPF (plugin
+// description, keybinds, window), which resolves them itself.
 
 namespace motioncab::loc {
 

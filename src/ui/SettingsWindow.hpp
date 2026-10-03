@@ -12,10 +12,10 @@ inline constexpr int kWindowWidth = 476;
 inline constexpr int kWindowHeight = 640;
 
 // Draw callback for the "MotionCab" window declared in Manifest.cpp.
-// Quick access to every effect's enabled toggle and sliders in one compact,
-// collapsible window, as an alternative to navigating the native settings
-// drawer. Reads/writes the same "settings.*" config keys as the native UI,
-// so changes take effect immediately via the existing OnSettingChanged path.
+// Every effect's enabled toggle and sliders in one compact, collapsible
+// window: the only place MotionCab's settings are shown (the manifest keeps
+// them out of SPF's native settings UI). Writes the "settings.*" config
+// keys, so changes take effect immediately via the OnSettingChanged path.
 void DrawSettingsWindow(SPF_UI_API *ui, void *user_data);
 
 // Destroys the About tab's cached logo texture, if one was created. Called

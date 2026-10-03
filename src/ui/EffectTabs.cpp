@@ -16,8 +16,8 @@ namespace motioncab::ui {
 
 namespace {
 
-// A setting's title and description live under its own config key (see
-// the UI Metadata comment in Manifest.cpp), shared with the native UI.
+// A setting's title and description live under its own config key, plus
+// ".title" / ".desc".
 const char *SettingTitle(const char *key) {
   return loc::Tr(std::string(key) + ".title");
 }

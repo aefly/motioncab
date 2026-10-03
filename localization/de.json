@@ -75,13 +75,8 @@
     "enabled_desc": "Schaltet diesen Effekt ein oder aus.",
     "driving": {
       "title": "Fahren",
-      "desc": "Reaktionen von Kopf und Kamera darauf, wie sich der Lkw bewegt und lenkt.",
       "head_motion": {
         "title": "Kopfbewegung",
-        "desc": "Einstellungen für den dynamischen Kopfbewegungseffekt.",
-        "enabled": {
-          "title": "Kopfbewegung aktivieren"
-        },
         "sway_strength": {
           "title": "Schwankstärke",
           "desc": "Wie stark dein Kopf beim Beschleunigen, Bremsen oder in Kurven hin und her geschoben wird."
@@ -97,10 +92,6 @@
       },
       "body_dynamics": {
         "title": "Körperdynamik",
-        "desc": "Der Kopf lehnt sich in Kurven nach außen und nickt beim Bremsen nach vorn, wie der Körper eines Fahrers, der auf die Bewegung des Lkw reagiert.",
-        "enabled": {
-          "title": "Körperdynamik aktivieren"
-        },
         "lean_strength": {
           "title": "Neigung in Kurven",
           "desc": "Wie stark sich dein Kopf in einer Kurve nach außen lehnt."
@@ -116,10 +107,6 @@
       },
       "steering_camera": {
         "title": "Lenkkamera",
-        "desc": "Geglättete Kameradrehung, die dem Lenkrad folgt.",
-        "enabled": {
-          "title": "Lenkkamera aktivieren"
-        },
         "rotation_left_deg": {
           "title": "Drehstärke (links)",
           "desc": "Wie weit sich die Kamera dreht, wenn du das Lenkrad voll nach links einschlägst."
@@ -144,13 +131,8 @@
     },
     "road": {
       "title": "Straße",
-      "desc": "Effekte durch Fahrbahnoberfläche, Federung und Geschwindigkeit.",
       "suspension": {
         "title": "Federung",
-        "desc": "Nachfedern der Kamera über Bodenwellen, wie ein luftgefederter Sitz: Sie sackt ein, federt zurück und kommt dann zur Ruhe. Bodenwellen unter nur einer Seite neigen deinen Kopf zudem leicht.",
-        "enabled": {
-          "title": "Federung aktivieren"
-        },
         "vertical_strength": {
           "title": "Vertikale Stärke",
           "desc": "Wie stark Bodenwellen die Kamera federn und neigen lassen."
@@ -166,10 +148,6 @@
       },
       "road_irregularity": {
         "title": "Fahrbahnunebenheit",
-        "desc": "Rütteln je nach Untergrund unter den Rädern (Schotter, Kopfsteinpflaster, Erde). Unebener Boden schaukelt deinen Kopf außerdem seitlich.",
-        "enabled": {
-          "title": "Fahrbahnunebenheit aktivieren"
-        },
         "intensity": {
           "title": "Intensität",
           "desc": "Wie stark sich das Rütteln der Fahrbahn und das Schaukeln im Gelände anfühlen."
@@ -181,10 +159,6 @@
       },
       "speed_shake": {
         "title": "Geschwindigkeitswackeln",
-        "desc": "Realistisches Kopfschwanken während der Fahrt, das mit Geschwindigkeit und rauem Untergrund zunimmt.",
-        "enabled": {
-          "title": "Geschwindigkeitswackeln aktivieren"
-        },
         "intensity": {
           "title": "Intensität",
           "desc": "Gesamtstärke des Wackelns bei schneller Fahrt."
@@ -209,13 +183,8 @@
     },
     "cabin": {
       "title": "Fahrerhaus",
-      "desc": "Effekte von Fahrer und Motor im Fahrerhaus.",
       "idle_breathing": {
         "title": "Atmung im Stand",
-        "desc": "Dezente Atembewegung im Stand, die mit zunehmender Geschwindigkeit ausblendet.",
-        "enabled": {
-          "title": "Atmung im Stand aktivieren"
-        },
         "vertical_amplitude": {
           "title": "Vertikaler Ausschlag",
           "desc": "Wie weit sich die Kamera mit jedem Atemzug hebt und senkt."
@@ -239,10 +208,6 @@
       },
       "engine_vibration": {
         "title": "Motorvibration",
-        "desc": "Feine Motorvibration abhängig von der Drehzahl. Bei Elektro-Lkw automatisch deaktiviert.",
-        "enabled": {
-          "title": "Motorvibration aktivieren"
-        },
         "intensity": {
           "title": "Intensität",
           "desc": "Wie stark sich das Motorbrummen anfühlt."
@@ -250,10 +215,6 @@
       },
       "engine_start_stop": {
         "title": "Motorstart/-stopp",
-        "desc": "Ein kurzes mechanisches Rütteln, wenn der Motor anspringt oder ausgeht. Bei Elektro-Lkw automatisch deaktiviert.",
-        "enabled": {
-          "title": "Motorstart/-stopp aktivieren"
-        },
         "intensity": {
           "title": "Intensität",
           "desc": "Wie stark sich das Rütteln beim Starten oder Abstellen des Motors anfühlt."
@@ -266,14 +227,9 @@
     },
     "manual": {
       "title": "Manuell",
-      "desc": "Blick-, Zoom- und Laufeffekte, die du selbst auslöst.",
       "mirror_check": {
         "title": "Spiegelblick",
-        "desc": "Schaut zum passenden Spiegel, solange ein Blinker an ist, und zentriert wieder, wenn er aus ist.",
         "hint": "Erfordert, dass die spieleigenen Tasten „Blinker links“ und „Blinker rechts“ belegt sind.",
-        "enabled": {
-          "title": "Spiegelblick aktivieren"
-        },
         "look_angle_deg": {
           "title": "Blickwinkel",
           "desc": "Wie weit sich dein Kopf zum Spiegel dreht."
@@ -297,11 +253,7 @@
       },
       "manual_look": {
         "title": "Manueller Blick",
-        "desc": "Sanfte Blicke nach links/rechts auf zwei eigenen Tasten.",
         "hint": "Diese Tasten sind unabhängig von der Steuerung des Spiels.",
-        "enabled": {
-          "title": "Manuellen Blick aktivieren"
-        },
         "look_angle_deg": {
           "title": "Blickwinkel",
           "desc": "Wie weit sich dein Kopf beim Blick nach links oder rechts dreht."
@@ -317,11 +269,7 @@
       },
       "manual_zoom": {
         "title": "Manueller Zoom",
-        "desc": "Sanfter Zoom auf einer eigenen Taste: gedrückt halten zum Heranzoomen, loslassen zum langsamen Zurückkehren.",
         "hint": "Diese Taste ist unabhängig von der spieleigenen Taste „Innenkamera zoomen“.",
-        "enabled": {
-          "title": "Manuellen Zoom aktivieren"
-        },
         "zoom_fov_deg": {
           "title": "Zoomstufe",
           "desc": "Wie stark herangezoomt wird, solange die Zoomtaste gehalten wird. Niedriger = stärker gezoomt."
@@ -333,10 +281,6 @@
       },
       "blindspot_viewer": {
         "title": "Toter-Winkel-Sicht",
-        "desc": "Beugt sich auf Tastendruck vor, um von der Scheibensäule verdeckte Ampeln zu sehen.",
-        "enabled": {
-          "title": "Toter-Winkel-Sicht aktivieren"
-        },
         "pos_x": {
           "title": "Seitlich",
           "desc": "Wie weit sich dein Kopf beim Vorbeugen nach links oder rechts bewegt."
@@ -376,11 +320,7 @@
       },
       "cabin_walk": {
         "title": "Kabinenrundgang",
-        "desc": "Steh vom Fahrersitz auf und bewege dich im geparkten Lkw frei durch die Kabine.",
         "hint": "Die Standardlayouts sind auf die kleinste Schlafkabine jedes Lkw abgestimmt. Andere Kabinen müssen eventuell angepasst werden.",
-        "enabled": {
-          "title": "Kabinenrundgang aktivieren"
-        },
         "require_parking_brake": {
           "title": "Feststellbremse erforderlich",
           "desc": "An: Feststellbremse nötig, Lösen schickt dich zurück. Aus: Stillstand genügt."

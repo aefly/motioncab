@@ -75,13 +75,8 @@
     "enabled_desc": "Zapne nebo vypne tento efekt.",
     "driving": {
       "title": "Jízda",
-      "desc": "Reakce hlavy a kamery na pohyb a zatáčení kamionu.",
       "head_motion": {
         "title": "Pohyb hlavy",
-        "desc": "Nastavení efektu dynamického pohybu hlavy.",
-        "enabled": {
-          "title": "Zapnout pohyb hlavy"
-        },
         "sway_strength": {
           "title": "Síla kývání",
           "desc": "Jak moc je hlava vychylována při zrychlení, brzdění nebo v zatáčce."
@@ -97,10 +92,6 @@
       },
       "body_dynamics": {
         "title": "Dynamika těla",
-        "desc": "Hlava se v zatáčkách naklání ven a při brzdění kývne dopředu, jako tělo řidiče reagující na pohyb kamionu.",
-        "enabled": {
-          "title": "Zapnout dynamiku těla"
-        },
         "lean_strength": {
           "title": "Síla náklonu do strany",
           "desc": "Jak moc se hlava naklání ven ze zatáčky."
@@ -116,10 +107,6 @@
       },
       "steering_camera": {
         "title": "Kamera řízení",
-        "desc": "Vyhlazené otáčení kamery podle volantu.",
-        "enabled": {
-          "title": "Zapnout kameru řízení"
-        },
         "rotation_left_deg": {
           "title": "Rozsah otočení (vlevo)",
           "desc": "Jak daleko se kamera otočí, když volant vytočíte na doraz doleva."
@@ -144,13 +131,8 @@
     },
     "road": {
       "title": "Silnice",
-      "desc": "Efekty způsobené povrchem vozovky, odpružením a rychlostí.",
       "suspension": {
         "title": "Odpružení",
-        "desc": "Pohupování kamery na nerovnostech, jako vzduchem odpružené sedadlo: klesne, odrazí se a pak se vrátí na místo. Nerovnosti pod jednou stranou také mírně nakloní hlavu.",
-        "enabled": {
-          "title": "Zapnout odpružení"
-        },
         "vertical_strength": {
           "title": "Svislá síla",
           "desc": "Jak moc nerovnosti na silnici nadhazují a naklánějí kameru."
@@ -166,10 +148,6 @@
       },
       "road_irregularity": {
         "title": "Nerovnosti vozovky",
-        "desc": "Drnčení podle povrchu pod koly (štěrk, dlažební kostky, hlína). Nerovný terén navíc kolébá hlavou ze strany na stranu.",
-        "enabled": {
-          "title": "Zapnout nerovnosti vozovky"
-        },
         "intensity": {
           "title": "Intenzita",
           "desc": "Jak silné je drnčení povrchu a kolébání v terénu."
@@ -181,10 +159,6 @@
       },
       "speed_shake": {
         "title": "Třes od rychlosti",
-        "desc": "Realistické kývání hlavy za jízdy, které roste s rychlostí a na nerovném povrchu.",
-        "enabled": {
-          "title": "Zapnout třes od rychlosti"
-        },
         "intensity": {
           "title": "Intenzita",
           "desc": "Celková síla třesu při rychlé jízdě."
@@ -209,13 +183,8 @@
     },
     "cabin": {
       "title": "Kabina",
-      "desc": "Efekty řidiče a motoru uvnitř kabiny.",
       "idle_breathing": {
         "title": "Dýchání v klidu",
-        "desc": "Jemný pohyb dýchání v klidu, který se s rostoucí rychlostí vytrácí.",
-        "enabled": {
-          "title": "Zapnout dýchání v klidu"
-        },
         "vertical_amplitude": {
           "title": "Svislá amplituda",
           "desc": "Jak moc kamera stoupá a klesá s každým nádechem."
@@ -239,10 +208,6 @@
       },
       "engine_vibration": {
         "title": "Vibrace motoru",
-        "desc": "Jemné vibrace motoru podle otáček. U elektrických kamionů automaticky vypnuto.",
-        "enabled": {
-          "title": "Zapnout vibrace motoru"
-        },
         "intensity": {
           "title": "Intenzita",
           "desc": "Jak silné je dunění motoru."
@@ -250,10 +215,6 @@
       },
       "engine_start_stop": {
         "title": "Start/stop motoru",
-        "desc": "Krátké mechanické škubnutí při nastartování nebo zhasnutí motoru. U elektrických kamionů automaticky vypnuto.",
-        "enabled": {
-          "title": "Zapnout start/stop motoru"
-        },
         "intensity": {
           "title": "Intenzita",
           "desc": "Jak silné je škubnutí při startu nebo vypnutí motoru."
@@ -266,14 +227,9 @@
     },
     "manual": {
       "title": "Ruční",
-      "desc": "Efekty rozhlížení, přiblížení a chůze, které spouštíte sami.",
       "mirror_check": {
         "title": "Kontrola zrcátek",
-        "desc": "Podívá se do příslušného zrcátka, dokud svítí blinkr, a po jeho vypnutí se vrátí na střed.",
         "hint": "Vyžaduje, aby byly ve hře přiřazeny klávesy „Levý blinkr“ a „Pravý blinkr“.",
-        "enabled": {
-          "title": "Zapnout kontrolu zrcátek"
-        },
         "look_angle_deg": {
           "title": "Úhel pohledu",
           "desc": "Jak daleko se hlava otočí k zrcátku."
@@ -297,11 +253,7 @@
       },
       "manual_look": {
         "title": "Ruční pohled",
-        "desc": "Plynulé pohledy doleva/doprava na dvou klávesách.",
         "hint": "Tyto klávesy jsou nezávislé na ovládání hry.",
-        "enabled": {
-          "title": "Zapnout ruční pohled"
-        },
         "look_angle_deg": {
           "title": "Úhel pohledu",
           "desc": "Jak daleko se hlava otočí při pohledu doleva nebo doprava."
@@ -317,11 +269,7 @@
       },
       "manual_zoom": {
         "title": "Ruční přiblížení",
-        "desc": "Plynulé přiblížení na vyhrazené klávese: podržením přiblížíte, uvolněním se pohled postupně vrátí do normálu.",
         "hint": "Tato klávesa je nezávislá na herní klávese „Přiblížení vnitřní kamery“.",
-        "enabled": {
-          "title": "Zapnout ruční přiblížení"
-        },
         "zoom_fov_deg": {
           "title": "Úroveň přiblížení",
           "desc": "Jak moc se pohled přiblíží při držení klávesy přiblížení. Nižší = větší přiblížení."
@@ -333,10 +281,6 @@
       },
       "blindspot_viewer": {
         "title": "Pohled do mrtvého úhlu",
-        "desc": "Stiskem klávesy se nakloní, aby byly vidět semafory schované za sloupkem čelního skla.",
-        "enabled": {
-          "title": "Zapnout pohled do mrtvého úhlu"
-        },
         "pos_x": {
           "title": "Posun do strany",
           "desc": "Jak daleko se hlava při náklonu posune doleva nebo doprava."
@@ -376,11 +320,7 @@
       },
       "cabin_walk": {
         "title": "Chůze po kabině",
-        "desc": "Vstaňte ze sedadla řidiče a volně se procházejte po kabině, když kamion stojí zaparkovaný.",
         "hint": "Výchozí rozvržení jsou nastavena pro nejmenší kabinu s lůžkem každého tahače. Jiné kabiny může být nutné upravit.",
-        "enabled": {
-          "title": "Zapnout chůzi po kabině"
-        },
         "require_parking_brake": {
           "title": "Vyžadovat parkovací brzdu",
           "desc": "Zapnuto: nutná parkovací brzda, její uvolnění vás vrátí zpět. Vypnuto: stačí zastavit."

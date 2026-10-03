@@ -75,13 +75,8 @@
     "enabled_desc": "Zet dit effect aan of uit.",
     "driving": {
       "title": "Rijden",
-      "desc": "Reacties van hoofd en camera op hoe de truck beweegt en stuurt.",
       "head_motion": {
         "title": "Hoofdbeweging",
-        "desc": "Instellingen voor het dynamische hoofdbewegingseffect.",
-        "enabled": {
-          "title": "Hoofdbeweging inschakelen"
-        },
         "sway_strength": {
           "title": "Zwaaisterkte",
           "desc": "Hoeveel je hoofd heen en weer wordt geduwd bij optrekken, remmen of een bocht."
@@ -97,10 +92,6 @@
       },
       "body_dynamics": {
         "title": "Lichaamsdynamiek",
-        "desc": "Het hoofd leunt naar de buitenkant van bochten en knikt naar voren bij het remmen, zoals het lichaam van een chauffeur dat reageert op de bewegingen van de truck.",
-        "enabled": {
-          "title": "Lichaamsdynamiek inschakelen"
-        },
         "lean_strength": {
           "title": "Leunsterkte",
           "desc": "Hoeveel je hoofd naar de buitenkant van een bocht leunt."
@@ -116,10 +107,6 @@
       },
       "steering_camera": {
         "title": "Stuurcamera",
-        "desc": "Vloeiende camerarotatie die het stuur volgt.",
-        "enabled": {
-          "title": "Stuurcamera inschakelen"
-        },
         "rotation_left_deg": {
           "title": "Draaihoek (links)",
           "desc": "Hoe ver de camera draait als je het stuur helemaal naar links draait."
@@ -144,13 +131,8 @@
     },
     "road": {
       "title": "Weg",
-      "desc": "Effecten door het wegdek, de vering en de snelheid.",
       "suspension": {
         "title": "Vering",
-        "desc": "Meeveren van de camera over hobbels, zoals een luchtgeveerde stoel: zakt in, veert terug en komt dan tot rust. Hobbels onder één kant kantelen je hoofd ook licht.",
-        "enabled": {
-          "title": "Vering inschakelen"
-        },
         "vertical_strength": {
           "title": "Verticale sterkte",
           "desc": "Hoeveel oneffenheden in de weg de camera laten veren en kantelen."
@@ -166,10 +148,6 @@
       },
       "road_irregularity": {
         "title": "Wegoneffenheid",
-        "desc": "Trillen afhankelijk van de ondergrond onder de wielen (grind, kinderkopjes, zand). Ongelijke ondergrond laat je hoofd ook zijwaarts schommelen.",
-        "enabled": {
-          "title": "Wegoneffenheid inschakelen"
-        },
         "intensity": {
           "title": "Intensiteit",
           "desc": "Hoe sterk het trillen van het wegdek en het schommelen offroad aanvoelen."
@@ -181,10 +159,6 @@
       },
       "speed_shake": {
         "title": "Snelheidstrilling",
-        "desc": "Realistisch hoofdschommelen tijdens het rijden, dat toeneemt met snelheid en ruwe ondergrond.",
-        "enabled": {
-          "title": "Snelheidstrilling inschakelen"
-        },
         "intensity": {
           "title": "Intensiteit",
           "desc": "Totale sterkte van de trilling die je voelt bij hard rijden."
@@ -209,13 +183,8 @@
     },
     "cabin": {
       "title": "Cabine",
-      "desc": "Effecten van de chauffeur en de motor in de cabine.",
       "idle_breathing": {
         "title": "Ademhaling in stilstand",
-        "desc": "Subtiele ademhalingsbeweging in stilstand die vervaagt naarmate de snelheid toeneemt.",
-        "enabled": {
-          "title": "Ademhaling in stilstand inschakelen"
-        },
         "vertical_amplitude": {
           "title": "Verticale uitslag",
           "desc": "Hoe ver de camera stijgt en daalt bij elke ademhaling."
@@ -239,10 +208,6 @@
       },
       "engine_vibration": {
         "title": "Motortrilling",
-        "desc": "Fijne motortrilling afhankelijk van het toerental. Automatisch uitgeschakeld bij elektrische trucks.",
-        "enabled": {
-          "title": "Motortrilling inschakelen"
-        },
         "intensity": {
           "title": "Intensiteit",
           "desc": "Hoe sterk het motorgebrom aanvoelt."
@@ -250,10 +215,6 @@
       },
       "engine_start_stop": {
         "title": "Motor start/stop",
-        "desc": "Een korte mechanische schok wanneer de motor start of afslaat. Automatisch uitgeschakeld bij elektrische trucks.",
-        "enabled": {
-          "title": "Motor start/stop inschakelen"
-        },
         "intensity": {
           "title": "Intensiteit",
           "desc": "Hoe sterk de schok aanvoelt wanneer de motor start of stopt."
@@ -266,14 +227,9 @@
     },
     "manual": {
       "title": "Handmatig",
-      "desc": "Kijk-, zoom- en loopeffecten die je zelf activeert.",
       "mirror_check": {
         "title": "Spiegelcontrole",
-        "desc": "Kijkt naar de bijbehorende spiegel zolang een richtingaanwijzer aan staat, en centreert weer als hij uit gaat.",
         "hint": "Vereist dat de standaardtoetsen van het spel 'Richtingaanwijzer links' en 'Richtingaanwijzer rechts' zijn toegewezen.",
-        "enabled": {
-          "title": "Spiegelcontrole inschakelen"
-        },
         "look_angle_deg": {
           "title": "Kijkhoek",
           "desc": "Hoe ver je hoofd draait om in de spiegel te kijken."
@@ -297,11 +253,7 @@
       },
       "manual_look": {
         "title": "Handmatig kijken",
-        "desc": "Vloeiende blikken naar links/rechts op twee toetsen.",
         "hint": "Deze toetsen staan los van de standaardbediening van het spel.",
-        "enabled": {
-          "title": "Handmatig kijken inschakelen"
-        },
         "look_angle_deg": {
           "title": "Kijkhoek",
           "desc": "Hoe ver je hoofd draait als je naar links of rechts kijkt."
@@ -317,11 +269,7 @@
       },
       "manual_zoom": {
         "title": "Handmatige zoom",
-        "desc": "Vloeiende zoom op een eigen toets: ingedrukt houden om in te zoomen, loslaten om geleidelijk terug te keren naar normaal.",
         "hint": "Deze toets staat los van de standaardtoets 'Binnencamera zoomen' van het spel.",
-        "enabled": {
-          "title": "Handmatige zoom inschakelen"
-        },
         "zoom_fov_deg": {
           "title": "Zoomniveau",
           "desc": "Hoe ver het beeld inzoomt zolang je de zoomtoets vasthoudt. Lager = verder ingezoomd."
@@ -333,10 +281,6 @@
       },
       "blindspot_viewer": {
         "title": "Dode-hoekzicht",
-        "desc": "Leunt met één toets naar voren om verkeerslichten achter de raamstijl te zien.",
-        "enabled": {
-          "title": "Dode-hoekzicht inschakelen"
-        },
         "pos_x": {
           "title": "Zijwaarts",
           "desc": "Hoe ver je hoofd naar links of rechts beweegt tijdens het kijken."
@@ -376,11 +320,7 @@
       },
       "cabin_walk": {
         "title": "Rondlopen in de cabine",
-        "desc": "Sta op uit de bestuurdersstoel en loop vrij door de cabine als de truck geparkeerd staat.",
         "hint": "De standaardindelingen zijn afgesteld op de kleinste slaapcabine van elke truck. Andere cabines moeten mogelijk worden bijgesteld.",
-        "enabled": {
-          "title": "Rondlopen in de cabine inschakelen"
-        },
         "require_parking_brake": {
           "title": "Parkeerrem vereist",
           "desc": "Aan: parkeerrem vereist, losmaken stuurt je terug. Uit: stilstaan is genoeg."
