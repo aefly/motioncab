@@ -45,6 +45,12 @@ game's `plugins/spfPlugins/MotionCab/`.
 - Derive a new effect from `ConfigurableEffect`
   (`src/effects/ConfigurableEffect.hpp`), which handles its `enabled`
   toggle and reads its settings by name.
+- If an effect only makes sense in the driver's seat, override
+  `NeedsDriverSeat()` so it fades out while Cabin Walk has the player
+  elsewhere in the cabin.
+- Declare a new keybind action once in `src/core/Keybinds.hpp` (default
+  key and localization key) and add it to `kAllActions`, plus
+  `kPolledActions` if the effect polls it.
 - Reuse the shared helpers (`src/math/Units.hpp`,
   `src/effects/TelemetryUtil.hpp`, `src/effects/road/Surface.hpp`,
   `src/core/Keybinds.hpp`) rather than duplicating their logic in an
