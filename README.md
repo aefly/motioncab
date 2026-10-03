@@ -52,6 +52,8 @@ camera control, keybind rebinding, and the in-game settings UI.
   dies
 - **Manual Zoom** — smooth zoom effect
 - **Blindspot Viewer** — leans forward to see traffic lights hidden by the cab
+- **Cabin Walk** — walks around the parked cabin and sits in the passenger
+  seat or on the bunk
 - **Profiles** — create, save, and switch between named presets
 - **Localized** — available in 15 languages
 
@@ -68,22 +70,23 @@ active while in the interior (cabin) camera view.
 
 ## Controls
 
-| Action           | Default key | Behavior                                                   |
-| ---------------- | ----------- | ---------------------------------------------------------- |
-| Look Left        | Numpad /    | Manual Look — hold or toggle to look left                  |
-| Look Right       | Numpad *    | Manual Look — hold or toggle to look right                 |
-| Zoom             | Numpad -    | Manual Zoom — hold to zoom in, release to return to normal |
-| Blindspot Viewer | F10         | Toggle or hold to lean forward and look up                 |
-| Toggle Window    | F9          | Shows/hides the MotionCab Quick Settings window            |
-
-All keys are fully rebindable in SPF's in-game Keybinds drawer.
+| Action              | Default key | Behavior                                                                              |
+| ------------------- | ----------- | ------------------------------------------------------------------------------------- |
+| Toggle Window       | F9          | Shows/hides the MotionCab Quick Settings window                                       |
+| Look Left           | Numpad /    | Manual Look — hold or toggle to look left                                             |
+| Look Right          | Numpad *    | Manual Look — hold or toggle to look right                                            |
+| Zoom                | Numpad -    | Manual Zoom — hold to zoom in, release to return to normal                            |
+| Blindspot Viewer    | F10         | Blindspot Viewer — Toggle or hold to lean forward and look up                         |
+| Stand Up / Sit Down | Page Up     | Cabin Walk — get up; tap to sit at the seat you look at, hold to go back to the wheel |
+| Walk                | W/S/A/D     | Cabin Walk — walk forward, back and sideways while standing                           |
+| Crouch              | C           | Cabin Walk — crouch while standing                                                    |
 
 ## Configuration
 
 All parameters are tuned live either through SPF's native in-game settings
 window, or through MotionCab's own **Quick Settings** window, which mirrors
-the same settings and adds a few conveniences: right-click any slider to reset
-it to default, and the **Settings** tab has a button to reset every effect at once.
+the same settings and adds a few conveniences: right-click any slider to reset it
+to default, and the **Settings** tab has a button to reset every effect at once.
 Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/settings.json`.
 
 | Setting                      | Default | Description                                                                                                                          |
@@ -149,6 +152,8 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `fov_offset_deg`             | 10.0    | How much the field of view widens while peeking. Negative = narrower.                                                                |
 | `smoothing_time`             | 0.6     | How smooth the lean-and-return motion is.                                                                                            |
 | `toggle_mode`                | true    | On: press once to peek, press again to sit back. Off: peek while held, let go to sit back.                                           |
+| **Cabin Walk**               |         |                                                                                                                                      |
+| `require_parking_brake`      | true    | On: needs the parking brake, releasing it sends you back. Off: stopping is enough.                                                   |
 
 Every effect also has its own `enabled` toggle, defaulting to on.
 
@@ -201,15 +206,23 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   │                             Surface (ground classification)
 │   │   ├── cabin/                    IdleBreathing, EngineVibration, EngineStartStop
 │   │   └── manual/                   MirrorCheck, ManualLook, ManualZoom, BlindspotViewer
+│   │       └── cabin_walk/
+│   │           ├── CabinWalkEffect.*     The effect: standing up, walking, sitting down
+│   │           ├── CabinLayouts.*        Per-truck cabin layouts
+│   │           ├── CabinPresets.*        Shipped layouts, one per truck model
+│   │           ├── CabinWalkSounds.*     Footsteps (FMOD bank)
+│   │           └── InteriorCameraOverride.* Swaps the camera's limits while out of the seat
 │   └── ui/
 │       ├── SettingsWindow.cpp / .hpp MotionCab Quick Settings window
 │       ├── EffectTabs.cpp / .hpp     Driving/Road/Cabin/Manual tabs
+│       ├── CabinLayoutPanel.cpp/.hpp Cabin Walk's layout panel (Advanced)
 │       ├── SettingsTab.cpp / .hpp    Settings tab: keybind, profiles, reset
 │       ├── AboutTab.cpp / .hpp       About tab
 │       ├── Widgets.cpp / .hpp        Shared look and widgets
 │       └── OpenUrl.cpp / .hpp        Opens a URL in the system browser
 ├── data/
-│   └── logo.png                      About tab logo
+│   ├── logo.png                      About tab logo
+│   └── sounds/                       Cabin Walk's FMOD bank
 ├── localization/
 │   └── <lang>.json                   UI text, one file per language
 ├── SPF_API/                          SPF Framework SDK headers

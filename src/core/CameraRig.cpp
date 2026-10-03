@@ -78,6 +78,26 @@ bool CameraRig::DetectExternalSeatWrite(const Pose &pose) {
   return any;
 }
 
+CameraRig::Pose CameraRig::Base(const Pose &pose) const {
+  return {pose.seat_x - applied_.pos_x, pose.seat_y - applied_.pos_y,
+          pose.seat_z - applied_.pos_z, pose.yaw_rad - applied_.yaw * kDegToRad,
+          pose.pitch_rad - applied_.pitch * kDegToRad};
+}
+
+void CameraRig::SetBaseRotation(Pose &pose, float yaw_rad,
+                                float pitch_rad) const {
+  pose.yaw_rad = yaw_rad + applied_.yaw * kDegToRad;
+  pose.pitch_rad = pitch_rad + applied_.pitch * kDegToRad;
+}
+
+void CameraRig::ForgetAppliedPose() {
+  const float roll = applied_.roll;
+  applied_ = {};
+  applied_.roll = roll;
+  has_last_written_rot_ = false;
+  has_last_written_seat_ = false;
+}
+
 void CameraRig::Apply(SPF_Camera_API *camera, const Pose &pose,
                       const HeadOffset &offset) {
   WriteSeat(camera, pose.seat_x, pose.seat_y, pose.seat_z, offset);

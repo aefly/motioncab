@@ -154,6 +154,9 @@ inline constexpr Setting kAll[] = {
     Float("settings.manual.blindspot_viewer.smoothing_time", 0.6f, 0.2f, 1.5f,
           "%.2f s"),
     Bool("settings.manual.blindspot_viewer.toggle_mode", true),
+    // manual.cabin_walk
+    Bool("settings.manual.cabin_walk.enabled", true),
+    Bool("settings.manual.cabin_walk.require_parking_brake", true),
 };
 
 // "settings.<group>.<effect>.<name>" split into its parts.

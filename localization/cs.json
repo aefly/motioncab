@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "Pohled do mrtvého úhlu",
       "desc": "Plynule se nakloní, aby bylo vidět za sloupek čelního skla."
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "Vstát / Sednout",
+        "desc": "Vstane ze sedadla. Klepnutím si sednete na místo, kam se díváte, podržením se vrátíte za volant."
+      },
+      "forward": {
+        "title": "Jít dopředu",
+        "desc": "Jde dopředu, když stojíte v kabině."
+      },
+      "back": {
+        "title": "Jít dozadu",
+        "desc": "Jde dozadu, když stojíte v kabině."
+      },
+      "left": {
+        "title": "Krok doleva",
+        "desc": "Udělá úkrok doleva, když stojíte v kabině."
+      },
+      "right": {
+        "title": "Krok doprava",
+        "desc": "Udělá úkrok doprava, když stojíte v kabině."
+      },
+      "crouch": {
+        "title": "Přikrčit se",
+        "desc": "Přikrčí se vestoje."
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "Ruční",
-      "desc": "Efekty pohledu a přiblížení, které spouštíte sami.",
+      "desc": "Efekty rozhlížení, přiblížení a chůze, které spouštíte sami.",
       "mirror_check": {
         "title": "Kontrola zrcátek",
         "desc": "Podívá se do příslušného zrcátka, dokud svítí blinkr, a po jeho vypnutí se vrátí na střed.",
@@ -347,6 +373,18 @@
           "title": "Režim přepínání",
           "desc": "Zapnuto: jedním stiskem se nakloníte, dalším se vrátíte. Vypnuto: nakloníte se, dokud klávesu držíte, uvolněním se vrátíte."
         }
+      },
+      "cabin_walk": {
+        "title": "Chůze po kabině",
+        "desc": "Vstaňte ze sedadla řidiče a volně se procházejte po kabině, když kamion stojí zaparkovaný.",
+        "hint": "Výchozí rozvržení jsou nastavena pro nejmenší kabinu s lůžkem každého tahače. Jiné kabiny může být nutné upravit.",
+        "enabled": {
+          "title": "Zapnout chůzi po kabině"
+        },
+        "require_parking_brake": {
+          "title": "Vyžadovat parkovací brzdu",
+          "desc": "Zapnuto: nutná parkovací brzda, její uvolnění vás vrátí zpět. Vypnuto: stačí zastavit."
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "metric",
       "kmh": "km/h",
       "mph": "mph"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "Zatáhněte parkovací brzdu, abyste mohli opustit sedadlo.",
+      "needs_stop": "Zastavte kamion, abyste mohli opustit sedadlo.",
+      "back_to_wheel": "Zpět za volant: kamion už není zaparkovaný.",
+      "layout": {
+        "no_truck": "Nastupte do kamionu, abyste mohli nastavit jeho kabinu.",
+        "truck": "Tahač",
+        "tip": {
+          "floor_z_min": "Jak daleko můžete jít dopředu, k čelnímu sklu.",
+          "floor_z_max": "Jak daleko můžete jít dozadu, k zadní stěně.",
+          "floor_x_min": "Jak daleko můžete jít ke dveřím řidiče.",
+          "floor_x_max": "Jak daleko můžete jít ke dveřím spolujezdce.",
+          "stand_y": "Výška vašich očí ve stoje.",
+          "crouch_depth": "O kolik klesne hlava, když se přikrčíte.",
+          "passenger_dx": "Do strany od zrcadlového obrazu vašeho sedadla.",
+          "passenger_dy": "Výš nebo níž než vaše sedadlo.",
+          "passenger_dz": "Víc vpředu nebo vzadu než vaše sedadlo.",
+          "bunk_sit_x": "Kde sedíte podél lůžka.",
+          "bunk_sit_y": "Výška vašich očí při sezení na lůžku.",
+          "bunk_sit_z": "Jak daleko vzadu je okraj lůžka.",
+          "yaw": "Kam se díváte vsedě.",
+          "pitch": "Jak moc se vsedě díváte nahoru nebo dolů.",
+          "has_passenger": "Zrušte, pokud se sedadlo spolujezdce sklápí nebo chybí.",
+          "has_bunk": "Zrušte u krátké kabiny bez lůžka."
+        },
+        "group": {
+          "walkway": "Prostor pro chůzi",
+          "heights": "Výška vestoje",
+          "passenger": "Sedadlo spolujezdce",
+          "bunk": "Lůžko"
+        },
+        "go": "Přejít tam",
+        "usable": "Použitelné",
+        "advanced": "Pokročilé",
+        "reset": "Obnovit uspořádání",
+        "reset_title": "Obnovit uspořádání kabiny",
+        "reset_message": "Vrátit se k výchozímu uspořádání pro {truck}?",
+        "reset_confirm": "Ano, obnovit",
+        "floor_x_min": "Levá hranice",
+        "floor_x_max": "Pravá hranice",
+        "floor_z_min": "Přední hranice",
+        "floor_z_max": "Zadní hranice",
+        "crouch_depth": "Hloubka přikrčení",
+        "passenger_dx": "Do strany",
+        "passenger_dy": "Výška",
+        "passenger_dz": "Hloubka",
+        "passenger_yaw": "Otočení",
+        "passenger_pitch": "Náklon",
+        "bunk_sit_x": "Do strany",
+        "bunk_sit_y": "Výška",
+        "bunk_sit_z": "Hloubka",
+        "bunk_sit_yaw": "Otočení",
+        "bunk_sit_pitch": "Náklon"
+      }
     }
   }
 }

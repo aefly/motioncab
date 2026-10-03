@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "Kör nokta görüşü",
       "desc": "Ön cam direğinin arkasını görmek için yumuşak bir şekilde öne eğilir."
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "Kalk / Otur",
+        "desc": "Koltuktan kalkar. Baktığın yere oturmak için dokun, direksiyona dönmek için basılı tut."
+      },
+      "forward": {
+        "title": "İleri Yürü",
+        "desc": "Kabinde ayaktayken ileri yürür."
+      },
+      "back": {
+        "title": "Geri Yürü",
+        "desc": "Kabinde ayaktayken geri yürür."
+      },
+      "left": {
+        "title": "Sola Adım",
+        "desc": "Kabinde ayaktayken sola yan adım atar."
+      },
+      "right": {
+        "title": "Sağa Adım",
+        "desc": "Kabinde ayaktayken sağa yan adım atar."
+      },
+      "crouch": {
+        "title": "Çömel",
+        "desc": "Ayaktayken çömelir."
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "Manuel",
-      "desc": "Kendiniz tetiklediğiniz bakış ve yakınlaştırma efektleri.",
+      "desc": "Kendin tetiklediğin bakış, yakınlaştırma ve yürüme efektleri.",
       "mirror_check": {
         "title": "Ayna kontrolü",
         "desc": "Sinyal açıkken ilgili aynaya bakar ve sinyal kapanınca merkeze döner.",
@@ -347,6 +373,18 @@
           "title": "Geçiş modu",
           "desc": "Açık: eğilmek için bir kez, geri dönmek için tekrar basın. Kapalı: basılı tuttuğunuz sürece eğilin, geri dönmek için bırakın."
         }
+      },
+      "cabin_walk": {
+        "title": "Kabinde Yürüme",
+        "desc": "Park halindeyken sürücü koltuğundan kalk ve kabinde serbestçe dolaş.",
+        "hint": "Varsayılan düzenler her kamyonun en küçük yataklı kabinine göre ayarlanmıştır. Diğer kabinlerin ayarlanması gerekebilir.",
+        "enabled": {
+          "title": "Kabinde Yürümeyi Etkinleştir"
+        },
+        "require_parking_brake": {
+          "title": "El Freni Gereksin",
+          "desc": "Açık: el freni gerekir, indirmek seni geri gönderir. Kapalı: durmak yeterlidir."
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "metric",
       "kmh": "km/sa",
       "mph": "mil/sa"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "Koltuktan kalkmak için el frenini çek.",
+      "needs_stop": "Koltuktan kalkmak için tırı durdur.",
+      "back_to_wheel": "Direksiyona dönüldü: tır artık park halinde değil.",
+      "layout": {
+        "no_truck": "Kabinini ayarlamak için bir tıra bin.",
+        "truck": "Kamyon",
+        "tip": {
+          "floor_z_min": "Ne kadar ileri yürüyebileceğin, ön cama doğru.",
+          "floor_z_max": "Ne kadar geri yürüyebileceğin, arka duvara doğru.",
+          "floor_x_min": "Sürücü kapısına doğru ne kadar gidebileceğin.",
+          "floor_x_max": "Yolcu kapısına doğru ne kadar gidebileceğin.",
+          "stand_y": "Ayaktayken göz yüksekliğin.",
+          "crouch_depth": "Çömeldiğinde başının ne kadar alçaldığı.",
+          "passenger_dx": "Koltuğunun yansımasından yana doğru.",
+          "passenger_dy": "Koltuğundan daha yukarı veya aşağı.",
+          "passenger_dz": "Koltuğundan daha ileri veya geri.",
+          "bunk_sit_x": "Yatak boyunca nereye oturduğun.",
+          "bunk_sit_y": "Yatakta otururken göz yüksekliğin.",
+          "bunk_sit_z": "Yatak kenarının ne kadar geride olduğu.",
+          "yaw": "Oturunca nereye baktığın.",
+          "pitch": "Oturunca ne kadar yukarı veya aşağı baktığın.",
+          "has_passenger": "Yolcu koltuğu katlanıyorsa veya yoksa işareti kaldır.",
+          "has_bunk": "Yataksız kısa kabin için işareti kaldır."
+        },
+        "group": {
+          "walkway": "Yürüme Alanı",
+          "heights": "Ayakta Yükseklik",
+          "passenger": "Yolcu Koltuğu",
+          "bunk": "Yatak"
+        },
+        "go": "Oraya git",
+        "usable": "Kullanılabilir",
+        "advanced": "Gelişmiş",
+        "reset": "Düzeni Sıfırla",
+        "reset_title": "Kabin Düzenini Sıfırla",
+        "reset_message": "{truck} için varsayılan düzene dönülsün mü?",
+        "reset_confirm": "Evet, Sıfırla",
+        "floor_x_min": "Sol Sınır",
+        "floor_x_max": "Sağ Sınır",
+        "floor_z_min": "Ön Sınır",
+        "floor_z_max": "Arka Sınır",
+        "crouch_depth": "Çömelme Derinliği",
+        "passenger_dx": "Yan",
+        "passenger_dy": "Yükseklik",
+        "passenger_dz": "Derinlik",
+        "passenger_yaw": "Dönüş",
+        "passenger_pitch": "Eğim",
+        "bunk_sit_x": "Yan",
+        "bunk_sit_y": "Yükseklik",
+        "bunk_sit_z": "Derinlik",
+        "bunk_sit_yaw": "Dönüş",
+        "bunk_sit_pitch": "Eğim"
+      }
     }
   }
 }

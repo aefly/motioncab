@@ -86,8 +86,9 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
   api->Defaults_SetLogging(h, "info", true);
   api->Defaults_SetLocalization(h, "en");
   for (const keybinds::Action &action : keybinds::kAllActions)
-    api->Defaults_AddKeybind(h, action.group, action.name, "keyboard",
-                             action.default_key, "always");
+    api->Defaults_AddKeybind(
+        h, action.group, action.name, "keyboard", action.default_key,
+        keybinds::IsWalkAction(action) ? "manual" : "always");
   // isVisible=true here only decides the very first launch ever
   api->Defaults_AddWindow(h, "MotionCab", true, true, 100, 100, kWindowWidth,
                           kWindowHeight, false, true);

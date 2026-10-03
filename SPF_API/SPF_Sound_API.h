@@ -2,12 +2,55 @@
 
 /**
  * @file SPF_Sound_API.h
- * @brief C-style API for the FMOD sound system, exposed to plugins.
+ * @brief C-style API for the sound system, exposed to plugins.
  *
- * @details This header provides complete access to the game's FMOD Studio sound system.
- *          Plugins can enumerate sound banks, events, buses, and VCAs; control playback;
- *          adjust bus and global parameters; manage listeners; and override FMOD parameters
- *          at the hook level.
+ * @details This header provides access to the game's sound system through TWO
+ *          independent layers. Choose the layer by answering one question:
+ *          WHO should drive the sound — the plugin, or the game?
+ *
+ * ================================================================================================
+ * ACCESS LAYERS
+ * ================================================================================================
+ *
+ * [FMOD layer] — direct FMOD Studio access (implemented via FmodApi / FmodStudioHook).
+ *   The plugin talks straight to FMOD: loads banks, enumerates events, creates
+ *   instances, starts/stops playback, sets parameters, mixes buses and VCAs,
+ *   controls listeners. THE GAME KNOWS NOTHING about these sounds — no game
+ *   logic triggers, updates or stops them. Use this layer when:
+ *     - the sound is entirely plugin-owned (custom music, plugin UI sounds,
+ *       notifications, footsteps of a custom character);
+ *     - the event does not exist in the game at all (e.g. a footsteps event
+ *       the game never had);
+ *     - the plugin must control playback timing itself.
+ *   Banks loaded via SND_LoadBankFile / SND_LoadBankMemory go directly into FMOD:
+ *   the game cannot see or manage such a bank — it never appears in the game's
+ *   bank list and the game will not unload it. The plugin owns its lifetime.
+ *
+ * [Game layer] — SoundRef rebinding (".soundref" -> "bank#event").
+ *   The game maps its own sounds through ".soundref" files and activates them
+ *   itself (UI clicks, horn, engine, world sounds). Use this layer when the
+ *   plugin wants to REPLACE a sound the game plays, while the game keeps
+ *   triggering, timing and stopping it exactly as before:
+ *     1. SND_RegisterSoundRefOverride("/sound/ui/ui_click.soundref",
+ *                                      "my_bank#ui/click_v2");
+ *     2. the game — including already-created events — switches to the new
+ *        "bank#event";
+ *     3. SND_UnregisterSoundRefOverride() / SND_ClearSoundRefOverrides()
+ *        restores the originals.
+ *   No plugin-side playback control is involved — the game remains the caller.
+ *
+ * Decision rule:
+ *   - the game should keep calling the sound              -> SoundRef (game layer)
+ *   - the plugin drives playback / event not in the game  -> FMOD (direct layer)
+ *
+ * ================================================================================================
+ * THREAD SAFETY
+ * ================================================================================================
+ *
+ * FMOD-layer functions must be called from the game thread (FMOD's command queue
+ * is processed there only; calling from other threads corrupts FMOD state).
+ * SoundRef (game layer) functions may be called from any thread; rebinds are
+ * applied on the game tick.
  *
  * ================================================================================================
  * LIFECYCLE
@@ -29,10 +72,17 @@
  *   2. Control: SND_SetBusVolume() / SND_SetVCAVolume() / SND_SetBusMute()
  *
  * Bank management:
- *   1. Load: SND_LoadBankFile()
+ *   1. Load: SND_LoadBankFile() / SND_LoadBankMemory()
  *   2. Query: SND_GetBankLoadingState() / SND_GetBankEventCount()
  *   3. Discover events: SND_GetBankEventGuid() + SND_FindEventIndexByGuid()
  *   4. Unload: SND_UnloadBank()
+ *
+ * SoundRef rebinding (game layer):
+ *   1. Enumerate: SND_GetSoundRefCount() + SND_GetSoundRefPath() / SND_GetSoundRefSource()
+ *   2. Find: SND_FindSoundRefIndex() / SND_FindSoundRefBySource()
+ *   3. Rebind: SND_RegisterSoundRefOverride()
+ *   4. Inspect: SND_GetSoundRefOverride() / SND_IsSoundRefActive()
+ *   5. Restore: SND_UnregisterSoundRefOverride() / SND_ClearSoundRefOverrides()
  *
  * ================================================================================================
  * ABI STABILITY
@@ -119,7 +169,7 @@ typedef bool (*SPF_SND_AreAllOffsetsFound_t)();
 typedef bool (*SPF_SND_RefreshOffsets_t)();
 
 // =================================================================================================
-// BUS ENUMERATION & CONTROL
+// BUS ENUMERATION & CONTROL [FMOD LAYER]
 // =================================================================================================
 
 /**
@@ -207,7 +257,7 @@ typedef bool (*SPF_SND_GetBusPause_t)(int index);
 typedef bool (*SPF_SND_SetBusPause_t)(int index, bool paused);
 
 // =================================================================================================
-// VCA (VOLUME CONTROL ASSOCIATION)
+// VCA (VOLUME CONTROL ASSOCIATION) [FMOD LAYER]
 // =================================================================================================
 
 /**
@@ -250,7 +300,7 @@ typedef float (*SPF_SND_GetVCAVolume_t)(int index);
 typedef bool (*SPF_SND_SetVCAVolume_t)(int index, float volume);
 
 // =================================================================================================
-// GLOBAL PARAMETERS
+// GLOBAL PARAMETERS [FMOD LAYER]
 // =================================================================================================
 
 /**
@@ -300,7 +350,7 @@ typedef float (*SPF_SND_GetGlobalParamValue_t)(const char* param_name);
 typedef bool (*SPF_SND_SetGlobalParamValue_t)(const char* param_name, float value);
 
 // =================================================================================================
-// EVENT ENUMERATION
+// EVENT ENUMERATION [FMOD LAYER]
 // =================================================================================================
 
 /**
@@ -467,7 +517,7 @@ typedef int (*SPF_SND_GetEventLiveInstanceCount_t)(int event_index);
 typedef void* (*SPF_SND_GetEventLiveInstance_t)(int event_index, int instance_index);
 
 // =================================================================================================
-// EVENT PLAYBACK
+// EVENT PLAYBACK [FMOD LAYER]
 // =================================================================================================
 
 /**
@@ -532,7 +582,7 @@ typedef int (*SPF_SND_GetEventPlaybackState_t)(void* instance);
 typedef void (*SPF_SND_ReleaseEvent_t)(void* instance);
 
 // =================================================================================================
-// EVENT INSTANCE PROPERTIES
+// EVENT INSTANCE PROPERTIES [FMOD LAYER]
 // =================================================================================================
 
 /**
@@ -692,7 +742,7 @@ typedef int (*SPF_SND_GetEventLoopCount_t)(void* instance);
 typedef bool (*SPF_SND_SetEventCallback_t)(void* instance, SPF_SND_EventCallbackFn callback, uint32_t callback_mask);
 
 // =================================================================================================
-// LISTENER CONTROL
+// LISTENER CONTROL [FMOD LAYER]
 // =================================================================================================
 
 /**
@@ -755,7 +805,7 @@ typedef bool (*SPF_SND_GetListenerAttributes_t)(int index, float* out_pos_x, flo
 typedef bool (*SPF_SND_SetListenerAttributes_t)(int index, float pos_x, float pos_y, float pos_z, float vel_x, float vel_y, float vel_z, float fwd_x, float fwd_y, float fwd_z, float up_x, float up_y, float up_z);
 
 // =================================================================================================
-// BANK MANAGEMENT
+// BANK MANAGEMENT [FMOD LAYER]
 // =================================================================================================
 
 /**
@@ -770,11 +820,29 @@ typedef bool (*SPF_SND_SetListenerAttributes_t)(int index, float pos_x, float po
  *          The dictionary enables path-based event lookup (SND_FindEventIndexByPath)
  *          for plugin-bank events that FMOD cannot resolve internally.
  *
+ *          FMOD layer: the game cannot see or manage this bank — it does not
+ *          appear in the game bank list and the game will not unload it.
+ *
  * @param bank_path Filesystem path to the .bank file.
  * @param guids_path Path to the GUIDs dictionary file, or null for auto-discovery.
  * @return Opaque bank pointer, or NULL on failure.
  */
 typedef void* (*SPF_SND_LoadBankFile_t)(const char* bank_path, const char* guids_path);
+
+/**
+ * @brief Loads a bank from a memory buffer and optionally resolves event GUIDs from a dictionary.
+ *
+ * @details FMOD layer: the bank is loaded directly into FMOD — the game does not
+ *          see it, does not list it and will not unload it. The plugin owns the
+ *          buffer lifetime and the bank lifetime (unload with SND_UnloadBank()).
+ *          Same GUID dictionary semantics as SND_LoadBankFile().
+ *
+ * @param data Pointer to the raw .bank file bytes.
+ * @param size Size of the buffer in bytes.
+ * @param guids_path Path to the GUIDs dictionary file, or null for auto-discovery.
+ * @return Opaque bank pointer, or NULL on failure.
+ */
+typedef void* (*SPF_SND_LoadBankMemory_t)(const void* data, uint32_t size, const char* guids_path);
 
 /**
  * @brief Returns the loading state of a bank.
@@ -849,7 +917,7 @@ typedef int (*SPF_SND_GetBankPath_t)(int index, char* out_buffer, int buffer_siz
 typedef bool (*SPF_SND_UnloadBank_t)(void* bank);
 
 // =================================================================================================
-// EVENT DESCRIPTION INTROSPECTION
+// EVENT DESCRIPTION INTROSPECTION [FMOD LAYER]
 // =================================================================================================
 
 /**
@@ -918,7 +986,7 @@ typedef uint32_t (*SPF_SND_GetEventSoundSize_t)(int event_index);
 typedef int (*SPF_SND_GetEventSampleLoadingState_t)(int event_index);
 
 // =================================================================================================
-// FMOD HOOK OVERRIDES
+// FMOD HOOK OVERRIDES [FMOD LAYER — INTERCEPTS THE GAME'S OWN FMOD READS]
 // =================================================================================================
 
 /**
@@ -980,12 +1048,446 @@ typedef void (*SPF_SND_Reset3DToOriginal_t)(const char* event_path);
 typedef bool (*SPF_SND_HasOverrides_t)();
 
 /**
- * @brief Removes ALL active FMOD hook overrides (parameters and 3D).
+ * @brief Removes ALL active FMOD hook overrides (parameters, 3D, volume, pitch).
  *
- * @details After this call, all events revert to the game's original parameter
- *          and 3D attribute values.
+ * @details After this call, all events revert to the game's original parameter,
+ *          3D attribute, volume and pitch values. Suppression prefixes
+ *          (SND_SuppressEventPlayback) are NOT affected — remove them explicitly.
  */
 typedef void (*SPF_SND_RemoveAllOverrides_t)();
+
+/**
+ * @brief Forces the FMOD volume of every instance of an event path (FMOD hook layer).
+ *
+ * @details Intercepts EventInstance::setVolume for instances whose resolved
+ *          event path equals @p event_path and replaces the value the game
+ *          requested. The game's own volume logic keeps running — its writes
+ *          are just replaced at the FMOD boundary. Remove the override to let
+ *          the game's values through again.
+ *
+ * @param event_path Exact FMOD event path (e.g. "event:/horn/truck").
+ * @param volume Forced volume (0.0 = silent, 1.0 = full).
+ */
+typedef void (*SPF_SND_OverrideEventVolume_t)(const char* event_path, float volume);
+
+/**
+ * @brief Removes a volume override installed by SND_OverrideEventVolume.
+ *
+ * @param event_path Exact FMOD event path the override was installed for.
+ */
+typedef void (*SPF_SND_RemoveEventVolumeOverride_t)(const char* event_path);
+
+/**
+ * @brief Forces the FMOD pitch of every instance of an event path (FMOD hook layer).
+ *
+ * @details Same interception model as SND_OverrideEventVolume, on
+ *          EventInstance::setPitch.
+ *
+ * @param event_path Exact FMOD event path.
+ * @param pitch Forced pitch multiplier (1.0 = unchanged).
+ */
+typedef void (*SPF_SND_OverrideEventPitch_t)(const char* event_path, float pitch);
+
+/**
+ * @brief Removes a pitch override installed by SND_OverrideEventPitch.
+ *
+ * @param event_path Exact FMOD event path the override was installed for.
+ */
+typedef void (*SPF_SND_RemoveEventPitchOverride_t)(const char* event_path);
+
+// =================================================================================================
+// FMOD INTERCEPTION [SUPPRESSION / ACTIVITY OBSERVATION] (FMOD hook layer)
+// =================================================================================================
+
+// Activity codes delivered to SPF_SND_ActivityCallback_t.
+#define SPF_ACTIVITY_EVENT_CREATED          1   // EventDescription::createInstance returned a new instance
+#define SPF_ACTIVITY_EVENT_START_SUPPRESSED 2   // EventInstance::start was blocked by SND_SuppressEventPlayback
+#define SPF_ACTIVITY_EVENT_STARTED          3   // EventInstance::start executed successfully
+#define SPF_ACTIVITY_EVENT_STOPPED          4   // EventInstance::stop called
+#define SPF_ACTIVITY_EVENT_PAUSED           5   // EventInstance::setPaused(true) called
+#define SPF_ACTIVITY_EVENT_UNPAUSED         6   // EventInstance::setPaused(false) called
+#define SPF_ACTIVITY_EVENT_RELEASED         7   // EventInstance::release called (path resolved before release)
+#define SPF_ACTIVITY_EVENT_PARAM_SET        8   // setParameterByName/ByID called (param_name/param_value valid)
+#define SPF_ACTIVITY_BANK_LOADED            9   // System::loadBank* succeeded (path = bank path)
+#define SPF_ACTIVITY_BANK_UNLOADING         10  // Bank::unload called (path = bank path)
+
+/**
+ * @brief Callback observing FMOD activity — the interception layer's event feed.
+ *
+ * @details Invoked synchronously from inside the intercepting detour, on the
+ *          thread that made the FMOD call (normally the game thread) — there is
+ *          no queuing. @p path and @p param_name are valid only for the
+ *          duration of the call; copy what you need. Nested delivery is
+ *          suppressed (activity fired from inside your own callback is
+ *          dropped), but calling SND_* FMOD functions from the callback is
+ *          still unsafe — buffer the data and act on it later (e.g. in your
+ *          OnUpdate).
+ *
+ * @param user_data Pointer passed to SND_SetActivityCallback.
+ * @param activity SPF_ACTIVITY_* code.
+ * @param path Event path, or bank path for SPF_ACTIVITY_BANK_*; "" if unresolvable.
+ * @param instance FMOD instance involved (NULL for bank activities).
+ * @param param_name Parameter name for SPF_ACTIVITY_EVENT_PARAM_SET, else NULL.
+ * @param param_value Effective value passed to FMOD for SPF_ACTIVITY_EVENT_PARAM_SET, else 0.
+ */
+typedef void (*SPF_SND_ActivityCallback_t)(void* user_data, int activity, const char* path,
+                                           void* instance, const char* param_name, float param_value);
+
+/**
+ * @brief Registers (or with NULL, unregisters) the FMOD activity callback.
+ *
+ * @details One callback per process; a new registration replaces the previous
+ *          one. Survives until replaced or the hook is uninstalled.
+ *
+ * @param callback Callback function, or NULL to unregister.
+ * @param user_data Opaque pointer delivered back to @p callback.
+ */
+typedef void (*SPF_SND_SetActivityCallback_t)(SPF_SND_ActivityCallback_t callback, void* user_data);
+
+/**
+ * @brief Blocks playback start for every event path under a prefix (FMOD hook layer).
+ *
+ * @details Installs a prefix rule on the EventInstance::start detour: any start
+ *          call for an event path beginning with @p path_prefix returns FMOD_OK
+ *          without playing — the game's horn never reaches the speakers, from
+ *          the first sample. The blocked start still counts: watch
+ *          SND_GetSuppressedStartCount for press edges. The game may keep
+ *          calling setParameter on the silent instance (e.g. "play") — those
+ *          writes pass through untouched. Matching is case-sensitive prefix
+ *          match; the rule applies to instances created before or after the
+ *          call. Suppression rules survive until SND_UnsuppressEventPlayback.
+ *
+ * @param path_prefix Event path prefix (e.g. "event:/horn/").
+ * @return true when the start hook is active and the rule installed; false on
+ *         empty prefix or when the hook is unavailable.
+ */
+typedef bool (*SPF_SND_SuppressEventPlayback_t)(const char* path_prefix);
+
+/**
+ * @brief Removes a suppression rule installed by SND_SuppressEventPlayback.
+ *
+ * @details Instances already blocked stay silent until their next start call,
+ *          which now plays normally.
+ *
+ * @param path_prefix The prefix rule to remove.
+ * @return true when a rule was found and removed; false otherwise.
+ */
+typedef bool (*SPF_SND_UnsuppressEventPlayback_t)(const char* path_prefix);
+
+/**
+ * @brief Returns how many start attempts were suppressed under a prefix.
+ *
+ * @details The counter resets when the prefix rule is removed or the hook
+ *          reinstalled. Compare against a stored baseline to detect presses —
+ *          the value only grows while the rule exists.
+ *
+ * @param path_prefix The suppression prefix.
+ * @return Suppressed-start attempt count, or 0 when no rule exists.
+ */
+typedef uint64_t (*SPF_SND_GetSuppressedStartCount_t)(const char* path_prefix);
+
+/**
+ * @brief Returns the FMOD instance of the most recent suppressed start under a prefix.
+ *
+ * @details Use it to read per-instance state the game keeps on the silent
+ *          instance (e.g. the "play" parameter) to detect release. The pointer
+ *          becomes NULL once the game releases that instance; never cache it
+ *          across frames — call this every frame instead. The instance is
+ *          stopped (its start was blocked) but alive and queryable.
+ *
+ * @param path_prefix The suppression prefix.
+ * @return FMOD instance pointer, or NULL when none / already released.
+ */
+typedef void* (*SPF_SND_GetLastSuppressedInstance_t)(const char* path_prefix);
+
+// =================================================================================================
+// GAME sound_event CONTROL [GAME LAYER]
+// =================================================================================================
+
+/**
+ * @brief Returns the number of live game sound_event_t objects.
+ *
+ * @details Walks per-bank event lists and builds a fresh snapshot on every
+ *          call. Handles obtained via SND_GetGameEventAt stay valid while the
+ *          event exists — prefer fetching handles once over repeated counts.
+ *
+ * @return Event count, or 0 if the sound system is not ready.
+ */
+typedef int (*SPF_SND_GetGameEventCount_t)();
+
+/**
+ * @brief Returns the sound_event_t handle at @p index within a fresh snapshot.
+ *
+ * @param index Zero-based index (0 to SND_GetGameEventCount()-1 of the same snapshot).
+ * @return Opaque handle, or NULL when out of range.
+ */
+typedef void* (*SPF_SND_GetGameEventAt_t)(int index);
+
+/**
+ * @brief Finds the first game sound_event whose path equals @p path.
+ *
+ * @param path Exact event path string (game's own path field).
+ * @return Opaque handle, or NULL if no event matches.
+ */
+typedef void* (*SPF_SND_FindGameEventByPath_t)(const char* path);
+
+/**
+ * @brief Finds the first game sound_event whose source equals @p source.
+ *
+ * @param source Exact "bank#event" source string.
+ * @return Opaque handle, or NULL if no event matches.
+ */
+typedef void* (*SPF_SND_FindGameEventBySource_t)(const char* source);
+
+/**
+ * @brief Finds the game sound_event that owns @p instance.
+ *
+ * Reverse FMOD→game mapping: matches the instance field of every live
+ * sound_event against @p instance.
+ *
+ * @param instance FMOD EventInstance* handle.
+ * @return Opaque game event handle, or NULL if no game event owns it
+ *         (plugin-created / foreign instances resolve to NULL).
+ */
+typedef void* (*SPF_SND_FindGameEventByInstance_t)(void* instance);
+
+/**
+ * @brief Reads the playback state dword of a game sound_event.
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @return SPF_SOUND_EVENT_STATE_* value; 0 if unavailable.
+ */
+typedef uint32_t (*SPF_SND_GetGameEventPlaybackState_t)(void* event);
+
+/**
+ * @brief Reports whether the game event is currently bound (state == 2).
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @return true when bound, false otherwise.
+ */
+typedef bool (*SPF_SND_IsGameEventBound_t)(void* event);
+
+/**
+ * @brief Recreates the event's EventInstance from its current source.
+ *
+ * @details Stops and releases the previous instance first (never leaks), then
+ *          runs the game's own activate path. Does NOT auto-start playback —
+ *          call SND_GameEvent_Start for that. Game thread only.
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @return true when activate succeeded.
+ */
+typedef bool (*SPF_SND_GameEvent_Activate_t)(void* event);
+
+/**
+ * @brief Starts (or resumes) a game sound_event through its vtable PlaybackControl.
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @return true on success.
+ */
+typedef bool (*SPF_SND_GameEvent_Start_t)(void* event);
+
+/**
+ * @brief Stops a game sound_event through its vtable Stop; instance is kept
+ *        until the next SND_GameEvent_Activate.
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @return true on success.
+ */
+typedef bool (*SPF_SND_GameEvent_Stop_t)(void* event);
+
+/**
+ * @brief Pauses or resumes a game sound_event through its vtable SetPaused.
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @param paused true to pause, false to resume.
+ * @return true on success.
+ */
+typedef bool (*SPF_SND_GameEvent_SetPaused_t)(void* event, bool paused);
+
+/**
+ * @brief Sets event volume through its vtable SetVolume (also cached by the game at +0x80).
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @param volume New volume (game convention 0..1).
+ * @return true on success.
+ */
+typedef bool (*SPF_SND_GameEvent_SetVolume_t)(void* event, float volume);
+
+/**
+ * @brief Sets event pitch through its vtable SetPitch (cached by the game at +0x84).
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @param pitch New pitch multiplier (1.0 = normal).
+ * @return true on success.
+ */
+typedef bool (*SPF_SND_GameEvent_SetPitch_t)(void* event, float pitch);
+
+/**
+ * @brief Sets a raw FMOD event property through its vtable SetProperty (cached at +0x88).
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @param property_id FMOD event property id (0 = frequency modulation depth, ...).
+ * @param value New property value.
+ * @return true on success.
+ */
+typedef bool (*SPF_SND_GameEvent_SetProperty_t)(void* event, int property_id, float value);
+
+/**
+ * @brief Sets 3D position through its vtable Set3DAttributes.
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @param pos_x,pos_y,pos_z World position; velocity is zeroed by this overload.
+ * @return true on success.
+ */
+typedef bool (*SPF_SND_GameEvent_Set3DAttributes_t)(void* event, float pos_x, float pos_y, float pos_z);
+
+/**
+ * @brief Sets a parameter on a game sound_event by its 16-byte FMOD ID.
+ *
+ * @param event Handle from SND_FindGameEventByPath/BySource/At.
+ * @param id 16-byte parameter GUID (same layout as SPD_GET_PARAMETER_ID_GUID).
+ * @param value New parameter value.
+ * @return true on success.
+ */
+typedef bool (*SPF_SND_GameEvent_SetParameterByID_t)(void* event, const uint8_t id[16], float value);
+
+// SoundEvent playback state (sound_event_t+0x30) — SPF_SND_GetGameEventPlaybackState values
+#define SPF_SOUND_EVENT_STATE_STOPPED 0u  // stopped manually / never started
+#define SPF_SOUND_EVENT_STATE_PLAYING 1u
+#define SPF_SOUND_EVENT_STATE_PAUSED 3u
+#define SPF_SOUND_EVENT_STATE_ENDED 4u    // finished on its own
+
+// =================================================================================================
+// SOUNDREF CATALOG & REBINDING [GAME LAYER]
+// =================================================================================================
+
+/**
+ * @brief Returns the number of known .soundref paths.
+ *
+ * @details The catalog merges all sources: static game tables (UI, voice-nav),
+ *          ".soundref" path references found in the game binary, files enumerated
+ *          from the game VFS, and currently live sound events. Entries with a live
+ *          event additionally expose their current "bank#event" source.
+ *
+ * @return SoundRef count, or 0 if the sound system is not ready.
+ */
+typedef int (*SPF_SND_GetSoundRefCount_t)();
+
+/**
+ * @brief Copies the .soundref path of a catalog entry into the provided buffer.
+ *
+ * @param index Zero-based catalog index (0 to SND_GetSoundRefCount()-1).
+ * @param out_buffer Buffer to receive the path string.
+ * @param buffer_size Size of the output buffer in bytes.
+ * @return The full path length excluding the null terminator, or -1 if the index is invalid.
+ */
+typedef int (*SPF_SND_GetSoundRefPath_t)(int index, char* out_buffer, int buffer_size);
+
+/**
+ * @brief Copies the current "bank#event" source of a catalog entry.
+ *
+ * @details Non-empty only when the game has a live sound_event for this path
+ *          (SND_IsSoundRefActive). Reflects any registered override once applied.
+ *
+ * @param index Zero-based catalog index.
+ * @param out_buffer Buffer to receive the source string.
+ * @param buffer_size Size of the output buffer in bytes.
+ * @return The full source length excluding the null terminator, or -1 if the index is invalid.
+ */
+typedef int (*SPF_SND_GetSoundRefSource_t)(int index, char* out_buffer, int buffer_size);
+
+/**
+ * @brief Searches the catalog for a ".soundref" path.
+ *
+ * @param soundref_path Full .soundref path (e.g. "/sound/ui/ui_click.soundref").
+ * @return Zero-based catalog index, or -1 if not found.
+ */
+typedef int (*SPF_SND_FindSoundRefIndex_t)(const char* soundref_path);
+
+/**
+ * @brief Searches for the first catalog entry whose live source equals the given "bank#event".
+ *
+ * @details Useful to discover which soundref currently points at a given event,
+ *          e.g. before rebinding everything that plays "music/main_menu" from a
+ *          specific bank.
+ *
+ * @param source "bank#event" string (e.g. "sound/ui/ui.bank#click").
+ * @return Zero-based catalog index, or -1 if not found.
+ */
+typedef int (*SPF_SND_FindSoundRefBySource_t)(const char* source);
+
+/**
+ * @brief Returns whether the game currently has a live sound_event for the path.
+ *
+ * @param soundref_path Full .soundref path.
+ * @return true if a live event exists, false otherwise.
+ */
+typedef bool (*SPF_SND_IsSoundRefActive_t)(const char* soundref_path);
+
+/**
+ * @brief PURE registration of a ".soundref" -> "bank#event" override (map only).
+ *
+ * @details No side effects at call time: nothing is applied to live events, no
+ *          bank is loaded, no instance is stopped or started. The override is
+ *          consulted inside the game's SoundRef load pipeline, so it takes
+ *          effect on the soundref's NEXT activation by the game. For immediate
+ *          audible replacement use SND_SoundRef_Replace.
+ *
+ * @param soundref_path Full .soundref path to rebind.
+ * @param source New source in "bank#event" format (e.g. "my_bank#ui/click_v2").
+ * @return true if the override was registered, false on invalid arguments.
+ */
+typedef bool (*SPF_SND_RegisterSoundRefOverride_t)(const char* soundref_path, const char* source);
+
+/**
+ * @brief AUTOMATIC full-cycle replacement — the one-stop "swap my sound" call.
+ *
+ * @details Single call does everything, in order:
+ *          1) registers the override (same map as SND_RegisterSoundRefOverride);
+ *          2) rewrites the source field of every LIVE game event with this path;
+ *          3) queues a rebind executed on the game thread: stop current instance
+ *             -> release it -> activate from the new source -> start again if the
+ *             event was playing/paused before. During activate the GAME loads the
+ *             target bank itself through its VFS (part of source before '#'), so
+ *             the bank's VFS directory must be mounted first (Env_VfsMount).
+ *          Events not live right now pick the override up automatically on their
+ *          next activation (same as pure SND_RegisterSoundRefOverride).
+ *
+ * @param soundref_path Full .soundref path to rebind.
+ * @param source New source in "bank#event" format; before '#' is the VFS bank path.
+ * @return true if registered and the apply pass ran, false on invalid arguments.
+ */
+typedef bool (*SPF_SND_SoundRef_Replace_t)(const char* soundref_path, const char* source);
+
+/**
+ * @brief Removes one override, restoring the original "bank#event" source.
+ *
+ * @details Live events with this path are restored to their original source and
+ *          rebound on the game thread with the same stop -> activate -> resume
+ *          lifecycle, so a playing replacement stops and the original resumes.
+ *          A bank that was auto-loaded by SND_SoundRef_Replace stays loaded
+ *          (silent); unload it explicitly with SND_UnloadBank if needed.
+ *
+ * @param soundref_path Full .soundref path.
+ * @return true if an override existed and was removed, false otherwise.
+ */
+typedef bool (*SPF_SND_UnregisterSoundRefOverride_t)(const char* soundref_path);
+
+/**
+ * @brief Removes ALL registered SoundRef overrides, restoring every original source.
+ */
+typedef void (*SPF_SND_ClearSoundRefOverrides_t)();
+
+/**
+ * @brief Copies the currently registered override source for a path.
+ *
+ * @param soundref_path Full .soundref path.
+ * @param out_buffer Buffer to receive the "bank#event" source.
+ * @param buffer_size Size of the output buffer in bytes.
+ * @return The source length (0 if no override is registered), or -1 on invalid arguments.
+ */
+typedef int (*SPF_SND_GetSoundRefOverride_t)(const char* soundref_path, char* out_buffer, int buffer_size);
 
 // =================================================================================================
 // API STRUCTURE
@@ -1015,7 +1517,7 @@ typedef struct SPF_Sound_API {
   /** @} */
 
   /**
-   * @brief Bus enumeration and control.
+   * @brief Bus enumeration and control (FMOD layer).
    * @{
    */
   SPF_SND_GetBusCount_t SND_GetBusCount;
@@ -1029,7 +1531,7 @@ typedef struct SPF_Sound_API {
   /** @} */
 
   /**
-   * @brief VCA (Volume Control Association) enumeration and control.
+   * @brief VCA (Volume Control Association) enumeration and control (FMOD layer).
    * @{
    */
   SPF_SND_GetVCACount_t SND_GetVCACount;
@@ -1039,7 +1541,7 @@ typedef struct SPF_Sound_API {
   /** @} */
 
   /**
-   * @brief Global parameter enumeration and control.
+   * @brief Global parameter enumeration and control (FMOD layer).
    * @{
    */
   SPF_SND_GetGlobalParamCount_t SND_GetGlobalParamCount;
@@ -1050,7 +1552,7 @@ typedef struct SPF_Sound_API {
   /** @} */
 
   /**
-   * @brief Event enumeration (read-only metadata).
+   * @brief Event enumeration — bank catalog metadata (FMOD layer).
    * @{
    */
   SPF_SND_GetEventCount_t SND_GetEventCount;
@@ -1072,7 +1574,7 @@ typedef struct SPF_Sound_API {
   /** @} */
 
   /**
-   * @brief Event instance playback control.
+   * @brief Event instance playback control — plugin-driven playback (FMOD layer).
    * @{
    */
   SPF_SND_CreateEventInstance_t SND_CreateEventInstance;
@@ -1084,7 +1586,7 @@ typedef struct SPF_Sound_API {
   /** @} */
 
   /**
-   * @brief Event instance property control.
+   * @brief Event instance property control (FMOD layer).
    * @{
    */
   SPF_SND_SetEventVolume_t SND_SetEventVolume;
@@ -1103,7 +1605,7 @@ typedef struct SPF_Sound_API {
   /** @} */
 
   /**
-   * @brief Listener control.
+   * @brief Listener control (FMOD layer).
    * @{
    */
   SPF_SND_GetNumListeners_t SND_GetNumListeners;
@@ -1113,10 +1615,11 @@ typedef struct SPF_Sound_API {
   /** @} */
 
   /**
-   * @brief Bank management.
+   * @brief Bank management — banks loaded here are invisible to the game (FMOD layer).
    * @{
    */
   SPF_SND_LoadBankFile_t SND_LoadBankFile;
+  SPF_SND_LoadBankMemory_t SND_LoadBankMemory;
   SPF_SND_GetBankLoadingState_t SND_GetBankLoadingState;
   SPF_SND_GetBankEventCount_t SND_GetBankEventCount;
   SPF_SND_GetBankEventGuid_t SND_GetBankEventGuid;
@@ -1127,7 +1630,7 @@ typedef struct SPF_Sound_API {
   /** @} */
 
   /**
-   * @brief FMOD hook overrides (parameter and 3D attribute injection).
+   * @brief FMOD hook overrides — intercept the game's own FMOD reads (FMOD hook layer).
    * @{
    */
   SPF_SND_OverrideParameter_t SND_OverrideParameter;
@@ -1137,10 +1640,25 @@ typedef struct SPF_Sound_API {
   SPF_SND_Reset3DToOriginal_t SND_Reset3DToOriginal;
   SPF_SND_HasOverrides_t SND_HasOverrides;
   SPF_SND_RemoveAllOverrides_t SND_RemoveAllOverrides;
+  SPF_SND_OverrideEventVolume_t SND_OverrideEventVolume;
+  SPF_SND_RemoveEventVolumeOverride_t SND_RemoveEventVolumeOverride;
+  SPF_SND_OverrideEventPitch_t SND_OverrideEventPitch;
+  SPF_SND_RemoveEventPitchOverride_t SND_RemoveEventPitchOverride;
   /** @} */
 
   /**
-   * @brief Event description introspection (parameters, user properties, sample state).
+   * @brief FMOD interception — suppression and activity observation (FMOD hook layer).
+   * @{
+   */
+  SPF_SND_SetActivityCallback_t SND_SetActivityCallback;
+  SPF_SND_SuppressEventPlayback_t SND_SuppressEventPlayback;
+  SPF_SND_UnsuppressEventPlayback_t SND_UnsuppressEventPlayback;
+  SPF_SND_GetSuppressedStartCount_t SND_GetSuppressedStartCount;
+  SPF_SND_GetLastSuppressedInstance_t SND_GetLastSuppressedInstance;
+  /** @} */
+
+  /**
+   * @brief Event description introspection — parameters, user properties, sample state (FMOD layer).
    * @{
    */
   SPF_SND_GetEventParameterCount_t SND_GetEventParameterCount;
@@ -1149,6 +1667,48 @@ typedef struct SPF_Sound_API {
   SPF_SND_GetEventUserPropertyByIndex_t SND_GetEventUserPropertyByIndex;
   SPF_SND_GetEventSoundSize_t SND_GetEventSoundSize;
   SPF_SND_GetEventSampleLoadingState_t SND_GetEventSampleLoadingState;
+  /** @} */
+
+  /**
+   * @brief Game sound_event control — direct handles into the game's own events (game layer).
+   * @details GAME THREAD ONLY: these calls reach FMOD internals and the game's
+   *          vtable dispatch. Handles are raw game pointers — valid while the
+   *          event exists; bank unload destroys its events, re-query after.
+   * @{
+   */
+  SPF_SND_GetGameEventCount_t SND_GetGameEventCount;
+  SPF_SND_GetGameEventAt_t SND_GetGameEventAt;
+  SPF_SND_FindGameEventByPath_t SND_FindGameEventByPath;
+  SPF_SND_FindGameEventBySource_t SND_FindGameEventBySource;
+  SPF_SND_FindGameEventByInstance_t SND_FindGameEventByInstance;
+  SPF_SND_GetGameEventPlaybackState_t SND_GetGameEventPlaybackState;
+  SPF_SND_IsGameEventBound_t SND_IsGameEventBound;
+  SPF_SND_GameEvent_Activate_t SND_GameEvent_Activate;
+  SPF_SND_GameEvent_Start_t SND_GameEvent_Start;
+  SPF_SND_GameEvent_Stop_t SND_GameEvent_Stop;
+  SPF_SND_GameEvent_SetPaused_t SND_GameEvent_SetPaused;
+  SPF_SND_GameEvent_SetVolume_t SND_GameEvent_SetVolume;
+  SPF_SND_GameEvent_SetPitch_t SND_GameEvent_SetPitch;
+  SPF_SND_GameEvent_SetProperty_t SND_GameEvent_SetProperty;
+  SPF_SND_GameEvent_Set3DAttributes_t SND_GameEvent_Set3DAttributes;
+  SPF_SND_GameEvent_SetParameterByID_t SND_GameEvent_SetParameterByID;
+  /** @} */
+
+  /**
+   * @brief SoundRef catalog & rebinding — the game keeps driving the sound (game layer).
+   * @{
+   */
+  SPF_SND_GetSoundRefCount_t SND_GetSoundRefCount;
+  SPF_SND_GetSoundRefPath_t SND_GetSoundRefPath;
+  SPF_SND_GetSoundRefSource_t SND_GetSoundRefSource;
+  SPF_SND_FindSoundRefIndex_t SND_FindSoundRefIndex;
+  SPF_SND_FindSoundRefBySource_t SND_FindSoundRefBySource;
+  SPF_SND_IsSoundRefActive_t SND_IsSoundRefActive;
+  SPF_SND_RegisterSoundRefOverride_t SND_RegisterSoundRefOverride;
+  SPF_SND_SoundRef_Replace_t SND_SoundRef_Replace;
+  SPF_SND_UnregisterSoundRefOverride_t SND_UnregisterSoundRefOverride;
+  SPF_SND_ClearSoundRefOverrides_t SND_ClearSoundRefOverrides;
+  SPF_SND_GetSoundRefOverride_t SND_GetSoundRefOverride;
   /** @} */
 } SPF_Sound_API;
 

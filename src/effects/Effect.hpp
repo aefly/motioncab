@@ -40,6 +40,12 @@ public:
   virtual HeadOffset Update(float dt, const SPF_TruckData &truck,
                             const SPF_Controls &controls) = 0;
 
+  // True for the effects that only make sense in the driver's seat (driving
+  // motion, looking at the mirrors, road motion, ...): they fade out while
+  // Cabin Walk takes the player elsewhere in the cabin
+  // (EffectManager::SetAtWheel).
+  virtual bool NeedsDriverSeat() const { return false; }
+
   // Called whenever the truck's static configuration changes (bought a new
   // truck, added/removed axles). Default no-op; only effects that need
   // per-wheel layout (e.g. front/rear classification) override this.

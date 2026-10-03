@@ -29,6 +29,25 @@ int PushBrandRounding(SPF_UI_API *ui);
 // keybind buttons, instead of the brighter brand red of regular buttons.
 bool MutedButton(SPF_UI_API *ui, const char *label, float width = 0.0f);
 
+// How a value was edited this frame (see StepperFloat).
+enum class StepperEdit {
+  kNone,
+  kLive, // being dragged: apply it, save once let go
+  kDone, // stepped, reset, typed or let go: save it
+};
+
+// [-] value [+] filling the width: the value slid (or, with `drag`,
+// dragged without a range bar), stepped by `step` with the buttons,
+// Ctrl+click to type it, right-click back to `reset_value`. `tooltip`, if
+// any, shows over the value.
+StepperEdit StepperFloat(SPF_UI_API *ui, const char *id, float *value,
+                         float min, float max, float step, const char *format,
+                         float reset_value, const char *tooltip = nullptr,
+                         bool drag = false);
+
+// The step a printf-style format shows: 1 for "%.0f", 0.01 for "%.2f".
+float FormatStep(const char *format);
+
 // "<icon> <text>", for the icon-prefixed labels used all over the window.
 std::string WithIcon(const char *icon, std::string_view text);
 

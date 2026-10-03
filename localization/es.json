@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "Visor de ángulo muerto",
       "desc": "Se inclina suavemente para ver detrás del pilar del parabrisas."
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "Levantarse / Sentarse",
+        "desc": "Te levanta del asiento. Pulsa para sentarte en el sitio que miras, mantén para volver al volante."
+      },
+      "forward": {
+        "title": "Caminar hacia delante",
+        "desc": "Camina hacia delante mientras estás de pie en la cabina."
+      },
+      "back": {
+        "title": "Caminar hacia atrás",
+        "desc": "Camina hacia atrás mientras estás de pie en la cabina."
+      },
+      "left": {
+        "title": "Paso a la izquierda",
+        "desc": "Da un paso lateral a la izquierda mientras estás de pie en la cabina."
+      },
+      "right": {
+        "title": "Paso a la derecha",
+        "desc": "Da un paso lateral a la derecha mientras estás de pie en la cabina."
+      },
+      "crouch": {
+        "title": "Agacharse",
+        "desc": "Te agacha de pie."
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "Manual",
-      "desc": "Efectos de mirada y zoom que activas tú mismo.",
+      "desc": "Efectos de mirada, zoom y caminar que activas tú mismo.",
       "mirror_check": {
         "title": "Mirar los espejos",
         "desc": "Mira hacia el espejo correspondiente mientras un intermitente está encendido y vuelve al centro cuando se apaga.",
@@ -347,6 +373,18 @@
           "title": "Modo alternar",
           "desc": "Activado: pulsa una vez para inclinarte y otra vez para volver. Desactivado: te inclinas mientras mantienes pulsado y sueltas para volver."
         }
+      },
+      "cabin_walk": {
+        "title": "Caminar por la cabina",
+        "desc": "Levántate del asiento del conductor y camina libremente por la cabina con el camión aparcado.",
+        "hint": "Las distribuciones predeterminadas están ajustadas a la cabina litera más pequeña de cada camión. Las demás cabinas pueden necesitar ajustes.",
+        "enabled": {
+          "title": "Activar Caminar por la cabina"
+        },
+        "require_parking_brake": {
+          "title": "Exigir freno de estacionamiento",
+          "desc": "Activado: requiere el freno de estacionamiento, quitarlo te devuelve. Desactivado: basta con parar."
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "metric",
       "kmh": "km/h",
       "mph": "mph"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "Pon el freno de estacionamiento para dejar el asiento.",
+      "needs_stop": "Detén el camión para dejar el asiento.",
+      "back_to_wheel": "De vuelta al volante: el camión ya no está aparcado.",
+      "layout": {
+        "no_truck": "Sube a un camión para configurar su cabina.",
+        "truck": "Camión",
+        "tip": {
+          "floor_z_min": "Hasta dónde puedes avanzar, hacia el parabrisas.",
+          "floor_z_max": "Hasta dónde puedes retroceder, hacia la pared trasera.",
+          "floor_x_min": "Hasta dónde puedes ir hacia la puerta del conductor.",
+          "floor_x_max": "Hasta dónde puedes ir hacia la puerta del acompañante.",
+          "stand_y": "La altura de tus ojos de pie.",
+          "crouch_depth": "Cuánto baja la cabeza al agacharte.",
+          "passenger_dx": "Hacia un lado desde el reflejo de tu asiento.",
+          "passenger_dy": "Más arriba o abajo que tu asiento.",
+          "passenger_dz": "Más adelante o atrás que tu asiento.",
+          "bunk_sit_x": "Dónde te sientas a lo largo de la litera.",
+          "bunk_sit_y": "La altura de tus ojos sentado en la litera.",
+          "bunk_sit_z": "Lo atrás que está el borde de la litera.",
+          "yaw": "Hacia dónde miras una vez sentado.",
+          "pitch": "Cuánto miras arriba o abajo una vez sentado.",
+          "has_passenger": "Desmárcalo si el asiento del acompañante se pliega o no existe.",
+          "has_bunk": "Desmárcalo para una cabina corta sin litera."
+        },
+        "group": {
+          "walkway": "Zona de paso",
+          "heights": "Altura de pie",
+          "passenger": "Asiento del acompañante",
+          "bunk": "Litera"
+        },
+        "go": "Ir allí",
+        "usable": "Utilizable",
+        "advanced": "Avanzado",
+        "reset": "Restablecer distribución",
+        "reset_title": "Restablecer distribución de la cabina",
+        "reset_message": "¿Volver a la distribución por defecto para {truck}?",
+        "reset_confirm": "Sí, restablecer",
+        "floor_x_min": "Límite izquierdo",
+        "floor_x_max": "Límite derecho",
+        "floor_z_min": "Límite delantero",
+        "floor_z_max": "Límite trasero",
+        "crouch_depth": "Profundidad al agacharse",
+        "passenger_dx": "Lado",
+        "passenger_dy": "Altura",
+        "passenger_dz": "Profundidad",
+        "passenger_yaw": "Giro",
+        "passenger_pitch": "Inclinación",
+        "bunk_sit_x": "Lado",
+        "bunk_sit_y": "Altura",
+        "bunk_sit_z": "Profundidad",
+        "bunk_sit_yaw": "Giro",
+        "bunk_sit_pitch": "Inclinación"
+      }
     }
   }
 }

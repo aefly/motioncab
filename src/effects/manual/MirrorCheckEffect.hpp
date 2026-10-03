@@ -27,6 +27,7 @@ public:
                            "mirror_check") {}
 
   void Reset() override;
+  bool NeedsDriverSeat() const override { return true; }
   HeadOffset Update(float dt, const SPF_TruckData &truck,
                     const SPF_Controls &controls) override;
 

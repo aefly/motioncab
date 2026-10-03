@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "Visuale angolo cieco",
       "desc": "Si sporge dolcemente per vedere dietro il montante del parabrezza."
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "Alzati / Siediti",
+        "desc": "Ti alza dal sedile. Premi per sederti nel posto che guardi, tieni premuto per tornare al volante."
+      },
+      "forward": {
+        "title": "Cammina avanti",
+        "desc": "Cammina in avanti quando sei in piedi nella cabina."
+      },
+      "back": {
+        "title": "Cammina indietro",
+        "desc": "Cammina all'indietro quando sei in piedi nella cabina."
+      },
+      "left": {
+        "title": "Passo a sinistra",
+        "desc": "Fa un passo laterale a sinistra quando sei in piedi nella cabina."
+      },
+      "right": {
+        "title": "Passo a destra",
+        "desc": "Fa un passo laterale a destra quando sei in piedi nella cabina."
+      },
+      "crouch": {
+        "title": "Accovacciati",
+        "desc": "Ti accovacci in piedi."
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "Manuale",
-      "desc": "Effetti di sguardo e zoom che attivi tu.",
+      "desc": "Effetti di sguardo, zoom e camminata che attivi tu stesso.",
       "mirror_check": {
         "title": "Controllo specchietti",
         "desc": "Guarda verso lo specchietto corrispondente mentre un indicatore di direzione è acceso e torna al centro quando si spegne.",
@@ -347,6 +373,18 @@
           "title": "Modalità alternata",
           "desc": "Attiva: premi una volta per sporgerti, di nuovo per tornare. Disattiva: sporgiti finché tieni premuto, rilascia per tornare."
         }
+      },
+      "cabin_walk": {
+        "title": "Camminata in cabina",
+        "desc": "Alzati dal sedile del conducente e muoviti liberamente nella cabina a camion parcheggiato.",
+        "hint": "Le disposizioni predefinite sono impostate sulla cabina con cuccetta più piccola di ogni camion. Le altre cabine potrebbero richiedere una regolazione.",
+        "enabled": {
+          "title": "Attiva Camminata in cabina"
+        },
+        "require_parking_brake": {
+          "title": "Richiedi freno di stazionamento",
+          "desc": "Attivo: serve il freno di stazionamento, toglierlo ti riporta indietro. Disattivo: basta fermarsi."
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "metric",
       "kmh": "km/h",
       "mph": "mph"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "Inserisci il freno di stazionamento per lasciare il sedile.",
+      "needs_stop": "Ferma il camion per lasciare il sedile.",
+      "back_to_wheel": "Di nuovo al volante: il camion non è più parcheggiato.",
+      "layout": {
+        "no_truck": "Sali su un camion per configurarne la cabina.",
+        "truck": "Camion",
+        "tip": {
+          "floor_z_min": "Quanto puoi avanzare, verso il parabrezza.",
+          "floor_z_max": "Quanto puoi arretrare, verso la parete posteriore.",
+          "floor_x_min": "Quanto puoi andare verso la portiera del conducente.",
+          "floor_x_max": "Quanto puoi andare verso la portiera del passeggero.",
+          "stand_y": "L'altezza dei tuoi occhi in piedi.",
+          "crouch_depth": "Quanto scende la testa quando ti accovacci.",
+          "passenger_dx": "Di lato rispetto al riflesso del tuo sedile.",
+          "passenger_dy": "Più in alto o in basso del tuo sedile.",
+          "passenger_dz": "Più avanti o indietro del tuo sedile.",
+          "bunk_sit_x": "Dove ti siedi lungo la cuccetta.",
+          "bunk_sit_y": "L'altezza dei tuoi occhi seduto sulla cuccetta.",
+          "bunk_sit_z": "Quanto è indietro il bordo della cuccetta.",
+          "yaw": "Dove guardi una volta seduto.",
+          "pitch": "Quanto guardi in alto o in basso una volta seduto.",
+          "has_passenger": "Deseleziona se il sedile del passeggero si ripiega o manca.",
+          "has_bunk": "Deseleziona per una cabina corta senza cuccetta."
+        },
+        "group": {
+          "walkway": "Area calpestabile",
+          "heights": "Altezza in piedi",
+          "passenger": "Sedile passeggero",
+          "bunk": "Cuccetta"
+        },
+        "go": "Vai lì",
+        "usable": "Utilizzabile",
+        "advanced": "Avanzate",
+        "reset": "Ripristina disposizione",
+        "reset_title": "Ripristina disposizione della cabina",
+        "reset_message": "Tornare alla disposizione predefinita per {truck}?",
+        "reset_confirm": "Sì, ripristina",
+        "floor_x_min": "Limite sinistro",
+        "floor_x_max": "Limite destro",
+        "floor_z_min": "Limite anteriore",
+        "floor_z_max": "Limite posteriore",
+        "crouch_depth": "Profondità accovacciata",
+        "passenger_dx": "Lato",
+        "passenger_dy": "Altezza",
+        "passenger_dz": "Profondità",
+        "passenger_yaw": "Rotazione",
+        "passenger_pitch": "Inclinazione",
+        "bunk_sit_x": "Lato",
+        "bunk_sit_y": "Altezza",
+        "bunk_sit_z": "Profondità",
+        "bunk_sit_yaw": "Rotazione",
+        "bunk_sit_pitch": "Inclinazione"
+      }
     }
   }
 }

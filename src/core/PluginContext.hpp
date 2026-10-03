@@ -12,6 +12,9 @@
 #include "core/CameraRig.hpp"
 #include "effects/EffectManager.hpp"
 #include "effects/manual/ManualZoomEffect.hpp"
+#include "effects/manual/cabin_walk/CabinLayouts.hpp"
+#include "effects/manual/cabin_walk/CabinWalkEffect.hpp"
+#include "effects/manual/cabin_walk/CabinWalkSounds.hpp"
 
 #include <atomic>
 #include <chrono>
@@ -35,6 +38,10 @@ struct PluginContext {
 
   EffectManager effects;
   std::unique_ptr<ManualZoomEffect> manual_zoom;
+  // Held apart like manual_zoom, see its class comment.
+  std::unique_ptr<CabinLayoutStore> cabin_layouts;
+  std::unique_ptr<CabinWalkEffect> cabin_walk;
+  CabinWalkSounds cabin_walk_sounds;
 
   // Latest truck telemetry snapshot, refreshed via Tel_RegisterForTruckData.
   SPF_TruckData latest_truck_data{};
@@ -49,16 +56,22 @@ struct PluginContext {
   // Writes the effects' offset into the interior camera (differential
   // write) and remembers what it applied.
   CameraRig camera_rig;
+  // "<brand_id>/<id>" of the last truck telemetry described, to tell a
+  // truck switch from a change to the same truck.
+  std::string truck_identity;
   bool was_interior_last_frame = false;
 
   std::chrono::steady_clock::time_point last_update_time{};
   bool has_last_update_time = false;
 
-  // Re-reads every effect's settings, ManualZoomEffect's included.
+  // Re-reads every effect's settings, ManualZoomEffect's and
+  // CabinWalkEffect's included.
   void ReloadEffectsConfig();
 
   // Clears every effect's smoothing state (settling their fades, see
-  // EffectManager::ResetAll), ManualZoomEffect's included.
+  // EffectManager::ResetAll), ManualZoomEffect's included. Not Cabin
+  // Walk's: a player up in the cabin stays there across a view switch or a
+  // recenter.
   void ResetEffects();
 
   // The plugin's data directory (Env_GetPluginDataDir), or empty if the

@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "Vue angle mort",
       "desc": "Se penche doucement pour voir derrière le montant de pare-brise."
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "Se lever / S'asseoir",
+        "desc": "Quitte le siège. Appuyer pour s'asseoir à la place regardée, maintenir pour revenir au volant."
+      },
+      "forward": {
+        "title": "Avancer",
+        "desc": "Avance quand vous êtes debout dans la cabine."
+      },
+      "back": {
+        "title": "Reculer",
+        "desc": "Recule quand vous êtes debout dans la cabine."
+      },
+      "left": {
+        "title": "Pas à gauche",
+        "desc": "Fait un pas de côté vers la gauche quand vous êtes debout dans la cabine."
+      },
+      "right": {
+        "title": "Pas à droite",
+        "desc": "Fait un pas de côté vers la droite quand vous êtes debout dans la cabine."
+      },
+      "crouch": {
+        "title": "S'accroupir",
+        "desc": "S'accroupit debout."
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "Manuel",
-      "desc": "Effets de regard et de zoom que vous déclenchez vous-même.",
+      "desc": "Effets de regard, de zoom et de marche que vous déclenchez vous-même.",
       "mirror_check": {
         "title": "Contrôle des rétroviseurs",
         "desc": "Regarde vers le rétroviseur correspondant tant qu'un clignotant est allumé, et se recentre quand il s'éteint.",
@@ -347,6 +373,18 @@
           "title": "Mode bascule",
           "desc": "Activé : appuyer une fois pour se pencher, une seconde fois pour revenir. Désactivé : se pencher tant que la touche est maintenue, relâcher pour revenir."
         }
+      },
+      "cabin_walk": {
+        "title": "Marche en cabine",
+        "desc": "Quittez le siège conducteur et marchez librement dans la cabine une fois garé.",
+        "hint": "Les dispositions par défaut sont réglées sur la plus petite cabine couchette de chaque camion. Les autres cabines peuvent nécessiter un ajustement.",
+        "enabled": {
+          "title": "Activer la marche en cabine"
+        },
+        "require_parking_brake": {
+          "title": "Exiger le frein de parc",
+          "desc": "Activé : frein de parc requis, le desserrer vous ramène au volant. Désactivé : l'arrêt suffit."
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "metric",
       "kmh": "km/h",
       "mph": "mi/h"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "Serrez le frein de parc pour quitter le siège.",
+      "needs_stop": "Arrêtez le camion pour quitter le siège.",
+      "back_to_wheel": "Retour au volant : le camion n'est plus garé.",
+      "layout": {
+        "no_truck": "Montez dans un camion pour configurer sa cabine.",
+        "truck": "Camion",
+        "tip": {
+          "floor_z_min": "Jusqu'où vous pouvez avancer, vers le pare-brise.",
+          "floor_z_max": "Jusqu'où vous pouvez reculer, vers la paroi arrière.",
+          "floor_x_min": "Jusqu'où vous pouvez aller vers la portière conducteur.",
+          "floor_x_max": "Jusqu'où vous pouvez aller vers la portière passager.",
+          "stand_y": "La hauteur de vos yeux debout.",
+          "crouch_depth": "De combien la tête descend quand vous vous accroupissez.",
+          "passenger_dx": "Sur le côté, depuis le reflet de votre siège.",
+          "passenger_dy": "Plus haut ou plus bas que votre siège.",
+          "passenger_dz": "Plus en avant ou en arrière que votre siège.",
+          "bunk_sit_x": "Où vous vous asseyez le long de la couchette.",
+          "bunk_sit_y": "La hauteur de vos yeux assis sur la couchette.",
+          "bunk_sit_z": "La distance du bord de la couchette vers l'arrière.",
+          "yaw": "Où vous regardez une fois assis.",
+          "pitch": "Vers le haut ou le bas une fois assis.",
+          "has_passenger": "Décochez si le siège passager se replie ou n'existe pas.",
+          "has_bunk": "Décochez pour une cabine courte sans couchette."
+        },
+        "group": {
+          "walkway": "Zone de marche",
+          "heights": "Hauteur debout",
+          "passenger": "Siège passager",
+          "bunk": "Couchette"
+        },
+        "go": "Y aller",
+        "usable": "Utilisable",
+        "advanced": "Avancé",
+        "reset": "Réinitialiser l'agencement",
+        "reset_title": "Réinitialiser l'agencement de la cabine",
+        "reset_message": "Revenir à l'agencement par défaut pour {truck} ?",
+        "reset_confirm": "Oui, réinitialiser",
+        "floor_x_min": "Limite gauche",
+        "floor_x_max": "Limite droite",
+        "floor_z_min": "Limite avant",
+        "floor_z_max": "Limite arrière",
+        "crouch_depth": "Profondeur d'accroupissement",
+        "passenger_dx": "Côté",
+        "passenger_dy": "Hauteur",
+        "passenger_dz": "Profondeur",
+        "passenger_yaw": "Rotation",
+        "passenger_pitch": "Inclinaison",
+        "bunk_sit_x": "Côté",
+        "bunk_sit_y": "Hauteur",
+        "bunk_sit_z": "Profondeur",
+        "bunk_sit_yaw": "Rotation",
+        "bunk_sit_pitch": "Inclinaison"
+      }
     }
   }
 }

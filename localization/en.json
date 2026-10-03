@@ -43,6 +43,32 @@
     "blindspot_viewer": {
       "title": "Blindspot Viewer",
       "desc": "Smoothly leans forward to see past the windshield pillar."
+    },
+    "cabin_walk": {
+      "stand_sit": {
+        "title": "Stand Up / Sit Down",
+        "desc": "Gets up from the seat. Tap to sit at the seat you look at, hold to go back to the wheel."
+      },
+      "forward": {
+        "title": "Walk Forward",
+        "desc": "Walks forward while standing in the cabin."
+      },
+      "back": {
+        "title": "Walk Backward",
+        "desc": "Walks backward while standing in the cabin."
+      },
+      "left": {
+        "title": "Step Left",
+        "desc": "Steps to the left while standing in the cabin."
+      },
+      "right": {
+        "title": "Step Right",
+        "desc": "Steps to the right while standing in the cabin."
+      },
+      "crouch": {
+        "title": "Crouch",
+        "desc": "Crouches while standing."
+      }
     }
   },
   "settings": {
@@ -240,7 +266,7 @@
     },
     "manual": {
       "title": "Manual",
-      "desc": "Look and zoom effects you trigger yourself.",
+      "desc": "Look, zoom and walking effects you trigger yourself.",
       "mirror_check": {
         "title": "Mirror Check",
         "desc": "Looks toward the corresponding mirror while a turn signal is on, and recenters when it's off.",
@@ -347,6 +373,18 @@
           "title": "Toggle Mode",
           "desc": "On: press once to peek, press again to sit back. Off: peek while held, let go to sit back."
         }
+      },
+      "cabin_walk": {
+        "title": "Cabin Walk",
+        "desc": "Get up from the driver's seat and walk freely around the cabin while parked.",
+        "hint": "Default layouts are set for each truck's smallest sleeper cabin. Other cabins may need adjustments.",
+        "enabled": {
+          "title": "Enable Cabin Walk"
+        },
+        "require_parking_brake": {
+          "title": "Require Parking Brake",
+          "desc": "On: needs the parking brake, releasing it sends you back. Off: stopping is enough."
+        }
       }
     }
   },
@@ -431,6 +469,61 @@
       "speed_system": "imperial",
       "kmh": "km/h",
       "mph": "mph"
+    },
+    "cabin_walk": {
+      "needs_parking_brake": "Engage the parking brake to leave the seat.",
+      "needs_stop": "Stop the truck to leave the seat.",
+      "back_to_wheel": "Back to the wheel: the truck is no longer parked.",
+      "layout": {
+        "no_truck": "Get in a truck to set up its cabin.",
+        "truck": "Truck",
+        "tip": {
+          "floor_z_min": "How far forward you can walk, toward the windshield.",
+          "floor_z_max": "How far back you can walk, toward the back wall.",
+          "floor_x_min": "How far you can walk toward the driver's door.",
+          "floor_x_max": "How far you can walk toward the passenger door.",
+          "stand_y": "Your eye height when standing.",
+          "crouch_depth": "How far your head drops when crouching.",
+          "passenger_dx": "Sideways from your own seat's mirror image.",
+          "passenger_dy": "Up or down from your own seat's height.",
+          "passenger_dz": "Forward or back from your own seat's depth.",
+          "bunk_sit_x": "Where you sit along the bunk.",
+          "bunk_sit_y": "Your eye height when sitting on the bunk.",
+          "bunk_sit_z": "How far back the bunk's edge is.",
+          "yaw": "Where you look once seated.",
+          "pitch": "How far up or down you look once seated.",
+          "has_passenger": "Untick if the passenger seat folds up or is missing.",
+          "has_bunk": "Untick for a day cab without a bunk."
+        },
+        "group": {
+          "walkway": "Walkway",
+          "heights": "Standing Height",
+          "passenger": "Passenger Seat",
+          "bunk": "Bunk"
+        },
+        "go": "Go There",
+        "usable": "Usable",
+        "advanced": "Advanced",
+        "reset": "Reset Layout",
+        "reset_title": "Reset Cabin Layout",
+        "reset_message": "Go back to the default layout for {truck}?",
+        "reset_confirm": "Yes, Reset",
+        "floor_x_min": "Left Limit",
+        "floor_x_max": "Right Limit",
+        "floor_z_min": "Front Limit",
+        "floor_z_max": "Back Limit",
+        "crouch_depth": "Crouch Depth",
+        "passenger_dx": "Side",
+        "passenger_dy": "Height",
+        "passenger_dz": "Depth",
+        "passenger_yaw": "Turn",
+        "passenger_pitch": "Tilt",
+        "bunk_sit_x": "Side",
+        "bunk_sit_y": "Height",
+        "bunk_sit_z": "Depth",
+        "bunk_sit_yaw": "Turn",
+        "bunk_sit_pitch": "Tilt"
+      }
     }
   }
 }

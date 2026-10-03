@@ -19,16 +19,31 @@ void EffectManager::ResetAll() {
   for (auto &slot : effects_) {
     slot.effect->Reset();
     slot.fade = slot.effect->IsEnabled() ? 1.0f : 0.0f;
+    slot.seat_reset = false;
   }
+  seat_fade_ = at_wheel_ ? 1.0f : 0.0f;
 }
 
 HeadOffset EffectManager::UpdateAndAccumulate(float dt,
                                               const SPF_TruckData &truck,
                                               const SPF_Controls &controls) {
   const float step = dt / kFadeSeconds;
+  seat_fade_ = at_wheel_ ? std::min(1.0f, seat_fade_ + step)
+                         : std::max(0.0f, seat_fade_ - step);
   HeadOffset total;
   for (auto &slot : effects_) {
     Effect &effect = *slot.effect;
+    float seat_weight = 1.0f;
+    if (effect.NeedsDriverSeat()) {
+      if (seat_fade_ <= 0.0f) {
+        if (!slot.seat_reset)
+          effect.Reset(); // start from rest back in the seat
+        slot.seat_reset = true;
+        continue;
+      }
+      slot.seat_reset = false;
+      seat_weight = math::SmoothStep(seat_fade_);
+    }
     if (effect.IsEnabled()) {
       slot.fade = std::min(1.0f, slot.fade + step);
     } else {
@@ -41,7 +56,7 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
       }
     }
     const HeadOffset contribution = effect.Update(dt, truck, controls);
-    const float weight = math::SmoothStep(slot.fade);
+    const float weight = math::SmoothStep(slot.fade) * seat_weight;
     total.pos_x += contribution.pos_x * weight;
     total.pos_y += contribution.pos_y * weight;
     total.pos_z += contribution.pos_z * weight;
