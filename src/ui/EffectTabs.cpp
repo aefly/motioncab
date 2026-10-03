@@ -289,13 +289,18 @@ void UpdateLabelColumnWidth(SPF_UI_API *ui) {
   g_label_column_w = LabelColumnWidth(ui);
 }
 
-void DrawEffectTab(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
-                   std::string_view group) {
+float DrawEffectTab(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
+                    std::string_view group) {
   const std::string group_prefix = "settings." + std::string(group) + ".";
+  float folded_h = 0.0f;
   for (const EffectUi &effect : kEffects) {
-    if (std::string_view(effect.prefix).starts_with(group_prefix))
-      DrawEffect(ui, cfg, h, effect);
+    if (!std::string_view(effect.prefix).starts_with(group_prefix))
+      continue;
+    DrawEffect(ui, cfg, h, effect);
+    // A folded section is its header alone, one frame high.
+    folded_h += ui->UI_GetFrameHeightWithSpacing();
   }
+  return folded_h;
 }
 
 } // namespace motioncab::ui

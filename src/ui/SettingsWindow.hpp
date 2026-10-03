@@ -4,10 +4,9 @@
 
 namespace motioncab {
 
-// [TEMPORARY] The Quick Settings window's size on first launch (Manifest.cpp's
-// Defaults_AddWindow). The player can't resize it: SettingsWindow.cpp
-// keeps it at least kWindowHeight tall (taller if the About tab needs it)
-// and fits its width to the tab titles.
+// The Quick Settings window's size on first launch (Manifest.cpp's
+// Defaults_AddWindow). SettingsWindow.cpp then snaps the width to the tab
+// titles and never lets the player narrow it past them.
 inline constexpr int kWindowWidth = 476;
 inline constexpr int kWindowHeight = 640;
 

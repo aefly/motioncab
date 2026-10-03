@@ -16,6 +16,10 @@ namespace motioncab::loc {
 // what keeps the pointers Tr() hands out valid for the rest of the frame.
 void Sync();
 
+// Bumped every time Sync() picks up a new active language, the first one
+// included.
+unsigned LanguageChangeCount();
+
 // Translation of `key` in the active language. Despite what
 // SPF_Localization_API.h says, SPF only loads that one language file, with
 // no per-key fallback to English: a key missing from it comes back as the

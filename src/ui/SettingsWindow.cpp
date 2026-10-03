@@ -131,11 +131,11 @@ bool BeginTab(SPF_UI_API *ui, const TabInfo &tab, float width,
   return open;
 }
 
-// The window height at which the About tab's content exactly fits, as of
-// the last frame it was open; 0 until then. It depends on the language
-// (text length and wrapping), so FitWindowSize grows the window to it
-// rather than leaving About with a scrollbar.
-float g_about_fit_h = 0.0f;
+// The window height the open tab needs to show all its content with every
+// section folded, as of the last frame (0 until then); FitWindowSize keeps
+// the window at least that tall. It depends on the language and the width
+// (text wrapping), so it's measured every frame.
+float g_tab_min_h = 0.0f;
 
 // Starts the scrolling region a tab's content is drawn in, filling the
 // window's height below the tab bar (minus the footer line, if the tab has
@@ -152,41 +152,68 @@ void BeginTabContent(SPF_UI_API *ui, const TabInfo &tab, bool with_footer) {
                     SPF_WINDOW_FLAG_NONE);
 }
 
-// The window height at which the content drawn so far in a tab's region
-// exactly fits it. Call inside the region, after its content, with
-// `region_top` the window-local Y the region started at: a borderless child
-// has no padding, and the cursor sits one ItemSpacing below the last item,
-// in content coordinates (unaffected by the scroll position).
-float ContentFitHeight(SPF_UI_API *ui, float region_top) {
+// The window height at which a tab's region exactly fits `content_h` of
+// content (with the footer line under it, if the tab has one), measured
+// like the cursor's height: one ItemSpacing below the last item.
+// `region_top` is the window-local Y the region starts at; a borderless
+// child has no padding.
+float FitHeight(SPF_UI_API *ui, float region_top, float content_h,
+                bool with_footer) {
   SPF_Style_Handle *style = ui->UI_GetStyle();
   float spacing_x = 0.0f, spacing_y = 0.0f, pad_x = 0.0f, pad_y = 0.0f;
   ui->UI_Style_GetItemSpacing(style, &spacing_x, &spacing_y);
   ui->UI_Style_GetWindowPadding(style, &pad_x, &pad_y);
-  return std::ceil(region_top + ui->UI_GetCursorPosY() - spacing_y + pad_y);
+  const float footer_h =
+      with_footer ? ui->UI_GetTextLineHeightWithSpacing() : 0.0f;
+  return std::ceil(region_top + content_h - spacing_y + footer_h + pad_y);
 }
 
-// [TEMPORARY] Sizes the window, which the player can't resize (see OnRegisterUI
-// in Plugin.cpp): exactly wide enough for the tab titles, so none gets cut with
-// "..." (many translations are longer than English), and kWindowHeight tall, or
-// taller if the About tab needs it in this language (g_about_fit_h), but never
-// taller than the screen. The other tabs' content scrolls within it.
+// True on the first frame after a language switch. `seen` must start at
+// the count from the window's first frame, so the language SPF starts with
+// doesn't count as a switch (that would undo the width the player left the
+// window at last session).
+bool LanguageSwitched(unsigned &seen) {
+  const unsigned now = loc::LanguageChangeCount();
+  const bool switched = now != seen;
+  seen = now;
+  return switched;
+}
+
+// Lets the player resize the window, but never narrower than the tab
+// titles (snapped to exactly that on the first launch and a language
+// switch), nor shorter than the open tab's folded content or taller than
+// the screen.
 void FitWindowSize(SPF_UI_API *ui, const TabMetrics &m) {
+  static unsigned s_seen_lang = loc::LanguageChangeCount();
+  static bool s_first_frame = true;
+
   float win_pad_x = 0.0f, win_pad_y = 0.0f;
   ui->UI_Style_GetWindowPadding(ui->UI_GetStyle(), &win_pad_x, &win_pad_y);
   // ImGui only shrinks tabs once they overflow the window's width minus
   // WindowPadding on both sides by 1 px or more, and everything is whole
-  // pixels, so this is the exact width (the tab content scrolls in its own
+  // pixels, so this is the exact limit (the tab content scrolls in its own
   // region, so its scrollbar never narrows the tab bar).
-  const float target_w = std::round(m.total + win_pad_x * 2.0f);
-
-  float target_h = std::max(static_cast<float>(kWindowHeight), g_about_fit_h);
-  float vp_w = 0.0f, vp_h = 0.0f;
-  ui->UI_GetMainViewportSize(&vp_w, &vp_h);
-  if (vp_h > 0.0f)
-    target_h = std::min(target_h, std::floor(vp_h));
+  const float required_w = std::round(m.total + win_pad_x * 2.0f);
 
   float win_w = 0.0f, win_h = 0.0f;
   ui->UI_GetWindowSize(&win_w, &win_h);
+
+  float target_h = std::max(win_h, g_tab_min_h);
+  float vp_w = 0.0f, vp_h = 0.0f;
+  ui->UI_GetMainViewportSize(&vp_w, &vp_h);
+  // The screen wins over the minimum, on one too small for both.
+  if (vp_h > 0.0f)
+    target_h = std::min(target_h, std::floor(vp_h));
+
+  // The first launch ever is the window still at its manifest default;
+  // later launches keep whatever width the player left it at.
+  const bool first_launch =
+      s_first_frame &&
+      std::fabs(win_w - static_cast<float>(kWindowWidth)) < 0.5f;
+  s_first_frame = false;
+  const bool snap = LanguageSwitched(s_seen_lang) || first_launch;
+
+  const float target_w = snap ? required_w : std::max(win_w, required_w);
   if (std::fabs(win_w - target_w) < 0.5f && std::fabs(win_h - target_h) < 0.5f)
     return;
   ui->UI_SetWindowSize(target_w, target_h, SPF_COND_ALWAYS);
@@ -236,8 +263,10 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   for (size_t i = 0; i < kEffectTabCount; ++i) {
     if (!BeginTab(ui, kTabs[i], tab_widths[i], tab_metrics))
       continue;
+    const float region_top = ui->UI_GetCursorPosY();
     BeginTabContent(ui, kTabs[i], true);
-    DrawEffectTab(ui, cfg, h, kTabs[i].id);
+    const float folded_h = DrawEffectTab(ui, cfg, h, kTabs[i].id);
+    g_tab_min_h = FitHeight(ui, region_top, folded_h, true);
     ui->UI_EndChild();
     ui->UI_EndTabItem();
   }
@@ -245,8 +274,10 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
   const bool settings_tab_open =
       BeginTab(ui, kTabs[4], tab_widths[4], tab_metrics);
   if (settings_tab_open) {
+    const float region_top = ui->UI_GetCursorPosY();
     BeginTabContent(ui, kTabs[4], false);
     DrawSettingsTab(ui, cfg, h);
+    g_tab_min_h = FitHeight(ui, region_top, ui->UI_GetCursorPosY(), false);
     ui->UI_EndChild();
     ui->UI_EndTabItem();
   }
@@ -257,7 +288,7 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
     const float region_top = ui->UI_GetCursorPosY();
     BeginTabContent(ui, kTabs[5], false);
     DrawAboutTab(ui);
-    g_about_fit_h = ContentFitHeight(ui, region_top);
+    g_tab_min_h = FitHeight(ui, region_top, ui->UI_GetCursorPosY(), false);
     ui->UI_EndChild();
     ui->UI_EndTabItem();
   }
