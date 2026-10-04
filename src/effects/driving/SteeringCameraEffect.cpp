@@ -1,11 +1,19 @@
 #include "SteeringCameraEffect.hpp"
 
+#include "math/Units.hpp"
+
 #include <algorithm>
 #include <cmath>
 
 namespace motioncab {
 
 namespace {
+
+// Seconds to hand the camera back to the wheel after reversing (and to
+// take it away when reversing starts). The wheel is often at full lock
+// after a maneuver: aiming straight back at it made the spring swing the
+// camera across in one go.
+constexpr float kReverseFadeSeconds = 1.5f;
 
 // Integral of SmoothStep(x / zone) from 0 to x (x >= 0): x itself when
 // there's no zone.
@@ -105,16 +113,23 @@ HeadOffset SteeringCameraEffect::Update(float dt, const SPF_TruckData &truck,
   const float delayed_steering =
       GetDelayedSteering(elapsed_time_s_ - delay_seconds_);
   // In reverse the driver looks at the mirrors, not down the road, so
-  // following the wheel only gets in the way: aim back at center and let
-  // the spring ease there instead of snapping.
+  // following the wheel only gets in the way: fade the wheel's share of the
+  // camera out, and back in once out of reverse (see kReverseFadeSeconds).
   const bool reversing = disable_in_reverse_ && truck.gear < 0;
+  const float follow_target = reversing ? 0.0f : 1.0f;
+  if (needs_resync_) {
+    follow_ = follow_target;
+  } else {
+    const float step = dt / kReverseFadeSeconds;
+    follow_ = std::clamp(follow_target, follow_ - step, follow_ + step);
+  }
   // Positive steering and positive yaw both mean left (counterclockwise),
   // whatever SPF_ControlInput's comment says: steering times a single
   // factor has always turned the camera toward the wheel in-game.
   const float target_yaw_deg =
-      reversing ? 0.0f
-                : SteeringYaw(delayed_steering, rotation_left_deg_,
-                              rotation_right_deg_, center_zone_pct_ / 100.0f);
+      math::SmoothStep(follow_) *
+      SteeringYaw(delayed_steering, rotation_left_deg_, rotation_right_deg_,
+                  center_zone_pct_ / 100.0f);
 
   if (needs_resync_) {
     yaw_.Reset(target_yaw_deg);

@@ -31,7 +31,8 @@ namespace motioncab {
 // sudden head jerk.
 //
 // With `disable_in_reverse_` on (the default), the camera eases back to
-// center while a reverse gear is selected (SPF_TruckData.gear < 0).
+// center while a reverse gear is selected (SPF_TruckData.gear < 0), and
+// eases back onto the wheel over a second and a half once out of it.
 class SteeringCameraEffect final : public ConfigurableEffect {
 public:
   SteeringCameraEffect(SPF_Config_API *config_api,
@@ -80,6 +81,8 @@ private:
 
   math::SpringDamper1D yaw_;
   bool needs_resync_ = false;
+  // How much the camera follows the wheel, 0 in reverse to 1 (eased).
+  float follow_ = 1.0f;
 
   double elapsed_time_s_ = 0.0;
   std::array<Sample, kDelayBufferCapacity> delay_buffer_{};
