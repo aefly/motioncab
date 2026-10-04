@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "Direksiyon kamerası",
         "rotation_left_deg": {
-          "title": "Dönüş miktarı (sol)",
+          "title": "Sola dönüş miktarı",
           "desc": "Direksiyonu sonuna kadar sola çevirdiğinizde kameranın ne kadar döndüğü."
         },
         "rotation_right_deg": {
-          "title": "Dönüş miktarı (sağ)",
+          "title": "Sağa dönüş miktarı",
           "desc": "Direksiyonu sonuna kadar sağa çevirdiğinizde kameranın ne kadar döndüğü."
+        },
+        "center_zone_pct": {
+          "title": "Orta bölge",
+          "desc": "Kameranın her iki yöne de aynı dönmesini korurken direksiyonu ne kadar çevirebileceğiniz, tam kilidin bir payı olarak. Ötesinde her taraf kendi dönüş miktarıyla döner."
         },
         "smoothing_time": {
           "title": "Yumuşatma",
@@ -274,13 +278,17 @@
           "title": "Sol göz atma açısı",
           "desc": "Sol aynaya göz attığınızda kafanızın ne kadar döndüğü."
         },
+        "glance_left_pitch_deg": {
+          "title": "Sol göz atma eğimi",
+          "desc": "Sol aynaya göz atarken kafanızın ne kadar aşağı eğildiği."
+        },
         "glance_right_deg": {
           "title": "Sağ göz atma açısı",
           "desc": "Sağ aynaya göz attığınızda kafanızın ne kadar döndüğü."
         },
-        "glance_pitch_deg": {
-          "title": "Göz atma eğimi",
-          "desc": "Bir aynaya göz atarken kafanızın ne kadar aşağı eğildiği."
+        "glance_right_pitch_deg": {
+          "title": "Sağ göz atma eğimi",
+          "desc": "Sağ aynaya göz atarken kafanızın ne kadar aşağı eğildiği."
         },
         "smoothing_time": {
           "title": "Yumuşatma",

@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "Kamera kierownicy",
         "rotation_left_deg": {
-          "title": "Zakres obrotu (w lewo)",
+          "title": "Zakres obrotu w lewo",
           "desc": "Jak daleko obraca się kamera, gdy skręcisz kierownicę do oporu w lewo."
         },
         "rotation_right_deg": {
-          "title": "Zakres obrotu (w prawo)",
+          "title": "Zakres obrotu w prawo",
           "desc": "Jak daleko obraca się kamera, gdy skręcisz kierownicę do oporu w prawo."
+        },
+        "center_zone_pct": {
+          "title": "Strefa środkowa",
+          "desc": "Jak daleko możesz obrócić kierownicę, by kamera obracała się tak samo w obie strony, jako część pełnego skrętu. Dalej każda strona obraca się według własnego zakresu."
         },
         "smoothing_time": {
           "title": "Wygładzanie",
@@ -274,13 +278,17 @@
           "title": "Kąt zerknięcia w lewo",
           "desc": "Jak daleko obraca się głowa, gdy zerkasz w lewe lusterko."
         },
+        "glance_left_pitch_deg": {
+          "title": "Pochylenie przy zerknięciu w lewo",
+          "desc": "Jak mocno głowa pochyla się w dół podczas zerkania w lewe lusterko."
+        },
         "glance_right_deg": {
           "title": "Kąt zerknięcia w prawo",
           "desc": "Jak daleko obraca się głowa, gdy zerkasz w prawe lusterko."
         },
-        "glance_pitch_deg": {
-          "title": "Pochylenie przy zerknięciu",
-          "desc": "Jak mocno głowa pochyla się w dół podczas zerkania w lusterko."
+        "glance_right_pitch_deg": {
+          "title": "Pochylenie przy zerknięciu w prawo",
+          "desc": "Jak mocno głowa pochyla się w dół podczas zerkania w prawe lusterko."
         },
         "smoothing_time": {
           "title": "Wygładzanie",

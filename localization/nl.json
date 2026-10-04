@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "Stuurcamera",
         "rotation_left_deg": {
-          "title": "Draaihoek (links)",
+          "title": "Draaihoek links",
           "desc": "Hoe ver de camera draait als je het stuur helemaal naar links draait."
         },
         "rotation_right_deg": {
-          "title": "Draaihoek (rechts)",
+          "title": "Draaihoek rechts",
           "desc": "Hoe ver de camera draait als je het stuur helemaal naar rechts draait."
+        },
+        "center_zone_pct": {
+          "title": "Middenzone",
+          "desc": "Hoe ver je het stuur kunt draaien terwijl de camera aan beide kanten even ver draait, als deel van volledig insturen. Daarbuiten draait elke kant met zijn eigen draaihoek."
         },
         "smoothing_time": {
           "title": "Demping",
@@ -274,13 +278,17 @@
           "title": "Spiegelblik links",
           "desc": "Hoe ver je hoofd draait als je in de linkerspiegel kijkt."
         },
+        "glance_left_pitch_deg": {
+          "title": "Kantelhoek spiegelblik links",
+          "desc": "Hoeveel je hoofd omlaag kantelt tijdens een blik in de linkerspiegel."
+        },
         "glance_right_deg": {
           "title": "Spiegelblik rechts",
           "desc": "Hoe ver je hoofd draait als je in de rechterspiegel kijkt."
         },
-        "glance_pitch_deg": {
-          "title": "Kantelhoek spiegelblik",
-          "desc": "Hoeveel je hoofd omlaag kantelt tijdens een blik in een spiegel."
+        "glance_right_pitch_deg": {
+          "title": "Kantelhoek spiegelblik rechts",
+          "desc": "Hoeveel je hoofd omlaag kantelt tijdens een blik in de rechterspiegel."
         },
         "smoothing_time": {
           "title": "Demping",

@@ -1,7 +1,5 @@
 #include "SteeringCameraEffect.hpp"
 
-#include "math/Units.hpp"
-
 #include <algorithm>
 #include <cmath>
 
@@ -9,26 +7,30 @@ namespace motioncab {
 
 namespace {
 
-// Steering input (fraction of full lock) from which the left/right rotation
-// amounts fully apply. Closer to center, the wider side fades down to the
-// narrower one, so small lane corrections don't pick up the wider setting.
-constexpr float kSideBlendFullSteering = 0.2f;
-
-// 0 at center, easing up to 1 at kSideBlendFullSteering (smoothstep). A
-// smooth ramp rather than a hard threshold, which would make the camera
-// jump when the wheel crosses it.
-float SideWeight(float steering) {
-  return math::SmoothStep(
-      std::min(std::abs(steering) / kSideBlendFullSteering, 1.0f));
+// Integral of SmoothStep(x / zone) from 0 to x (x >= 0): x itself when
+// there's no zone.
+float SmoothStepIntegral(float x, float zone) {
+  if (x >= zone)
+    return x - 0.5f * zone;
+  const float u = x / zone;
+  return zone * u * u * u * (1.0f - 0.5f * u);
 }
 
-// `left` for positive steering, `right` for negative. The narrower side
-// always gets exactly its own value; the wider one starts from the
-// narrower value at center and ramps up to its own.
-float SideValue(float steering, float left, float right) {
+// Target yaw for a steering input, `left` at full lock for positive
+// steering, `right` for negative. The narrower side is a straight line; on
+// the wider one the rate (degrees per unit of steering) eases from the
+// narrower side's up to its own over `zone` (fraction of full lock), a
+// little higher so full lock still lands exactly on its amount. Easing the
+// rate, not the amount: amount * steering with a blended amount made the
+// rate overshoot just past center, a camera lurch.
+float SteeringYaw(float steering, float left, float right, float zone) {
   const float narrower = std::min(left, right);
   const float side = steering >= 0.0f ? left : right;
-  return narrower + (side - narrower) * SideWeight(steering);
+  const float wide_rate = narrower + (side - narrower) / (1.0f - 0.5f * zone);
+  const float x = std::abs(steering);
+  const float yaw =
+      narrower * x + (wide_rate - narrower) * SmoothStepIntegral(x, zone);
+  return steering >= 0.0f ? yaw : -yaw;
 }
 
 } // namespace
@@ -36,6 +38,9 @@ float SideValue(float steering, float left, float right) {
 void SteeringCameraEffect::LoadSettings() {
   rotation_left_deg_ = Float("rotation_left_deg", rotation_left_deg_);
   rotation_right_deg_ = Float("rotation_right_deg", rotation_right_deg_);
+  // Clamped: at 200% SteeringYaw() would divide by zero.
+  center_zone_pct_ =
+      std::clamp(Float("center_zone_pct", center_zone_pct_), 0.0f, 100.0f);
   smoothing_time_ = Float("smoothing_time", smoothing_time_);
   delay_seconds_ = Float("delay_seconds", delay_seconds_);
   disable_in_reverse_ = Bool("disable_in_reverse", disable_in_reverse_);
@@ -107,10 +112,9 @@ HeadOffset SteeringCameraEffect::Update(float dt, const SPF_TruckData &truck,
   // whatever SPF_ControlInput's comment says: steering times a single
   // factor has always turned the camera toward the wheel in-game.
   const float target_yaw_deg =
-      reversing
-          ? 0.0f
-          : delayed_steering * SideValue(delayed_steering, rotation_left_deg_,
-                                         rotation_right_deg_);
+      reversing ? 0.0f
+                : SteeringYaw(delayed_steering, rotation_left_deg_,
+                              rotation_right_deg_, center_zone_pct_ / 100.0f);
 
   if (needs_resync_) {
     yaw_.Reset(target_yaw_deg);

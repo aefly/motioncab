@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "Lenkkamera",
         "rotation_left_deg": {
-          "title": "Drehstärke (links)",
+          "title": "Drehstärke links",
           "desc": "Wie weit sich die Kamera dreht, wenn du das Lenkrad voll nach links einschlägst."
         },
         "rotation_right_deg": {
-          "title": "Drehstärke (rechts)",
+          "title": "Drehstärke rechts",
           "desc": "Wie weit sich die Kamera dreht, wenn du das Lenkrad voll nach rechts einschlägst."
+        },
+        "center_zone_pct": {
+          "title": "Mittelzone",
+          "desc": "Wie weit du das Lenkrad drehen kannst, während die Kamera sich auf beiden Seiten gleich dreht, als Anteil des vollen Einschlags. Darüber hinaus dreht sich jede Seite mit ihrer eigenen Drehstärke."
         },
         "smoothing_time": {
           "title": "Glättung",
@@ -274,13 +278,17 @@
           "title": "Spiegelblick links",
           "desc": "Wie weit sich dein Kopf beim Blick in den linken Spiegel dreht."
         },
+        "glance_left_pitch_deg": {
+          "title": "Neigung Spiegelblick links",
+          "desc": "Wie stark dein Kopf beim Blick in den linken Spiegel nach unten kippt."
+        },
         "glance_right_deg": {
           "title": "Spiegelblick rechts",
           "desc": "Wie weit sich dein Kopf beim Blick in den rechten Spiegel dreht."
         },
-        "glance_pitch_deg": {
-          "title": "Neigung beim Spiegelblick",
-          "desc": "Wie stark dein Kopf beim Blick in einen Spiegel nach unten kippt."
+        "glance_right_pitch_deg": {
+          "title": "Neigung Spiegelblick rechts",
+          "desc": "Wie stark dein Kopf beim Blick in den rechten Spiegel nach unten kippt."
         },
         "smoothing_time": {
           "title": "Glättung",

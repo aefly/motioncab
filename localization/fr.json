@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "Caméra de direction",
         "rotation_left_deg": {
-          "title": "Amplitude de rotation (gauche)",
+          "title": "Amplitude de rotation à gauche",
           "desc": "Jusqu'où la caméra tourne quand vous braquez le volant à fond vers la gauche."
         },
         "rotation_right_deg": {
-          "title": "Amplitude de rotation (droite)",
+          "title": "Amplitude de rotation à droite",
           "desc": "Jusqu'où la caméra tourne quand vous braquez le volant à fond vers la droite."
+        },
+        "center_zone_pct": {
+          "title": "Zone centrale",
+          "desc": "Jusqu'où vous pouvez tourner le volant en gardant la même rotation de caméra des deux côtés, en part du braquage complet. Au-delà, chaque côté tourne selon sa propre amplitude."
         },
         "smoothing_time": {
           "title": "Lissage",
@@ -274,13 +278,17 @@
           "title": "Angle du coup d'œil gauche",
           "desc": "De combien votre tête tourne quand vous jetez un coup d'œil au rétroviseur gauche."
         },
+        "glance_left_pitch_deg": {
+          "title": "Inclinaison du coup d'œil gauche",
+          "desc": "De combien votre tête s'abaisse pendant un coup d'œil au rétroviseur gauche."
+        },
         "glance_right_deg": {
           "title": "Angle du coup d'œil droit",
           "desc": "De combien votre tête tourne quand vous jetez un coup d'œil au rétroviseur droit."
         },
-        "glance_pitch_deg": {
-          "title": "Inclinaison du coup d'œil",
-          "desc": "De combien votre tête s'abaisse pendant un coup d'œil au rétroviseur."
+        "glance_right_pitch_deg": {
+          "title": "Inclinaison du coup d'œil droit",
+          "desc": "De combien votre tête s'abaisse pendant un coup d'œil au rétroviseur droit."
         },
         "smoothing_time": {
           "title": "Lissage",

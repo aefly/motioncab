@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "Cámara de dirección",
         "rotation_left_deg": {
-          "title": "Cantidad de rotación (izquierda)",
+          "title": "Cantidad de rotación a la izquierda",
           "desc": "Cuánto gira la cámara cuando giras el volante hasta el tope a la izquierda."
         },
         "rotation_right_deg": {
-          "title": "Cantidad de rotación (derecha)",
+          "title": "Cantidad de rotación a la derecha",
           "desc": "Cuánto gira la cámara cuando giras el volante hasta el tope a la derecha."
+        },
+        "center_zone_pct": {
+          "title": "Zona central",
+          "desc": "Cuánto puedes girar el volante manteniendo el mismo giro de cámara en ambos lados, como parte del giro completo. Más allá, cada lado gira según su propia cantidad de rotación."
         },
         "smoothing_time": {
           "title": "Suavizado",
@@ -274,13 +278,17 @@
           "title": "Ángulo del vistazo izquierdo",
           "desc": "Cuánto gira tu cabeza al echar un vistazo al espejo izquierdo."
         },
+        "glance_left_pitch_deg": {
+          "title": "Inclinación del vistazo izquierdo",
+          "desc": "Cuánto baja tu cabeza al echar un vistazo al espejo izquierdo."
+        },
         "glance_right_deg": {
           "title": "Ángulo del vistazo derecho",
           "desc": "Cuánto gira tu cabeza al echar un vistazo al espejo derecho."
         },
-        "glance_pitch_deg": {
-          "title": "Inclinación del vistazo",
-          "desc": "Cuánto baja tu cabeza al echar un vistazo a un espejo."
+        "glance_right_pitch_deg": {
+          "title": "Inclinación del vistazo derecho",
+          "desc": "Cuánto baja tu cabeza al echar un vistazo al espejo derecho."
         },
         "smoothing_time": {
           "title": "Suavizado",

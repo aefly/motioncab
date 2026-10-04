@@ -56,9 +56,11 @@ private:
       settings::Default("settings.manual.manual_look.glance_left_deg");
   float glance_right_deg_ =
       settings::Default("settings.manual.manual_look.glance_right_deg");
-  // the mirrors sit a little low
-  float glance_pitch_deg_ =
-      settings::Default("settings.manual.manual_look.glance_pitch_deg");
+  // the mirrors sit a little low, not always both as low
+  float glance_left_pitch_deg_ =
+      settings::Default("settings.manual.manual_look.glance_left_pitch_deg");
+  float glance_right_pitch_deg_ =
+      settings::Default("settings.manual.manual_look.glance_right_pitch_deg");
   // seconds, spring time constant
   float smoothing_time_ =
       settings::Default("settings.manual.manual_look.smoothing_time");
@@ -66,7 +68,10 @@ private:
   bool toggle_mode_ =
       settings::DefaultBool("settings.manual.manual_look.toggle_mode");
 
+  // Two stages each, the first softening the start (see LoadSettings()).
+  math::SpringDamper1D yaw_intent_;
   math::SpringDamper1D yaw_;
+  math::SpringDamper1D pitch_intent_;
   math::SpringDamper1D pitch_;
 
   // The look of the keys held right now, kept until they're all released

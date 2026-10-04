@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "Câmera de direção",
         "rotation_left_deg": {
-          "title": "Quantidade de rotação (esquerda)",
+          "title": "Quantidade de rotação à esquerda",
           "desc": "Quanto a câmera gira quando você esterça o volante até o fim para a esquerda."
         },
         "rotation_right_deg": {
-          "title": "Quantidade de rotação (direita)",
+          "title": "Quantidade de rotação à direita",
           "desc": "Quanto a câmera gira quando você esterça o volante até o fim para a direita."
+        },
+        "center_zone_pct": {
+          "title": "Zona central",
+          "desc": "Quanto você pode girar o volante mantendo o mesmo giro da câmera dos dois lados, como parte do esterçamento total. Além disso, cada lado gira conforme sua própria quantidade de rotação."
         },
         "smoothing_time": {
           "title": "Suavização",
@@ -274,13 +278,17 @@
           "title": "Ângulo da espiada à esquerda",
           "desc": "Quanto sua cabeça gira ao espiar o espelho esquerdo."
         },
+        "glance_left_pitch_deg": {
+          "title": "Inclinação da espiada à esquerda",
+          "desc": "Quanto sua cabeça abaixa ao espiar o espelho esquerdo."
+        },
         "glance_right_deg": {
           "title": "Ângulo da espiada à direita",
           "desc": "Quanto sua cabeça gira ao espiar o espelho direito."
         },
-        "glance_pitch_deg": {
-          "title": "Inclinação da espiada",
-          "desc": "Quanto sua cabeça abaixa ao espiar um espelho."
+        "glance_right_pitch_deg": {
+          "title": "Inclinação da espiada à direita",
+          "desc": "Quanto sua cabeça abaixa ao espiar o espelho direito."
         },
         "smoothing_time": {
           "title": "Suavização",

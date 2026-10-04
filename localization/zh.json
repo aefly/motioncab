@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "转向镜头",
         "rotation_left_deg": {
-          "title": "旋转幅度（左）",
+          "title": "向左旋转幅度",
           "desc": "方向盘向左打满时镜头转动的角度。"
         },
         "rotation_right_deg": {
-          "title": "旋转幅度（右）",
+          "title": "向右旋转幅度",
           "desc": "方向盘向右打满时镜头转动的角度。"
+        },
+        "center_zone_pct": {
+          "title": "中心区域",
+          "desc": "在摄像机左右旋转保持一致的前提下方向盘可转动的范围（占满舵的比例）。超出后，每一侧按其自身的旋转幅度转动。"
         },
         "smoothing_time": {
           "title": "平滑",
@@ -274,13 +278,17 @@
           "title": "左后视镜瞥视角度",
           "desc": "瞥一眼左后视镜时头部转动的角度。"
         },
+        "glance_left_pitch_deg": {
+          "title": "左后视镜瞥视俯仰偏移",
+          "desc": "瞥一眼左后视镜时头部向下倾斜的幅度。"
+        },
         "glance_right_deg": {
           "title": "右后视镜瞥视角度",
           "desc": "瞥一眼右后视镜时头部转动的角度。"
         },
-        "glance_pitch_deg": {
-          "title": "瞥视俯仰偏移",
-          "desc": "瞥一眼后视镜时头部向下倾斜的幅度。"
+        "glance_right_pitch_deg": {
+          "title": "右后视镜瞥视俯仰偏移",
+          "desc": "瞥一眼右后视镜时头部向下倾斜的幅度。"
         },
         "smoothing_time": {
           "title": "平滑",

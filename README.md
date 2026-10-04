@@ -99,6 +99,7 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | **Steering Camera**          |         |                                                                                                                                      |
 | `rotation_left_deg`          | 30.0    | How far the camera turns when you crank the wheel all the way to the left.                                                           |
 | `rotation_right_deg`         | 30.0    | How far the camera turns when you crank the wheel all the way to the right.                                                          |
+| `center_zone_pct`            | 15.0    | How much of the wheel's turn keeps the camera turning alike both ways. Past it, each side turns at its own rotation amount.          |
 | `smoothing_time`             | 0.5     | How smooth the camera turn feels once it gets going. Higher = smoother and slower.                                                   |
 | `delay_seconds`              | 0.2     | How long the camera waits after you turn the wheel before it starts moving.                                                          |
 | `disable_in_reverse`         | true    | Keep the camera centered while the truck is in reverse gear.                                                                         |
@@ -124,8 +125,9 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `look_left_deg`              | 45.0    | How far your head turns when you look left.                                                                                          |
 | `look_right_deg`             | 45.0    | How far your head turns when you look right.                                                                                         |
 | `glance_left_deg`            | 20.0    | How far your head turns when you glance at the left mirror.                                                                          |
+| `glance_left_pitch_deg`      | 3.0     | How much your head tilts down while glancing at the left mirror.                                                                     |
 | `glance_right_deg`           | 30.0    | How far your head turns when you glance at the right mirror.                                                                         |
-| `glance_pitch_deg`           | 3.0     | How much your head tilts down while glancing at a mirror.                                                                            |
+| `glance_right_pitch_deg`     | 3.0     | How much your head tilts down while glancing at the right mirror.                                                                    |
 | `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                            |
 | `toggle_mode`                | false   | On: press once to look, press again to look back. Off: look while held, let go to look back.                                         |
 | **Road Irregularity**        |         |                                                                                                                                      |

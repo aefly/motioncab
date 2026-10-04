@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "Steering Camera",
         "rotation_left_deg": {
-          "title": "Rotation Amount (Left)",
+          "title": "Left Rotation Amount",
           "desc": "How far the camera turns when you crank the wheel all the way to the left."
         },
         "rotation_right_deg": {
-          "title": "Rotation Amount (Right)",
+          "title": "Right Rotation Amount",
           "desc": "How far the camera turns when you crank the wheel all the way to the right."
+        },
+        "center_zone_pct": {
+          "title": "Center Zone",
+          "desc": "How much of the wheel's turn keeps the camera turning alike both ways. Past it, each side turns at its own rotation amount."
         },
         "smoothing_time": {
           "title": "Smoothing",
@@ -274,13 +278,17 @@
           "title": "Left Glance Angle",
           "desc": "How far your head turns when you glance at the left mirror."
         },
+        "glance_left_pitch_deg": {
+          "title": "Left Glance Pitch",
+          "desc": "How much your head tilts down while glancing at the left mirror."
+        },
         "glance_right_deg": {
           "title": "Right Glance Angle",
           "desc": "How far your head turns when you glance at the right mirror."
         },
-        "glance_pitch_deg": {
-          "title": "Glance Pitch",
-          "desc": "How much your head tilts down while glancing at a mirror."
+        "glance_right_pitch_deg": {
+          "title": "Right Glance Pitch",
+          "desc": "How much your head tilts down while glancing at the right mirror."
         },
         "smoothing_time": {
           "title": "Smoothing",

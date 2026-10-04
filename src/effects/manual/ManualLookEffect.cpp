@@ -6,6 +6,13 @@ namespace motioncab {
 
 namespace {
 
+// Stage times, as fractions of smoothing_time: the first eases the head
+// into the motion instead of throwing it at full acceleration on the
+// press (or on a quick switch to another look mid-motion), the second
+// moves it. Together they take about as long as the single spring did.
+constexpr float kIntentFraction = 0.3f;
+constexpr float kHeadFraction = 0.85f;
+
 const keybinds::Action *ActionOf(ManualLookEffect::Look look) {
   using enum ManualLookEffect::Look;
   switch (look) {
@@ -30,16 +37,23 @@ void ManualLookEffect::LoadSettings() {
   look_right_deg_ = Float("look_right_deg", look_right_deg_);
   glance_left_deg_ = Float("glance_left_deg", glance_left_deg_);
   glance_right_deg_ = Float("glance_right_deg", glance_right_deg_);
-  glance_pitch_deg_ = Float("glance_pitch_deg", glance_pitch_deg_);
+  glance_left_pitch_deg_ =
+      Float("glance_left_pitch_deg", glance_left_pitch_deg_);
+  glance_right_pitch_deg_ =
+      Float("glance_right_pitch_deg", glance_right_pitch_deg_);
   smoothing_time_ = Float("smoothing_time", smoothing_time_);
   toggle_mode_ = Bool("toggle_mode", toggle_mode_);
 
-  yaw_.SetTimeConstant(smoothing_time_);
-  pitch_.SetTimeConstant(smoothing_time_);
+  yaw_intent_.SetTimeConstant(smoothing_time_ * kIntentFraction);
+  yaw_.SetTimeConstant(smoothing_time_ * kHeadFraction);
+  pitch_intent_.SetTimeConstant(smoothing_time_ * kIntentFraction);
+  pitch_.SetTimeConstant(smoothing_time_ * kHeadFraction);
 }
 
 void ManualLookEffect::Reset() {
+  yaw_intent_.Reset();
   yaw_.Reset();
+  pitch_intent_.Reset();
   pitch_.Reset();
   pressed_ = Look::kCenter;
   toggled_ = Look::kCenter;
@@ -102,17 +116,17 @@ HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
     break;
   case Look::kGlanceLeft:
     target_yaw_deg = glance_left_deg_;
-    target_pitch_deg = glance_pitch_deg_;
+    target_pitch_deg = glance_left_pitch_deg_;
     break;
   case Look::kGlanceRight:
     target_yaw_deg = -glance_right_deg_;
-    target_pitch_deg = glance_pitch_deg_;
+    target_pitch_deg = glance_right_pitch_deg_;
     break;
   }
 
   HeadOffset offset;
-  offset.yaw = yaw_.Update(target_yaw_deg, dt);
-  offset.pitch = pitch_.Update(target_pitch_deg, dt);
+  offset.yaw = yaw_.Update(yaw_intent_.Update(target_yaw_deg, dt), dt);
+  offset.pitch = pitch_.Update(pitch_intent_.Update(target_pitch_deg, dt), dt);
   return offset;
 }
 

@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "Telecamera di sterzata",
         "rotation_left_deg": {
-          "title": "Ampiezza della rotazione (sinistra)",
+          "title": "Ampiezza della rotazione a sinistra",
           "desc": "Quanto ruota la telecamera quando giri il volante fino in fondo a sinistra."
         },
         "rotation_right_deg": {
-          "title": "Ampiezza della rotazione (destra)",
+          "title": "Ampiezza della rotazione a destra",
           "desc": "Quanto ruota la telecamera quando giri il volante fino in fondo a destra."
+        },
+        "center_zone_pct": {
+          "title": "Zona centrale",
+          "desc": "Quanto puoi girare il volante mantenendo la stessa rotazione della telecamera su entrambi i lati, come parte della sterzata completa. Oltre, ogni lato ruota secondo la propria ampiezza."
         },
         "smoothing_time": {
           "title": "Smorzamento",
@@ -274,13 +278,17 @@
           "title": "Angolo dell'occhiata a sinistra",
           "desc": "Quanto ruota la tua testa quando dai un'occhiata allo specchietto sinistro."
         },
+        "glance_left_pitch_deg": {
+          "title": "Inclinazione dell'occhiata a sinistra",
+          "desc": "Quanto si abbassa la tua testa mentre dai un'occhiata allo specchietto sinistro."
+        },
         "glance_right_deg": {
           "title": "Angolo dell'occhiata a destra",
           "desc": "Quanto ruota la tua testa quando dai un'occhiata allo specchietto destro."
         },
-        "glance_pitch_deg": {
-          "title": "Inclinazione dell'occhiata",
-          "desc": "Quanto si abbassa la tua testa mentre dai un'occhiata a uno specchietto."
+        "glance_right_pitch_deg": {
+          "title": "Inclinazione dell'occhiata a destra",
+          "desc": "Quanto si abbassa la tua testa mentre dai un'occhiata allo specchietto destro."
         },
         "smoothing_time": {
           "title": "Smorzamento",

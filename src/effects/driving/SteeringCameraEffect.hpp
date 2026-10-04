@@ -22,12 +22,13 @@ namespace motioncab {
 // constant, how eased the motion is once it starts.
 //
 // The rotation amount is set per side: in a left-hand-drive cab the right
-// mirror is further away, so a right turn usually wants a wider pan. Near
-// center the wider side fades down to the narrower one, so small
-// corrections behave the same either way and the narrower side always gets
-// exactly its own value (see kSideBlendFullSteering). Smoothing stays shared
-// on purpose: changing the spring's time constant mid-turn makes it snap
-// up the lag built so far, which feels like a sudden head jerk.
+// mirror is further away, so a right turn usually wants a wider pan. The
+// camera turns faster toward the wider side once out of `center_zone_pct_`:
+// lane corrections within it turn at the narrower side's rate either way,
+// so they don't look lopsided (see SteeringYaw()).
+// Smoothing stays shared on purpose: changing the spring's time constant
+// mid-turn makes it snap up the lag built so far, which feels like a
+// sudden head jerk.
 //
 // With `disable_in_reverse_` on (the default), the camera eases back to
 // center while a reverse gear is selected (SPF_TruckData.gear < 0).
@@ -65,6 +66,9 @@ private:
       settings::Default("settings.driving.steering_camera.rotation_left_deg");
   float rotation_right_deg_ =
       settings::Default("settings.driving.steering_camera.rotation_right_deg");
+  // Steering (percent of full lock) over which the wider side eases in.
+  float center_zone_pct_ =
+      settings::Default("settings.driving.steering_camera.center_zone_pct");
   // seconds, spring time constant
   float smoothing_time_ =
       settings::Default("settings.driving.steering_camera.smoothing_time");

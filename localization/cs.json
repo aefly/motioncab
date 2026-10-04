@@ -116,12 +116,16 @@
       "steering_camera": {
         "title": "Kamera řízení",
         "rotation_left_deg": {
-          "title": "Rozsah otočení (vlevo)",
+          "title": "Rozsah otočení vlevo",
           "desc": "Jak daleko se kamera otočí, když volant vytočíte na doraz doleva."
         },
         "rotation_right_deg": {
-          "title": "Rozsah otočení (vpravo)",
+          "title": "Rozsah otočení vpravo",
           "desc": "Jak daleko se kamera otočí, když volant vytočíte na doraz doprava."
+        },
+        "center_zone_pct": {
+          "title": "Středová zóna",
+          "desc": "Jak daleko můžete otočit volantem, aby se kamera otáčela na obě strany stejně, jako podíl plného rejdu. Dál se každá strana otáčí podle vlastního rozsahu."
         },
         "smoothing_time": {
           "title": "Vyhlazení",
@@ -274,13 +278,17 @@
           "title": "Úhel pohledu do levého zrcátka",
           "desc": "Jak daleko se hlava otočí při pohledu do levého zrcátka."
         },
+        "glance_left_pitch_deg": {
+          "title": "Sklon při pohledu do levého zrcátka",
+          "desc": "Jak moc se hlava při pohledu do levého zrcátka skloní dolů."
+        },
         "glance_right_deg": {
           "title": "Úhel pohledu do pravého zrcátka",
           "desc": "Jak daleko se hlava otočí při pohledu do pravého zrcátka."
         },
-        "glance_pitch_deg": {
-          "title": "Sklon při pohledu do zrcátka",
-          "desc": "Jak moc se hlava při pohledu do zrcátka skloní dolů."
+        "glance_right_pitch_deg": {
+          "title": "Sklon při pohledu do pravého zrcátka",
+          "desc": "Jak moc se hlava při pohledu do pravého zrcátka skloní dolů."
         },
         "smoothing_time": {
           "title": "Vyhlazení",
