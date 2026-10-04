@@ -21,7 +21,7 @@
   <a href="#controls">Controls</a> •
   <a href="#configuration">Configuration</a> •
   <a href="#building">Building</a> •
-  <a href="#contribute">Contributing</a> •
+  <a href="#contributing">Contributing</a> •
   <a href="#license">License</a>
 </p>
 
@@ -247,7 +247,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 
 <!-- markdownlint-enable MD013 -->
 
-## Contribute
+## Contributing
 
 Bug reports, feature requests, pull requests and translation fixes are
 welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md) for build instructions,

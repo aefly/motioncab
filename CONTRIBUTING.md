@@ -56,6 +56,27 @@ game's `plugins/spfPlugins/MotionCab/`.
   `src/core/Keybinds.hpp`) rather than duplicating their logic in an
   effect.
 
+## Code layout
+
+- `src/Plugin.cpp` is the entry point and stays alone at the `src/` root.
+  Shared code goes in `src/core/`, the math primitives in `src/math/`,
+  the Quick Settings window in `src/ui/`, and each effect in
+  `src/effects/<group>/`, the group being its `settings.<group>.*` one
+  (`driving`, `road`, `cabin` or `manual`).
+- Includes: a `.cpp` includes its own header first, by its bare name
+  (`"Foo.hpp"`). Every other project header goes by its path from `src/`
+  (`"core/PluginContext.hpp"`), even from the same folder. Keep each block
+  of `#include "..."` lines sorted.
+- Namespaces: classes and structs live in `motioncab`. A module of free
+  functions or constants gets its own `motioncab::<module>`, named after
+  its file (`Profiles.*` is `profiles`, `Loc.*` is `loc`). Everything in
+  `src/ui/` is in `motioncab::ui`, everything in `src/math/` in
+  `motioncab::math`. Write the nested form (`namespace motioncab::ui {`)
+  and close it with `} // namespace motioncab::ui`.
+- Sources aren't globbed: add a new `.cpp` to `PLUGIN_SOURCES` in
+  `CMakeLists.txt`, under its folder's group, in alphabetical order
+  (`src/Plugin.cpp` stays first).
+
 ## Localization
 
 MotionCab's text lives in `localization/<language code>.json`, one file
