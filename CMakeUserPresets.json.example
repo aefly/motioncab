@@ -26,10 +26,33 @@
     },
 
     {
+      "$comment": "=== Linux: MinGW cross-compile (Ninja) ===",
+      "name": "user-mingw-release",
+      "inherits": ["base-user-env", "mingw-release"],
+      "displayName": "✔ USER: MinGW (Ninja) · Release",
+      "description": "MinGW + Ninja Release with game deploy path and RC compiler",
+      "cacheVariables": {
+        "CMAKE_RC_COMPILER": "$env{CMAKE_RC_COMPILER}",
+        "ATS_PLUGINS_DIR": "$env{ATS_PLUGINS_DIR}",
+        "ETS2_PLUGINS_DIR": "$env{ETS2_PLUGINS_DIR}"
+      }
+    },
+    {
+      "name": "user-mingw-debug",
+      "inherits": ["base-user-env", "mingw-debug"],
+      "displayName": "  · USER: MinGW (Ninja) · Debug",
+      "description": "MinGW + Ninja Debug with game deploy path and RC compiler",
+      "cacheVariables": {
+        "CMAKE_RC_COMPILER": "$env{CMAKE_RC_COMPILER}",
+        "ATS_PLUGINS_DIR": "$env{ATS_PLUGINS_DIR}",
+        "ETS2_PLUGINS_DIR": "$env{ETS2_PLUGINS_DIR}"
+      }
+    },
+    {
       "$comment": "=== Linux: MinGW cross-compile (Unix Makefiles) ===",
       "name": "user-mingw-make-release",
       "inherits": ["base-user-env", "mingw-make-release"],
-      "displayName": "✔ USER: MinGW (Make) · Release",
+      "displayName": "  · USER: MinGW (Make) · Release",
       "description": "MinGW + Unix Makefiles Release with game deploy path and RC compiler",
       "cacheVariables": {
         "CMAKE_RC_COMPILER": "$env{CMAKE_RC_COMPILER}",
@@ -52,9 +75,19 @@
 
   "buildPresets": [
     {
+      "name": "user-mingw-release",
+      "configurePreset": "user-mingw-release",
+      "displayName": "✔ Build: USER MinGW (Ninja) · Release"
+    },
+    {
+      "name": "user-mingw-debug",
+      "configurePreset": "user-mingw-debug",
+      "displayName": "  · Build: USER MinGW (Ninja) · Debug"
+    },
+    {
       "name": "user-mingw-make-release",
       "configurePreset": "user-mingw-make-release",
-      "displayName": "✔ Build: USER MinGW (Make) · Release"
+      "displayName": "  · Build: USER MinGW (Make) · Release"
     },
     {
       "name": "user-mingw-make-debug",
@@ -64,6 +97,22 @@
   ],
 
   "workflowPresets": [
+    {
+      "name": "user-mingw-release",
+      "displayName": "Workflow: USER MinGW (Ninja) · Release",
+      "steps": [
+        { "type": "configure", "name": "user-mingw-release" },
+        { "type": "build", "name": "user-mingw-release" }
+      ]
+    },
+    {
+      "name": "user-mingw-debug",
+      "displayName": "Workflow: USER MinGW (Ninja) · Debug",
+      "steps": [
+        { "type": "configure", "name": "user-mingw-debug" },
+        { "type": "build", "name": "user-mingw-debug" }
+      ]
+    },
     {
       "name": "user-mingw-make-release",
       "displayName": "Workflow: USER MinGW (Make) · Release",

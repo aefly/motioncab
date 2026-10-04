@@ -44,7 +44,7 @@ How did you verify this works? e.g. built locally, tested in-game with
 X truck/trailer, checked the Quick Settings window.
 -->
 
-- [ ] Built successfully via `cmake --workflow --preset user-mingw-make-release`
+- [ ] Built successfully via `cmake --workflow --preset user-mingw-release`
 - [ ] Tested in-game
 - [ ] Quick Settings window checked in-game, if a setting changed
 - [ ] `python3 .github/scripts/check-localization.py` passes, if a

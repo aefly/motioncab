@@ -166,7 +166,7 @@ Every effect also has its own `enabled` toggle, defaulting to on.
 
 ## Building
 
-Requires [CMake][cmake] 4.4+ and [MinGW-w64][mingw-w64] (`x86_64-w64-mingw32-g++`/`windres`).
+Requires [CMake][cmake] 4.4+, [Ninja][ninja] and [MinGW-w64][mingw-w64] (`x86_64-w64-mingw32-g++`/`windres`).
 
 1. Rename `CMakeUserPresets.json.example` to `CMakeUserPresets.json` and fill in
    your `ETS2_PLUGINS_DIR`/`ATS_PLUGINS_DIR` paths.
@@ -175,7 +175,7 @@ Requires [CMake][cmake] 4.4+ and [MinGW-w64][mingw-w64] (`x86_64-w64-mingw32-g++
 2. Run the workflow preset:
 
    ```sh
-   cmake --workflow --preset user-mingw-make-release
+   cmake --workflow --preset user-mingw-release
    ```
 
 This configures, builds, and deploys `motioncab.dll` straight into your
@@ -263,3 +263,4 @@ This project is licensed under the [GPL-3.0](./LICENSE).
 [motioncab-web]: https://motioncab.com
 [cmake]: https://github.com/kitware/cmake
 [mingw-w64]: https://www.mingw-w64.org/
+[ninja]: https://ninja-build.org/

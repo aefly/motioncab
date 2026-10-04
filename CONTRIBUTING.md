@@ -4,7 +4,7 @@ Thanks for taking the time to contribute!
 
 ## Building
 
-Requires [CMake][cmake] 4.4+ and [MinGW-w64][mingw-w64]
+Requires [CMake][cmake] 4.4+, [Ninja][ninja] and [MinGW-w64][mingw-w64]
 (`x86_64-w64-mingw32-g++`/`windres`).
 
 1. Clone or fork the repository:
@@ -21,7 +21,7 @@ Requires [CMake][cmake] 4.4+ and [MinGW-w64][mingw-w64]
 3. Run the workflow preset:
 
    ```sh
-   cmake --workflow --preset user-mingw-make-release
+   cmake --workflow --preset user-mingw-release
    ```
 
 This configures, builds, and deploys `motioncab.dll` straight into your
@@ -159,4 +159,5 @@ the request.
 
 [cmake]: https://github.com/kitware/cmake
 [mingw-w64]: https://www.mingw-w64.org/
+[ninja]: https://ninja-build.org/
 [conventional-commits]: https://www.conventionalcommits.org/
