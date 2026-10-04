@@ -31,6 +31,11 @@ public:
   HeadOffset Update(float dt, const SPF_TruckData &truck,
                     const SPF_Controls &controls) override;
 
+  // The offset as of the last Update(), in degrees, for ManualLookEffect
+  // to take out of its looks.
+  float yaw() const { return yaw_.value(); }
+  float pitch() const { return pitch_.value(); }
+
 private:
   void LoadSettings() override;
 

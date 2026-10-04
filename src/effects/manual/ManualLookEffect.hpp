@@ -2,6 +2,7 @@
 
 #include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
+#include "effects/manual/MirrorCheckEffect.hpp"
 #include "math/SpringDamper.hpp"
 
 #include "SPF_KeyBinds_API.h"
@@ -21,15 +22,28 @@ namespace motioncab {
 // while held, recenter on release; between plain keys, a wide look wins
 // over a glance) and toggle (press to look, press again to recenter, or
 // another look's key to switch). Either way the springs handle the easing.
+//
+// A look's angles are where the head ends up, not added to Mirror Check's
+// (a look at cross traffic with a blinker on turns as far as set). While a
+// look is on, the springs hold the head's angle, mirror check included, and
+// its offset is taken back out every frame, so a blinker switched mid-look
+// doesn't move the head. Released, they hold the look's own offset again
+// and ease it back to 0, leaving the mirror check to move at its own pace.
+// The switch shifts their values by the mirror check's offset, which keeps
+// the head still.
 class ManualLookEffect final : public ConfigurableEffect {
 public:
   enum class Look { kCenter, kLeft, kRight, kGlanceLeft, kGlanceRight };
 
+  // mirror_check must be updated before this effect, to be read the same
+  // frame (registered first).
   ManualLookEffect(SPF_Config_API *config_api, SPF_Config_Handle *config_handle,
                    SPF_KeyBinds_API *keybinds_api,
-                   SPF_KeyBinds_Handle *keybinds_handle)
+                   SPF_KeyBinds_Handle *keybinds_handle,
+                   const MirrorCheckEffect *mirror_check)
       : ConfigurableEffect(config_api, config_handle, "manual", "manual_look"),
-        keybinds_api_(keybinds_api), keybinds_handle_(keybinds_handle) {}
+        keybinds_api_(keybinds_api), keybinds_handle_(keybinds_handle),
+        mirror_check_(mirror_check) {}
 
   void Reset() override;
   bool NeedsDriverSeat() const override { return true; }
@@ -41,6 +55,7 @@ private:
 
   SPF_KeyBinds_API *keybinds_api_;
   SPF_KeyBinds_Handle *keybinds_handle_;
+  const MirrorCheckEffect *mirror_check_;
 
   // The held look, a combination's first, kCenter if none.
   Look HeldLook() const;
@@ -69,6 +84,7 @@ private:
       settings::DefaultBool("settings.manual.manual_look.toggle_mode");
 
   // Two stages each, the first softening the start (see LoadSettings()).
+  // The head's angle, mirror check included, while engaged_.
   math::SpringDamper1D yaw_intent_;
   math::SpringDamper1D yaw_;
   math::SpringDamper1D pitch_intent_;
@@ -81,6 +97,8 @@ private:
   // when the keys held now were pressed.
   Look toggled_ = Look::kCenter;
   Look toggled_before_press_ = Look::kCenter;
+  // A look is on: the springs hold the head's angle (see class comment).
+  bool engaged_ = false;
 };
 
 } // namespace motioncab

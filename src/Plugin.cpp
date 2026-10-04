@@ -223,11 +223,14 @@ void OnActivated(const SPF_Core_API *core_api) {
       std::make_unique<SuspensionEffect>(core_api->config, ctx.config_handle));
   ctx.effects.Register(std::make_unique<EngineVibrationEffect>(
       core_api->config, ctx.config_handle));
-  ctx.effects.Register(
-      std::make_unique<MirrorCheckEffect>(core_api->config, ctx.config_handle));
+  // Mirror Check first: Manual Look reads it the same frame.
+  auto mirror_check =
+      std::make_unique<MirrorCheckEffect>(core_api->config, ctx.config_handle);
+  const MirrorCheckEffect *mirror_check_ptr = mirror_check.get();
+  ctx.effects.Register(std::move(mirror_check));
   ctx.effects.Register(std::make_unique<ManualLookEffect>(
       core_api->config, ctx.config_handle, core_api->keybinds,
-      ctx.keybinds_handle));
+      ctx.keybinds_handle, mirror_check_ptr));
   ctx.effects.Register(std::make_unique<RoadIrregularityEffect>(
       core_api->config, ctx.config_handle));
   ctx.effects.Register(

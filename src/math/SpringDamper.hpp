@@ -15,6 +15,10 @@ public:
     velocity_ = 0.0f;
   }
 
+  // Moves the value by `delta`, keeping the velocity: re-expresses it
+  // relative to another origin without disturbing the motion.
+  void Shift(float delta) { value_ += delta; }
+
   float Update(float target, float dt) {
     if (dt <= 0.0f)
       return value_;

@@ -58,6 +58,7 @@ void ManualLookEffect::Reset() {
   pressed_ = Look::kCenter;
   toggled_ = Look::kCenter;
   toggled_before_press_ = Look::kCenter;
+  engaged_ = false;
 }
 
 bool ManualLookEffect::HasChord(Look look) const {
@@ -124,9 +125,26 @@ HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
     break;
   }
 
+  // Where Mirror Check has the head (see class comment).
+  const float mirror_yaw = mirror_check_ ? mirror_check_->yaw() : 0.0f;
+  const float mirror_pitch = mirror_check_ ? mirror_check_->pitch() : 0.0f;
+  if (engaged_ != (look != Look::kCenter)) {
+    engaged_ = !engaged_;
+    const float sign = engaged_ ? 1.0f : -1.0f;
+    yaw_intent_.Shift(sign * mirror_yaw);
+    yaw_.Shift(sign * mirror_yaw);
+    pitch_intent_.Shift(sign * mirror_pitch);
+    pitch_.Shift(sign * mirror_pitch);
+  }
+  const float base_yaw = engaged_ ? mirror_yaw : 0.0f;
+  const float base_pitch = engaged_ ? mirror_pitch : 0.0f;
+
   HeadOffset offset;
-  offset.yaw = yaw_.Update(yaw_intent_.Update(target_yaw_deg, dt), dt);
-  offset.pitch = pitch_.Update(pitch_intent_.Update(target_pitch_deg, dt), dt);
+  offset.yaw =
+      yaw_.Update(yaw_intent_.Update(target_yaw_deg, dt), dt) - base_yaw;
+  offset.pitch =
+      pitch_.Update(pitch_intent_.Update(target_pitch_deg, dt), dt) -
+      base_pitch;
   return offset;
 }
 
