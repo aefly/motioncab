@@ -484,6 +484,7 @@
         "floor_x_max": "Limite destro",
         "floor_z_min": "Limite anteriore",
         "floor_z_max": "Limite posteriore",
+        "stand_y": "Altezza",
         "crouch_depth": "Profondità accovacciata",
         "passenger_dx": "Lato",
         "passenger_dy": "Altezza",

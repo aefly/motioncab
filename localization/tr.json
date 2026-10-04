@@ -484,6 +484,7 @@
         "floor_x_max": "Sağ Sınır",
         "floor_z_min": "Ön Sınır",
         "floor_z_max": "Arka Sınır",
+        "stand_y": "Yükseklik",
         "crouch_depth": "Çömelme Derinliği",
         "passenger_dx": "Yan",
         "passenger_dy": "Yükseklik",

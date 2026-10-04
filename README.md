@@ -21,7 +21,7 @@
   <a href="#controls">Controls</a> •
   <a href="#configuration">Configuration</a> •
   <a href="#building">Building</a> •
-  <a href="#contributing">Contributing</a> •
+  <a href="#contribute">Contributing</a> •
   <a href="#license">License</a>
 </p>
 
@@ -72,7 +72,7 @@ active while in the interior (cabin) camera view.
 
 | Action                 | Default key | Behavior                                                                              |
 | ---------------------- | ----------- | ------------------------------------------------------------------------------------- |
-| Toggle Window          | F9          | Shows/hides the MotionCab Quick Settings window                                       |
+| Toggle Settings Window | F9          | Shows/hides the MotionCab Quick Settings window                                       |
 | Look Left              | Numpad /    | Manual Look — hold or toggle to look left                                             |
 | Look Right             | Numpad *    | Manual Look — hold or toggle to look right                                            |
 | Glance at Left Mirror  | Numpad 7    | Manual Look — hold or toggle to glance at the left mirror                             |

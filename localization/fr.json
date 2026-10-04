@@ -484,6 +484,7 @@
         "floor_x_max": "Limite droite",
         "floor_z_min": "Limite avant",
         "floor_z_max": "Limite arrière",
+        "stand_y": "Hauteur",
         "crouch_depth": "Profondeur d'accroupissement",
         "passenger_dx": "Côté",
         "passenger_dy": "Hauteur",

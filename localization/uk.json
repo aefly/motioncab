@@ -484,6 +484,7 @@
         "floor_x_max": "Права межа",
         "floor_z_min": "Передня межа",
         "floor_z_max": "Задня межа",
+        "stand_y": "Висота",
         "crouch_depth": "Глибина присідання",
         "passenger_dx": "Вбік",
         "passenger_dy": "Висота",

@@ -96,7 +96,7 @@ set(PLUGIN_SOURCES
 if(WIN32)
   # project(VERSION ...) leaves MINOR/PATCH as empty strings (not "0") when
   # a tag has fewer than 3 numeric components (e.g. a `vX.Y` release tag,
-  # via build.yml's version-injection sed) — version.rc.in's FILEVERSION/
+  # via build.yaml's version-injection sed) — version.rc.in's FILEVERSION/
   # PRODUCTVERSION would then get a stray double comma and fail to compile
   # with windres. Defaulting the missing components here keeps it robust
   # regardless of how the tag was written.
@@ -125,8 +125,10 @@ target_include_directories(${PLUGIN_NAME} PRIVATE
 )
 
 # --- Manifest Identity ---
-# Single source of truth for Info_SetAuthor/Version/DescriptionLiteral in
-# Manifest.cpp, kept in sync with version.rc.in via the same CMake variables.
+# Single source of truth for Info_SetAuthor/Version in Manifest.cpp and the
+# About tab, kept in sync with version.rc.in via the same CMake variables.
+# The manifest's description is a localization key (Info_SetDescriptionKey),
+# so PLUGIN_DESCRIPTION is only version.rc's FileDescription.
 target_compile_definitions(${PLUGIN_NAME} PRIVATE
     PLUGIN_AUTHOR="${PLUGIN_AUTHOR}"
     PLUGIN_DESCRIPTION="${PLUGIN_DESCRIPTION}"

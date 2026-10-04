@@ -484,6 +484,7 @@
         "floor_x_max": "Granica prawa",
         "floor_z_min": "Granica przednia",
         "floor_z_max": "Granica tylna",
+        "stand_y": "Wysokość",
         "crouch_depth": "Głębokość kucania",
         "passenger_dx": "Bok",
         "passenger_dy": "Wysokość",

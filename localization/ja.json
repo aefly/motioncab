@@ -484,6 +484,7 @@
         "floor_x_max": "右の境界",
         "floor_z_min": "前の境界",
         "floor_z_max": "後ろの境界",
+        "stand_y": "高さ",
         "crouch_depth": "しゃがむ深さ",
         "passenger_dx": "左右",
         "passenger_dy": "高さ",

@@ -484,6 +484,7 @@
         "floor_x_max": "Pravá hranice",
         "floor_z_min": "Přední hranice",
         "floor_z_max": "Zadní hranice",
+        "stand_y": "Výška",
         "crouch_depth": "Hloubka přikrčení",
         "passenger_dx": "Do strany",
         "passenger_dy": "Výška",

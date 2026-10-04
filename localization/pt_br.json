@@ -484,6 +484,7 @@
         "floor_x_max": "Limite direito",
         "floor_z_min": "Limite dianteiro",
         "floor_z_max": "Limite traseiro",
+        "stand_y": "Altura",
         "crouch_depth": "Profundidade ao agachar",
         "passenger_dx": "Lado",
         "passenger_dy": "Altura",

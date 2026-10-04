@@ -484,6 +484,7 @@
         "floor_x_max": "오른쪽 경계",
         "floor_z_min": "앞쪽 경계",
         "floor_z_max": "뒤쪽 경계",
+        "stand_y": "높이",
         "crouch_depth": "웅크리기 깊이",
         "passenger_dx": "좌우",
         "passenger_dy": "높이",

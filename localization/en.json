@@ -484,6 +484,7 @@
         "floor_x_max": "Right Limit",
         "floor_z_min": "Front Limit",
         "floor_z_max": "Back Limit",
+        "stand_y": "Height",
         "crouch_depth": "Crouch Depth",
         "passenger_dx": "Side",
         "passenger_dy": "Height",

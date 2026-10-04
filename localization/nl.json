@@ -484,6 +484,7 @@
         "floor_x_max": "Rechtergrens",
         "floor_z_min": "Voorgrens",
         "floor_z_max": "Achtergrens",
+        "stand_y": "Hoogte",
         "crouch_depth": "Hurkdiepte",
         "passenger_dx": "Zijkant",
         "passenger_dy": "Hoogte",

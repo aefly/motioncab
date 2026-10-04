@@ -484,6 +484,7 @@
         "floor_x_max": "Rechte Grenze",
         "floor_z_min": "Vordere Grenze",
         "floor_z_max": "Hintere Grenze",
+        "stand_y": "Höhe",
         "crouch_depth": "Ducktiefe",
         "passenger_dx": "Seite",
         "passenger_dy": "Höhe",

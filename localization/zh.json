@@ -484,6 +484,7 @@
         "floor_x_max": "右边界",
         "floor_z_min": "前边界",
         "floor_z_max": "后边界",
+        "stand_y": "高度",
         "crouch_depth": "下蹲深度",
         "passenger_dx": "左右",
         "passenger_dy": "高度",

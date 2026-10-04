@@ -184,9 +184,7 @@ void DrawValues(SPF_UI_API *ui, CabinWalkEffect &walk) {
   title("walkway");
   rows({"floor_z_min", "floor_z_max", "floor_x_min", "floor_x_max"});
   title("heights");
-  DrawValueRow(ui, walk, "stand_y", Label("ui.cabin_walk.layout.passenger_dy"),
-               true);
-  rows({"crouch_depth"});
+  rows({"stand_y", "crouch_depth"});
   title("passenger");
   DrawUsableRow(ui, walk, Spot::kPassenger);
   rows({"passenger_dx", "passenger_dy", "passenger_dz", "passenger_yaw",
