@@ -12,12 +12,14 @@ namespace motioncab {
 
 // Speed-driven body sway: the driver never sits perfectly still in a moving
 // cab. Procedural, built from continuous noise (math/Noise.hpp):
-//  - three frequency bands (slow sway, cab/seat bounce, fine vibration) with
-//    very different weights per axis: vertical is dominated by the faster
-//    bounce, lateral by the slow sway;
+//  - three frequency bands (cab sway, cab/seat bounce, fine vibration) with
+//    different weights per axis: vertical is dominated by the faster
+//    bounce, lateral by the sway;
 //  - the head mostly moves rather than turns, the eyes staying on the road:
 //    little yaw, roll following lateral motion, and pitch nodding against
 //    the vertical bounce, plus a little independent noise;
+//  - the head settles a moment, then shifts, like a real head, rather than
+//    swaying steadily;
 //  - a very slow amplitude envelope makes some stretches rougher than others.
 // Both amplitude and noise speed grow with truck speed. The amplitude also
 // follows the ground: calmer on smooth asphalt, rougher on gravel or dirt
@@ -68,6 +70,7 @@ private:
   // Both wrapped with math::WrapNoisePhase.
   std::array<double, kBands> phase_{};
   double envelope_phase_ = 0.0;       // not reset: keeps the roughness varying
+  double activity_phase_ = 0.0;       // not reset: holds and shifts
   math::SpringDamper1D entry_fade_;   // 0 -> 1 after Reset(), no pop
   math::SpringDamper1D surface_gain_; // amplitude factor from the ground
 };

@@ -2,6 +2,7 @@
 
 #include "effects/TelemetryUtil.hpp"
 #include "math/Noise.hpp"
+#include "math/Units.hpp"
 
 #include <algorithm>
 #include <cmath>
@@ -12,22 +13,27 @@ namespace motioncab {
 namespace {
 constexpr float kSpeedRefKmh = 90.0f; // sway is at full strength here
 constexpr float kSpeedDeadKmh = 3.0f; // below this the truck is "stopped"
+constexpr float kSpeedCurve = 1.376f; // ramp exponent: 20% at 30 km/h
 
 // RMS amplitudes at full speed, intensity 1.0, on neutral ground; peaks
 // reach about 4x these.
-constexpr float kSwayPos = 0.0015f; // meters, lateral
-constexpr float kSwayAngle = 0.15f; // degrees, before the per-axis ratios
+constexpr float kSwayPos = 0.0011f; // meters, lateral
+constexpr float kSwayAngle = 0.11f; // degrees, before the per-axis ratios
 // RMS of a channel's band mix (measured offline): gradient noise peaks near
 // +/-1 but sits much lower on average, and mixing bands lowers it further.
 // Dividing by it makes the amplitudes above the real ones; without it, the
 // shake was well under a millimeter and a tenth of a degree.
-constexpr float kMixRms = 0.2f;
+constexpr float kMixRms = 0.21f;
 
 // Band base rates in noise cells per second (roughly Hz), scaled up a little
-// with speed. Bands: slow body sway, cab/seat bounce, fine vibration.
-constexpr float kBandRate[] = {0.5f, 2.0f, 5.0f};
-constexpr float kRateSpeedMin = 0.7f; // rate multiplier when barely moving
-constexpr float kRateSpeedMax = 1.3f; // ... and at reference speed
+// with speed. Bands: cab sway, cab/seat bounce, fine vibration. A sway band
+// at 0.5 Hz, or one slowed down much at low speed, made the head drift
+// around like a floating, handheld camera; much quicker, the head moved
+// too fast. Quicker bands make the head move faster for the same size,
+// hence the smaller amplitudes above.
+constexpr float kBandRate[] = {0.7f, 1.8f, 4.5f};
+constexpr float kRateSpeedMin = 0.85f; // rate multiplier when barely moving
+constexpr float kRateSpeedMax = 1.15f; // ... and at reference speed
 
 // Smoothing sets the noise speed, as sqrt(default / smoothing): x1.7 at
 // 0.1 s, x0.55 at 1 s. Gradient noise keeps its size at any speed, unlike
@@ -39,13 +45,26 @@ constexpr float kMinSmoothing =
 
 // Per-channel mix of the three bands (each row sums to 1).
 enum Channel { kX, kY, kYaw, kRoll, kPitch };
+// The fine vibration is all but left out: a real head doesn't buzz
+// (RoadIrregularityEffect has the texture).
 constexpr float kBandWeight[5][3] = {
-    {0.70f, 0.22f, 0.08f}, // x: mostly slow lateral sway
-    {0.30f, 0.55f, 0.15f}, // y: dominated by the faster vertical bounce
-    {0.85f, 0.15f, 0.00f}, // yaw: slow only
-    {0.60f, 0.30f, 0.10f}, // roll (independent part)
-    {0.40f, 0.50f, 0.10f}, // pitch (independent part)
+    {0.55f, 0.45f, 0.00f}, // x: lateral sway, with some bounce
+    {0.30f, 0.65f, 0.05f}, // y: dominated by the faster vertical bounce
+    {0.75f, 0.25f, 0.00f}, // yaw: mostly the slow band
+    {0.50f, 0.50f, 0.00f}, // roll (independent part)
+    {0.35f, 0.60f, 0.05f}, // pitch (independent part)
 };
+
+// A real head doesn't sway steadily: it settles a moment, then shifts
+// more briskly. A slow noise sets how fast the bands' time runs, from calm
+// to brisk; the size of the motion is untouched, only its pace. Calm never
+// means frozen: a head held dead still for seconds (pace 0.15, ~8 s
+// cycles) looked broken.
+constexpr float kActivityRate = 0.2f; // cells per second (~5 s cycle)
+constexpr float kActivityGain = 0.9f; // how sharply calm and brisk split
+constexpr float kStillPace = 0.45f;   // band time multiplier, calm
+constexpr float kMovePace = 1.35f;    // ... and shifting
+constexpr uint32_t kActivitySeedOffset = 0xAC71;
 
 // How much of roll/pitch comes from lateral/vertical motion vs own noise.
 constexpr float kRollFromLateral = 0.7f;
@@ -117,9 +136,10 @@ HeadOffset SpeedShakeEffect::Update(float dt, const SPF_TruckData &truck,
   const float speed_kmh = telemetry::SpeedKmh(truck);
   const float ramp = std::clamp(
       (speed_kmh - kSpeedDeadKmh) / (kSpeedRefKmh - kSpeedDeadKmh), 0.0f, 1.0f);
-  // Squared: the sway builds up with the road's energy, so town speeds stay
-  // calm (29% at 50 km/h) and it comes in fully toward highway speed.
-  const float speed_amount = ramp * ramp;
+  // Curved: the sway builds up with the road's energy, already felt in town
+  // (20% at 30 km/h, 43% at 50) and coming in fully toward highway speed.
+  // Squared, it was barely there below 50 km/h (10% at 30).
+  const float speed_amount = std::pow(ramp, kSpeedCurve);
 
   envelope_phase_ = math::WrapNoisePhase(envelope_phase_ + dt * kEnvelopeRate);
   const float envelope_noise = math::GradientNoise1D(
@@ -140,9 +160,17 @@ HeadOffset SpeedShakeEffect::Update(float dt, const SPF_TruckData &truck,
   const float amount = speed_amount * intensity_ * envelope * ground *
                        entry_fade_.Update(1.0f, dt);
 
+  activity_phase_ = math::WrapNoisePhase(activity_phase_ + dt * kActivityRate);
+  const float activity = math::SmoothStep(std::clamp(
+      0.5f + kActivityGain *
+                 math::GradientNoise1D(static_cast<float>(activity_phase_),
+                                       seed_ + kActivitySeedOffset),
+      0.0f, 1.0f));
+  const float pace = kStillPace + (kMovePace - kStillPace) * activity;
+
   const float rate_scale =
       (kRateSpeedMin + (kRateSpeedMax - kRateSpeedMin) * ramp) *
-      rate_multiplier_;
+      rate_multiplier_ * pace;
 
   // Mix the three bands of each channel into one value of about unit RMS.
   std::array<float, kChannels> mixed{};
