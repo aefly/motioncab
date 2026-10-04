@@ -18,9 +18,12 @@
   <a href="#overview">Overview</a> •
   <a href="#features">Features</a> •
   <a href="#installation">Installation</a> •
+  <a href="#game-settings">Game Settings</a> •
   <a href="#controls">Controls</a> •
-  <a href="#configuration">Configuration</a> •
+  <a href="#configuration">Configuration</a>
+  <br>
   <a href="#building">Building</a> •
+  <a href="#project-structure">Project Structure</a> •
   <a href="#contributing">Contributing</a> •
   <a href="#license">License</a>
 </p>
@@ -67,6 +70,22 @@ active while in the interior (cabin) camera view.
 2. Install [MotionCab][motioncab-web] in your game's
    `bin/win_x64/plugins/spfPlugins/` folder.
 3. Start your game and enable **MotionCab** in SPF's plugin manager.
+
+## Game Settings
+
+For both **ETS2** and **ATS**, disable the following camera options
+in `Options > Gameplay`:
+
+| Setting                                | Value   |
+| -------------------------------------- | ------- |
+| Uneven surfaces simulation             | **0%**  |
+| Steering camera rotation factor        | **0%**  |
+| Steering camera rotation on reverse    | **Off** |
+| Physical camera movement               | **Off** |
+| Physical camera factor                 | **0%**  |
+| Interior camera horizon locking factor | **Off** |
+
+Disabling these settings ensures that MotionCab has full control over the camera.
 
 ## Controls
 
