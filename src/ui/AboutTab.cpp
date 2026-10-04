@@ -2,7 +2,7 @@
 
 #include "SPF_Icons.h"
 #include "core/Links.hpp"
-#include "core/Localization.hpp"
+#include "core/Loc.hpp"
 #include "core/PluginContext.hpp"
 #include "ui/OpenUrl.hpp"
 #include "ui/Widgets.hpp"

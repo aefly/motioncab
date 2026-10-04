@@ -1,9 +1,9 @@
-#include "ProfileManager.hpp"
+#include "Profiles.hpp"
 
-#include "PluginContext.hpp"
 #include "SPF_Environment_API.h"
-#include "SettingsSchema.hpp"
-#include "StringUtil.hpp"
+#include "core/PluginContext.hpp"
+#include "core/Settings.hpp"
+#include "core/Strings.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -79,7 +79,7 @@ bool MigrateLegacyKeys(SPF_Config_API *cfg, SPF_Config_Handle *h,
 // Windows device names can't be used as file names (with or without an
 // extension), so a profile called e.g. "con" could never be saved.
 bool IsReservedWindowsName(const std::string &name) {
-  const std::string n = util::ToLower(name);
+  const std::string n = strings::ToLower(name);
   if (n == "con" || n == "prn" || n == "aux" || n == "nul")
     return true;
   return n.size() == 4 && (n.rfind("com", 0) == 0 || n.rfind("lpt", 0) == 0) &&
@@ -172,7 +172,7 @@ std::string Sanitize(const std::string &name) {
 const std::string *FindIgnoreCase(const std::vector<std::string> &names,
                                   const std::string &name) {
   for (const std::string &n : names) {
-    if (util::EqualsIgnoreCase(n, name))
+    if (strings::EqualsIgnoreCase(n, name))
       return &n;
   }
   return nullptr;

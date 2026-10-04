@@ -2,7 +2,7 @@
 
 #include "SPF_UI_API.h"
 
-namespace motioncab {
+namespace motioncab::ui {
 
 // The Quick Settings window's size on first launch (Manifest.cpp's
 // Defaults_AddWindow). SettingsWindow.cpp then snaps the width to the tab
@@ -22,4 +22,4 @@ void DrawSettingsWindow(SPF_UI_API *ui, void *user_data);
 // a plugin texture when told to, not automatically on unload.
 void ReleaseLogoTexture(SPF_UI_API *ui);
 
-} // namespace motioncab
+} // namespace motioncab::ui

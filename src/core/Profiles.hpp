@@ -4,14 +4,14 @@
 #include <vector>
 
 namespace motioncab {
-
 struct PluginContext;
+} // namespace motioncab
 
 // Save/load/delete whole-settings snapshots as named "profiles", stored as
 // individual JSON files under the plugin's data directory. Not a native SPF
 // feature (SPF_Config_API only has one settings.json per plugin), so each
 // profile file is its own Cfg_CreateCustomContext.
-namespace profiles {
+namespace motioncab::profiles {
 
 inline constexpr const char *kDefaultProfileName = "Default";
 
@@ -35,7 +35,7 @@ const std::string *FindIgnoreCase(const std::vector<std::string> &names,
 // Rewrites settings.json keys renamed or split since a released version,
 // keeping the user's values. Profile files are migrated too whenever
 // they're opened, as long as they don't have the new keys yet (see
-// MigrateLegacyKeys in ProfileManager.cpp). Settings deleted outright
+// MigrateLegacyKeys in Profiles.cpp). Settings deleted outright
 // aren't touched. Call once on activation, before anything reads the live
 // settings.
 void MigrateLegacySettings(PluginContext &ctx);
@@ -81,5 +81,4 @@ void InvalidateMatchCache();
 // if there's no active profile, it doesn't exist, or nothing has changed.
 void RevertUnsavedChanges(PluginContext &ctx);
 
-} // namespace profiles
-} // namespace motioncab
+} // namespace motioncab::profiles

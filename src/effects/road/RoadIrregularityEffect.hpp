@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/SettingsSchema.hpp"
+#include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "effects/road/Surface.hpp"
 #include "math/SpringDamper.hpp"
@@ -43,7 +43,7 @@ private:
       settings::Default("settings.road.road_irregularity.reactivity");
 
   uint32_t wheel_count_ = 0;
-  road::SurfaceMap surfaces_;
+  SurfaceMap surfaces_;
 
   std::minstd_rand rng_;
   math::SpringDamper1D noise_x_;

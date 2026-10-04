@@ -1,17 +1,17 @@
 #include "Manifest.hpp"
 
-#include "Keybinds.hpp"
-#include "Links.hpp"
-#include "PluginContext.hpp"
-#include "SettingsSchema.hpp"
+#include "core/Keybinds.hpp"
+#include "core/Links.hpp"
+#include "core/PluginContext.hpp"
+#include "core/Settings.hpp"
 #include "ui/SettingsWindow.hpp"
 
 #include <string>
 
-namespace motioncab {
+namespace motioncab::manifest {
 
-void BuildManifest(SPF_Manifest_Builder_Handle *h,
-                   const SPF_Manifest_Builder_API *api) {
+void Build(SPF_Manifest_Builder_Handle *h,
+           const SPF_Manifest_Builder_API *api) {
 
   // --- Identity ---
   api->Info_SetName(h, PluginContext::kPluginName);
@@ -34,7 +34,7 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
   api->Policy_AddConfigurableSystem(h, "localization");
 
   // --- Default Settings ---
-  // Generated from settings::kAll (core/SettingsSchema.hpp).
+  // Generated from settings::kAll (core/Settings.hpp).
   api->Settings_SetJson(h, settings::DefaultsJson().c_str());
 
   // --- Default System ---
@@ -47,8 +47,8 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
         h, action.group, action.name, "keyboard", action.default_key,
         keybinds::IsWalkAction(action) ? "manual" : "always");
   // isVisible=true here only decides the very first launch ever
-  api->Defaults_AddWindow(h, "MotionCab", true, true, 100, 100, kWindowWidth,
-                          kWindowHeight, false, true);
+  api->Defaults_AddWindow(h, "MotionCab", true, true, 100, 100,
+                          ui::kWindowWidth, ui::kWindowHeight, false, true);
 
   // --- UI Metadata ---
   api->Meta_AddWindow(h, "MotionCab", "window.title", "window.desc");
@@ -60,4 +60,4 @@ void BuildManifest(SPF_Manifest_Builder_Handle *h,
   }
 }
 
-} // namespace motioncab
+} // namespace motioncab::manifest

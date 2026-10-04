@@ -5,7 +5,7 @@
 
 #include <shellapi.h>
 
-namespace motioncab {
+namespace motioncab::ui {
 
 void OpenUrl(const char *url) {
   if (!url || !url[0])
@@ -13,4 +13,4 @@ void OpenUrl(const char *url) {
   ShellExecuteA(nullptr, "open", url, nullptr, nullptr, SW_SHOWNORMAL);
 }
 
-} // namespace motioncab
+} // namespace motioncab::ui

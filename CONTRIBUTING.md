@@ -34,7 +34,7 @@ game's `plugins/spfPlugins/MotionCab/`.
   - Independently toggleable and customizable.
   - Active in the interior (cabin) camera view only.
   - Shown in MotionCab's own Quick Settings window. Declare each setting
-    once in `settings::kAll` (`src/core/SettingsSchema.hpp`): the
+    once in `settings::kAll` (`src/core/Settings.hpp`): the
     manifest, the Quick Settings window and the profiles are all generated
     from it. A new effect also needs its entry in `kEffects`
     (`src/ui/EffectTabs.cpp`).
@@ -52,7 +52,7 @@ game's `plugins/spfPlugins/MotionCab/`.
   key and localization key) and add it to `kAllActions`, plus
   `kPolledActions` if the effect polls it.
 - Reuse the shared helpers (`src/math/Units.hpp`,
-  `src/effects/TelemetryUtil.hpp`, `src/effects/road/Surface.hpp`,
+  `src/effects/Telemetry.hpp`, `src/effects/road/Surface.hpp`,
   `src/core/Keybinds.hpp`) rather than duplicating their logic in an
   effect.
 
@@ -107,7 +107,7 @@ may not render.
 
 Never hardcode user-facing text. Add a key to `en.json` and every other
 language file, then look it up with `loc::Tr()` (see
-`src/core/Localization.hpp`). A setting's title and description live under
+`src/core/Loc.hpp`). A setting's title and description live under
 its own config key plus `.title`/`.desc`
 (e.g. `settings.road.suspension.reactivity.title`).
 `check-localization.py` also fails if `en.json` lacks a key the code needs

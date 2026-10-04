@@ -8,10 +8,10 @@
 #include "SPF_UI_API.h"
 
 #include "core/Keybinds.hpp"
-#include "core/Localization.hpp"
+#include "core/Loc.hpp"
 #include "core/Manifest.hpp"
 #include "core/PluginContext.hpp"
-#include "core/ProfileManager.hpp"
+#include "core/Profiles.hpp"
 #include "effects/cabin/EngineStartStopEffect.hpp"
 #include "effects/cabin/EngineVibrationEffect.hpp"
 #include "effects/cabin/IdleBreathingEffect.hpp"
@@ -158,7 +158,7 @@ void OnUnload() {
   // The About tab's logo texture is the one thing this plugin allocates
   // through the UI API that SPF doesn't free on its own.
   if (Context().core && Context().core->ui)
-    ReleaseLogoTexture(Context().core->ui);
+    ui::ReleaseLogoTexture(Context().core->ui);
   loc::Reset();
   // All API pointers become invalid after this returns; handles besides
   // the logo texture above are owned by the framework.
@@ -166,7 +166,7 @@ void OnUnload() {
 
 void OnRegisterUI(SPF_UI_API *ui_api) {
   ui_api->UI_RegisterDrawCallback(PluginContext::kPluginName, "MotionCab",
-                                  &DrawSettingsWindow, nullptr);
+                                  &ui::DrawSettingsWindow, nullptr);
 }
 
 void OnToggleSettingsWindow() {
@@ -436,7 +436,7 @@ extern "C" SPF_PLUGIN_EXPORT bool
 SPF_GetManifestAPI(SPF_Manifest_API *out_api) {
   if (!out_api)
     return false;
-  out_api->BuildManifest = &BuildManifest;
+  out_api->BuildManifest = &manifest::Build;
   return true;
 }
 

@@ -2,10 +2,10 @@
 
 #include "SPF_Icons.h"
 #include "core/Keybinds.hpp"
-#include "core/Localization.hpp"
+#include "core/Loc.hpp"
 #include "core/PluginContext.hpp"
-#include "core/ProfileManager.hpp"
-#include "core/SettingsSchema.hpp"
+#include "core/Profiles.hpp"
+#include "core/Settings.hpp"
 #include "ui/Widgets.hpp"
 
 #include <algorithm>

@@ -1,6 +1,6 @@
 #include "CabinLayouts.hpp"
 
-#include "CabinPresets.hpp"
+#include "effects/manual/cabin_walk/CabinPresets.hpp"
 
 #include <cctype>
 #include <cmath>
@@ -166,7 +166,7 @@ void CabinLayoutStore::Forget(const std::string &truck_key) {
   if (!h)
     return;
   // Emptied rather than removed: Cfg_RemoveKey doesn't work on a custom
-  // context file (see ProfileManager.cpp). An empty layout reads as none.
+  // context file (see Profiles.cpp). An empty layout reads as none.
   config_->Cfg_SetJsonString(h, ("layouts." + truck_key).c_str(), "{}");
   config_->Cfg_Save(h);
 }

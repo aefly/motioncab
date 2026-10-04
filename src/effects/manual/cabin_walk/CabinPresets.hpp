@@ -1,6 +1,6 @@
 #pragma once
 
-#include "CabinLayouts.hpp"
+#include "effects/manual/cabin_walk/CabinLayouts.hpp"
 
 #include <span>
 #include <string_view>

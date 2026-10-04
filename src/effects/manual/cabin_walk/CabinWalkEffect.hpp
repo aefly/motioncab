@@ -1,13 +1,13 @@
 #pragma once
 
-#include "CabinLayouts.hpp"
-#include "InteriorCameraOverride.hpp"
 #include "SPF_Camera_API.h"
 #include "SPF_KeyBinds_API.h"
 #include "SPF_UI_API.h"
 #include "core/CameraRig.hpp"
-#include "core/SettingsSchema.hpp"
+#include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
+#include "effects/manual/cabin_walk/CabinLayouts.hpp"
+#include "effects/manual/cabin_walk/InteriorCameraOverride.hpp"
 #include "math/SpringDamper.hpp"
 
 #include <optional>

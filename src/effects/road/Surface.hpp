@@ -1,7 +1,7 @@
 #pragma once
 
 #include "SPF_TelemetryData.h"
-#include "core/StringUtil.hpp"
+#include "core/Strings.hpp"
 
 #include <array>
 #include <cstdint>
@@ -12,7 +12,7 @@
 // substances[]), no numeric roughness value, so material names are
 // heuristically classified into a rough/smooth scale, with unknown/modded
 // names defaulting to smooth to avoid unexpected buzzing.
-namespace motioncab::road {
+namespace motioncab {
 
 struct SurfaceTraits {
   float roughness = 0.0f;  // 0..1, fine chatter
@@ -45,7 +45,7 @@ inline SurfaceTraits ClassifySurface(const char *substance_name) {
   if (!substance_name || !substance_name[0])
     return {};
   for (const auto &entry : detail::kSurfaceTable) {
-    if (util::EqualsIgnoreCase(substance_name, entry.name))
+    if (strings::EqualsIgnoreCase(substance_name, entry.name))
       return entry.traits;
   }
   return {}; // unrecognized name (other map/mod): default to smooth
@@ -88,4 +88,4 @@ private:
   uint32_t count_ = 0;
 };
 
-} // namespace motioncab::road
+} // namespace motioncab

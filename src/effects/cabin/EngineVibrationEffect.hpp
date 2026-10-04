@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/SettingsSchema.hpp"
+#include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
 
 namespace motioncab {

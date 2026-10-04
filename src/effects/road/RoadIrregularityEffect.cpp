@@ -1,6 +1,6 @@
 #include "RoadIrregularityEffect.hpp"
 
-#include "effects/TelemetryUtil.hpp"
+#include "effects/Telemetry.hpp"
 #include "math/Noise.hpp"
 
 #include <algorithm>
@@ -69,7 +69,7 @@ HeadOffset RoadIrregularityEffect::Update(float dt, const SPF_TruckData &truck,
   if (wheel_count_ == 0 || surfaces_.empty())
     return {};
 
-  const road::SurfaceTraits surface = surfaces_.Average(truck, wheel_count_);
+  const SurfaceTraits surface = surfaces_.Average(truck, wheel_count_);
   const float roughness = surface.roughness;
   const float unevenness = unevenness_.Update(surface.unevenness, dt);
   const float speed_kmh = telemetry::SpeedKmh(truck);

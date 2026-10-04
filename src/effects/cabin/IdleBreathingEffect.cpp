@@ -1,6 +1,6 @@
 #include "IdleBreathingEffect.hpp"
 
-#include "effects/TelemetryUtil.hpp"
+#include "effects/Telemetry.hpp"
 #include "math/Units.hpp"
 
 #include <cmath>

@@ -17,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 LOCALIZATION_DIR = ROOT / "localization"
-SETTINGS_SCHEMA = ROOT / "src/core/SettingsSchema.hpp"
+SETTINGS_SCHEMA = ROOT / "src/core/Settings.hpp"
 KEYBINDS = ROOT / "src/core/Keybinds.hpp"
 EFFECT_TABS = ROOT / "src/ui/EffectTabs.cpp"
 REFERENCE = "en.json"

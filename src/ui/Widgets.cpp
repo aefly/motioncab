@@ -1,7 +1,7 @@
 #include "Widgets.hpp"
 
 #include "SPF_Icons.h"
-#include "core/Localization.hpp"
+#include "core/Loc.hpp"
 #include "core/PluginContext.hpp"
 
 #include <algorithm>

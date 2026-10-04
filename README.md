@@ -192,11 +192,11 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── Manifest.cpp / .hpp       Plugin identity, settings defaults, keybinds, window
 │   │   ├── CameraRig.cpp / .hpp      Writes the effects' offset into the interior camera
 │   │   ├── PluginContext.cpp / .hpp  Shared plugin state
-│   │   ├── ProfileManager.cpp / .hpp Create/save/switch named presets
-│   │   ├── SettingsSchema.cpp / .hpp Every setting: key, default, slider range
-│   │   ├── Localization.cpp / .hpp   Translated string lookup (loc::Tr)
+│   │   ├── Profiles.cpp / .hpp       Create/save/switch named presets
+│   │   ├── Settings.cpp / .hpp       Every setting: key, default, slider range
+│   │   ├── Loc.cpp / .hpp            Translated string lookup (loc::Tr)
 │   │   ├── Keybinds.hpp              Keybind action names and key polling helpers
-│   │   ├── StringUtil.hpp            Case-insensitive string helpers
+│   │   ├── Strings.hpp               Case-insensitive string helpers
 │   │   └── Links.hpp                 Plugin URLs
 │   ├── math/
 │   │   ├── SpringDamper.hpp          Critically-damped spring, the core smoothing primitive
@@ -207,7 +207,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── Effect.hpp                Base effect interface + HeadOffset struct
 │   │   ├── ConfigurableEffect.hpp    Base for effects: enabled toggle + settings access
 │   │   ├── EffectManager.cpp / .hpp  Owns/drives all HeadOffset-based effects
-│   │   ├── TelemetryUtil.hpp         Telemetry readings shared by effects
+│   │   ├── Telemetry.hpp             Telemetry readings shared by effects
 │   │   ├── driving/                  HeadMotion, BodyDynamics, SteeringCamera
 │   │   ├── road/                     Suspension, RoadIrregularity, SpeedShake,
 │   │   │                             Surface (ground classification)

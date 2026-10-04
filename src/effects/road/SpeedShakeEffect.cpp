@@ -1,6 +1,6 @@
 #include "SpeedShakeEffect.hpp"
 
-#include "effects/TelemetryUtil.hpp"
+#include "effects/Telemetry.hpp"
 #include "math/Noise.hpp"
 #include "math/Units.hpp"
 
@@ -150,7 +150,7 @@ HeadOffset SpeedShakeEffect::Update(float dt, const SPF_TruckData &truck,
 
   float ground_target = 1.0f;
   if (wheel_count_ > 0 && !surfaces_.empty()) {
-    const road::SurfaceTraits surface = surfaces_.Average(truck, wheel_count_);
+    const SurfaceTraits surface = surfaces_.Average(truck, wheel_count_);
     const float t = std::max(surface.roughness, surface.unevenness);
     ground_target =
         kSmoothGroundGain + (kRoughGroundGain - kSmoothGroundGain) * t;

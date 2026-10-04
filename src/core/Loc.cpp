@@ -1,6 +1,6 @@
-#include "Localization.hpp"
+#include "Loc.hpp"
 
-#include "PluginContext.hpp"
+#include "core/PluginContext.hpp"
 
 #include <unordered_map>
 

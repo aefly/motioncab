@@ -3,7 +3,7 @@
 #include "SPF_Camera_API.h"
 #include "SPF_KeyBinds_API.h"
 #include "core/CameraRig.hpp"
-#include "core/SettingsSchema.hpp"
+#include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
 

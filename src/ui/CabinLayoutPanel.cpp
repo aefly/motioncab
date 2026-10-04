@@ -1,7 +1,7 @@
 #include "CabinLayoutPanel.hpp"
 
 #include "SPF_Icons.h"
-#include "core/Localization.hpp"
+#include "core/Loc.hpp"
 #include "core/PluginContext.hpp"
 #include "effects/manual/cabin_walk/CabinLayouts.hpp"
 #include "ui/Widgets.hpp"

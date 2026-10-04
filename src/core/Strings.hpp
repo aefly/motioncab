@@ -4,7 +4,7 @@
 #include <string>
 #include <string_view>
 
-namespace motioncab::util {
+namespace motioncab::strings {
 
 inline std::string ToLower(std::string_view s) {
   std::string out(s);
@@ -24,4 +24,4 @@ inline bool EqualsIgnoreCase(std::string_view a, std::string_view b) {
   return true;
 }
 
-} // namespace motioncab::util
+} // namespace motioncab::strings

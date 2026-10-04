@@ -1,6 +1,6 @@
 #pragma once
 
-#include "core/SettingsSchema.hpp"
+#include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "effects/road/Surface.hpp"
 #include "math/SpringDamper.hpp"
@@ -62,7 +62,7 @@ private:
   float roughness_ = settings::Default("settings.road.speed_shake.roughness");
 
   uint32_t wheel_count_ = 0;
-  road::SurfaceMap surfaces_;
+  SurfaceMap surfaces_;
 
   uint32_t seed_;
   // Noise-domain time per band, not reset either, so each cabin entry picks

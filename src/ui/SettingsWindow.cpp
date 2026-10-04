@@ -1,9 +1,9 @@
 #include "SettingsWindow.hpp"
 
 #include "SPF_Icons.h"
-#include "core/Localization.hpp"
+#include "core/Loc.hpp"
 #include "core/PluginContext.hpp"
-#include "core/ProfileManager.hpp"
+#include "core/Profiles.hpp"
 #include "ui/AboutTab.hpp"
 #include "ui/EffectTabs.hpp"
 #include "ui/SettingsTab.hpp"
@@ -15,9 +15,7 @@
 #include <iterator>
 #include <string>
 
-namespace motioncab {
-
-using namespace ui;
+namespace motioncab::ui {
 
 namespace {
 
@@ -305,4 +303,4 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
 
 void ReleaseLogoTexture(SPF_UI_API *ui) { DestroyLogoTexture(ui); }
 
-} // namespace motioncab
+} // namespace motioncab::ui
