@@ -78,6 +78,20 @@ bool CameraRig::DetectExternalSeatWrite(const Pose &pose) {
   return any;
 }
 
+bool CameraRig::DetectExternalFovWrite(SPF_Camera_API *camera) {
+  float fov_deg = 0.0f;
+  if (!has_last_written_fov_ || !camera->Cam_GetInteriorFov(&fov_deg))
+    return false;
+  // Far below any change a player or the game makes, far above float
+  // round-trip noise through the setter/getter.
+  constexpr float kEpsilonDeg = 0.01f;
+  if (std::fabs(fov_deg - last_written_fov_) <= kEpsilonDeg)
+    return false;
+  applied_.fov = 0.0f;
+  last_written_fov_ = fov_deg;
+  return true;
+}
+
 CameraRig::Pose CameraRig::Base(const Pose &pose) const {
   return {pose.seat_x - applied_.pos_x, pose.seat_y - applied_.pos_y,
           pose.seat_z - applied_.pos_z, pose.yaw_rad - applied_.yaw * kDegToRad,
@@ -96,6 +110,7 @@ void CameraRig::ForgetAppliedPose() {
   applied_.roll = roll;
   has_last_written_rot_ = false;
   has_last_written_seat_ = false;
+  has_last_written_fov_ = false;
 }
 
 void CameraRig::Apply(SPF_Camera_API *camera, const Pose &pose,
@@ -123,8 +138,31 @@ void CameraRig::Remove(SPF_Camera_API *camera) {
   if (camera->Cam_GetInteriorHeadRot(&yaw_rad, &pitch_rad))
     WriteHeadRot(camera, yaw_rad, pitch_rad, none);
   WriteRoll(camera, none);
+  // Same as the seat above (F4 FOV slider, then unload from another view).
+  DetectExternalFovWrite(camera);
   WriteFov(camera, none);
   applied_ = {};
+}
+
+bool CameraRig::RemoveFov(SPF_Camera_API *camera) {
+  // Something else rewrote the FOV since: our offset isn't in it any more.
+  DetectExternalFovWrite(camera);
+  if (applied_.fov == 0.0f)
+    return true;
+  float fov_deg = 0.0f;
+  if (!camera->Cam_GetInteriorFov(&fov_deg))
+    return false;
+  const float base_fov_deg = fov_deg - applied_.fov;
+  camera->Cam_SetInteriorFov(base_fov_deg);
+  // Forgotten only once the write has taken: forgetting an offset still in
+  // the FOV would hand it to the player for good.
+  float check_deg = 0.0f;
+  if (!camera->Cam_GetInteriorFov(&check_deg) ||
+      std::fabs(check_deg - base_fov_deg) > 0.01f)
+    return false;
+  NoteFovWrite(base_fov_deg);
+  applied_.fov = 0.0f;
+  return true;
 }
 
 void CameraRig::WriteSeat(SPF_Camera_API *camera, float x, float y, float z,
@@ -174,7 +212,9 @@ void CameraRig::WriteFov(SPF_Camera_API *camera, const HeadOffset &offset) {
   float fov_deg = 0.0f;
   if (!camera->Cam_GetInteriorFov(&fov_deg))
     return;
-  camera->Cam_SetInteriorFov(fov_deg - applied_.fov + offset.fov);
+  const float new_fov_deg = fov_deg - applied_.fov + offset.fov;
+  camera->Cam_SetInteriorFov(new_fov_deg);
+  NoteFovWrite(new_fov_deg);
   applied_.fov = offset.fov;
 }
 

@@ -2,6 +2,7 @@
 
 #include "SPF_Camera_API.h"
 #include "SPF_KeyBinds_API.h"
+#include "core/CameraRig.hpp"
 #include "core/SettingsSchema.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
@@ -17,15 +18,15 @@ namespace motioncab {
 //
 // Works on the FOV without the HeadOffset effects' own additive FOV offset
 // (e.g. BlindspotViewerEffect's), which CameraRig layers on top every frame:
-// its reads subtract `*extra_fov_deg`, the offset currently in the live
-// FOV, and its writes add it back. Otherwise a zoom started mid-peek would
-// take the peek's offset as the player's own FOV and return to it.
+// its reads subtract the rig's applied FOV, the offset currently in the
+// live FOV, and its writes add it back (and are noted by the rig, see
+// CameraRig::NoteFovWrite). Otherwise a zoom started mid-peek would take
+// the peek's offset as the player's own FOV and return to it.
 class ManualZoomEffect {
 public:
   ManualZoomEffect(SPF_Config_API *config_api, SPF_Config_Handle *config_handle,
                    SPF_KeyBinds_API *keybinds_api,
-                   SPF_KeyBinds_Handle *keybinds_handle,
-                   const float *extra_fov_deg);
+                   SPF_KeyBinds_Handle *keybinds_handle, CameraRig *rig);
 
   bool IsEnabled() const { return enabled_; }
   void SetEnabled(bool enabled) { enabled_ = enabled; }
@@ -45,7 +46,7 @@ private:
   EffectConfig config_;
   SPF_KeyBinds_API *keybinds_api_;
   SPF_KeyBinds_Handle *keybinds_handle_;
-  const float *extra_fov_deg_; // see class comment
+  CameraRig *rig_; // see class comment
 
   bool enabled_ = true;
   // FOV while the zoom key is held
@@ -71,7 +72,7 @@ private:
   SPF_Camera_API *camera_api_ = nullptr; // last seen, for restoring
 
   // Cam_GetInteriorFov/Cam_SetInteriorFov on camera_api_, null-checked,
-  // minus/plus *extra_fov_deg_.
+  // minus/plus the rig's applied FOV.
   bool GetFov(float *out_fov);
   void SetFov(float fov);
 };

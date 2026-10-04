@@ -241,7 +241,7 @@ void OnActivated(const SPF_Core_API *core_api) {
       ctx.keybinds_handle));
   ctx.manual_zoom = std::make_unique<ManualZoomEffect>(
       core_api->config, ctx.config_handle, core_api->keybinds,
-      ctx.keybinds_handle, &ctx.camera_rig.applied().fov);
+      ctx.keybinds_handle, &ctx.camera_rig);
   // The player's own layouts (the presets are compiled in).
   ctx.cabin_layouts = std::make_unique<CabinLayoutStore>(
       core_api->config, DataFilePath(ctx, "cabin_layouts.json"));
@@ -267,6 +267,10 @@ void OnActivated(const SPF_Core_API *core_api) {
     SPF_TruckConstants initial_constants{};
     core_api->telemetry->Tel_GetTruckConstants(
         ctx.telemetry_handle, &initial_constants, sizeof(initial_constants));
+    // The current truck, so a later event for it isn't taken for a switch
+    // (which would forget the offset still in the pose).
+    ctx.truck_identity =
+        std::string(initial_constants.brand_id) + "/" + initial_constants.id;
     ctx.effects.NotifyTruckConstants(initial_constants);
     ctx.cabin_walk->OnTruckConstantsChanged(initial_constants);
     core_api->telemetry->Tel_RegisterForCommonData(ctx.telemetry_handle,
@@ -314,6 +318,10 @@ void OnUpdate() {
     if (game_state.paused) {
       if (ctx.was_interior_last_frame && ctx.manual_zoom)
         ctx.manual_zoom->RestoreFov();
+      // Leaving a truck (job, garage, save load) goes through a menu, and
+      // the game saves that truck's FOV as it is then. After the zoom's
+      // restore above, which adds the applied FOV offset back on.
+      ctx.camera_rig.RemoveFov(ctx.core->camera);
       // SCS's "paused" telemetry flag covers native menus, not just the
       // pause screen, including F4's interior seat/FOV/lighting overlay.
       // That overlay doesn't change the reported camera type, so
@@ -359,6 +367,9 @@ void OnUpdate() {
       !ctx.has_controls_data.load(std::memory_order_acquire))
     return;
 
+  // Before ManualZoomEffect's write: the live FOV must still be last
+  // frame's, ours or someone else's (a truck switch's new camera, F4).
+  ctx.camera_rig.DetectExternalFovWrite(ctx.core->camera);
   if (ctx.manual_zoom && ctx.manual_zoom->IsEnabled())
     ctx.manual_zoom->Update(dt, ctx.core->camera);
 

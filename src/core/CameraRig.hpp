@@ -44,6 +44,19 @@ public:
   // offset that's no longer there subtracted from it.
   bool DetectExternalSeatWrite(const Pose &pose);
 
+  // Same for the FOV: a truck switch's new camera comes with the player's
+  // own FOV, and the game's F4 slider sets it as an absolute value, both
+  // without our offset. The applied FOV is then forgotten. Call before
+  // ManualZoomEffect writes this frame's FOV.
+  bool DetectExternalFovWrite(SPF_Camera_API *camera);
+
+  // Records a FOV write made outside Apply (ManualZoomEffect), so
+  // DetectExternalFovWrite doesn't take it for someone else's.
+  void NoteFovWrite(float fov_deg) {
+    last_written_fov_ = fov_deg;
+    has_last_written_fov_ = true;
+  }
+
   // The player's own pose underneath: `pose` minus the applied offset.
   Pose Base(const Pose &pose) const;
 
@@ -62,6 +75,13 @@ public:
   // subtract it, so e.g. unloading mid Blindspot Viewer peek would leave
   // the seat leaned forward for good.
   void Remove(SPF_Camera_API *camera);
+
+  // Takes the applied FOV offset back out of the live FOV (game paused).
+  // The game saves the FOV per truck as it is when the truck is left, which
+  // only happens through a menu: an offset still in it (e.g. mid Blindspot
+  // Viewer peek) would come back as the player's own FOV in that truck.
+  // False if the write didn't take yet: call again on the next frame.
+  bool RemoveFov(SPF_Camera_API *camera);
 
   // The game rebuilt the interior camera (another truck): the new one holds
   // the player's own pose, without our offset, so there's nothing to
@@ -92,6 +112,9 @@ private:
   float last_written_seat_x_ = 0.0f, last_written_seat_y_ = 0.0f,
         last_written_seat_z_ = 0.0f;
   bool has_last_written_seat_ = false;
+  // FOV we (or ManualZoomEffect) wrote last, to spot another writer's.
+  float last_written_fov_ = 0.0f;
+  bool has_last_written_fov_ = false;
 };
 
 } // namespace motioncab

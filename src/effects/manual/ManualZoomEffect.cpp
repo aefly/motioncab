@@ -12,10 +12,10 @@ ManualZoomEffect::ManualZoomEffect(SPF_Config_API *config_api,
                                    SPF_Config_Handle *config_handle,
                                    SPF_KeyBinds_API *keybinds_api,
                                    SPF_KeyBinds_Handle *keybinds_handle,
-                                   const float *extra_fov_deg)
+                                   CameraRig *rig)
     : config_(config_api, config_handle, "manual", "manual_zoom"),
       keybinds_api_(keybinds_api), keybinds_handle_(keybinds_handle),
-      extra_fov_deg_(extra_fov_deg) {}
+      rig_(rig) {}
 
 void ManualZoomEffect::LoadConfig() {
   if (!config_.IsAvailable())
@@ -111,15 +111,18 @@ void ManualZoomEffect::RestoreDynamicFov() {
 bool ManualZoomEffect::GetFov(float *out_fov) {
   if (!camera_api_ || !camera_api_->Cam_GetInteriorFov(out_fov))
     return false;
-  if (extra_fov_deg_)
-    *out_fov -= *extra_fov_deg_;
+  if (rig_)
+    *out_fov -= rig_->applied().fov;
   return true;
 }
 
 void ManualZoomEffect::SetFov(float fov) {
-  if (camera_api_)
-    camera_api_->Cam_SetInteriorFov(fov +
-                                    (extra_fov_deg_ ? *extra_fov_deg_ : 0.0f));
+  if (!camera_api_)
+    return;
+  const float live_fov = fov + (rig_ ? rig_->applied().fov : 0.0f);
+  camera_api_->Cam_SetInteriorFov(live_fov);
+  if (rig_)
+    rig_->NoteFovWrite(live_fov);
 }
 
 void ManualZoomEffect::Update(float dt, SPF_Camera_API *camera_api) {
