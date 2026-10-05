@@ -106,8 +106,12 @@ void CameraRig::SetBaseRotation(Pose &pose, float yaw_rad,
 
 void CameraRig::ForgetAppliedPose() {
   const float roll = applied_.roll;
-  applied_ = {};
+  ForgetApplied();
   applied_.roll = roll;
+}
+
+void CameraRig::ForgetApplied() {
+  applied_ = {};
   has_last_written_rot_ = false;
   has_last_written_seat_ = false;
   has_last_written_fov_ = false;

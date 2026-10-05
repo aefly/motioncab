@@ -422,16 +422,19 @@ void OnGameWorldReady() {
   ctx.has_last_update_time = false;
   ctx.has_truck_data.store(false, std::memory_order_relaxed);
   ctx.has_controls_data.store(false, std::memory_order_relaxed);
-  // The bank's handle dies with the world's sound system, and Update only
-  // runs in the interior view, too late to see it go: forget it here so
-  // the next world loads the bank again.
-  ctx.cabin_walk_sounds.Shutdown(ctx.core ? ctx.core->sound : nullptr);
 }
 
 void OnWorldUnloaded() {
   PluginContext &ctx = Context();
   ctx.has_truck_data.store(false, std::memory_order_relaxed);
   ctx.has_controls_data.store(false, std::memory_order_relaxed);
+  // SPF rebuilds its interior camera for the next world, roll back at 0:
+  // subtracting the old roll offset from it would tilt the view for good.
+  ctx.camera_rig.ForgetApplied();
+  // The bank's handle dies with the world's sound system, and Update only
+  // runs in the interior view, too late to see it go: unload it while the
+  // sound system still runs, so the next world loads it again.
+  ctx.cabin_walk_sounds.Shutdown(ctx.core ? ctx.core->sound : nullptr);
 }
 
 } // namespace

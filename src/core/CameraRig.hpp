@@ -89,6 +89,10 @@ public:
   // and puts it back on the new camera.
   void ForgetAppliedPose();
 
+  // A world reload rebuilds the game's camera and SPF's own (whose roll
+  // starts back at 0): none of the applied offset is left, roll included.
+  void ForgetApplied();
+
   // The offset currently in the live pose.
   const HeadOffset &applied() const { return applied_; }
 
