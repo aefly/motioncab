@@ -422,6 +422,10 @@ void OnGameWorldReady() {
   ctx.has_last_update_time = false;
   ctx.has_truck_data.store(false, std::memory_order_relaxed);
   ctx.has_controls_data.store(false, std::memory_order_relaxed);
+  // The bank's handle dies with the world's sound system, and Update only
+  // runs in the interior view, too late to see it go: forget it here so
+  // the next world loads the bank again.
+  ctx.cabin_walk_sounds.Shutdown(ctx.core ? ctx.core->sound : nullptr);
 }
 
 void OnWorldUnloaded() {

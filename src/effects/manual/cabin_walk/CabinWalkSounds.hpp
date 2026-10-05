@@ -32,8 +32,8 @@ public:
   // `volume`: 0..1.
   void PlayFootstep(SPF_Sound_API *sound, float volume);
 
-  // Plugin unload: unloads the bank, so a reloaded plugin can load it
-  // again.
+  // Plugin or world unload: unloads the bank if the sound system still
+  // runs, else forgets its handle, so Update loads it again.
   void Shutdown(SPF_Sound_API *sound);
 
 private:
