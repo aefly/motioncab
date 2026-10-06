@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "Bu efekti açar veya kapatır.",
+    "paused_by": "{effects} tarafından duraklatıldı.",
+    "pauses": "Açıldığında şu efekt(ler)i duraklatır:",
     "driving": {
       "title": "Sürüş",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "Süre",
           "desc": "Çalıştırma sarsıntısının ne kadar sürdüğü. Durdurma sarsıntısı bundan daha kısa ve yumuşaktır."
+        }
+      },
+      "natural_head_movement": {
+        "title": "Doğal Baş Hareketi",
+        "tremor_intensity": {
+          "title": "Titreme",
+          "desc": "Başınızın sürekli ne kadar hafifçe titrediği."
+        },
+        "micro_intensity": {
+          "title": "Mikro Ayarlar",
+          "desc": "Küçük bir ayarlamada başınızın ne kadar hareket ettiği."
+        },
+        "posture_intensity": {
+          "title": "Duruş Değişimleri",
+          "desc": "Başınızın yeni bir pozisyona geçerken ne kadar kaydığı: eğik, öne veya bir yana yaslanmış."
+        },
+        "posture_interval": {
+          "title": "Duruş Aralığı",
+          "desc": "Başınızın yeni bir pozisyona geçmeden önce bir pozisyonu yaklaşık ne kadar koruduğu."
+        },
+        "steering_tilt": {
+          "title": "Direksiyon Eğimi",
+          "desc": "Direksiyonu çevirdiğinizde başınızın virajın içine ne kadar eğildiği."
         }
       }
     },

@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "이 효과를 켜거나 끕니다.",
+    "paused_by": "{effects}에 의해 일시 정지되었습니다.",
+    "pauses": "켜면 다음 효과를 일시 정지합니다:",
     "driving": {
       "title": "주행",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "지속 시간",
           "desc": "시동 떨림이 지속되는 시간입니다. 정지 떨림은 이보다 짧고 부드럽습니다."
+        }
+      },
+      "natural_head_movement": {
+        "title": "자연스러운 머리 움직임",
+        "tremor_intensity": {
+          "title": "떨림",
+          "desc": "머리가 항상 살짝 떨리는 정도입니다."
+        },
+        "micro_intensity": {
+          "title": "미세 조정",
+          "desc": "머리가 작게 조정할 때 움직이는 정도입니다."
+        },
+        "posture_intensity": {
+          "title": "자세 변화",
+          "desc": "머리가 새 자세로 바뀔 때 움직이는 정도입니다: 기울이기, 앞으로 숙이기, 한쪽으로 기대기."
+        },
+        "posture_interval": {
+          "title": "자세 간격",
+          "desc": "머리가 새 자세로 바꾸기 전에 한 자세를 유지하는 대략적인 시간입니다."
+        },
+        "steering_tilt": {
+          "title": "핸들 기울기",
+          "desc": "핸들을 돌릴 때 머리가 커브 안쪽으로 기우는 정도입니다."
         }
       }
     },

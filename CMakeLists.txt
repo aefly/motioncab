@@ -68,6 +68,7 @@ set(PLUGIN_SOURCES
     "src/effects/cabin/EngineStartStopEffect.cpp"
     "src/effects/cabin/EngineVibrationEffect.cpp"
     "src/effects/cabin/IdleBreathingEffect.cpp"
+    "src/effects/cabin/NaturalHeadMovementEffect.cpp"
     "src/effects/driving/BodyDynamicsEffect.cpp"
     "src/effects/driving/HeadMotionEffect.cpp"
     "src/effects/driving/SteeringCameraEffect.cpp"

@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "Active ou désactive cet effet.",
+    "paused_by": "Mis en pause par {effects}.",
+    "pauses": "Une fois activé, cet effet met en pause le(s) effet(s) suivant(s) :",
     "driving": {
       "title": "Conduite",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "Durée",
           "desc": "Durée de la secousse au démarrage. Celle de l'arrêt est plus courte et plus douce."
+        }
+      },
+      "natural_head_movement": {
+        "title": "Mouvement de tête naturel",
+        "tremor_intensity": {
+          "title": "Tremblement",
+          "desc": "À quel point votre tête tremble légèrement, en permanence."
+        },
+        "micro_intensity": {
+          "title": "Micro-ajustements",
+          "desc": "À quel point votre tête bouge lors d'un petit ajustement."
+        },
+        "posture_intensity": {
+          "title": "Changements de posture",
+          "desc": "À quel point votre tête se déplace quand elle prend une nouvelle position : penchée, avancée ou décalée sur un côté."
+        },
+        "posture_interval": {
+          "title": "Intervalle de posture",
+          "desc": "Combien de temps environ votre tête garde une position avant d'en prendre une nouvelle."
+        },
+        "steering_tilt": {
+          "title": "Inclinaison au volant",
+          "desc": "À quel point votre tête s'incline vers l'intérieur du virage quand vous tournez le volant."
         }
       }
     },

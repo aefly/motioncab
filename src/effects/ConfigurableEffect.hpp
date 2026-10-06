@@ -43,6 +43,7 @@ class ConfigurableEffect : public Effect {
 public:
   bool IsEnabled() const override { return enabled_; }
   void SetEnabled(bool enabled) override { enabled_ = enabled; }
+  std::string_view Id() const override { return id_; }
 
   void LoadConfig() final {
     if (!config_.IsAvailable())
@@ -55,7 +56,8 @@ protected:
   ConfigurableEffect(SPF_Config_API *config_api,
                      SPF_Config_Handle *config_handle, const char *group,
                      const char *name)
-      : config_(config_api, config_handle, group, name) {}
+      : config_(config_api, config_handle, group, name),
+        id_(std::string("settings.") + group + "." + name) {}
 
   // Reads the effect's own tunables (everything but "enabled") with Float()
   // and Bool(), and applies them, e.g. to its springs' time constants.
@@ -70,6 +72,7 @@ protected:
 
 private:
   EffectConfig config_;
+  std::string id_;
   bool enabled_ = true;
 };
 

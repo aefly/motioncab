@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "Turn this effect on or off.",
+    "paused_by": "Paused by {effects}.",
+    "pauses": "When enabled, this pauses the following effect(s):",
     "driving": {
       "title": "Driving",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "Duration",
           "desc": "How long the start-up shudder lasts. The stop shudder is shorter and gentler than this."
+        }
+      },
+      "natural_head_movement": {
+        "title": "Natural Head Movement",
+        "tremor_intensity": {
+          "title": "Tremor",
+          "desc": "How much your head trembles slightly, all the time."
+        },
+        "micro_intensity": {
+          "title": "Micro-Adjustments",
+          "desc": "How far your head moves when it makes a small adjustment."
+        },
+        "posture_intensity": {
+          "title": "Posture Changes",
+          "desc": "How far your head shifts when it settles into a new position: tilted, leaning forward or to one side."
+        },
+        "posture_interval": {
+          "title": "Posture Interval",
+          "desc": "About how long your head holds a position before settling into a new one."
+        },
+        "steering_tilt": {
+          "title": "Steering Tilt",
+          "desc": "How much your head tilts into the turn as you turn the steering wheel."
         }
       }
     },

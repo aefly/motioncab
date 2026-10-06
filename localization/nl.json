@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "Zet dit effect aan of uit.",
+    "paused_by": "Gepauzeerd door {effects}.",
+    "pauses": "Als dit aan staat, pauzeert het de volgende effect(en):",
     "driving": {
       "title": "Rijden",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "Duur",
           "desc": "Hoe lang de startschok duurt. De stopschok is korter en zachter."
+        }
+      },
+      "natural_head_movement": {
+        "title": "Natuurlijke hoofdbeweging",
+        "tremor_intensity": {
+          "title": "Trilling",
+          "desc": "Hoeveel je hoofd voortdurend licht trilt."
+        },
+        "micro_intensity": {
+          "title": "Microbewegingen",
+          "desc": "Hoe ver je hoofd beweegt bij een kleine correctie."
+        },
+        "posture_intensity": {
+          "title": "Houdingswissels",
+          "desc": "Hoe ver je hoofd verschuift als het een nieuwe houding aanneemt: gekanteld, naar voren of opzij geleund."
+        },
+        "posture_interval": {
+          "title": "Houdingsinterval",
+          "desc": "Hoe lang je hoofd ongeveer een houding vasthoudt voordat het een nieuwe aanneemt."
+        },
+        "steering_tilt": {
+          "title": "Kanteling bij sturen",
+          "desc": "Hoeveel je hoofd de bocht in kantelt als je aan het stuur draait."
         }
       }
     },

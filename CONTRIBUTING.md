@@ -48,6 +48,10 @@ game's `plugins/spfPlugins/MotionCab/`.
 - If an effect only makes sense in the driver's seat, override
   `NeedsDriverSeat()` so it fades out while Cabin Walk has the player
   elsewhere in the cabin.
+- If an effect shouldn't run alongside another one (e.g. Natural Head
+  Movement and Idle Breathing), declare the pair in `conflicts::kPauses`
+  (`src/core/Conflicts.hpp`): while the first is enabled, the second fades
+  out, its settings untouched, and the Quick Settings window says so.
 - Declare a new keybind action once in `src/core/Keybinds.hpp` (default
   key and localization key) and add it to `kAllActions`, plus
   `kPolledActions` if the effect polls it.

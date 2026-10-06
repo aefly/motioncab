@@ -113,6 +113,18 @@ inline constexpr Setting kAll[] = {
           "%.2f"),
     Float("settings.cabin.engine_start_stop.duration", 1.0f, 0.3f, 2.0f,
           "%.2f s"),
+    // cabin.natural_head_movement
+    Bool("settings.cabin.natural_head_movement.enabled", false),
+    Float("settings.cabin.natural_head_movement.tremor_intensity", 5.0f, 0.0f,
+          8.0f, "%.2f"),
+    Float("settings.cabin.natural_head_movement.micro_intensity", 2.5f, 0.0f,
+          5.0f, "%.2f"),
+    Float("settings.cabin.natural_head_movement.posture_intensity", 1.3f, 0.0f,
+          2.0f, "%.2f"),
+    Float("settings.cabin.natural_head_movement.posture_interval", 15.0f, 5.0f,
+          60.0f, "%.0f s"),
+    Float("settings.cabin.natural_head_movement.steering_tilt", 1.5f, 0.0f,
+          3.0f, "%.2f"),
     // manual.mirror_check
     Bool("settings.manual.mirror_check.enabled", true),
     Float("settings.manual.mirror_check.look_angle_deg", 28.0f, 15.0f, 50.0f,

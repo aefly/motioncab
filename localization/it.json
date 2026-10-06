@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "Attiva o disattiva questo effetto.",
+    "paused_by": "In pausa a causa di {effects}.",
+    "pauses": "Se attivo, mette in pausa i seguenti effetti:",
     "driving": {
       "title": "Guida",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "Durata",
           "desc": "Quanto dura lo scossone all'avvio. Quello all'arresto è più breve e più dolce."
+        }
+      },
+      "natural_head_movement": {
+        "title": "Movimento naturale della testa",
+        "tremor_intensity": {
+          "title": "Tremore",
+          "desc": "Quanto la tua testa trema leggermente, in ogni momento."
+        },
+        "micro_intensity": {
+          "title": "Microaggiustamenti",
+          "desc": "Quanto si muove la tua testa durante un piccolo aggiustamento."
+        },
+        "posture_intensity": {
+          "title": "Cambi di postura",
+          "desc": "Quanto si sposta la tua testa quando assume una nuova posizione: inclinata, in avanti o di lato."
+        },
+        "posture_interval": {
+          "title": "Intervallo di postura",
+          "desc": "Per quanto tempo circa la tua testa mantiene una posizione prima di assumerne una nuova."
+        },
+        "steering_tilt": {
+          "title": "Inclinazione in sterzata",
+          "desc": "Quanto la tua testa si inclina verso l'interno della curva quando giri il volante."
         }
       }
     },

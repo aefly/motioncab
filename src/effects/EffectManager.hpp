@@ -15,6 +15,9 @@ namespace motioncab {
 // Camera in a turn) would otherwise snap the camera. A disabled effect
 // keeps being updated until it has faded out, then is Reset() so it starts
 // from rest once re-enabled.
+//
+// An effect paused by another (conflicts::kPauses) fades out the same way
+// while that one plays, and is Reset() once faded out.
 class EffectManager {
 public:
   void Register(std::unique_ptr<Effect> effect);
@@ -52,7 +55,16 @@ private:
     std::unique_ptr<Effect> effect;
     float fade = 1.0f;       // 0 = contributes nothing, 1 = full contribution
     bool seat_reset = false; // Reset() since the driver's seat was left
+    // The effects that pause this one (conflicts::kPauses), by index.
+    std::vector<size_t> paused_by;
+    float pause_fade = 1.0f;  // same as fade, 0 while paused
+    bool pause_reset = false; // Reset() since paused
   };
+
+  // Whether an effect pausing `slot` plays: enabled, and in the driver's
+  // seat if it needs it.
+  bool IsPaused(const Slot &slot) const;
+
   std::vector<Slot> effects_;
   bool at_wheel_ = true;
   float seat_fade_ = 1.0f; // same as Slot::fade, for NeedsDriverSeat effects
