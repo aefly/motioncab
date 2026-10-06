@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "Schaltet diesen Effekt ein oder aus.",
+    "paused_by": "Pausiert durch {effects}.",
+    "pauses": "Wenn aktiviert, pausiert dies folgende(n) Effekt(e):",
     "driving": {
       "title": "Fahren",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "Dauer",
           "desc": "Wie lange das Rütteln beim Start dauert. Das Rütteln beim Abstellen ist kürzer und sanfter."
+        }
+      },
+      "natural_head_movement": {
+        "title": "Natürliche Kopfbewegung",
+        "tremor_intensity": {
+          "title": "Zittern",
+          "desc": "Wie stark dein Kopf ständig leicht zittert."
+        },
+        "micro_intensity": {
+          "title": "Mikrobewegungen",
+          "desc": "Wie weit sich dein Kopf bei einer kleinen Korrektur bewegt."
+        },
+        "posture_intensity": {
+          "title": "Haltungswechsel",
+          "desc": "Wie weit sich dein Kopf verschiebt, wenn er eine neue Haltung einnimmt: geneigt, nach vorn oder zur Seite gelehnt."
+        },
+        "posture_interval": {
+          "title": "Haltungsintervall",
+          "desc": "Wie lange dein Kopf ungefähr eine Haltung hält, bevor er eine neue einnimmt."
+        },
+        "steering_tilt": {
+          "title": "Neigung beim Lenken",
+          "desc": "Wie stark sich dein Kopf beim Lenken in die Kurve neigt."
         }
       }
     },

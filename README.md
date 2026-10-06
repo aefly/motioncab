@@ -53,6 +53,8 @@ camera control, keybind rebinding, and the in-game settings UI.
   braking
 - **Engine Start/Stop** — mechanical shudder when the engine catches or
   dies
+- **Natural Head Movement** — TrackIR-like head movement, without a
+  tracker
 - **Manual Zoom** — smooth zoom effect
 - **Blindspot Viewer** — leans forward to see traffic lights hidden by the cab
 - **Cabin Walk** — walks around the parked cabin and sits in the passenger
@@ -165,6 +167,12 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | **Engine Start/Stop**        |         |                                                                                                                                      |
 | `intensity`                  | 0.1     | How strong the shudder feels when the engine starts or stops.                                                                        |
 | `duration`                   | 1.0     | How long the start-up shudder lasts. The stop shudder is shorter and gentler than this.                                              |
+| **Natural Head Movement**    |         |                                                                                                                                      |
+| `tremor_intensity`           | 5.0     | How much your head trembles slightly, all the time.                                                                                  |
+| `micro_intensity`            | 2.5     | How far your head moves when it makes a small adjustment.                                                                            |
+| `posture_intensity`          | 1.3     | How far your head shifts when it settles into a new position: tilted, leaning forward or to one side.                                |
+| `posture_interval`           | 15.0    | About how long your head holds a position before settling into a new one.                                                            |
+| `steering_tilt`              | 1.5     | How much your head tilts into the turn as you turn the steering wheel.                                                               |
 | **Manual Zoom**              |         |                                                                                                                                      |
 | `zoom_fov_deg`               | 40.0    | How zoomed in the view gets while holding the zoom key. Lower = more zoomed in.                                                      |
 | `smoothing_time`             | 0.25    | How smooth the zoom in/out feels.                                                                                                    |
@@ -213,6 +221,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── PluginContext.cpp / .hpp  Shared plugin state
 │   │   ├── Profiles.cpp / .hpp       Create/save/switch named presets
 │   │   ├── Settings.cpp / .hpp       Every setting: key, default, slider range
+│   │   ├── Conflicts.hpp             Which effects pause which while enabled
 │   │   ├── Loc.cpp / .hpp            Translated string lookup (loc::Tr)
 │   │   ├── Keybinds.hpp              Keybind action names and key polling helpers
 │   │   ├── Strings.hpp               Case-insensitive string helpers
@@ -221,7 +230,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── SpringDamper.hpp          Critically-damped spring, the core smoothing primitive
 │   │   ├── Noise.hpp                 Deterministic gradient noise
 │   │   ├── Oscillator.hpp            Damped spring that can overshoot and ring
-│   │   └── Units.hpp                 Unit conversions, SmoothStep, phase wrapping
+│   │   └── Units.hpp                 Unit conversions, easing, Lerp, phase wrapping
 │   ├── effects/
 │   │   ├── Effect.hpp                Base effect interface + HeadOffset struct
 │   │   ├── ConfigurableEffect.hpp    Base for effects: enabled toggle + settings access
@@ -230,7 +239,8 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── driving/                  HeadMotion, BodyDynamics, SteeringCamera
 │   │   ├── road/                     Suspension, RoadIrregularity, SpeedShake,
 │   │   │                             Surface (ground classification)
-│   │   ├── cabin/                    IdleBreathing, EngineVibration, EngineStartStop
+│   │   ├── cabin/                    IdleBreathing, EngineVibration, EngineStartStop,
+│   │   │                             NaturalHeadMovement
 │   │   └── manual/                   MirrorCheck, ManualLook, ManualZoom, BlindspotViewer
 │   │       └── cabin_walk/
 │   │           ├── CabinWalkEffect.*     The effect: standing up, walking, sitting down

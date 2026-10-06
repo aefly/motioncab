@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "开启或关闭此效果。",
+    "paused_by": "已被{effects}暂停。",
+    "pauses": "启用后，将暂停以下效果：",
     "driving": {
       "title": "驾驶",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "持续时间",
           "desc": "启动抖动持续的时间。熄火抖动更短、更柔和。"
+        }
+      },
+      "natural_head_movement": {
+        "title": "自然头部运动",
+        "tremor_intensity": {
+          "title": "颤动",
+          "desc": "头部始终轻微颤动的程度。"
+        },
+        "micro_intensity": {
+          "title": "微调",
+          "desc": "头部做小幅调整时移动的幅度。"
+        },
+        "posture_intensity": {
+          "title": "姿势变化",
+          "desc": "头部换到新姿势时的移动幅度：歪头、前倾或偏向一侧。"
+        },
+        "posture_interval": {
+          "title": "姿势间隔",
+          "desc": "头部保持一个姿势大约多久后再换到新姿势。"
+        },
+        "steering_tilt": {
+          "title": "转向倾斜",
+          "desc": "转动方向盘时头部向弯道内侧倾斜的幅度。"
         }
       }
     },

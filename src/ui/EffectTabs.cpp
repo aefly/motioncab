@@ -1,6 +1,7 @@
 #include "EffectTabs.hpp"
 
 #include "SPF_Icons.h"
+#include "core/Conflicts.hpp"
 #include "core/Keybinds.hpp"
 #include "core/Loc.hpp"
 #include "core/Settings.hpp"
@@ -224,6 +225,7 @@ constexpr EffectUi kEffects[] = {
     {ICON_FA_LUNGS, "settings.cabin.idle_breathing", false, {}},
     {ICON_FA_WAVE_SQUARE, "settings.cabin.engine_vibration", false, {}},
     {ICON_FA_POWER_OFF, "settings.cabin.engine_start_stop", false, {}},
+    {ICON_FA_PERSON_RAYS, "settings.cabin.natural_head_movement", false, {}},
     {ICON_FA_EYE, "settings.manual.mirror_check", true, {}},
     {ICON_FA_ARROWS_LEFT_RIGHT, "settings.manual.manual_look", true,
      kManualLookKeybinds},
@@ -257,6 +259,51 @@ consteval bool EffectsHaveEnabledToggle() {
 static_assert(EffectsHaveEnabledToggle(),
               "every effect in kEffects needs an \"enabled\" setting");
 
+// Whether the effect under `prefix` is enabled.
+bool IsEffectEnabled(SPF_Config_API *cfg, SPF_Config_Handle *h,
+                     std::string_view prefix) {
+  const settings::Setting &toggle =
+      *settings::Find(std::string(prefix) + ".enabled");
+  return cfg->Cfg_GetBool(h, toggle.key, toggle.default_bool());
+}
+
+// "When enabled, this pauses the following effect(s):" and a bullet list,
+// under an effect that pauses others (conflicts::kPauses).
+void DrawPausesHint(SPF_UI_API *ui, std::string_view prefix) {
+  bool any = false;
+  for (const conflicts::Pause &p : conflicts::kPauses) {
+    if (prefix != p.effect)
+      continue;
+    if (!any) {
+      DrawWrappedHint(ui, loc::Tr("settings.pauses"));
+      ui->UI_PushStyleColor(SPF_COLOR_TEXT, 0.6f, 0.6f, 0.6f, 1.0f);
+      any = true;
+    }
+    ui->UI_BulletText(SettingTitle(p.paused));
+  }
+  if (any)
+    ui->UI_PopStyleColor(1);
+}
+
+// "Paused by X, Y." under an effect an enabled one pauses; returns whether
+// it's paused.
+bool DrawPausedByHint(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
+                      std::string_view prefix) {
+  std::string names;
+  for (const conflicts::Pause &p : conflicts::kPauses) {
+    if (prefix != p.paused || !IsEffectEnabled(cfg, h, p.effect))
+      continue;
+    if (!names.empty())
+      names += ", ";
+    names += SettingTitle(p.effect);
+  }
+  if (names.empty())
+    return false;
+  DrawWrappedHint(ui,
+                  loc::Tr("settings.paused_by", {{"effects", names}}).c_str());
+  return true;
+}
+
 void DrawEffect(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
                 const EffectUi &effect) {
   if (!EffectHeader(ui, effect.icon, effect.prefix))
@@ -266,7 +313,9 @@ void DrawEffect(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
       DrawEnabled(ui, cfg, h, *settings::Find(prefix + ".enabled"));
   if (effect.has_hint)
     DrawWrappedHint(ui, loc::Tr(prefix + ".hint"));
-  ui->UI_BeginDisabled(!enabled);
+  DrawPausesHint(ui, effect.prefix);
+  const bool paused = DrawPausedByHint(ui, cfg, h, effect.prefix);
+  ui->UI_BeginDisabled(!enabled || paused);
   // "<effect>_table", unique per effect.
   const std::string table_id = prefix.substr(prefix.rfind('.') + 1) + "_table";
   if (BeginSettingsTable(ui, table_id.c_str())) {

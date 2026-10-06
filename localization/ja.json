@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "このエフェクトのオン/オフを切り替えます。",
+    "paused_by": "{effects}により一時停止中です。",
+    "pauses": "オンにすると、次のエフェクトを一時停止します：",
     "driving": {
       "title": "運転",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "長さ",
           "desc": "始動時の揺れが続く時間。停止時の揺れはこれより短く穏やかです。"
+        }
+      },
+      "natural_head_movement": {
+        "title": "自然な頭の動き",
+        "tremor_intensity": {
+          "title": "微振動",
+          "desc": "頭が常にわずかに揺れる量です。"
+        },
+        "micro_intensity": {
+          "title": "微調整",
+          "desc": "頭が小さく調整するときの動きの大きさです。"
+        },
+        "posture_intensity": {
+          "title": "姿勢の変化",
+          "desc": "頭が新しい姿勢に移るときの動きの大きさです（傾ける、前に乗り出す、横に寄るなど）。"
+        },
+        "posture_interval": {
+          "title": "姿勢の間隔",
+          "desc": "頭が新しい姿勢に移るまで、ひとつの姿勢を保つおおよその時間です。"
+        },
+        "steering_tilt": {
+          "title": "ハンドル操作時の傾き",
+          "desc": "ハンドルを切ったときに頭がカーブの内側へ傾く量です。"
         }
       }
     },

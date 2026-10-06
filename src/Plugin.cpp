@@ -15,6 +15,7 @@
 #include "effects/cabin/EngineStartStopEffect.hpp"
 #include "effects/cabin/EngineVibrationEffect.hpp"
 #include "effects/cabin/IdleBreathingEffect.hpp"
+#include "effects/cabin/NaturalHeadMovementEffect.hpp"
 #include "effects/driving/BodyDynamicsEffect.hpp"
 #include "effects/driving/HeadMotionEffect.hpp"
 #include "effects/driving/SteeringCameraEffect.hpp"
@@ -236,6 +237,8 @@ void OnActivated(const SPF_Core_API *core_api) {
   ctx.effects.Register(
       std::make_unique<SpeedShakeEffect>(core_api->config, ctx.config_handle));
   ctx.effects.Register(std::make_unique<EngineStartStopEffect>(
+      core_api->config, ctx.config_handle));
+  ctx.effects.Register(std::make_unique<NaturalHeadMovementEffect>(
       core_api->config, ctx.config_handle));
   ctx.effects.Register(std::make_unique<BodyDynamicsEffect>(core_api->config,
                                                             ctx.config_handle));

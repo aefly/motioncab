@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "Liga ou desliga este efeito.",
+    "paused_by": "Pausado por {effects}.",
+    "pauses": "Quando ativado, pausa o(s) seguinte(s) efeito(s):",
     "driving": {
       "title": "Direção",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "Duração",
           "desc": "Quanto dura o tranco da partida. O da parada é mais curto e suave."
+        }
+      },
+      "natural_head_movement": {
+        "title": "Movimento natural da cabeça",
+        "tremor_intensity": {
+          "title": "Tremor",
+          "desc": "O quanto sua cabeça treme levemente, o tempo todo."
+        },
+        "micro_intensity": {
+          "title": "Microajustes",
+          "desc": "O quanto sua cabeça se move ao fazer um pequeno ajuste."
+        },
+        "posture_intensity": {
+          "title": "Mudanças de postura",
+          "desc": "O quanto sua cabeça se desloca ao assumir uma nova posição: inclinada, para a frente ou para um lado."
+        },
+        "posture_interval": {
+          "title": "Intervalo de postura",
+          "desc": "Por quanto tempo, aproximadamente, sua cabeça mantém uma posição antes de assumir outra."
+        },
+        "steering_tilt": {
+          "title": "Inclinação ao esterçar",
+          "desc": "O quanto sua cabeça se inclina para dentro da curva ao girar o volante."
         }
       }
     },

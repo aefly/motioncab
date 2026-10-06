@@ -30,6 +30,8 @@
 - [ ] Effect doesn't conflict with existing effects
 - [ ] Effect overrides `NeedsDriverSeat()`, if it only makes sense in the
       driver's seat
+- [ ] Effects that shouldn't run together declared in
+      `conflicts::kPauses` (`src/core/Conflicts.hpp`), if any
 - [ ] Setting declared in `settings::kAll` (`src/core/Settings.hpp`)
 - [ ] New effect listed in `kEffects` (`src/ui/EffectTabs.cpp`)
 - [ ] Keybind declared in `src/core/Keybinds.hpp` (`kAllActions`), if any

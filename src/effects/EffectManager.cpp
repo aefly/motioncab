@@ -1,5 +1,6 @@
 #include "EffectManager.hpp"
 
+#include "core/Conflicts.hpp"
 #include "math/Units.hpp"
 
 #include <algorithm>
@@ -8,6 +9,14 @@ namespace motioncab {
 
 void EffectManager::Register(std::unique_ptr<Effect> effect) {
   effects_.push_back({std::move(effect)});
+  // Relink every effect: the new one can pause, or be paused by, any other.
+  for (size_t i = 0; i < effects_.size(); ++i) {
+    effects_[i].paused_by.clear();
+    for (size_t j = 0; j < effects_.size(); ++j) {
+      if (conflicts::Pauses(effects_[j].effect->Id(), effects_[i].effect->Id()))
+        effects_[i].paused_by.push_back(j);
+    }
+  }
 }
 
 void EffectManager::LoadAllConfig() {
@@ -20,8 +29,19 @@ void EffectManager::ResetAll() {
     slot.effect->Reset();
     slot.fade = slot.effect->IsEnabled() ? 1.0f : 0.0f;
     slot.seat_reset = false;
+    slot.pause_fade = IsPaused(slot) ? 0.0f : 1.0f;
+    slot.pause_reset = false;
   }
   seat_fade_ = at_wheel_ ? 1.0f : 0.0f;
+}
+
+bool EffectManager::IsPaused(const Slot &slot) const {
+  // Only while the pausing effect actually plays: one that needs the
+  // driver's seat lets the others back while Cabin Walk is away.
+  return std::ranges::any_of(slot.paused_by, [this](size_t i) {
+    const Effect &pauser = *effects_[i].effect;
+    return pauser.IsEnabled() && (at_wheel_ || !pauser.NeedsDriverSeat());
+  });
 }
 
 HeadOffset EffectManager::UpdateAndAccumulate(float dt,
@@ -33,7 +53,21 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
   HeadOffset total;
   for (auto &slot : effects_) {
     Effect &effect = *slot.effect;
-    float seat_weight = 1.0f;
+    // The toggle's fade moves even while the seat or a pause holds the
+    // effect back, so it never picks up again from a stale value (an effect
+    // turned off while paused would play a moment once unpaused).
+    if (effect.IsEnabled()) {
+      slot.fade = std::min(1.0f, slot.fade + step);
+    } else if (slot.fade > 0.0f) {
+      slot.fade = std::max(0.0f, slot.fade - step);
+      if (slot.fade <= 0.0f)
+        effect.Reset(); // start from rest once re-enabled
+    }
+    slot.pause_fade = IsPaused(slot) ? std::max(0.0f, slot.pause_fade - step)
+                                     : std::min(1.0f, slot.pause_fade + step);
+    if (slot.fade <= 0.0f)
+      continue;
+    float context_weight = 1.0f;
     if (effect.NeedsDriverSeat()) {
       if (seat_fade_ <= 0.0f) {
         if (!slot.seat_reset)
@@ -42,21 +76,18 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
         continue;
       }
       slot.seat_reset = false;
-      seat_weight = math::SmoothStep(seat_fade_);
+      context_weight = math::SmoothStep(seat_fade_);
     }
-    if (effect.IsEnabled()) {
-      slot.fade = std::min(1.0f, slot.fade + step);
-    } else {
-      if (slot.fade <= 0.0f)
-        continue;
-      slot.fade = std::max(0.0f, slot.fade - step);
-      if (slot.fade <= 0.0f) {
-        effect.Reset(); // start from rest once re-enabled
-        continue;
-      }
+    if (slot.pause_fade <= 0.0f) {
+      if (!slot.pause_reset)
+        effect.Reset(); // start from rest once no longer paused
+      slot.pause_reset = true;
+      continue;
     }
+    slot.pause_reset = false;
+    context_weight *= math::SmoothStep(slot.pause_fade);
     const HeadOffset contribution = effect.Update(dt, truck, controls);
-    const float weight = math::SmoothStep(slot.fade) * seat_weight;
+    const float weight = math::SmoothStep(slot.fade) * context_weight;
     total.pos_x += contribution.pos_x * weight;
     total.pos_y += contribution.pos_y * weight;
     total.pos_z += contribution.pos_z * weight;

@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "Activa o desactiva este efecto.",
+    "paused_by": "En pausa por {effects}.",
+    "pauses": "Al activarlo, pausa el/los siguiente(s) efecto(s):",
     "driving": {
       "title": "Conducción",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "Duración",
           "desc": "Cuánto dura la sacudida de arranque. La de parada es más corta y suave."
+        }
+      },
+      "natural_head_movement": {
+        "title": "Movimiento natural de cabeza",
+        "tremor_intensity": {
+          "title": "Temblor",
+          "desc": "Cuánto tiembla ligeramente tu cabeza, todo el tiempo."
+        },
+        "micro_intensity": {
+          "title": "Microajustes",
+          "desc": "Cuánto se mueve tu cabeza al hacer un pequeño ajuste."
+        },
+        "posture_intensity": {
+          "title": "Cambios de postura",
+          "desc": "Cuánto se desplaza tu cabeza al adoptar una nueva posición: inclinada, hacia delante o hacia un lado."
+        },
+        "posture_interval": {
+          "title": "Intervalo de postura",
+          "desc": "Cuánto tiempo aproximadamente mantiene tu cabeza una posición antes de adoptar otra."
+        },
+        "steering_tilt": {
+          "title": "Inclinación al girar",
+          "desc": "Cuánto se inclina tu cabeza hacia el interior de la curva al girar el volante."
         }
       }
     },

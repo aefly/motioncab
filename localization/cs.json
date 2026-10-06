@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "Zapne nebo vypne tento efekt.",
+    "paused_by": "Pozastaveno efektem: {effects}.",
+    "pauses": "Po zapnutí pozastaví následující efekt(y):",
     "driving": {
       "title": "Jízda",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "Doba trvání",
           "desc": "Jak dlouho trvá škubnutí při startu. Škubnutí při vypnutí je kratší a jemnější."
+        }
+      },
+      "natural_head_movement": {
+        "title": "Přirozený pohyb hlavy",
+        "tremor_intensity": {
+          "title": "Chvění",
+          "desc": "Jak moc se hlava neustále lehce chvěje."
+        },
+        "micro_intensity": {
+          "title": "Mikropohyby",
+          "desc": "Jak daleko se hlava pohne při drobné korekci."
+        },
+        "posture_intensity": {
+          "title": "Změny držení",
+          "desc": "Jak daleko se hlava posune, když zaujme novou polohu: naklonění, předklon nebo posun do strany."
+        },
+        "posture_interval": {
+          "title": "Interval držení",
+          "desc": "Přibližně jak dlouho hlava drží jednu polohu, než zaujme novou."
+        },
+        "steering_tilt": {
+          "title": "Náklon při zatáčení",
+          "desc": "Jak moc se hlava nakloní do zatáčky, když otáčíte volantem."
         }
       }
     },

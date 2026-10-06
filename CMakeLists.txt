@@ -19,6 +19,7 @@ add_compile_definitions(_AMD64_)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
 # --- Global MSVC Runtime Configuration (/MT) ---
 # This ensures static runtime linking, avoiding "Win32 Error 126" on
@@ -67,6 +68,7 @@ set(PLUGIN_SOURCES
     "src/effects/cabin/EngineStartStopEffect.cpp"
     "src/effects/cabin/EngineVibrationEffect.cpp"
     "src/effects/cabin/IdleBreathingEffect.cpp"
+    "src/effects/cabin/NaturalHeadMovementEffect.cpp"
     "src/effects/driving/BodyDynamicsEffect.cpp"
     "src/effects/driving/HeadMotionEffect.cpp"
     "src/effects/driving/SteeringCameraEffect.cpp"

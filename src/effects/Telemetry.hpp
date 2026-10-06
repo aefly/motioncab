@@ -29,6 +29,12 @@ inline bool IsElectric(const SPF_TruckConstants &constants) {
   return constants.adblue_capacity <= 0.01f;
 }
 
+// True if the truck's driver sits on the right: the default head position,
+// relative to the cabin's pivot on its centerline, is right of it.
+inline bool IsRightHandDrive(const SPF_TruckConstants &constants) {
+  return constants.head_position.x > 0.0f;
+}
+
 // engine_rpm crossing this (near-zero) is the "engine has started" signal.
 // engine_enabled lags the real catch by 1+ second, which read as buzz or
 // shudder firing well after the fact.

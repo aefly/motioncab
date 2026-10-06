@@ -2,6 +2,8 @@
 
 #include "SPF_TelemetryData.h"
 
+#include <string_view>
+
 namespace motioncab {
 
 // Additive offset an effect wants applied to the interior head/seat pose.
@@ -45,6 +47,10 @@ public:
   // Cabin Walk takes the player elsewhere in the cabin
   // (EffectManager::SetAtWheel).
   virtual bool NeedsDriverSeat() const { return false; }
+
+  // The effect's settings prefix, "settings.<group>.<effect>": what
+  // conflicts::kPauses names it by.
+  virtual std::string_view Id() const = 0;
 
   // Called whenever the truck's static configuration changes (bought a new
   // truck, added/removed axles). Default no-op; only effects that need

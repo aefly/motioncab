@@ -14,6 +14,15 @@ inline constexpr float kMsToKmh = 3.6f;
 // in [0, 1].
 inline float SmoothStep(float t) { return t * t * (3.0f - 2.0f * t); }
 
+// 0 to 1 with zero speed and acceleration at both ends (quintic), so a move
+// neither starts nor stops with a jolt. `t` is clamped to [0, 1].
+inline float SmootherStep(float t) {
+  t = t < 0.0f ? 0.0f : (t > 1.0f ? 1.0f : t);
+  return t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f);
+}
+
+inline float Lerp(float a, float b, float t) { return a + (b - a) * t; }
+
 // Brings an oscillator phase back into [0, 2*pi). fmod rather than a single
 // subtraction: a large dt spike (load hitch, alt-tab, a Quick Job cancel
 // reload) can advance a phase by several full turns in one frame, and

@@ -81,6 +81,8 @@
   },
   "settings": {
     "enabled_desc": "Włącza lub wyłącza ten efekt.",
+    "paused_by": "Wstrzymane przez: {effects}.",
+    "pauses": "Po włączeniu wstrzymuje następujące efekty:",
     "driving": {
       "title": "Jazda",
       "head_motion": {
@@ -234,6 +236,29 @@
         "duration": {
           "title": "Czas trwania",
           "desc": "Jak długo trwa szarpnięcie przy starcie. Szarpnięcie przy gaszeniu jest krótsze i łagodniejsze."
+        }
+      },
+      "natural_head_movement": {
+        "title": "Naturalny ruch głowy",
+        "tremor_intensity": {
+          "title": "Drżenie",
+          "desc": "Jak bardzo głowa stale lekko drży."
+        },
+        "micro_intensity": {
+          "title": "Mikroruchy",
+          "desc": "Jak daleko porusza się głowa przy drobnej korekcie."
+        },
+        "posture_intensity": {
+          "title": "Zmiany postawy",
+          "desc": "Jak daleko przesuwa się głowa, gdy przyjmuje nową pozycję: przechyloną, pochyloną do przodu lub na bok."
+        },
+        "posture_interval": {
+          "title": "Odstęp zmian postawy",
+          "desc": "Mniej więcej jak długo głowa utrzymuje pozycję, zanim przyjmie nową."
+        },
+        "steering_tilt": {
+          "title": "Przechył przy skręcie",
+          "desc": "Jak bardzo głowa przechyla się do wnętrza zakrętu, gdy kręcisz kierownicą."
         }
       }
     },

@@ -13,6 +13,8 @@ namespace motioncab {
 
 using math::kDegToRad;
 using math::kPi;
+using math::Lerp;
+using math::SmootherStep;
 
 namespace {
 
@@ -101,20 +103,11 @@ constexpr float kTurnShare = 0.85f;
 
 float Clamp01(float t) { return std::clamp(t, 0.0f, 1.0f); }
 
-// 0 to 1 with zero speed and acceleration at both ends (quintic), so a move
-// neither starts nor stops with a jolt.
-float SmootherStep(float t) {
-  t = Clamp01(t);
-  return t * t * t * (t * (t * 6.0f - 15.0f) + 10.0f);
-}
-
 // 0 at both ends, 1 at mid-move, with zero slope at the ends.
 float Bell(float t) {
   const float s = std::sin(kPi * Clamp01(t));
   return s * s;
 }
-
-float Lerp(float a, float b, float t) { return a + (b - a) * t; }
 
 // Into [-pi, pi], so a turn never goes across the back: the yaw limits stop
 // at +-180 degrees, and a turn across them would jump.
@@ -665,7 +658,7 @@ void CabinWalkEffect::UpdateWalking(float dt) {
 void CabinWalkEffect::OnTruckConstantsChanged(
     const SPF_TruckConstants &constants) {
   const std::string key = TruckLayoutKey(constants);
-  const bool right_hand_drive = IsRightHandDrive(constants);
+  const bool right_hand_drive = telemetry::IsRightHandDrive(constants);
   // Another cabin on the same model can move the driver's seat.
   const float centerline_x = CabinCenterlineX(constants);
   if (key == truck_key_ && right_hand_drive == right_hand_drive_ &&
