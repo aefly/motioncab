@@ -82,12 +82,6 @@ void NormalizeCabinLayout(CabinLayout &layout);
 // for a right-hand drive truck (its positions already fit, see above).
 CabinLayout WithMirroredYaws(const CabinLayout &layout);
 
-// True if the truck's driver sits on the right: the default head position,
-// relative to the cabin's pivot on its centerline, is right of it.
-inline bool IsRightHandDrive(const SPF_TruckConstants &constants) {
-  return constants.head_position.x > 0.0f;
-}
-
 // "<brand_id>_<id>" of the truck model, reduced to [A-Za-z0-9_] so it
 // holds as one config key segment; empty if the truck isn't known yet.
 std::string TruckLayoutKey(const SPF_TruckConstants &constants);
