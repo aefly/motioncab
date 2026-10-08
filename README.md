@@ -67,7 +67,7 @@ active while in the interior (cabin) camera view.
 
 ## Installation
 
-1. Install the [SPF Framework][spf-framework-download] in your game's
+1. Install [SPF Framework][spf-framework-download] in your game's
    `bin/win_x64/plugins/` folder.
 2. Install [MotionCab][motioncab-web] in your game's
    `bin/win_x64/plugins/spfPlugins/` folder.

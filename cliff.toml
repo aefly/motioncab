@@ -45,9 +45,9 @@ body = """
 first.
 {% endif %}
 
-1. Install or update the \
-[SPF Framework](https://github.com/TrackAndTruckDevs/SPF-Framework/releases/latest)\
-{% if spf %} ({{ spf }}+){% endif %} in your game's `bin/win_x64/plugins/` folder.
+1. Install or update \
+[SPF Framework](https://github.com/TrackAndTruckDevs/SPF-Framework/releases/latest) \
+in your game's `bin/win_x64/plugins/` folder.
 2. Download [`motioncab-{{ semver }}.zip`]({{ zip }}) and extract it into \
 your game's `bin/win_x64/` folder.
 3. Start your game and enable **MotionCab** in SPF's plugin manager.
