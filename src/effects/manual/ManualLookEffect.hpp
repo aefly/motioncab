@@ -9,28 +9,17 @@
 
 namespace motioncab {
 
-// Lets the player look left or right on demand, spring-eased into place
-// and back. Two looks per side, each on its own key: a wide one (cross
-// traffic at a junction) and a mirror glance (a smaller turn, tilted down,
-// e.g. merging onto a highway). Every angle is set per side, since the
-// passenger mirror is further away than the driver's. Polls the raw key
-// state every frame via Kbind_GetActionValue rather than reacting to the
-// one-shot Kbind_Register callback, since press/hold mode needs to know the
-// key is still down.
+// Looks left or right on demand, spring-eased. Two looks per side, each on
+// its own key: a wide one (cross traffic) and a mirror glance (tilted and
+// zoomed as set), every value per side. Polls the key state every frame,
+// since hold mode needs to know the key is still down. Hold (a wide look
+// wins over a glance) or toggle (`toggle_mode_`).
 //
-// `toggle_mode_` selects between two behaviors: press/hold (default, look
-// while held, recenter on release; between plain keys, a wide look wins
-// over a glance) and toggle (press to look, press again to recenter, or
-// another look's key to switch). Either way the springs handle the easing.
-//
-// A look's angles are where the head ends up, not added to Mirror Check's
-// (a look at cross traffic with a blinker on turns as far as set). While a
-// look is on, the springs hold the head's angle, mirror check included, and
-// its offset is taken back out every frame, so a blinker switched mid-look
-// doesn't move the head. Released, they hold the look's own offset again
-// and ease it back to 0, leaving the mirror check to move at its own pace.
-// The switch shifts their values by the mirror check's offset, which keeps
-// the head still.
+// A look's values are where the head ends up, Mirror Check included: while
+// a look is on, the springs hold the whole offset and Mirror Check's is
+// taken back out, so a blinker mid-look doesn't move the head. The springs
+// are shifted by Mirror Check's offset on the switch, keeping the head
+// still.
 class ManualLookEffect final : public ConfigurableEffect {
 public:
   enum class Look { kCenter, kLeft, kRight, kGlanceLeft, kGlanceRight };
@@ -71,11 +60,16 @@ private:
       settings::Default("settings.manual.manual_look.glance_left_deg");
   float glance_right_deg_ =
       settings::Default("settings.manual.manual_look.glance_right_deg");
-  // the mirrors sit a little low, not always both as low
+  // in degrees, positive up: the mirrors aren't always both as high
   float glance_left_pitch_deg_ =
       settings::Default("settings.manual.manual_look.glance_left_pitch_deg");
   float glance_right_pitch_deg_ =
       settings::Default("settings.manual.manual_look.glance_right_pitch_deg");
+  // FOV change of the mirror glances, in degrees, negative zooms in
+  float glance_left_fov_deg_ =
+      settings::Default("settings.manual.manual_look.glance_left_fov_deg");
+  float glance_right_fov_deg_ =
+      settings::Default("settings.manual.manual_look.glance_right_fov_deg");
   // seconds, spring time constant
   float smoothing_time_ =
       settings::Default("settings.manual.manual_look.smoothing_time");
@@ -89,6 +83,8 @@ private:
   math::SpringDamper1D yaw_;
   math::SpringDamper1D pitch_intent_;
   math::SpringDamper1D pitch_;
+  math::SpringDamper1D fov_intent_;
+  math::SpringDamper1D fov_;
 
   // The look of the keys held right now, kept until they're all released
   // unless a combination look comes on top.

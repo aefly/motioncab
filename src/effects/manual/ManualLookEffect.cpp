@@ -41,6 +41,8 @@ void ManualLookEffect::LoadSettings() {
       Float("glance_left_pitch_deg", glance_left_pitch_deg_);
   glance_right_pitch_deg_ =
       Float("glance_right_pitch_deg", glance_right_pitch_deg_);
+  glance_left_fov_deg_ = Float("glance_left_fov_deg", glance_left_fov_deg_);
+  glance_right_fov_deg_ = Float("glance_right_fov_deg", glance_right_fov_deg_);
   smoothing_time_ = Float("smoothing_time", smoothing_time_);
   toggle_mode_ = Bool("toggle_mode", toggle_mode_);
 
@@ -48,6 +50,8 @@ void ManualLookEffect::LoadSettings() {
   yaw_.SetTimeConstant(smoothing_time_ * kHeadFraction);
   pitch_intent_.SetTimeConstant(smoothing_time_ * kIntentFraction);
   pitch_.SetTimeConstant(smoothing_time_ * kHeadFraction);
+  fov_intent_.SetTimeConstant(smoothing_time_ * kIntentFraction);
+  fov_.SetTimeConstant(smoothing_time_ * kHeadFraction);
 }
 
 void ManualLookEffect::Reset() {
@@ -55,6 +59,8 @@ void ManualLookEffect::Reset() {
   yaw_.Reset();
   pitch_intent_.Reset();
   pitch_.Reset();
+  fov_intent_.Reset();
+  fov_.Reset();
   pressed_ = Look::kCenter;
   toggled_ = Look::kCenter;
   toggled_before_press_ = Look::kCenter;
@@ -102,10 +108,10 @@ HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
   }
   const Look look = toggle_mode_ ? toggled_ : pressed_;
 
-  // Left = positive yaw, right = negative, and positive pitch looks down,
-  // matching the conventions empirically confirmed for MirrorCheckEffect.
+  // Left = positive yaw, right = negative, and positive pitch looks up.
   float target_yaw_deg = 0.0f;
   float target_pitch_deg = 0.0f;
+  float target_fov_deg = 0.0f;
   switch (look) {
   case Look::kCenter:
     break;
@@ -118,16 +124,19 @@ HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
   case Look::kGlanceLeft:
     target_yaw_deg = glance_left_deg_;
     target_pitch_deg = glance_left_pitch_deg_;
+    target_fov_deg = glance_left_fov_deg_;
     break;
   case Look::kGlanceRight:
     target_yaw_deg = -glance_right_deg_;
     target_pitch_deg = glance_right_pitch_deg_;
+    target_fov_deg = glance_right_fov_deg_;
     break;
   }
 
   // Where Mirror Check has the head (see class comment).
   const float mirror_yaw = mirror_check_ ? mirror_check_->yaw() : 0.0f;
   const float mirror_pitch = mirror_check_ ? mirror_check_->pitch() : 0.0f;
+  const float mirror_fov = mirror_check_ ? mirror_check_->fov() : 0.0f;
   if (engaged_ != (look != Look::kCenter)) {
     engaged_ = !engaged_;
     const float sign = engaged_ ? 1.0f : -1.0f;
@@ -135,16 +144,20 @@ HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
     yaw_.Shift(sign * mirror_yaw);
     pitch_intent_.Shift(sign * mirror_pitch);
     pitch_.Shift(sign * mirror_pitch);
+    fov_intent_.Shift(sign * mirror_fov);
+    fov_.Shift(sign * mirror_fov);
   }
   const float base_yaw = engaged_ ? mirror_yaw : 0.0f;
   const float base_pitch = engaged_ ? mirror_pitch : 0.0f;
+  const float base_fov = engaged_ ? mirror_fov : 0.0f;
 
   HeadOffset offset;
   offset.yaw =
       yaw_.Update(yaw_intent_.Update(target_yaw_deg, dt), dt) - base_yaw;
-  offset.pitch =
-      pitch_.Update(pitch_intent_.Update(target_pitch_deg, dt), dt) -
-      base_pitch;
+  offset.pitch = pitch_.Update(pitch_intent_.Update(target_pitch_deg, dt), dt) -
+                 base_pitch;
+  offset.fov =
+      fov_.Update(fov_intent_.Update(target_fov_deg, dt), dt) - base_fov;
   return offset;
 }
 
