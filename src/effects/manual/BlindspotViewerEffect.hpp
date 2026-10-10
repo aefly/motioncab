@@ -10,17 +10,12 @@
 namespace motioncab {
 
 // Based on SPF_FrontalBlindspotViewer by Track'n'Truck Devs
-// (https://github.com/TrackAndTruckDevs/SPF_FrontalBlindspotViewer),
+// (https://github.com/TrackAndTruckDevs/SPF_FrontalBlindspotViewer).
 //
-// Leans the driver forward to see past the the windshield pillar.
-//
-// One motion moves every axis together, leaning in and sitting back alike
-// (staging them, e.g. lean then look up, read as robotic in-game):
-// - It starts slowly and stops softly like a real body (two critically
-//   damped springs in series give a bell-shaped speed profile without any
-//   overshoot), and can reverse mid-way smoothly.
-// - While leaning, the body is off the backrest: it sways a little on its
-//   own and gets pushed around more by braking and acceleration.
+// Leans the driver forward to see past the windshield pillar. Every axis
+// moves together, since staging them (lean, then look up) looked robotic.
+// Off the backrest, the body sways a little on its own and gets pushed
+// around more by braking and acceleration.
 class BlindspotViewerEffect final : public ConfigurableEffect {
 public:
   BlindspotViewerEffect(SPF_Config_API *config_api,
@@ -42,7 +37,7 @@ private:
   SPF_KeyBinds_API *keybinds_api_;
   SPF_KeyBinds_Handle *keybinds_handle_;
 
-  // meters, cabin-local
+  // meters
   float pos_x_ = settings::Default("settings.manual.blindspot_viewer.pos_x");
   float pos_y_ = settings::Default("settings.manual.blindspot_viewer.pos_y");
   float pos_z_ = settings::Default("settings.manual.blindspot_viewer.pos_z");
@@ -54,22 +49,21 @@ private:
       settings::Default("settings.manual.blindspot_viewer.roll_deg");
   float fov_offset_deg_ =
       settings::Default("settings.manual.blindspot_viewer.fov_offset_deg");
-  // seconds, motion duration
+  // How long the whole motion takes.
   float smoothing_time_ =
       settings::Default("settings.manual.blindspot_viewer.smoothing_time");
-  // false = press/hold, true = toggle
   bool toggle_mode_ =
       settings::DefaultBool("settings.manual.blindspot_viewer.toggle_mode");
 
-  bool peeking_ = false; // toggle-mode target
+  bool peeking_ = false; // in toggle mode
   keybinds::PressEdge press_edge_;
 
-  // 0 = seated, 1 = fully peeking.
-  math::SpringDamper1D intent_; // first stage, softens the start
+  // 0 seated, 1 fully peeking.
+  math::SpringDamper1D intent_;
   math::SpringDamper1D body_;
-  math::SpringDamper1D inertia_x_; // extra sway while off the backrest
+  math::SpringDamper1D inertia_x_;
   math::SpringDamper1D inertia_z_;
-  float sway_time_ = 0.0f; // drives the postural sway noise
+  float sway_time_ = 0.0f;
 };
 
 } // namespace motioncab

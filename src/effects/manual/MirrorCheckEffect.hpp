@@ -6,21 +6,11 @@
 
 namespace motioncab {
 
-// Looks toward the corresponding side mirror while a turn signal is on,
-// recentering when it's off, a driver's blind-spot check before a turn.
-// Every angle and the FOV change are set per side, since the passenger
-// mirror is further away than the driver's.
+// Looks at the mirror on the side of the turn signal while it's on. Every
+// value is set per side, since the passenger mirror is farther away.
 //
-// Level-triggered, not one-shot: target is simply "mirror" while
-// lblinker/rblinker is true, "center" otherwise; the spring does the
-// easing, no hold/return state machine needed.
-//
-// require_stationary_ (default on) restricts triggering to standing still,
-// since signaling while driving reads as distraction, not a deliberate check.
-// With it on, ignore_after_moving_signal_ (default on) latches whether the
-// truck was moving when the blinker turned on: if so, it keeps ignoring
-// that blinker even if the truck later stops mid-signal, since it isn't
-// re-evaluated continuously.
+// By default it only does so standing still: while driving, the head turning
+// away from the road reads as a distraction, not a deliberate check.
 class MirrorCheckEffect final : public ConfigurableEffect {
 public:
   MirrorCheckEffect(SPF_Config_API *config_api,
@@ -33,8 +23,7 @@ public:
   HeadOffset Update(float dt, const SPF_TruckData &truck,
                     const SPF_Controls &controls) override;
 
-  // The offset as of the last Update(), in degrees, for ManualLookEffect
-  // to take out of its looks.
+  // For ManualLookEffect to take out of its looks.
   float yaw() const { return yaw_.value(); }
   float pitch() const { return pitch_.value(); }
   float fov() const { return fov_.value(); }
@@ -42,28 +31,25 @@ public:
 private:
   void LoadSettings() override;
 
-  // yaw toward each mirror, in degrees
   float left_angle_deg_ =
       settings::Default("settings.manual.mirror_check.left_angle_deg");
   float right_angle_deg_ =
       settings::Default("settings.manual.mirror_check.right_angle_deg");
-  // in degrees, positive up
+  // Positive up.
   float left_pitch_deg_ =
       settings::Default("settings.manual.mirror_check.left_pitch_deg");
   float right_pitch_deg_ =
       settings::Default("settings.manual.mirror_check.right_pitch_deg");
-  // FOV change, in degrees, negative zooms in
+  // Negative zooms in.
   float left_fov_deg_ =
       settings::Default("settings.manual.mirror_check.left_fov_deg");
   float right_fov_deg_ =
       settings::Default("settings.manual.mirror_check.right_fov_deg");
-  // seconds, spring time constant
   float smoothing_time_ =
       settings::Default("settings.manual.mirror_check.smoothing_time");
-  // ignore blinkers while the truck is moving
   bool require_stationary_ =
       settings::DefaultBool("settings.manual.mirror_check.require_stationary");
-  // see class comment
+  // A blinker switched on while moving stays ignored once stopped.
   bool ignore_after_moving_signal_ = settings::DefaultBool(
       "settings.manual.mirror_check.ignore_after_moving_signal");
 

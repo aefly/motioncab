@@ -18,69 +18,50 @@ using math::SmootherStep;
 
 namespace {
 
-// Walking speed (m/s), slower backward and sideways, and how long it takes
-// to get up to speed and to stop (stopping is quicker).
-constexpr float kWalkSpeed = 1.0f;
+constexpr float kWalkSpeed = 1.0f; // m/s
 constexpr float kBackwardShare = 0.6f;
 constexpr float kSidewaysShare = 0.75f;
 constexpr float kAccelerationSeconds = 0.15f;
 constexpr float kDecelerationSeconds = 0.1f;
-// How deep the head dips each step (meters).
-constexpr float kHeadBob = 0.012f;
-// The footsteps' volume (0..1) at walking speed.
+constexpr float kHeadBob = 0.012f; // meters
 constexpr float kFootstepVolume = 0.8f;
-// Standing up needs the truck at rest; above kMaxAwayKmh the player is
-// sent back to the wheel (a parked truck still creeps a little on a slope).
+// More margin once up: a parked truck still creeps a little on a slope.
 constexpr float kMaxStandKmh = 1.0f;
 constexpr float kMaxAwayKmh = 3.0f;
-// Holding stand/sit this long goes back to the wheel instead of the tap's
-// "sit at the nearest spot".
 constexpr float kLongPressSeconds = 0.6f;
-// Standing up or sitting down takes kTransitionSeconds for kTransitionMeters,
-// scaled by the actual distance within the bounds below.
+// For kTransitionMeters, scaled by the distance within the bounds below.
 constexpr float kTransitionSeconds = 1.2f;
 constexpr float kTransitionMeters = 0.7f;
 constexpr float kTransitionScaleMin = 0.7f;
 constexpr float kTransitionScaleMax = 1.6f;
-// Hurried back to the wheel (parking brake released, truck rolling).
+// Sent back to the wheel (parking brake released, truck rolling).
 constexpr float kHurrySeconds = 0.8f;
-// Walking by itself to a spot: close enough to sit down from, and how
-// soon it slows down before it (speed = distance * gain).
+// Walking there by itself, it slows down as it nears the spot.
 constexpr float kArriveMeters = 0.04f;
 constexpr float kArriveGain = 4.0f;
-// Crouching slows walking down by this fraction.
 constexpr float kCrouchSlowdown = 0.5f;
-// Head height changes (crouching).
 constexpr float kHeightTime = 0.3f;
-// Step bob: one dip per step of kStepMeters, a sideways sway of this
-// fraction of the dip, and a slight roll along with the sway.
 constexpr float kStepMeters = 0.45f;
-constexpr float kBobSwayRatio = 0.6f;
+constexpr float kBobSwayRatio = 0.6f; // of the dip
 constexpr float kBobRollDegPerMeter = 40.0f;
-// How long the head's rotation is held after the camera's re-activation,
-// which recenters it a frame or so later.
 constexpr float kHoldRotationSeconds = 0.25f;
-// Within this distance of a seat (on the floor plane), a tap sits there
-// whatever the look.
+// Standing on a seat, a tap sits there whatever the look.
 constexpr float kOverSpotMeters = 0.08f;
-// No footstep sound below this share of walking speed (shuffling in place).
+// Shuffling in place makes no sound.
 constexpr float kMinStepSoundAmount = 0.3f;
 constexpr float kBobTime = 0.2f;
-// Standing, the body stays upright while the parked truck leans (half on a
-// kerb, on a slope): the head tilts against the truck's tilt, turning
-// along with standing up and sitting down, within a sane bound.
+// The body stays upright while the parked truck leans (half on a kerb, on a
+// slope), within reason.
 constexpr float kMaxUprightDeg = 15.0f;
-// The camera's roll turns the head the other way from the truck's roll
-// (seen in game: +1 leaned the head further with the truck).
+// Seen in game: +1 leaned the head further with the truck.
 constexpr float kUprightRollSign = -1.0f;
-// Turning all the way around while up, and looking down at the floor. The
-// yaw is wrapped back into +-180 every frame (see Update), so this is just
-// headroom the mouse never reaches: 90 degrees past a half-turn in a frame.
+// The yaw is wrapped back into +-180 every frame, so this is only headroom
+// the mouse never reaches.
 constexpr float kAwayYawLimitDeg = 270.0f;
 constexpr float kAwayDownLimitDeg = -80.0f;
 
-// Standing up leans the head forward (over the feet) and a bit down before
-// rising; the rise then ends straight up.
+// Standing up leans the head forward over the feet and a bit down before
+// rising, and ends straight up.
 constexpr float kRiseLeanMeters = 0.12f;
 constexpr float kRiseDipMeters = 0.04f;
 constexpr float kRiseEndLiftMeters = 0.10f;
@@ -89,28 +70,26 @@ constexpr float kRiseEndLiftMeters = 0.10f;
 constexpr float kSitStepShare = 0.4f;
 constexpr float kSitLeanMeters = 0.12f;
 constexpr float kSitAboveMeters = 0.10f;
-// Moving between seated spots arcs over, more for a longer move.
+// Moving between seats arcs over, more for a longer move.
 constexpr float kArcMeters = 0.05f;
 constexpr float kArcFullMeters = 0.6f;
-// Looking down during the move, and leaning into it on the way to the
-// driver's or the passenger seat (degrees, at mid-move).
+// At mid-move.
 constexpr float kRiseLookDownDeg = 8.0f;
 constexpr float kSitLookDownDeg = 10.0f;
 constexpr float kDirectLookDownDeg = 4.0f;
 constexpr float kLeanRollDeg = 3.0f;
-// The view turns to a seat's look a bit before the head gets there.
+// The view finishes turning a bit before the head gets there.
 constexpr float kTurnShare = 0.85f;
 
 float Clamp01(float t) { return std::clamp(t, 0.0f, 1.0f); }
 
-// 0 at both ends, 1 at mid-move, with zero slope at the ends.
+// 1 at mid-move, 0 at both ends with zero slope.
 float Bell(float t) {
   const float s = std::sin(kPi * Clamp01(t));
   return s * s;
 }
 
-// Into [-pi, pi], so a turn never goes across the back: the yaw limits stop
-// at +-180 degrees, and a turn across them would jump.
+// So a turn never goes across the back, where it would jump the yaw limits.
 float WrapYaw(float yaw_rad) { return std::remainder(yaw_rad, 2.0f * kPi); }
 
 } // namespace
@@ -138,7 +117,6 @@ void CabinWalkEffect::LoadConfig() {
 HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
                                    SPF_Camera_API *camera,
                                    const CameraRig::Pose &base) {
-  // First frame back from another view (see OnLeftInterior).
   const bool back_in_cabin = std::exchange(left_interior_, false);
   base_ = {base.seat_x, base.seat_y, base.seat_z};
   base_yaw_ = base.yaw_rad;
@@ -152,9 +130,9 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
       camera_override_.EndRefresh(camera);
   }
 
-  // Turning around freely: past a half-turn, the same look a full turn
-  // back, before the mouse reaches the widened limit. (Not in a seat that
-  // keeps the truck's own limits, which may go past 180 on purpose.)
+  // Past a half-turn, the same look a full turn back, so the mouse never
+  // reaches the limit. Not in the passenger seat, which keeps the truck's
+  // own limits: they may go past 180 on purpose.
   const bool full_turn =
       !AtWheel() && !(state_ == State::kSeated && spot_ == Spot::kPassenger);
   if (full_turn && std::fabs(base_yaw_) > kPi) {
@@ -162,8 +140,6 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
     base_rotation_ = {base_yaw_, base_pitch_};
   }
 
-  // Anything that makes being up unsafe (or unwanted) brings the player
-  // back, unless already on the way to the wheel.
   const bool heading_to_wheel = state_ == State::kTransition &&
                                 after_ == State::kSeated &&
                                 after_spot_ == Spot::kDriver;
@@ -171,8 +147,7 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
     const bool unsafe = telemetry::SpeedKmh(truck) > kMaxAwayKmh ||
                         (require_parking_brake_ && !truck.parking_brake);
     if (unsafe && back_in_cabin) {
-      // It became unsafe while out of the interior view (driving from
-      // another camera): no walk back to the wheel in the middle of it.
+      // Driven off from another camera: no walk back to the wheel now.
       notice_ = Notice::kBackToWheel;
       camera_override_.Restore(camera);
       SnapToWheel();
@@ -214,7 +189,6 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
   SetMouseBlocked(state_ == State::kTransition && turn_);
   SetWalkKeysBlocked(!AtWheel());
 
-  // Step bob, fading in and out with the walking speed.
   const float speed = state_ == State::kWalking
                           ? std::hypot(vel_x_.value(), vel_z_.value())
                           : 0.0f;
@@ -222,8 +196,8 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
       std::clamp(bob_amount_.Update(speed / kWalkSpeed, dt), 0.0f, 1.0f);
   const float phase_before = bob_phase_;
   bob_phase_ = math::WrapPhase(bob_phase_ + speed * dt / kStepMeters * kPi);
-  // A footstep where the head dips lowest, a quarter-turn into each step:
-  // where the phase's cosine changes sign.
+  // A footstep where the head dips lowest, where the phase's cosine changes
+  // sign.
   if (amount > kMinStepSoundAmount &&
       (std::cos(phase_before) > 0.0f) != (std::cos(bob_phase_) > 0.0f))
     footsteps_.push_back(kFootstepVolume * amount);
@@ -239,11 +213,9 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
   offset.roll = kBobRollDegPerMeter * kHeadBob * amount * std::sin(bob_phase_) +
                 motion_roll_deg_;
 
-  // Upright against the truck's tilt, seen from where the head looks (yaw
-  // positive to the left): the truck's roll is a roll looking ahead and a
+  // Upright on the feet, tilted with the cabin in a seat, changing along with
+  // the move between the two. The truck's roll is a roll looking ahead and a
   // pitch looking aside, its pitch the other way around.
-  // Upright on the feet, with the cabin in a seat: it changes along with
-  // the move between the two (standing up, sitting down), not after it.
   const float on_feet = state_ == State::kWalking ? 1.0f : 0.0f;
   const float upright =
       state_ == State::kTransition
@@ -273,8 +245,7 @@ CabinWalkEffect::SpotPose CabinWalkEffect::SpotAt(Spot spot) const {
   };
   switch (spot) {
   case Spot::kPassenger:
-    // The player's own seat mirrored across the centerline: sat at the same
-    // height, depth and distance from the center as at the wheel.
+    // The player's own seat mirrored across the centerline.
     return pose(2.0f * centerline_x_ - base_.x + l.passenger_dx,
                 base_.y + l.passenger_dy, base_.z + l.passenger_dz,
                 l.passenger_yaw, l.passenger_pitch);
@@ -284,7 +255,7 @@ CabinWalkEffect::SpotPose CabinWalkEffect::SpotAt(Spot spot) const {
   case Spot::kDriver:
     break;
   }
-  // The player's own seat, looking where the truck's recenter does.
+  // Looking where the game's recenter does.
   float yaw_deg = 0.0f, pitch_deg = 0.0f;
   if (camera_override_.engaged()) {
     yaw_deg = camera_override_.original_default_yaw();
@@ -301,8 +272,7 @@ CabinWalkEffect::Vec3 CabinWalkEffect::Approach(Spot spot) const {
 }
 
 CabinWalkEffect::Spot CabinWalkEffect::LookedAtSpot() const {
-  // The seat whose direction is closest to the look, on the floor plane:
-  // the seats are too close together in most cabins to go by distance.
+  // The seats are too close together in most cabins to go by distance.
   const float look_x = -CameraX() * std::sin(base_yaw_);
   const float look_z = -std::cos(base_yaw_);
   Spot best = Spot::kDriver;
@@ -313,7 +283,6 @@ CabinWalkEffect::Spot CabinWalkEffect::LookedAtSpot() const {
     const Vec3 p = SpotAt(spot).pos;
     const float dx = p.x - pos_.x, dz = p.z - pos_.z;
     const float distance = std::hypot(dx, dz);
-    // Standing on top of it, where the look points doesn't tell.
     const float cos = distance < kOverSpotMeters
                           ? 1.0f
                           : (dx * look_x + dz * look_z) / distance;
@@ -380,11 +349,10 @@ void CabinWalkEffect::TryStandUp(const SPF_TruckData &truck,
     return;
   }
   if (!camera_override_.Engage(camera)) {
-    // Camera not resolved yet: try again on the next press.
-    return;
+    return; // the camera isn't resolved yet: next press
   }
-  // Up from where the head really was: leaning toward a mirror, the truck's
-  // own head offset for that look, now gone.
+  // Up from where the head really was: looking at a mirror leans it, which
+  // Engage just took away.
   const std::array<float, 3> &lean = camera_override_.engage_head_offset();
   pos_ = {base_.x + lean[0], base_.y + lean[1], base_.z + lean[2]};
   StandUp();
@@ -413,7 +381,7 @@ void CabinWalkEffect::GoToWheel(float duration) {
 // --- Transitions ---
 
 CabinWalkEffect::Vec3 CabinWalkEffect::Facing(Spot spot) const {
-  // Yaw 0 looks toward -z, positive yaw turns left.
+  // Yaw 0 looks toward -z, positive is left.
   const float yaw = SpotAt(spot).yaw_rad;
   return Vec3{-CameraX() * std::sin(yaw), 0.0f, -std::cos(yaw)};
 }
@@ -462,8 +430,7 @@ void CabinWalkEffect::StartTransition(const Vec3 &to, Path path, float duration,
   }
   }
 
-  // Sideways share of the move as seen from where the player looks, for
-  // leaning into it on the way to a front seat (not the bunk).
+  // Not onto the bunk.
   const bool front_seat =
       after == State::kSeated && after_spot != Spot::kBunkSit;
   const float right =
@@ -499,17 +466,14 @@ CabinWalkEffect::Vec3 CabinWalkEffect::Bezier(const Vec3 &p0, const Vec3 &p1,
 void CabinWalkEffect::UpdateTransition(float dt, SPF_Camera_API *camera) {
   progress_ = std::min(1.0f, progress_ + dt / duration_);
   const float t = progress_;
-  // The seat follows the player's own seat, should it change meanwhile.
+  // The player's own seat may change meanwhile.
   if (after_ == State::kSeated)
     to_ = SpotAt(after_spot_).pos;
 
-  // Along the Bezier path, eased so the body starts and stops smoothly.
   const Vec3 ctrl2{to_.x + ctrl2_offset_.x, to_.y + ctrl2_offset_.y,
                    to_.z + ctrl2_offset_.z};
   pos_ = Bezier(from_, ctrl1_, ctrl2, to_, SmootherStep(t));
 
-  // The body's own motion on top: looking down at where it goes, leaning
-  // into a sideways move.
   const float look_down = path_ == Path::kRise  ? kRiseLookDownDeg
                           : path_ == Path::kSit ? kSitLookDownDeg
                                                 : kDirectLookDownDeg;
@@ -552,9 +516,8 @@ void CabinWalkEffect::OnArrived(SPF_Camera_API *camera) {
     camera_override_.Restore(camera);
     return;
   }
-  // The passenger seat mirrors the driver's view range; the bunk allows
-  // looking all around, as standing does. The recenter key looks where the
-  // spot does.
+  // The passenger seat mirrors the driver's view range; the bunk looks all
+  // around, as standing does.
   if (spot_ == Spot::kPassenger)
     camera_override_.SetLimits(camera,
                                {-own.right, -own.left, own.up, own.down});
@@ -573,7 +536,6 @@ void CabinWalkEffect::FollowSeatedSpot(SPF_Camera_API *camera) {
   const float pitch_deg = pose.pitch_rad / kDegToRad;
   if (yaw_deg == seated_yaw_deg_ && pitch_deg == seated_pitch_deg_)
     return;
-  // The spot's look was edited: look that way, and recenter to it.
   seated_yaw_deg_ = yaw_deg;
   seated_pitch_deg_ = pitch_deg;
   base_rotation_ = {WrapYaw(pose.yaw_rad), pose.pitch_rad};
@@ -587,7 +549,7 @@ float CabinWalkEffect::ClampToFloor(float value, float min, float max,
                                     math::SpringDamper1D &spring) const {
   const float clamped = std::clamp(value, min, max);
   if (clamped != value) {
-    // Against a wall: slide along it instead of pushing into it.
+    // Against a wall: slide along it rather than pushing into it.
     spring.Reset();
     velocity = 0.0f;
   }
@@ -612,8 +574,7 @@ void CabinWalkEffect::UpdateWalking(float dt) {
     forward *= kBackwardShare;
   side *= kSidewaysShare;
 
-  // Relative to where the player looks: yaw 0 looks toward -z, positive
-  // yaw turns left (toward -x, flipped in a mirrored camera, see CameraX).
+  // Relative to the look: yaw 0 looks toward -z, positive is left.
   const float speed = kWalkSpeed * (1.0f - kCrouchSlowdown * crouch);
   float want_x = CameraX() *
                  (-std::sin(base_yaw_) * forward + std::cos(base_yaw_) * side) *
@@ -636,7 +597,6 @@ void CabinWalkEffect::UpdateWalking(float dt) {
     want_z = dz / distance * approach;
   }
 
-  // Getting up to speed, or slowing down and stopping (quicker).
   const bool speeding_up =
       std::hypot(want_x, want_z) >= std::hypot(vel_x_.value(), vel_z_.value());
   const float response =
@@ -706,7 +666,7 @@ CabinWalkEffect::Notice CabinWalkEffect::TakeNotice() {
 void CabinWalkEffect::SetMouseBlocked(bool blocked) {
   if (blocked == mouse_blocked_ || !ui_api_)
     return;
-  // Only the look axes: the view is being turned for the player.
+  // Only the look axes, while we turn the view for the player.
   ui_api_->UI_SetMouseBlockState(blocked, false, false);
   mouse_blocked_ = blocked;
 }
@@ -714,8 +674,8 @@ void CabinWalkEffect::SetMouseBlocked(bool blocked) {
 void CabinWalkEffect::SetWalkKeysBlocked(bool blocked) {
   if (blocked == walk_keys_blocked_ || !keybinds_api_ || !keybinds_handle_)
     return;
-  // Takes effect from the next press: a key already held when the player
-  // stands up keeps driving until released.
+  // From the next press: a key already held keeps reaching the game until
+  // released.
   for (const keybinds::Action &action : keybinds::kWalkActions)
     keybinds_api_->Kbind_SetBlockState(keybinds_handle_, action.id, blocked);
   walk_keys_blocked_ = blocked;
@@ -741,7 +701,6 @@ void CabinWalkEffect::HandleGoTo(Spot spot, const SPF_TruckData &truck,
 
 void CabinWalkEffect::SetLayout(const CabinLayout &layout, bool save) {
   layout_ = layout;
-  // Sat in (or walking to) a spot just marked unusable: back on the feet.
   if (state_ == State::kSeated && !CanSitAt(spot_))
     StandUp();
   if (walk_to_ && !CanSitAt(*walk_to_))
@@ -757,10 +716,9 @@ void CabinWalkEffect::ResetLayout() {
 }
 
 void CabinWalkEffect::LoadLayout() {
-  // One layout per truck model, whichever its cabin or side: the player's
-  // own, else the preset, else one built around the centerline. Made for
-  // left-hand drive, it has the right positions for a right-hand drive
-  // truck's mirrored camera, but its looks turn the wrong way.
+  // One layout per truck model, whichever its cabin or side. Made for
+  // left-hand drive, its positions suit a right-hand drive truck's mirrored
+  // camera, but its looks turn the wrong way.
   auto fit = [&](const CabinLayout &layout) {
     return right_hand_drive_ ? WithMirroredYaws(layout) : layout;
   };
@@ -779,8 +737,7 @@ void CabinWalkEffect::SaveLayout() {
   custom_layout_ = true;
   if (truck_key_.empty() || !layouts_)
     return;
-  // Saved as for left-hand drive, so both sides get it: a right-hand drive
-  // truck's looks turned back (see CabinLayout).
+  // Saved as for left-hand drive, so both sides get it.
   layouts_->Save(truck_key_,
                  right_hand_drive_ ? WithMirroredYaws(layout_) : layout_);
 }

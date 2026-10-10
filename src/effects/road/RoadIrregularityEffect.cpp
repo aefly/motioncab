@@ -9,28 +9,26 @@
 namespace motioncab {
 
 namespace {
-constexpr float kBaseAmplitude = 0.0012f; // meters, at full roughness+speed
+constexpr float kBaseAmplitude = 0.0012f; // meters
 constexpr float kLateralGainRatio = 0.6f;
-constexpr float kSpeedRampKmh = 30.0f; // ramps in fully by this speed
-// Frame time the noise gain was tuned at (60 fps), and the shortest frame
-// time compensated for so a very high fps can't blow the gain up.
+constexpr float kSpeedRampKmh = 30.0f;
+// The noise gain was tuned at 60 fps. The floor keeps a very high frame rate
+// from blowing it up.
 constexpr float kReferenceDt = 1.0f / 60.0f;
 constexpr float kMinCompensatedDt = 1.0f / 1000.0f;
 
-// Off-road rocking (roll), degrees at full unevenness and intensity 1.0.
 constexpr float kRollAmplitudeDeg = 1.2f;
 // Unlike the chatter, the rocking is already there at walking pace.
 constexpr float kRollSpeedRampKmh = 15.0f;
-// Noise cells per second (roughly Hz): bumps pass faster with speed.
-constexpr float kRollRateMin = 0.35f; // barely moving
-constexpr float kRollRateMax = 1.6f;  // at kRollRateRefKmh and above
+// Bumps go by faster with speed.
+constexpr float kRollRateMin = 0.35f;
+constexpr float kRollRateMax = 1.6f;
 constexpr float kRollRateRefKmh = 50.0f;
-// A second, faster octave so it isn't a smooth sine-like sway.
-constexpr float kRollDetailRatio = 2.3f;   // rate relative to the base
-constexpr float kRollDetailWeight = 0.35f; // share of the amplitude
+// A faster octave on top, so it isn't a smooth, sine-like sway.
+constexpr float kRollDetailRatio = 2.3f;
+constexpr float kRollDetailWeight = 0.35f;
 constexpr uint32_t kRollDetailSeedOffset = 0x51DE;
-// How fast the rocking fades in/out when the ground changes.
-constexpr float kUnevennessSmoothing = 0.4f; // seconds
+constexpr float kUnevennessSmoothing = 0.4f;
 } // namespace
 
 RoadIrregularityEffect::RoadIrregularityEffect(SPF_Config_API *config_api,
@@ -76,9 +74,7 @@ HeadOffset RoadIrregularityEffect::Update(float dt, const SPF_TruckData &truck,
 
   HeadOffset offset;
 
-  // Off-road rocking: gradient noise is already smooth, so it needs no
-  // low-pass filter. Its phase only advances with speed, so a stopped
-  // truck holds still instead of swaying on its own.
+  // The phase only moves with speed, so a stopped truck holds still.
   const float rate_t = std::min(speed_kmh / kRollRateRefKmh, 1.0f);
   const float rate = kRollRateMin + (kRollRateMax - kRollRateMin) * rate_t;
   const float roll_speed_factor = std::min(speed_kmh / kRollSpeedRampKmh, 1.0f);
@@ -96,8 +92,7 @@ HeadOffset RoadIrregularityEffect::Update(float dt, const SPF_TruckData &truck,
                 roll_speed_factor;
 
   if (roughness <= 0.0f) {
-    // Let the filters decay smoothly toward silence on smooth ground
-    // instead of snapping to zero mid-transition.
+    // Decays rather than cutting off when the ground turns smooth.
     offset.pos_y = noise_y_.Update(0.0f, dt);
     offset.pos_x = noise_x_.Update(0.0f, dt) * kLateralGainRatio;
     return offset;
@@ -109,10 +104,8 @@ HeadOffset RoadIrregularityEffect::Update(float dt, const SPF_TruckData &truck,
       kBaseAmplitude * intensity_ * roughness * speed_factor;
 
   std::uniform_real_distribution<float> noise(-1.0f, 1.0f);
-  // One white-noise sample per frame through a fixed low-pass filter: the
-  // output variance grows with dt, so the shake would be rougher at low fps
-  // and calmer at high fps. Scaling by sqrt(kReferenceDt / dt) keeps the
-  // strength the same at any frame rate (unchanged at 60 fps).
+  // One white noise sample per frame through a low-pass grows with dt, so
+  // without this the shake would be rougher at a low frame rate.
   const float fps_gain =
       std::sqrt(kReferenceDt / std::max(dt, kMinCompensatedDt));
   const float raw_x = noise(rng_) * fps_gain;

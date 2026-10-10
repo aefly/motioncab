@@ -6,17 +6,14 @@
 #include <array>
 #include <cstdint>
 
-// The ground under the wheels, shared by the road effects.
-//
-// SPF_API only exposes each surface as a name string (SPF_CommonData
-// substances[]), no numeric roughness value, so material names are
-// heuristically classified into a rough/smooth scale, with unknown/modded
-// names defaulting to smooth to avoid unexpected buzzing.
+// The ground under the wheels, shared by the road effects. Telemetry only
+// names each surface, so the names are rated by hand. An unknown one (other
+// map, mod) counts as smooth rather than buzzing for no visible reason.
 namespace motioncab {
 
 struct SurfaceTraits {
   float roughness = 0.0f;  // 0..1, fine chatter
-  float unevenness = 0.0f; // 0..1, side-to-side rocking (roll)
+  float unevenness = 0.0f; // 0..1, side-to-side rocking
 };
 
 namespace detail {
@@ -25,8 +22,7 @@ struct SurfaceEntry {
   SurfaceTraits traits;
 };
 
-// Exact names confirmed empirically from SPF_CommonData.substances[] at
-// runtime (ETS2)
+// The names ETS2 reports at runtime.
 inline constexpr SurfaceEntry kSurfaceTable[] = {
     {"road", {0.0f, 0.0f}},        {"road_smooth", {0.0f, 0.0f}},
     {"road_coarse", {0.5f, 0.0f}}, {"road_dirt", {0.7f, 0.6f}},
@@ -48,11 +44,11 @@ inline SurfaceTraits ClassifySurface(const char *substance_name) {
     if (strings::EqualsIgnoreCase(substance_name, entry.name))
       return entry.traits;
   }
-  return {}; // unrecognized name (other map/mod): default to smooth
+  return {};
 }
 
-// Each substance index's traits, classified once when the game's substance
-// list changes, then averaged over the wheels every frame.
+// Classifies the substance list once when it changes, rather than every
+// frame.
 class SurfaceMap {
 public:
   void SetSubstances(const SPF_CommonData &data) {
@@ -65,8 +61,7 @@ public:
 
   bool empty() const { return count_ == 0; }
 
-  // Mean traits under the first `wheel_count` wheels (0 if none); a wheel
-  // on an unknown substance index counts as smooth.
+  // A wheel on an unknown substance index counts as smooth.
   SurfaceTraits Average(const SPF_TruckData &truck,
                         uint32_t wheel_count) const {
     if (wheel_count == 0)

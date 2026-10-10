@@ -5,33 +5,29 @@
 #include <string_view>
 #include <utility>
 
-// Runtime access to the translations in localization/<lang>.json, through
-// SPF's Localization API. The manifest passes keys straight to SPF (plugin
-// description, keybinds, window), which resolves them itself.
+// Translations for our own UI. The manifest doesn't need this: it hands
+// keys to SPF, which resolves them itself.
 
 namespace motioncab::loc {
 
-// Picks up a language switch made in SPF's Language tab. Call once per
-// frame before any Tr(): the cache is only ever cleared here, which is
-// what keeps the pointers Tr() hands out valid for the rest of the frame.
+// Picks up a language switch. Call once per frame before any Tr(): the cache
+// is only cleared here, so Tr()'s pointers stay valid for the whole frame.
 void Sync();
 
-// Bumped every time Sync() picks up a new active language, the first one
-// included.
+// Counts the first language too.
 unsigned LanguageChangeCount();
 
-// Translation of `key` in the active language. Despite what
-// SPF_Localization_API.h says, SPF only loads that one language file, with
-// no per-key fallback to English: a key missing from it comes back as the
-// key itself, so every language file must carry every key.
+// Despite what SPF_Localization_API.h says, there's no per-key fallback to
+// English: a missing key comes back as the key itself, so every language
+// file must carry every key.
 const char *Tr(std::string_view key);
 
-// Tr() with every "{name}" in the translation replaced by its value.
+// Replaces every "{name}" in the translation with its value.
 std::string
 Tr(std::string_view key,
    std::initializer_list<std::pair<std::string_view, std::string_view>> args);
 
-// Drops the cache, so a plugin reload re-reads the translation files.
+// So a plugin reload re-reads the translation files.
 void Reset();
 
 } // namespace motioncab::loc

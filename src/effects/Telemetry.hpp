@@ -6,38 +6,34 @@
 #include <cmath>
 #include <cstdint>
 
-// Telemetry readings shared by several effects, so each heuristic lives in
-// one place.
+// Readings shared by several effects, so each heuristic lives in one place.
 namespace motioncab::telemetry {
 
-// Absolute truck speed in km/h, whichever way it's moving.
+// Whichever way the truck is moving.
 inline float SpeedKmh(const SPF_TruckData &truck) {
   return std::fabs(truck.speed) * math::kMsToKmh;
 }
 
-// constants.wheel_count, or 0 if it's out of range for the per-wheel arrays
-// (the effects then treat the layout as unknown).
+// 0, an unknown layout, if it doesn't fit the per-wheel arrays.
 inline uint32_t WheelCount(const SPF_TruckConstants &constants) {
   return constants.wheel_count <= SPF_TELEMETRY_WHEEL_MAX_COUNT
              ? constants.wheel_count
              : 0;
 }
 
-// No direct "is electric" flag: an empty AdBlue tank is the tell
-// (fuel_capacity doesn't work, since BEVs still report a nonzero value).
+// There's no flag for it. An electric truck has no AdBlue tank, while it
+// still reports a fuel capacity.
 inline bool IsElectric(const SPF_TruckConstants &constants) {
   return constants.adblue_capacity <= 0.01f;
 }
 
-// True if the truck's driver sits on the right: the default head position,
-// relative to the cabin's pivot on its centerline, is right of it.
+// The head position is relative to the cabin's centerline.
 inline bool IsRightHandDrive(const SPF_TruckConstants &constants) {
   return constants.head_position.x > 0.0f;
 }
 
-// engine_rpm crossing this (near-zero) is the "engine has started" signal.
-// engine_enabled lags the real catch by 1+ second, which read as buzz or
-// shudder firing well after the fact.
+// RPM crossing this means the engine has started. engine_enabled lags the
+// real catch by a second or more, so the shudder came well after the fact.
 inline constexpr float kRpmStartThreshold = 5.0f;
 
 } // namespace motioncab::telemetry

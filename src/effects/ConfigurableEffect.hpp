@@ -8,8 +8,7 @@
 
 namespace motioncab {
 
-// Reads one effect's tunables, "settings.<group>.<effect>.<setting>", by
-// setting name alone.
+// Reads "settings.<group>.<effect>.<setting>" by setting name alone.
 class EffectConfig {
 public:
   EffectConfig(SPF_Config_API *api, SPF_Config_Handle *handle,
@@ -36,9 +35,8 @@ private:
   std::string prefix_;
 };
 
-// Base for the effects configured under "settings.<group>.<effect>.*": owns
-// the "enabled" toggle and the config access, so an effect only reads its
-// own tunables, in LoadSettings().
+// Handles the "enabled" toggle and the config access, so an effect only
+// reads its own tunables in LoadSettings().
 class ConfigurableEffect : public Effect {
 public:
   bool IsEnabled() const override { return enabled_; }
@@ -59,8 +57,6 @@ protected:
       : config_(config_api, config_handle, group, name),
         id_(std::string("settings.") + group + "." + name) {}
 
-  // Reads the effect's own tunables (everything but "enabled") with Float()
-  // and Bool(), and applies them, e.g. to its springs' time constants.
   virtual void LoadSettings() = 0;
 
   float Float(const char *setting, float fallback) const {

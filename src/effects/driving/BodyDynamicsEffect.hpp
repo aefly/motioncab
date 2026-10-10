@@ -6,14 +6,9 @@
 
 namespace motioncab {
 
-// Tilts and rolls the head the way a driver's whole body reacts to
-// cornering and braking, complementing HeadMotionEffect (which only
-// translates the head and follows cabin angular velocity):
-//  - Lean: in a corner the head tilts (roll) toward the outside, pushed by
-//    lateral acceleration.
-//  - Nod: braking pitches the head forward, accelerating pitches it back.
-// Assumes SCS's local-space convention: X = right, Z = backward, so braking
-// is positive Z acceleration.
+// The whole body reacting to cornering and braking: the head leans toward
+// the outside of a corner and nods forward under braking. HeadMotionEffect
+// covers the head's own sway.
 class BodyDynamicsEffect final : public ConfigurableEffect {
 public:
   BodyDynamicsEffect(SPF_Config_API *config_api,
@@ -33,7 +28,6 @@ private:
       settings::Default("settings.driving.body_dynamics.lean_strength");
   float nod_strength_ =
       settings::Default("settings.driving.body_dynamics.nod_strength");
-  // seconds, spring time constant
   float smoothing_time_ =
       settings::Default("settings.driving.body_dynamics.smoothing_time");
 

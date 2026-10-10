@@ -11,8 +11,7 @@ constexpr const char *kGuidsFile = "MotionCab.bank.guids";
 
 constexpr const char *kFootstepEvent = "event:/motioncab/footsteps";
 
-// Footsteps vary a little so that no two sound alike: pitch (a ratio) and
-// volume ranges.
+// So no two footsteps sound alike.
 constexpr float kStepPitchMin = 0.93f, kStepPitchMax = 1.07f;
 constexpr float kStepVolumeMin = 0.8f;
 
@@ -22,8 +21,6 @@ void CabinWalkSounds::Load(SPF_Sound_API *sound) {
   PluginContext &ctx = Context();
   const std::string bank = dir_ + "/" + kBankFile;
   const std::string guids = dir_ + "/" + kGuidsFile;
-  // SPF reads the .guids file itself, which names the bank's events: they
-  // are then found by path.
   bank_ = sound->SND_LoadBankFile(bank.c_str(), guids.c_str());
   if (!bank_)
     ctx.LogFmt(SPF_LOG_WARN, "(CabinWalk) %s not loaded", kBankFile);
@@ -33,7 +30,7 @@ void CabinWalkSounds::Update(SPF_Sound_API *sound) {
   if (!sound)
     return;
   if (!sound->SND_IsReady()) {
-    // The world is gone, and the bank's handle with it.
+    // The bank's handle went with the world.
     ready_ = false;
     bank_ = nullptr;
     return;
@@ -65,7 +62,7 @@ void CabinWalkSounds::PlayFootstep(SPF_Sound_API *sound, float volume) {
   sound->SND_SetEventVolume(instance, volume);
   sound->SND_SetEventPitch(instance, pitch);
   sound->SND_StartEvent(instance);
-  // Freed by FMOD once it has finished playing.
+  // FMOD frees it once it has finished playing.
   sound->SND_ReleaseEvent(instance);
 }
 

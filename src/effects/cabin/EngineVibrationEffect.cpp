@@ -8,10 +8,9 @@
 namespace motioncab {
 
 namespace {
-constexpr float kBaseAmplitude = 0.0003f; // meters; a fine buzz
-constexpr float kLateralGainRatio =
-    0.25f;                             // lateral component relative to vertical
-constexpr float kHarmonicOrder = 1.0f; // vibration cycles per engine revolution
+constexpr float kBaseAmplitude = 0.0003f; // meters
+constexpr float kLateralGainRatio = 0.25f;
+constexpr float kHarmonicOrder = 1.0f; // cycles per engine revolution
 constexpr float kMinAmplitudeFraction = 0.1f;
 } // namespace
 
@@ -30,7 +29,6 @@ void EngineVibrationEffect::OnTruckConstantsChanged(
 
 HeadOffset EngineVibrationEffect::Update(float dt, const SPF_TruckData &truck,
                                          const SPF_Controls & /*controls*/) {
-  // Same start signal as EngineStartStopEffect (see kRpmStartThreshold).
   if (truck.engine_rpm <= telemetry::kRpmStartThreshold)
     return {};
 

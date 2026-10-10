@@ -3,9 +3,9 @@
 namespace motioncab {
 
 namespace {
-// Base response gains; the user-facing "strength" settings scale these.
-constexpr float kTranslationGain = 0.03f; // meters per (m/s^2)
-constexpr float kRotationGain = 8.6f;     // degrees per (rad/s)
+// The strength settings scale these.
+constexpr float kTranslationGain = 0.03f; // meters per m/s^2
+constexpr float kRotationGain = 8.6f;     // degrees per rad/s
 } // namespace
 
 void HeadMotionEffect::LoadSettings() {
@@ -31,11 +31,9 @@ HeadOffset HeadMotionEffect::Update(float dt, const SPF_TruckData &truck,
   const SPF_FVector &accel = truck.local_linear_acceleration;
   const SPF_FVector &cabin_omega = truck.cabin_angular_velocity;
 
-  // Inertia pulls the head opposite to the applied acceleration.
   const float target_x = -accel.x * kTranslationGain * sway_strength_;
   const float target_z = -accel.z * kTranslationGain * sway_strength_;
 
-  // Cabin roll/pitch rate produces a small counter-tilt of the head.
   const float target_yaw = -cabin_omega.y * kRotationGain * tilt_strength_;
   const float target_pitch = -cabin_omega.x * kRotationGain * tilt_strength_;
 

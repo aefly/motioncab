@@ -6,10 +6,9 @@ namespace motioncab {
 
 namespace {
 
-// The layouts shipped with the plugin, calibrated by hand in game in each
-// model's smallest sleeper cabin (see CabinLayout for the frame), every
-// field written out: a player's cabin_layouts.json entry has the same
-// fields and values.
+// Calibrated by hand in game, in each model's smallest sleeper cabin. Every
+// field is written out, so an entry can be copied to or from a player's
+// cabin_layouts.json as is.
 constexpr CabinPreset kPresets[] = {
     // --- Euro Truck Simulator 2 ---
     {"daf_vehicle_daf_2021",

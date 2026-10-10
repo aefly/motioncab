@@ -6,10 +6,10 @@ namespace motioncab {
 
 namespace {
 
-// Stage times, as fractions of smoothing_time: the first eases the head
-// into the motion instead of throwing it at full acceleration on the
-// press (or on a quick switch to another look mid-motion), the second
-// moves it. Together they take about as long as the single spring did.
+// Two springs in a row, as shares of smoothing_time: the first eases the
+// head into the move instead of throwing it at full acceleration on the
+// press (or a quick switch to another look). Together they take about as
+// long as the single spring did.
 constexpr float kIntentFraction = 0.3f;
 constexpr float kHeadFraction = 0.85f;
 
@@ -73,7 +73,7 @@ bool ManualLookEffect::HasChord(Look look) const {
 }
 
 ManualLookEffect::Look ManualLookEffect::HeldLook() const {
-  // In priority order when no combination decides: a wide look first.
+  // When no combination decides, a wide look wins.
   static constexpr Look kLooks[] = {Look::kLeft, Look::kRight,
                                     Look::kGlanceLeft, Look::kGlanceRight};
   Look first_held = Look::kCenter;
@@ -97,8 +97,8 @@ HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
   if (held == Look::kCenter) {
     pressed_ = Look::kCenter;
   } else if (held != pressed_ && !(HasChord(pressed_) && !HasChord(held))) {
-    // A combination completed on top of its own key held alone replaces
-    // that key's look, toggle included; anything else is a new press.
+    // A combination completed on top of its own key replaces that key's
+    // look, toggle included; anything else is a new press.
     const bool completes_chord =
         pressed_ != Look::kCenter && HasChord(held) && !HasChord(pressed_);
     if (!completes_chord)
@@ -108,7 +108,6 @@ HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
   }
   const Look look = toggle_mode_ ? toggled_ : pressed_;
 
-  // Left = positive yaw, right = negative, and positive pitch looks up.
   float target_yaw_deg = 0.0f;
   float target_pitch_deg = 0.0f;
   float target_fov_deg = 0.0f;
@@ -133,7 +132,6 @@ HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
     break;
   }
 
-  // Where Mirror Check has the head (see class comment).
   const float mirror_yaw = mirror_check_ ? mirror_check_->yaw() : 0.0f;
   const float mirror_pitch = mirror_check_ ? mirror_check_->pitch() : 0.0f;
   const float mirror_fov = mirror_check_ ? mirror_check_->fov() : 0.0f;

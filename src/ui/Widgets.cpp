@@ -14,8 +14,7 @@ namespace motioncab::ui {
 
 namespace {
 
-// The muted red of the sliders/fields (their FRAME_BG values), for buttons
-// that shouldn't stand out like the brand red regular ones. Pop 3 colors.
+// The sliders' FRAME_BG values. Pop 3 colors.
 void PushMutedButtonColors(SPF_UI_API *ui) {
   ui->UI_PushStyleColor(SPF_COLOR_BUTTON, kAccentR, kAccentG, kAccentB, 0.25f);
   ui->UI_PushStyleColor(SPF_COLOR_BUTTON_HOVERED, kAccentR, kAccentG, kAccentB,
@@ -77,7 +76,7 @@ StepperEdit StepperFloat(SPF_UI_API *ui, const char *id, float *value,
                          float min, float max, float step, const char *format,
                          float reset_value, const char *tooltip, bool drag) {
   StepperEdit edit = StepperEdit::kNone;
-  // Square buttons at both ends, the value filling the width between.
+  // Square buttons at both ends.
   const float button = ui->UI_GetFrameHeight();
   constexpr float kGap = 4.0f;
   float avail_w = 0.0f, avail_h = 0.0f;

@@ -10,64 +10,51 @@
 
 namespace motioncab {
 
-// Where Cabin Walk can take the player in one truck's cabin. The game has
-// no cabin geometry to read, so it's calibrated in-game per truck model
-// (the Quick Settings' Advanced part) and falls back to a generic layout
-// until then.
+// Where Cabin Walk can take the player in one truck model's cabin. There's
+// no cabin geometry to read from the game, so it's calibrated by hand in
+// game.
 //
-// Every position is in the interior camera's seat-position frame, as
-// Cam_GetInteriorSeatPos reads it: meters, x right, y up, z backward.
-// Angles are degrees, as the head rotation: yaw positive to the left,
-// pitch positive up. A right-hand drive truck's interior camera mirrors
-// the seat position left to right (seen in game: moving to -x there walks
-// out of the driver's door), but not the yaw. So in that frame the cabin's
-// centerline is at +x on every truck, angles keep their meaning, and a
-// left-hand drive layout fits a right-hand drive truck of the same model
-// as it is.
+// Positions are in the camera's seat frame: meters, x right, y up, z back.
+// Angles are degrees, yaw positive to the left, pitch positive up. A
+// right-hand drive truck's camera mirrors the seat position but not the yaw
+// (seen in game: moving to -x there walks out the driver's door), so the
+// centerline is at +x on every truck, and the positions of a left-hand
+// drive layout fit a right-hand drive truck as they are.
 struct CabinLayout {
-  // The area the standing head can walk over.
+  // Where the standing head can go.
   float floor_x_min, floor_x_max, floor_z_min, floor_z_max;
-  float stand_y;      // standing head height
-  float crouch_depth; // how far below it crouching takes the head
-  // The passenger seat: its position mirrors the player's own seat across
-  // the centerline (see CabinWalkEffect::SpotAt), following the seat as it's
-  // adjusted, moved by these offsets (meters: right, up, back), and its
-  // look.
+  float stand_y;      // the standing head's height
+  float crouch_depth; // under stand_y
+  // Offsets from the player's own seat mirrored across the centerline, so
+  // the passenger seat follows it as it's adjusted.
   float passenger_dx, passenger_dy, passenger_dz;
   float passenger_yaw, passenger_pitch;
-  // Sitting on the bunk's front edge, halfway along the mattress.
+  // On the bunk's front edge, halfway along the mattress.
   float bunk_sit_x, bunk_sit_y, bunk_sit_z, bunk_sit_yaw, bunk_sit_pitch;
-  // False where the passenger seat can't be sat in (folded up, or none), or
-  // there's no bunk (a day cab): Cabin Walk never takes the player there.
-  // Not CabinLayoutFields (those are the sliders' floats); stored under
-  // their own names.
+  // A folded-up passenger seat, a day cab. Not in CabinLayoutFields, which
+  // are the sliders' floats.
   bool has_passenger = true;
   bool has_bunk = true;
 };
 
-// The cabin's centerline, as an x in CabinLayout's frame: the driver's head
-// (the frame's origin) sits this far from it, always at a positive x (see
-// CabinLayout). SPF_CabinWalk's passenger seat at x = 0.95 puts it at about
-// half that on the trucks it was tuned on.
+// The frame's origin is the driver's head. SPF_CabinWalk's passenger seat at
+// x = 0.95 puts the centerline about half that far on the trucks it was
+// tuned on.
 inline constexpr float kTypicalCenterlineX = 0.475f;
 
-// The truck's centerline from its default head position, which telemetry
-// gives relative to the cabin's pivot, on the centerline. A head closer
-// than kMinHeadOffsetX to it is taken as missing data (a driver sits well
-// off-center), and the typical centerline is used instead.
+// From the default head position, which telemetry gives from the centerline.
+// A head closer to it than this is missing data: a driver sits well
+// off-center.
 inline constexpr float kMinHeadOffsetX = 0.1f;
 float CabinCenterlineX(const SPF_TruckConstants &constants);
 
-// A layout for a truck nobody calibrated, built around its centerline: the
-// walkway runs down the middle, and the bunk sits across the back. Heights
-// and depths are SPF_CabinWalk's defaults, since telemetry says nothing
-// about them.
+// For a truck nobody calibrated: the walkway runs down the middle and the
+// bunk across the back. Heights and depths are SPF_CabinWalk's defaults,
+// since telemetry says nothing about them.
 CabinLayout DefaultCabinLayout(float centerline_x = kTypicalCenterlineX);
 
-// One CabinLayout field: its name (storage key and "ui.cabin_walk.layout.
-// <name>" label), its slider's range and its unit.
 struct CabinLayoutField {
-  const char *name;
+  const char *name; // the storage key, and "ui.cabin_walk.layout.<name>"
   float CabinLayout::*member;
   float min, max;
   bool angle; // degrees, else meters
@@ -75,38 +62,30 @@ struct CabinLayoutField {
 
 std::span<const CabinLayoutField> CabinLayoutFields();
 
-// Swaps any min/max pair entered backwards, so the floor stays a valid box.
+// Swaps a min/max pair entered backwards.
 void NormalizeCabinLayout(CabinLayout &layout);
 
-// `layout` with its spots' looks mirrored: a left-hand drive layout's looks,
-// for a right-hand drive truck (its positions already fit, see above).
+// Fits a left-hand drive layout to a right-hand drive truck and back.
 CabinLayout WithMirroredYaws(const CabinLayout &layout);
 
-// "<brand_id>_<id>" of the truck model, reduced to [A-Za-z0-9_] so it
-// holds as one config key segment; empty if the truck isn't known yet.
+// "<brand_id>_<id>", reduced to [A-Za-z0-9_] to hold as one config key
+// segment. Empty while the truck isn't known.
 std::string TruckLayoutKey(const SPF_TruckConstants &constants);
 
-// The calibrated layouts, one per truck model: the player's own, in their
-// own JSON file (SPF only gives a plugin one settings.json), created on the
-// first save, and the presets compiled into the plugin (CabinPresets.hpp).
+// The player's own layouts get a file of their own, since SPF only gives a
+// plugin one settings.json. It's only created on the first save.
 class CabinLayoutStore {
 public:
   CabinLayoutStore(SPF_Config_API *config, std::string path)
       : config_(config), path_(std::move(path)) {}
 
-  // Only the preset shipped with the plugin for `truck_key`, if any.
   std::optional<CabinLayout> LoadPreset(const std::string &truck_key);
-  // Only the player's own layout for `truck_key`, if any.
   std::optional<CabinLayout> LoadCustom(const std::string &truck_key);
-  // As the player's layout.
   void Save(const std::string &truck_key, const CabinLayout &layout);
-  // Drops the player's layout, back to the preset if any: its entry is
-  // emptied (Cfg_RemoveKey doesn't work on a custom context file).
   void Forget(const std::string &truck_key);
 
 private:
-  // The player's file, opened on first use; null while it doesn't exist,
-  // unless `create` (opening a custom context creates a missing file).
+  // Null while the file doesn't exist, unless `create`.
   SPF_Config_Handle *Handle(bool create);
   std::optional<CabinLayout> Read(SPF_Config_Handle *h,
                                   const std::string &truck_key) const;

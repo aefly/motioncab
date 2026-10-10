@@ -9,80 +9,68 @@
 namespace motioncab {
 
 namespace {
-// Seat spring. Its stiffness comes from Reactivity (omega = 2 / reactivity,
-// ~1.3 Hz at the 0.25 s default, typical of an air-suspended truck seat);
-// its damping leaves a small rebound after a bump without ringing on: a
-// lighter one kept the seat bouncing at its own frequency on flat road at
-// speed, excited by the road's constant small jolts.
+// Leaves a small rebound after a bump. Any lighter and the road's constant
+// small jolts kept the seat bouncing at its own frequency on flat road. (The
+// stiffness comes from Reactivity: ~1.3 Hz at the default, typical of an air
+// seat.)
 constexpr float kSeatDamping = 0.6f;
-// Smooths the raw accelerations first: at speed they carry a constant
-// fast jitter (road texture, seams) that a real seat cushion swallows,
-// and which RoadIrregularityEffect already renders. Undulations and bumps
-// are slower and pass.
+// At speed the raw accelerations carry a constant fast jitter that a real
+// cushion swallows, and that RoadIrregularityEffect already plays.
+// Undulations and bumps are slower and get through.
 constexpr float kAccelFilterTimeConstant = 0.08f;
-// Below about this (m/s^2), what's left is the flat road's noise floor,
-// faded out smoothly (half of it passes at this level, 90% at 3x).
+// What's left below this (m/s^2) is the flat road's noise floor. Half gets
+// through at this level, 90% at three times it.
 constexpr float kAccelNoiseFloor = 0.05f;
 
-// Smooth dead zone: ~0 for |a| << floor, ~a for |a| >> floor, no kink.
+// A dead zone without a kink.
 float FadeNoiseFloor(float a, float floor) {
   const float a2 = a * a;
   return a * a2 / (a2 + floor * floor);
 }
 
-// Smooth limit: ~a for |a| << limit, approaching +/-limit beyond it.
 float SoftLimit(float a, float limit) { return limit * std::tanh(a / limit); }
-// Meters of head travel per m/s^2 of sustained vertical acceleration,
-// normalized so Reactivity changes the timing but not the size. The game's
-// accelerations are small (logged: ~0.2 m/s^2 on a rolling road, a few m/s^2
-// on a curb), so this has to be generous for undulations to show at all.
+// Meters per m/s^2, the same whatever the Reactivity. The game's
+// accelerations are small (logged: ~0.2 m/s^2 on a rolling road, a few on a
+// curb), so it has to be generous for undulations to show at all.
 constexpr float kSeatTravelPerAccel = 0.02f;
 constexpr float kMaxSeatTravel = 0.04f; // meters, either way
-// Big jolts (logged: 5 to 9 m/s^2 over a curb or speed bump at ~30 km/h)
-// are compressed toward this, like a seat firming up near the end of its
-// travel, so they read as a bump rather than throwing the head around.
-// Small ones stay nearly linear (90% passes at half this level).
+// Big jolts (logged: 5 to 9 m/s^2 over a curb at ~30 km/h) get squashed
+// toward this, like a seat firming up near the end of its travel, so they
+// read as a bump rather than throwing the head around.
 constexpr float kAccelSoftLimit = 1.5f; // m/s^2
 
-// SPF passes the SCS telemetry through unconverted (see orientation.pitch
-// below), and the SCS SDK gives angular acceleration in rotations/s^2,
-// whatever SPF_TelemetryData.h says. Converted to rad/s^2 on read.
+// Angular acceleration comes in rotations/s^2, whatever SPF_TelemetryData.h
+// says: SPF passes the SCS units through.
 constexpr float kRotationsToRadians = math::kTwoPi;
 
-// Head roll: the neck and torso are stiffer and better damped than the seat.
+// The neck and torso are stiffer and better damped than the seat.
 constexpr float kRollOmega = 12.0f; // rad/s, ~1.9 Hz
 constexpr float kRollDamping = 0.4f;
-// Degrees of head roll per rad/s^2 of sustained chassis roll acceleration
-// (2 degrees per rotation/s^2, as tuned before the unit conversion).
+// Tuned as 2 degrees per rotation/s^2, before the unit conversion.
 constexpr float kRollDegPerAngularAccel = 2.0f / math::kTwoPi;
 constexpr float kMaxRollDeg = 2.0f;
-// Roll direction, the body staying upright while the cabin rocks. Positive
-// chassis roll lifts the right side (SCS vehicle space: X = right, Z =
-// backward), so the truck leans left. Flip if the head tilt feels inverted.
+// The body stays upright while the cabin rocks.
 constexpr float kRollSign = 1.0f;
 
-// The high-pass on both accelerations, a safety net so the head always
-// settles back to the player's own seat: the game leaves gravity out, and a
-// truck can't sustain a vertical acceleration for long anyway. Slow enough
-// to let a dip or crest a few seconds long through.
+// A safety net bringing the head back to the player's seat: the game leaves
+// gravity out, and a truck can't sustain a vertical acceleration for long
+// anyway. Slow enough to let a dip or crest a few seconds long through.
 constexpr float kAccelBaselineTimeConstant = 8.0f;
 // Collisions and physics glitches spike far beyond any road input.
 constexpr float kMaxAccel = 30.0f;        // m/s^2
 constexpr float kMaxAngularAccel = 20.0f; // rad/s^2
 
-// The dive baseline is only re-captured once the truck has settled at a
-// stop, so the stopping dive has rebounded first.
+// The dive baseline waits for the truck to settle at a stop, so the braking
+// dive has rebounded first.
 constexpr float kStationarySpeedKmh = 0.5f;
 constexpr float kSettleSeconds = 1.0f;
 constexpr float kDeltaBaselineTimeConstant = 1.0f;
 
-constexpr float kGradeGain =
-    1.0f; // meters of head offset per radian of chassis pitch
-// Road pitch changes in steps at each road segment joint, which a fast
-// follow turned into jolts at speed. A grade is a slow thing to follow.
+constexpr float kGradeGain = 1.0f; // meters per radian of pitch
+// The road's pitch changes in steps at each segment joint, which a fast
+// follow turned into jolts at speed.
 constexpr float kGradeTimeConstant = 1.0f;
-// A front/rear split with less than this much separation isn't a
-// meaningful wheelbase to divide by (degenerate/single-axle layout).
+// Too short a wheelbase to divide by.
 constexpr float kMinAxleSeparation = 0.5f;
 } // namespace
 
@@ -91,8 +79,7 @@ void SuspensionEffect::LoadSettings() {
   reactivity_ = Float("reactivity", reactivity_);
   grade_strength_ = Float("grade_strength", grade_strength_);
 
-  // Floored to the slider's minimum: a value saved under the old, wider
-  // range would make the seat buzz.
+  // A value saved under the old, wider range would make the seat buzz.
   seat_omega_ =
       2.0f / std::max(reactivity_,
                       settings::Min("settings.road.suspension.reactivity"));
@@ -110,17 +97,16 @@ void SuspensionEffect::Reset() {
   seat_y_.Reset();
   seat_roll_.Reset();
   grade_y_.Reset();
-  // Restarted from 0 rather than from the next reading: that reading may
-  // land mid-bump, and the slow baseline would then hold the head off its
-  // seat for seconds. A truck can't sustain a vertical acceleration (the
-  // game leaves gravity out), so 0 is where both settle anyway.
+  // From 0 rather than the next reading, which may land mid-bump and leave
+  // the slow baseline holding the head off its seat for seconds. Both settle
+  // at 0 anyway.
   accel_y_filter_.Reset();
   accel_roll_filter_.Reset();
   accel_y_baseline_.Reset();
   accel_roll_baseline_.Reset();
   stationary_elapsed_ = 0.0f;
-  // The dive baseline intentionally is NOT reset here: it tracks the
-  // truck's actual resting geometry.
+  // Not the dive baseline: it's the truck's resting geometry, which hasn't
+  // changed.
 }
 
 void SuspensionEffect::OnTruckConstantsChanged(
@@ -149,7 +135,7 @@ void SuspensionEffect::OnTruckConstantsChanged(
   uint32_t front_count = 0, rear_count = 0;
   for (uint32_t i = 0; i < wheel_count_; ++i) {
     const float z = constants.wheels[i].position.z;
-    is_front_[i] = z < mid_z; // SCS vehicle space: Z = backward
+    is_front_[i] = z < mid_z; // Z points backward
     if (!is_simulated_[i])
       continue;
     if (is_front_[i]) {
@@ -167,7 +153,6 @@ void SuspensionEffect::OnTruckConstantsChanged(
       axle_separation_ = separation;
   }
 
-  // A truck swap invalidates the resting front/rear balance.
   has_delta_baseline_ = false;
 }
 
@@ -184,8 +169,7 @@ void SuspensionEffect::OnTrailersChanged(const SPF_Trailer *trailers,
   if (connected_now == prev_trailer_connected_)
     return;
 
-  // Hitching/unhitching shifts the front/rear balance just as much as a
-  // truck swap does.
+  // Hitching or unhitching shifts the front/rear balance.
   prev_trailer_connected_ = connected_now;
   has_delta_baseline_ = false;
 }
@@ -195,9 +179,8 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
   if (wheel_count_ == 0)
     return {};
 
-  // While the game world is still loading, telemetry reports every wheel
-  // at exactly 0, which no real truck ever does at rest. Don't react to
-  // that, nor seed the baselines from it.
+  // While the world loads every wheel reads exactly 0, which no truck at rest
+  // ever does: nothing to react to or seed the baselines from.
   bool has_live_data = false;
   for (uint32_t i = 0; i < wheel_count_; ++i) {
     if (truck.wheels[i].suspension_deflection != 0.0f) {
@@ -211,9 +194,8 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
   HeadOffset offset;
 
   // --- Seat: chassis acceleration at the driver's head ---
-  // Rigid body: a_head = a + alpha x r, whose vertical component is
-  // alpha.z * r.x - alpha.x * r.z. Pitching lifts the front (where the
-  // driver sits) and rolling lifts the driver's side.
+  // Rigid body: a_head = a + alpha x r, whose vertical part is
+  // alpha.z * r.x - alpha.x * r.z.
   const SPF_FVector &alpha = truck.local_angular_acceleration;
   const float alpha_x = std::clamp(alpha.x * kRotationsToRadians,
                                    -kMaxAngularAccel, kMaxAngularAccel);
@@ -230,9 +212,8 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
   const float alpha_z_hp =
       alpha_z_lp - accel_roll_baseline_.Update(alpha_z_lp, dt);
 
-  // The body lags behind the cabin: a jolt upward drops the head relative
-  // to it, hence the negated drive. Scaled by omega^2 so the size doesn't
-  // depend on the spring's stiffness (see kSeatTravelPerAccel).
+  // A jolt upward drops the head relative to the cabin. Scaled by omega^2 so
+  // the size doesn't depend on the spring's stiffness.
   const float seat_y = seat_y_.Update(
       -SoftLimit(FadeNoiseFloor(accel_y_hp, kAccelNoiseFloor), kAccelSoftLimit),
       dt);
@@ -246,8 +227,7 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
                            -kMaxRollDeg, kMaxRollDeg);
 
   // --- Grade-follow ---
-  // Wheels that don't carry the truck would skew the front/rear balance:
-  // unsimulated ones, a raised lift axle, and any wheel in the air.
+  // Wheels that don't carry the truck would skew the balance.
   float sum_front = 0.0f, sum_rear = 0.0f;
   uint32_t front_count = 0, rear_count = 0;
   for (uint32_t i = 0; i < wheel_count_; ++i) {
@@ -274,8 +254,7 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
     stationary_elapsed_ += dt;
   else
     stationary_elapsed_ = 0.0f;
-  // Seeded from the first reading, even on the move, so there's a sane
-  // baseline until the first stop refines it.
+  // Seeded on the move too, so there's something sane until the first stop.
   if (!has_delta_baseline_ && have_axle_split) {
     delta_baseline_.Reset(front_rear_delta);
     has_delta_baseline_ = true;
@@ -285,29 +264,23 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
           ? delta_baseline_.Update(front_rear_delta, dt)
           : delta_baseline_.value();
 
-  // Still followed at 0 strength, easing to 0, so turning Grade Follow off
-  // fades the offset out instead of dropping it, and turning it back on
-  // starts from 0 rather than a stale value.
+  // Still followed at 0 strength, so turning it off fades the offset out
+  // rather than dropping it.
   float grade_target = 0.0f;
   if (grade_strength_ != 0.0f) {
-    // orientation.pitch is a unit-circle fraction (<-0.25,0.25> = <-90,90>
-    // degrees, positive = nose up), not radians. Convert before gaining.
-    // Measured against true horizontal, so flat road always brings the
-    // head back to the player's own seat height. A captured "resting
-    // pitch" can't tell the chassis's own (tiny) pitch apart from the
-    // slope the truck happened to rest on.
+    // orientation.pitch is a fraction of a turn, positive nose up. Taken
+    // against true horizontal so flat road always brings the head back to
+    // the player's seat: a captured resting pitch couldn't tell the
+    // chassis's own pitch from the slope the truck stopped on.
     float pitch_radians =
         static_cast<float>(truck.world_placement.orientation.pitch) *
         math::kTwoPi;
 
     if (have_axle_split) {
-      // Cancel braking/accelerating dive (asymmetric front/rear
-      // deflection); a real grade compresses both ends evenly.
+      // A grade compresses both ends evenly, a dive doesn't.
       pitch_radians += (front_rear_delta - delta_baseline) / axle_separation_;
     }
 
-    // Downhill (nose down, negative) should raise the head; uphill (nose
-    // up, positive) should lower it, hence the negation.
     grade_target = -pitch_radians * kGradeGain * grade_strength_;
   }
   offset.pos_y += grade_y_.Update(grade_target, dt);

@@ -4,9 +4,7 @@
 
 namespace motioncab::ui {
 
-// Cabin Walk's per-truck cabin layout, folded under its settings
-// ("Advanced"): the truck with a reset of the player's own layout, Go There
-// for each seat, and a row per layout value.
+// Cabin Walk's "Advanced" part, for the current truck's layout.
 void DrawCabinLayoutPanel(SPF_UI_API *ui);
 
 } // namespace motioncab::ui

@@ -2,8 +2,8 @@
 
 namespace motioncab::math {
 
-// Critically-damped spring smoother (semi-implicit, frame-rate independent).
-// `time_constant` is roughly the time to close ~95% of the gap to a new target.
+// Critically-damped smoothing that behaves the same at any frame rate.
+// The time constant is roughly how long it takes to close 95% of the gap.
 class SpringDamper1D {
 public:
   void SetTimeConstant(float seconds) {
@@ -15,8 +15,7 @@ public:
     velocity_ = 0.0f;
   }
 
-  // Moves the value by `delta`, keeping the velocity: re-expresses it
-  // relative to another origin without disturbing the motion.
+  // For re-basing the value on another origin without disturbing the motion.
   void Shift(float delta) { value_ += delta; }
 
   float Update(float target, float dt) {
@@ -25,7 +24,7 @@ public:
 
     const float omega = 2.0f / time_constant_;
     const float x = omega * dt;
-    // Fast rational approximation of exp(-x), stable for any dt.
+    // Cheap stand-in for exp(-x) that stays stable for any dt.
     const float exp_approx =
         1.0f / (1.0f + x + 0.48f * x * x + 0.235f * x * x * x);
 

@@ -43,9 +43,8 @@ namespace {
 void OnTruckDataUpdate(const SPF_TruckData *data, void * /*user_data*/) {
   PluginContext &ctx = Context();
   ctx.latest_truck_data = *data;
-  // Release pairs with OnUpdate's acquire load below: guarantees the
-  // struct write above is visible before the flag is, in case this
-  // callback and OnUpdate ever run on different threads.
+  // Pairs with OnUpdate's acquire, in case telemetry ever comes from another
+  // thread.
   ctx.has_truck_data.store(true, std::memory_order_release);
 }
 
@@ -58,8 +57,8 @@ void OnControlsUpdate(const SPF_Controls *data, void * /*user_data*/) {
 void OnTruckConstantsUpdate(const SPF_TruckConstants *data,
                             void * /*user_data*/) {
   PluginContext &ctx = Context();
-  // Another truck (or none, in between two): the game rebuilds the interior
-  // camera with the player's own pose, which holds none of our offset.
+  // Another truck (or none, between two) gets a new interior camera, without
+  // our offset in it.
   const std::string truck = std::string(data->brand_id) + "/" + data->id;
   if (truck != ctx.truck_identity) {
     ctx.truck_identity = truck;
@@ -71,11 +70,9 @@ void OnTruckConstantsUpdate(const SPF_TruckConstants *data,
     ctx.cabin_walk->OnTruckConstantsChanged(*data);
   }
 
-  // Don't call Cam_SwitchTo here (even deferred) to get SPF onto the new
-  // truck's camera: it can crash during slow Quick Job reloads (750ms+),
-  // so no fixed delay is safe. Picking up the rebuilt camera is SPF's job:
-  // older releases only did it on a view change, so a truck switch in the
-  // interior view left them writing to the freed camera.
+  // No Cam_SwitchTo here to get SPF onto the new camera, even deferred: it
+  // can crash during slow Quick Job reloads (750 ms and more), so no delay is
+  // safe. Picking up the new camera is SPF's job (fixed in 1.2.5).
 }
 
 void OnCommonDataUpdate(const SPF_CommonData *data, void * /*user_data*/) {
@@ -87,13 +84,10 @@ void OnTrailersUpdate(const SPF_Trailer *trailers, uint32_t count,
   Context().effects.NotifyTrailers(trailers, count);
 }
 
-// Callback for keybinds::kPolledActions, which the effects poll via
-// Kbind_GetActionValue instead. Registering is still required though, an
-// unregistered action stays stuck at 0.0 even with a valid manifest binding.
+// The polled actions don't need a callback, but an unregistered action
+// always reads 0.
 void OnPolledActionTriggered() {}
 
-// Tells the player why Cabin Walk refused to stand up, or sent them back to
-// the wheel.
 void ShowCabinWalkNotice(PluginContext &ctx) {
   const char *key = nullptr;
   switch (ctx.cabin_walk->TakeNotice()) {
@@ -137,32 +131,26 @@ void OnLoad(const SPF_Load_API *load_api) {
 }
 
 void OnUnload() {
-  // Runs before SPF's own final settings.json flush, while the config API
-  // is still valid, discard unsaved tweaks here so they never reach disk.
+  // Before SPF's last settings.json flush, so unsaved tweaks never reach
+  // disk.
   profiles::RevertUnsavedChanges(Context());
-  // Don't leave the game's dynamic FOV switched off if we were mid-zoom.
   if (Context().manual_zoom) {
     Context().manual_zoom->RestoreFov();
     Context().manual_zoom->RestoreDynamicFov();
   }
-  // Give the camera's own limits and the mouse back if the player is up in
-  // the cabin. Their position is part of the offset below.
+  // Cabin Walk's position is part of the offset removed below.
   PluginContext &ctx = Context();
   if (ctx.cabin_walk)
     ctx.cabin_walk->Shutdown(ctx.core ? ctx.core->camera : nullptr);
   ctx.cabin_walk_sounds.Shutdown(ctx.core ? ctx.core->sound : nullptr);
-  // Take our offset back out of the interior pose, which the engine keeps
-  // after we're gone. After ManualZoomEffect's RestoreFov above, which
-  // adds the applied FOV offset back on.
+  // The engine would keep our offset after we're gone. This has to follow
+  // RestoreFov, which puts the applied FOV offset back on.
   if (ctx.core && ctx.core->camera)
     ctx.camera_rig.Remove(ctx.core->camera);
-  // The About tab's logo texture is the one thing this plugin allocates
-  // through the UI API that SPF doesn't free on its own.
+  // The one thing we allocate that SPF doesn't free for us.
   if (Context().core && Context().core->ui)
     ui::ReleaseLogoTexture(Context().core->ui);
   loc::Reset();
-  // All API pointers become invalid after this returns; handles besides
-  // the logo texture above are owned by the framework.
 }
 
 void OnRegisterUI(SPF_UI_API *ui_api) {
@@ -181,8 +169,7 @@ void OnToggleSettingsWindow() {
   ctx.core->config->Cfg_SetBool(ctx.config_handle, kKey, new_state);
 }
 
-// `file` in the plugin's data directory, next to the profiles; empty (the
-// file then isn't used) if the data directory isn't available.
+// Empty if there's no data directory, in which case the file isn't used.
 std::string DataFilePath(PluginContext &ctx, const char *file) {
   const std::string dir = ctx.PluginDataDir();
   if (dir.empty() || !ctx.core->environment->Env_CreatePath(
@@ -201,9 +188,8 @@ void OnActivated(const SPF_Core_API *core_api) {
   ctx.config_handle =
       core_api->config->Cfg_GetContext(PluginContext::kPluginName);
 
-  // Acquired before effect registration: ManualLookEffect needs the
-  // keybinds API/handle at construction time to poll its look-left/right
-  // actions every frame.
+  // Before the effects: the ones polling keys take the handle at
+  // construction.
   ctx.keybinds_handle =
       core_api->keybinds->Kbind_GetContext(PluginContext::kPluginName);
   ctx.environment_handle =
@@ -248,7 +234,6 @@ void OnActivated(const SPF_Core_API *core_api) {
   ctx.manual_zoom = std::make_unique<ManualZoomEffect>(
       core_api->config, ctx.config_handle, core_api->keybinds,
       ctx.keybinds_handle, &ctx.camera_rig);
-  // The player's own layouts (the presets are compiled in).
   ctx.cabin_layouts = std::make_unique<CabinLayoutStore>(
       core_api->config, DataFilePath(ctx, "cabin_layouts.json"));
   if (const std::string dir = ctx.PluginDataDir(); !dir.empty())
@@ -267,14 +252,13 @@ void OnActivated(const SPF_Core_API *core_api) {
                                                  OnControlsUpdate, nullptr);
     core_api->telemetry->Tel_RegisterForTruckConstants(
         ctx.telemetry_handle, OnTruckConstantsUpdate, nullptr);
-    // Tel_RegisterForTruckConstants only fires on a later change event, not
-    // at registration. Fetch the current snapshot now so effects gating on
-    // it (e.g. is_electric_) see it even when activating mid-session.
+    // The callback only fires on a later change, so activating mid-session
+    // would leave the effects without the current truck.
     SPF_TruckConstants initial_constants{};
     core_api->telemetry->Tel_GetTruckConstants(
         ctx.telemetry_handle, &initial_constants, sizeof(initial_constants));
-    // The current truck, so a later event for it isn't taken for a switch
-    // (which would forget the offset still in the pose).
+    // So a later event for this truck isn't taken for a switch, which would
+    // forget the offset still in the pose.
     ctx.truck_identity =
         std::string(initial_constants.brand_id) + "/" + initial_constants.id;
     ctx.effects.NotifyTruckConstants(initial_constants);
@@ -286,8 +270,6 @@ void OnActivated(const SPF_Core_API *core_api) {
   }
 
   if (ctx.keybinds_handle) {
-    // Only functional keybinds are registered here; effect enable/disable
-    // stays in the settings UI.
     for (const keybinds::Action &action : keybinds::kPolledActions)
       core_api->keybinds->Kbind_Register(ctx.keybinds_handle, action.id,
                                          OnPolledActionTriggered);
@@ -306,8 +288,6 @@ void OnSettingChanged(SPF_Config_Handle * /*config_handle*/,
   if (std::strncmp(keyPath, kSettingsPrefix, sizeof(kSettingsPrefix) - 1) ==
       0) {
     ctx.ReloadEffectsConfig();
-    // A setting just changed, so the cached "matches the active profile?"
-    // answer (SettingsWindow.cpp's unsaved-changes marker) is stale.
     profiles::InvalidateMatchCache();
   }
 }
@@ -324,16 +304,12 @@ void OnUpdate() {
     if (game_state.paused) {
       if (ctx.was_interior_last_frame && ctx.manual_zoom)
         ctx.manual_zoom->RestoreFov();
-      // Leaving a truck (job, garage, save load) goes through a menu, and
-      // the game saves that truck's FOV as it is then. After the zoom's
-      // restore above, which adds the applied FOV offset back on.
+      // Leaving a truck always goes through a menu, and the game saves its
+      // FOV as it is then. After RestoreFov, which puts our offset back on.
       ctx.camera_rig.RemoveFov(ctx.core->camera);
-      // SCS's "paused" telemetry flag covers native menus, not just the
-      // pause screen, including F4's interior seat/FOV/lighting overlay.
-      // That overlay doesn't change the reported camera type, so
-      // is_interior below would otherwise stay true and effects would
-      // keep animating behind it, which is most noticeable for any
-      // effect that reacts while the truck is stationary.
+      // "Paused" covers every native menu, F4's seat/FOV overlay included,
+      // which still reports the interior camera: the effects would keep
+      // moving behind it otherwise.
       ctx.was_interior_last_frame = false;
       ctx.has_last_update_time = false;
       return;
@@ -344,7 +320,6 @@ void OnUpdate() {
   const bool have_camera = ctx.core->camera->Cam_GetCurrentCamera(&camera_type);
   const bool is_interior = have_camera && camera_type == SPF_CAMERA_INTERIOR;
 
-  // Per project policy, every effect is active in cabin (interior) view only.
   if (!is_interior) {
     if (ctx.was_interior_last_frame && ctx.manual_zoom)
       ctx.manual_zoom->RestoreFov();
@@ -356,31 +331,23 @@ void OnUpdate() {
   }
 
   if (!ctx.was_interior_last_frame) {
-    // Resets smoothing state on cabin re-entry, but not the camera rig's
-    // applied offset: the engine keeps our last-written offset even while
-    // inactive, so it's still what must be subtracted below on the first
-    // frame back. Zeroing it would bake the stale offset into the live
-    // pose, compounding on every view switch.
+    // The camera rig's applied offset stays: the engine kept it in the pose
+    // while we were away, and it still has to come out on the first frame
+    // back. Zeroing it would pile the offset up on every view switch.
     ctx.ResetEffects();
     ctx.was_interior_last_frame = true;
   }
 
   const float dt = ComputeDeltaTimeSeconds(ctx);
-  // Acquire pairs with OnTruckDataUpdate/OnControlsUpdate's release stores
-  // above: guarantees the struct reads below see the write that set the
-  // flag, in case telemetry callbacks run on a different thread.
   if (dt <= 0.0f || !ctx.has_truck_data.load(std::memory_order_acquire) ||
       !ctx.has_controls_data.load(std::memory_order_acquire))
     return;
 
-  // Before ManualZoomEffect's write: the live FOV must still be last
-  // frame's, ours or someone else's (a truck switch's new camera, F4).
+  // Before the zoom writes, while the live FOV is still last frame's.
   ctx.camera_rig.DetectExternalFovWrite(ctx.core->camera);
   if (ctx.manual_zoom && ctx.manual_zoom->IsEnabled())
     ctx.manual_zoom->Update(dt, ctx.core->camera);
 
-  // Differential write (see CameraRig), skipped entirely while the camera
-  // isn't resolved yet.
   SPF_Camera_API *camera = ctx.core->camera;
   std::optional<CameraRig::Pose> pose = ctx.camera_rig.ReadPose(camera);
   if (!pose)
@@ -418,7 +385,6 @@ void OnUpdate() {
 
 void OnGameWorldReady() {
   PluginContext &ctx = Context();
-  // A new world starts in the driver's seat, with a new camera.
   if (ctx.cabin_walk)
     ctx.cabin_walk->SnapToWheel();
   ctx.was_interior_last_frame = false;
@@ -431,12 +397,11 @@ void OnWorldUnloaded() {
   PluginContext &ctx = Context();
   ctx.has_truck_data.store(false, std::memory_order_relaxed);
   ctx.has_controls_data.store(false, std::memory_order_relaxed);
-  // SPF rebuilds its interior camera for the next world, roll back at 0:
-  // subtracting the old roll offset from it would tilt the view for good.
+  // SPF's next camera starts with no roll: subtracting the old roll offset
+  // from it would tilt the view for good.
   ctx.camera_rig.ForgetApplied();
-  // The bank's handle dies with the world's sound system, and Update only
-  // runs in the interior view, too late to see it go: unload it while the
-  // sound system still runs, so the next world loads it again.
+  // The bank dies with this world's sound system, and nothing else would
+  // notice in time: unload it now so the next world loads it again.
   ctx.cabin_walk_sounds.Shutdown(ctx.core ? ctx.core->sound : nullptr);
 }
 

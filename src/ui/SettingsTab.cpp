@@ -17,14 +17,13 @@ namespace motioncab::ui {
 
 namespace {
 
-// "###" IDs of the confirmation popups: their visible title is translated,
-// and OpenPopup/BeginPopupModal must still agree on the same ID.
+// The popups' titles are translated, so they go by "###" IDs.
 constexpr const char *kOverwritePopupId = "###confirm_overwrite_profile";
 constexpr const char *kDeletePopupId = "###confirm_delete_profile";
 constexpr const char *kResetPopupId = "###confirm_reset_all";
 
-// `field_w`: width of the name field and the profile dropdown, which the
-// buttons next to them follow.
+// `field_w` is the width of the name field and the dropdown, which the
+// buttons follow.
 void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
   PluginContext &ctx = Context();
 
@@ -61,9 +60,8 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
                 loc::Tr("ui.profiles.invalid_name"));
     } else {
       const std::vector<std::string> existing = profiles::List(ctx);
-      // Case-insensitive: on Windows "default" is the same file as
-      // "Default". Reuse the stored spelling so the active profile name
-      // keeps matching the dropdown entry.
+      // On Windows "default" is the same file as "Default": the stored
+      // spelling is kept so the active name still matches the dropdown.
       const std::string *match = profiles::FindIgnoreCase(existing, sanitized);
       if (match) {
         pending_overwrite = *match;
@@ -88,11 +86,9 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
   if (profile_names.empty()) {
     ui->UI_TextDisabled(loc::Tr("ui.profiles.none"));
   } else {
-    // -1 means "no profile matches the current live settings", e.g. a
-    // manual edit was made since the last Load()/Save(). Shown as its own
-    // placeholder rather than defaulting to index 0, which would falsely
-    // claim whatever profile sorts first (often "Default") is active.
-    static int selected_profile = -2; // -2: not yet synced this session
+    // -1 when no profile matches the live settings, shown as such rather
+    // than as whichever profile sorts first. -2 until synced.
+    static int selected_profile = -2;
     static bool selection_initialized = false;
     if (!selection_initialized) {
       selection_initialized = true;
@@ -104,10 +100,7 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
                              : -1;
     }
     if (!pending_select.empty()) {
-      // Only updates which entry the dropdown shows as selected, no
-      // Load() here. Saving already copied the current live settings into
-      // this profile's file, so reloading it right back would just be a
-      // redundant round-trip to the same values.
+      // No Load(): the save just wrote these same values.
       const auto it =
           std::find(profile_names.begin(), profile_names.end(), pending_select);
       selected_profile = it != profile_names.end()
@@ -189,9 +182,8 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
         ShowToast(
             ui, SPF_NOTIFICATION_SUCCESS,
             loc::Tr("ui.profiles.deleted_toast", {{"name", pending_delete}}));
-        // Deleting the active profile shouldn't leave its values loaded,
-        // so fall back to "Default", recreating it first if it's what
-        // just got deleted.
+        // The deleted profile's values shouldn't stay loaded. "Default" is
+        // recreated first in case it's the one that got deleted.
         profiles::EnsureDefaultExists(ctx);
         if (profiles::Load(ctx, profiles::kDefaultProfileName)) {
           const std::vector<std::string> refreshed = profiles::List(ctx);
@@ -210,8 +202,8 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
   }
 }
 
-// Global reset, last in the tab and away from the effect tabs so it isn't
-// clicked by accident.
+// Last in the tab and away from the effect tabs, so it isn't clicked by
+// accident.
 void DrawResetSection(SPF_UI_API *ui, SPF_Config_API *cfg,
                       SPF_Config_Handle *h) {
   PluginContext &ctx = Context();
@@ -240,9 +232,8 @@ void DrawResetSection(SPF_UI_API *ui, SPF_Config_API *cfg,
 void DrawSettingsTab(SPF_UI_API *ui, SPF_Config_API *cfg,
                      SPF_Config_Handle *h) {
   DrawSectionTitle(ui, loc::Tr("ui.keybind.section"));
-  // The keybind button and the profiles section's buttons all start at
-  // the same x, just past the profile name field (180 px, or wider when
-  // the translated keybind label needs the room).
+  // The keybind button and the profiles' buttons line up just past the name
+  // field, which widens if the translated keybind label needs the room.
   constexpr float kGap = 8.0f;
   const char *toggle_label = loc::Tr("ui.keybind.toggle_window");
   float label_w = 0.0f, label_h = 0.0f;

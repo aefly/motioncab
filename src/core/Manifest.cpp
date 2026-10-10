@@ -25,28 +25,25 @@ void Build(SPF_Manifest_Builder_Handle *h,
   api->Info_SetDiscordUrl(h, links::kDiscord);
 
   // --- Configuration Policy ---
-  // No "settings" system: MotionCab's settings are only shown in its own
-  // Quick Settings window (ui/SettingsWindow.cpp), not in SPF's native
-  // settings UI. SPF still saves them, since user config is allowed.
+  // No "settings" system: the settings only show in our own Quick Settings
+  // window. SPF still saves them since user config is allowed.
   api->Policy_SetAllowUserConfig(h, true);
   api->Policy_AddConfigurableSystem(h, "logging");
   api->Policy_AddConfigurableSystem(h, "ui");
   api->Policy_AddConfigurableSystem(h, "localization");
 
   // --- Default Settings ---
-  // Generated from settings::kAll (core/Settings.hpp).
   api->Settings_SetJson(h, settings::DefaultsJson().c_str());
 
   // --- Default System ---
-  // Enabling/disabling effects is handled entirely through their "enabled"
-  // checkbox in the settings UI.
   api->Defaults_SetLogging(h, "info", true);
   api->Defaults_SetLocalization(h, "en");
   for (const keybinds::Action &action : keybinds::kAllActions)
     api->Defaults_AddKeybind(
         h, action.group, action.name, "keyboard", action.default_key,
         keybinds::IsWalkAction(action) ? "manual" : "always");
-  // isVisible=true here only decides the very first launch ever
+  // isVisible only counts on the very first launch: SPF remembers the
+  // player's choice after that.
   api->Defaults_AddWindow(h, "MotionCab", true, true, 100, 100,
                           ui::kWindowWidth, ui::kWindowHeight, false, true);
 

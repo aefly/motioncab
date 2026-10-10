@@ -9,7 +9,7 @@ namespace motioncab {
 
 void EffectManager::Register(std::unique_ptr<Effect> effect) {
   effects_.push_back({std::move(effect)});
-  // Relink every effect: the new one can pause, or be paused by, any other.
+  // The new one can pause, or be paused by, any other.
   for (size_t i = 0; i < effects_.size(); ++i) {
     effects_[i].paused_by.clear();
     for (size_t j = 0; j < effects_.size(); ++j) {
@@ -37,7 +37,7 @@ void EffectManager::ResetAll() {
 
 bool EffectManager::IsPaused(const Slot &slot) const {
   // Only while the pausing effect actually plays: one that needs the
-  // driver's seat lets the others back while Cabin Walk is away.
+  // driver's seat lets the others back while the player is up.
   return std::ranges::any_of(slot.paused_by, [this](size_t i) {
     const Effect &pauser = *effects_[i].effect;
     return pauser.IsEnabled() && (at_wheel_ || !pauser.NeedsDriverSeat());
@@ -53,15 +53,15 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
   HeadOffset total;
   for (auto &slot : effects_) {
     Effect &effect = *slot.effect;
-    // The toggle's fade moves even while the seat or a pause holds the
-    // effect back, so it never picks up again from a stale value (an effect
-    // turned off while paused would play a moment once unpaused).
+    // The toggle's fade keeps moving while the seat or a pause holds the
+    // effect back: an effect turned off while paused would otherwise play for
+    // a moment once unpaused.
     if (effect.IsEnabled()) {
       slot.fade = std::min(1.0f, slot.fade + step);
     } else if (slot.fade > 0.0f) {
       slot.fade = std::max(0.0f, slot.fade - step);
       if (slot.fade <= 0.0f)
-        effect.Reset(); // start from rest once re-enabled
+        effect.Reset();
     }
     slot.pause_fade = IsPaused(slot) ? std::max(0.0f, slot.pause_fade - step)
                                      : std::min(1.0f, slot.pause_fade + step);
@@ -71,7 +71,7 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
     if (effect.NeedsDriverSeat()) {
       if (seat_fade_ <= 0.0f) {
         if (!slot.seat_reset)
-          effect.Reset(); // start from rest back in the seat
+          effect.Reset();
         slot.seat_reset = true;
         continue;
       }
@@ -80,7 +80,7 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
     }
     if (slot.pause_fade <= 0.0f) {
       if (!slot.pause_reset)
-        effect.Reset(); // start from rest once no longer paused
+        effect.Reset();
       slot.pause_reset = true;
       continue;
     }

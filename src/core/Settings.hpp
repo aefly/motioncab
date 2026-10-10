@@ -5,9 +5,8 @@
 #include <string>
 #include <string_view>
 
-// Every MotionCab setting, declared once: the manifest's defaults, the Quick
-// Settings window, the profiles and the effects' own defaults all come from
-// this table.
+// Every setting, declared once: the manifest, the Quick Settings window, the
+// profiles and the effects' defaults all read this table.
 namespace motioncab::settings {
 
 enum class Type { kBool, kFloat };
@@ -16,12 +15,11 @@ struct Setting {
   const char *key; // "settings.<group>.<effect>.<name>"
   Type type;
   float default_value; // 0 or 1 for a bool
-  // Float only: the slider the Quick Settings window shows.
+  // Slider range and printf format, floats only.
   float min = 0.0f;
   float max = 0.0f;
-  const char *format = nullptr; // printf format of the slider's value
-  // Stored in km/h, but shown by the Quick Settings window in the active
-  // language's unit (km/h or mph).
+  const char *format = nullptr;
+  // Stored in km/h, shown in the language's unit (km/h or mph).
   bool is_speed = false;
 
   constexpr bool default_bool() const { return default_value != 0.0f; }
@@ -41,8 +39,8 @@ constexpr Setting Speed(const char *key, float default_value, float min,
   return {key, Type::kFloat, default_value, min, max, "%.0f km/h", true};
 }
 
-// In the order of the manifest's default settings JSON. Each group's and
-// each effect's settings must stay together (checked below).
+// The manifest JSON's order. Each group's and effect's settings must stay
+// together (checked below).
 inline constexpr Setting kAll[] = {
     // driving.head_motion
     Bool("settings.driving.head_motion.enabled", true),
@@ -194,7 +192,6 @@ inline constexpr Setting kAll[] = {
     Bool("settings.manual.cabin_walk.require_parking_brake", true),
 };
 
-// "settings.<group>.<effect>.<name>" split into its parts.
 struct KeyParts {
   std::string_view group, effect, name;
 };
@@ -208,8 +205,7 @@ constexpr KeyParts SplitKey(std::string_view key) {
           key.substr(effect_end + 1)};
 }
 
-// True if `setting` belongs to the effect whose settings live under
-// `effect_prefix` ("settings.<group>.<effect>").
+// `effect_prefix` is "settings.<group>.<effect>".
 constexpr bool InEffect(const Setting &setting,
                         std::string_view effect_prefix) {
   const std::string_view key(setting.key);
@@ -217,11 +213,9 @@ constexpr bool InEffect(const Setting &setting,
          key[effect_prefix.size()] == '.';
 }
 
-// The manifest's JSON needs each group's and each
-// effect's settings in one run: a group or effect seen again after another
-// one would be a duplicate JSON key.
-// Each key is split once: splitting them all again for every pair runs
-// past clang's constant evaluation step limit.
+// A group or effect showing up again after another one would be a duplicate
+// key in the manifest's JSON. The keys are split up front because splitting
+// them again for every pair runs past clang's constexpr step limit.
 consteval bool SettingsAreGrouped() {
   constexpr size_t n = std::size(kAll);
   KeyParts parts[n];
@@ -245,8 +239,7 @@ consteval bool SettingsAreGrouped() {
 static_assert(SettingsAreGrouped(),
               "keep each group's and each effect's settings together");
 
-// Default value of `key`, checked at compile time: an unknown key doesn't
-// compile. For the effects' member initializers.
+// For the effects' member initializers: a mistyped key doesn't compile.
 consteval float Default(std::string_view key) {
   for (const Setting &s : kAll) {
     if (key == s.key && s.type == Type::kFloat)
@@ -255,8 +248,7 @@ consteval float Default(std::string_view key) {
   throw "unknown float setting key";
 }
 
-// Slider minimum of `key`, checked the same way: for an effect to floor a
-// value saved before the range was narrowed.
+// Lets an effect floor a value saved before its range was narrowed.
 consteval float Min(std::string_view key) {
   for (const Setting &s : kAll) {
     if (key == s.key && s.type == Type::kFloat)
@@ -273,15 +265,12 @@ consteval bool DefaultBool(std::string_view key) {
   throw "unknown bool setting key";
 }
 
-// The setting with this key, or nullptr.
 const Setting *Find(std::string_view key);
 
-// The manifest's default settings JSON (Settings_SetJson), without the
-// "settings." root.
+// Without the "settings." root, which SPF adds.
 std::string DefaultsJson();
 
-// Writes every setting's default value into `handle`: the live config for
-// "Reset to Defaults", or a new profile file.
+// Into the live config for "Reset to Defaults", or into a new profile file.
 void WriteDefaults(SPF_Config_API *cfg, SPF_Config_Handle *handle);
 
 } // namespace motioncab::settings

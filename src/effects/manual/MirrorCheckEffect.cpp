@@ -5,9 +5,8 @@
 namespace motioncab {
 
 namespace {
-// Below this, the truck is considered "stationary" for require_stationary_
-// purposes, a small margin over exact 0 to absorb residual physics creep.
-constexpr float kStationarySpeedThreshold = 0.3f; // meters/second
+// A little over 0, since a stopped truck still creeps a bit.
+constexpr float kStationarySpeedThreshold = 0.3f; // m/s
 } // namespace
 
 void MirrorCheckEffect::LoadSettings() {
@@ -31,19 +30,17 @@ void MirrorCheckEffect::Reset() {
   yaw_.Reset();
   pitch_.Reset();
   fov_.Reset();
-  // prev_*blinker_ and *_moving_at_activation_ are deliberately kept: Reset
-  // runs on every cabin re-entry, and clearing them would make a blinker
-  // switched on while driving look like a fresh activation while stopped.
+  // The blinker state is kept: this runs on every cabin re-entry, and a
+  // blinker switched on while driving would then look freshly switched on
+  // while stopped.
 }
 
 HeadOffset MirrorCheckEffect::Update(float dt, const SPF_TruckData &truck,
                                      const SPF_Controls & /*controls*/) {
   const bool is_moving = std::fabs(truck.speed) > kStationarySpeedThreshold;
 
-  // Latch whether the truck was moving at the exact moment each blinker
-  // turned on, so a signal started while driving keeps ignoring the
-  // mirror check even if the truck subsequently stops (e.g. waiting in
-  // traffic mid-lane-change) instead of being re-evaluated every frame.
+  // A signal started while driving stays ignored even if the truck then
+  // stops, e.g. waiting in traffic mid lane change.
   if (truck.lblinker && !prev_lblinker_)
     lblinker_moving_at_activation_ = is_moving;
   if (truck.rblinker && !prev_rblinker_)
@@ -64,8 +61,7 @@ HeadOffset MirrorCheckEffect::Update(float dt, const SPF_TruckData &truck,
       !(ignore_after_moving_signal_ ? rblinker_moving_at_activation_
                                     : is_moving);
 
-  // Empirically, lblinker/rblinker map to the opposite yaw sign from the
-  // naive assumption (confirmed in-game: right blinker was looking left).
+  // Positive yaw is to the left (seen in game).
   if (lblinker_allowed && truck.lblinker) {
     target_yaw_deg = left_angle_deg_;
     target_pitch_deg = left_pitch_deg_;

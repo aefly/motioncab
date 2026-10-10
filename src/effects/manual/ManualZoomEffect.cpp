@@ -30,9 +30,7 @@ void ManualZoomEffect::LoadConfig() {
     RestoreDynamicFov();
   }
   if (enabled_ && !was_enabled) {
-    // Update() doesn't run at all while disabled, so base_fov_deg_ can go
-    // stale if the FOV changes some other way in the meantime. Force a
-    // resync on the next Update() rather than only on cabin re-entry.
+    // The FOV may have changed while disabled.
     has_synced_ = false;
   }
   zoom_fov_deg_ = config_.Float("zoom_fov_deg", zoom_fov_deg_);
@@ -43,32 +41,29 @@ void ManualZoomEffect::LoadConfig() {
 
 void ManualZoomEffect::Reset() {
   RestoreFov();
-  // While a restore is still pending the sync must keep the player's base
-  // FOV: the live value is still our zoomed one.
+  // With a restore pending, the live FOV is still our zoomed one, not
+  // something to sync from.
   if (!restore_pending_)
     has_synced_ = false;
   RestoreDynamicFov();
 }
 
-// Puts the player's own FOV back if we are still overriding it. Without
-// this, a Reset() while zoomed (pause, camera switch, alt-tab) would
-// re-sync from the live, zoomed FOV and bake it in as the new base.
+// Without this, a Reset() while zoomed (pause, view switch, alt-tab) would
+// sync from the zoomed FOV and keep it as the player's own.
 void ManualZoomEffect::RestoreFov() {
   if (!fov_overridden_)
     return;
   if (has_synced_ && camera_api_)
     SetFov(base_fov_deg_);
-  // The write can be ignored (e.g. interior camera not resolved yet right
-  // after re-entry), so Update() keeps retrying until the live FOV matches.
+  // The write can be ignored (the camera not resolved yet right after
+  // re-entry), so Update() keeps at it until the live FOV matches.
   restore_pending_ = has_synced_;
   fov_overridden_ = restore_pending_;
 }
 
-// The game's real FOV is ours plus a speed-dependent term scaled by the
-// speed-FOV factor (measured in-game: ~4 deg extra at speed with the
-// default factor 1.2). Cutting that factor to 1 instantly would pop the
-// term out in a single frame, so it's eased in step with the FOV spring
-// instead: down while zooming in, back up while zooming out.
+// The game widens the FOV with speed (~4 degrees at speed with the default
+// factor, measured in game). Cutting that factor to 1 at once would pop the
+// FOV, so it's eased along with the zoom.
 void ManualZoomEffect::UpdateDynamicFov(float dt, bool zoom_held) {
   if (!camera_api_ || !camera_api_->Cam_GetInteriorSpeedFovChangeFactor ||
       !camera_api_->Cam_SetInteriorSpeedFovChangeFactor)
@@ -78,7 +73,7 @@ void ManualZoomEffect::UpdateDynamicFov(float dt, bool zoom_held) {
     if (!zoom_held)
       return;
     float factor = 1.0f;
-    // Nothing to ease if it's already 1 (dynamic FOV off).
+    // Already 1 means the player has dynamic FOV off.
     if (!camera_api_->Cam_GetInteriorSpeedFovChangeFactor(&factor) ||
         std::fabs(factor - 1.0f) <= 1e-3f)
       return;
@@ -96,7 +91,7 @@ void ManualZoomEffect::UpdateDynamicFov(float dt, bool zoom_held) {
   camera_api_->Cam_SetInteriorSpeedFovChangeFactor(
       1.0f + (saved_speed_fov_factor_ - 1.0f) * eased);
   if (!zoom_held && dynamic_blend_ >= 1.0f)
-    dynamic_fov_suppressed_ = false; // fully handed back to the game
+    dynamic_fov_suppressed_ = false;
 }
 
 void ManualZoomEffect::RestoreDynamicFov() {
@@ -142,11 +137,8 @@ void ManualZoomEffect::Update(float dt, SPF_Camera_API *camera_api) {
   }
 
   if (!has_synced_) {
-    // Start from whatever FOV the player already has (native default or a
-    // prior zoom level) instead of snapping to a fixed value. The getter
-    // can fail for a frame or two right after cabin entry, so only latch
-    // has_synced_ on success; a failed frame just retries instead of
-    // locking in the 0.0f default.
+    // The getter can fail for a frame or two after cabin entry: retry
+    // rather than keep 0 as the player's FOV.
     if (GetFov(&base_fov_deg_)) {
       fov_spring_.Reset(base_fov_deg_);
       has_synced_ = true;
@@ -156,23 +148,18 @@ void ManualZoomEffect::Update(float dt, SPF_Camera_API *camera_api) {
   const bool zoom_held =
       keybinds::IsHeld(keybinds_api_, keybinds_handle_, keybinds::kZoom);
 
-  // base_fov_deg_ is kept in sync with the native FOV below whenever not
-  // zoomed, so it's already correct by press time. Reading the live FOV
-  // here instead would grab a not-yet-settled spring value on a repeat
-  // press, ratcheting the "return to" FOV inward with each spam.
-
+  // Not the live FOV: on a quick repeat press the spring hasn't settled
+  // yet, and each press would ratchet the FOV to return to inward.
   const float target = zoom_held ? zoom_fov_deg_ : base_fov_deg_;
   const float smoothed = fov_spring_.Update(target, dt);
 
-  // Once idle and settled, stop writing FOV and track the live value
-  // instead. Otherwise this keeps re-asserting the stale base_fov_deg_,
-  // fighting any FOV change made elsewhere (e.g. the game's own F4 slider).
+  // Once settled, follow the live FOV instead of writing it, or we'd fight
+  // any other change to it (the F4 slider).
   constexpr float kSettledEpsilonDeg = 0.05f;
   if (!zoom_held && std::fabs(smoothed - base_fov_deg_) < kSettledEpsilonDeg) {
     if (fov_overridden_) {
-      // Just settled: land exactly on the player's FOV before letting go.
-      // The last write stopped up to kSettledEpsilonDeg short of it, and
-      // re-syncing from that would shift the base a little on every zoom.
+      // Land exactly on the player's FOV before letting go: syncing from
+      // the last write, a little short of it, would shift it on every zoom.
       SetFov(base_fov_deg_);
       fov_spring_.Reset(base_fov_deg_);
     } else if (GetFov(&base_fov_deg_)) {

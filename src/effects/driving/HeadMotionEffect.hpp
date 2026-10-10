@@ -6,13 +6,10 @@
 
 namespace motioncab {
 
-// Simulates inertial head sway and tilt: the driver's head lags behind the
-// cabin's own motion under acceleration, braking and cornering, the way a
-// real passenger's head would.
+// The head lagging behind the cabin's motion through inertia.
 //
-// No vertical (Y) sway: it double-pushed pos_y alongside SuspensionEffect's
-// grade-follow on grade transitions, so that's left entirely to Suspension.
-// Assumes SCS's local-space convention: X = right, Y = up, Z = backward.
+// No vertical sway: on a change of grade it added up with SuspensionEffect's,
+// which now has that to itself.
 class HeadMotionEffect final : public ConfigurableEffect {
 public:
   HeadMotionEffect(SPF_Config_API *config_api, SPF_Config_Handle *config_handle)
@@ -27,13 +24,10 @@ public:
 private:
   void LoadSettings() override;
 
-  // translational response to linear acceleration
   float sway_strength_ =
       settings::Default("settings.driving.head_motion.sway_strength");
-  // rotational response to angular velocity
   float tilt_strength_ =
       settings::Default("settings.driving.head_motion.tilt_strength");
-  // seconds, spring time constant
   float smoothing_time_ =
       settings::Default("settings.driving.head_motion.smoothing_time");
 

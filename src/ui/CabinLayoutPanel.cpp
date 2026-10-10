@@ -28,8 +28,7 @@ const CabinLayoutField &FieldNamed(std::string_view name) {
 
 std::string Label(const std::string &key) { return loc::Tr(key.c_str()); }
 
-// A value's tooltip: what it moves and which way. Both seats' looks share
-// theirs.
+// Both seats' looks share theirs.
 std::string Tip(std::string_view name) {
   std::string_view tip = name;
   if (name.ends_with("_yaw"))
@@ -39,10 +38,8 @@ std::string Tip(std::string_view name) {
   return Label("ui.cabin_walk.layout.tip." + std::string(tip));
 }
 
-// A value's row: its name, then [-] value [+] (StepperFloat). The value is
-// in centimeters (meters stored) or degrees, stepped by 1 cm or 1 degree,
-// dragged, typed with Ctrl+click, or right-clicked back to the shipped
-// layout's. Applies live; saved when let go.
+// Shown in centimeters (stored in meters) or degrees. Right-click goes back
+// to the shipped layout's value. Applies live, saved when let go.
 void DrawValueRow(SPF_UI_API *ui, CabinWalkEffect &walk, const char *name,
                   const std::string &label, bool indent = false) {
   const CabinLayoutField &field = FieldNamed(name);
@@ -78,7 +75,6 @@ void DrawValueRow(SPF_UI_API *ui, CabinWalkEffect &walk, const char *name,
   }
 }
 
-// A table of rows: the names' column as wide as they need.
 bool BeginRows(SPF_UI_API *ui, const char *id) {
   if (!ui->UI_BeginTable(id, 2, SPF_TABLE_FLAG_NONE, 0.0f, 0.0f, 0.0f))
     return false;
@@ -88,8 +84,7 @@ bool BeginRows(SPF_UI_API *ui, const char *id) {
   return true;
 }
 
-// Going to sit at a seat (standing up first if at the wheel), to tune it
-// from there: a row of its own, the buttons where the values start.
+// To tune a seat from there.
 void DrawGoToRow(SPF_UI_API *ui, CabinWalkEffect &walk) {
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableNextColumn();
@@ -113,8 +108,7 @@ void DrawGoToRow(SPF_UI_API *ui, CabinWalkEffect &walk) {
   }
 }
 
-// Whether a seat can be sat in: a passenger seat folded up, a day cab's
-// missing bunk.
+// A passenger seat folded up, a day cab's missing bunk.
 void DrawUsableRow(SPF_UI_API *ui, CabinWalkEffect &walk, Spot spot) {
   CabinLayout layout = walk.layout();
   bool &usable =
@@ -134,7 +128,7 @@ void DrawUsableRow(SPF_UI_API *ui, CabinWalkEffect &walk, Spot spot) {
       Tip(spot == Spot::kPassenger ? "has_passenger" : "has_bunk").c_str());
 }
 
-// The truck, and dropping the player's own layout for it (only then).
+// The reset only shows for the player's own layout.
 void DrawTruckRow(SPF_UI_API *ui, CabinWalkEffect &walk) {
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableNextColumn();
@@ -161,9 +155,6 @@ void DrawTruckRow(SPF_UI_API *ui, CabinWalkEffect &walk) {
     walk.ResetLayout();
 }
 
-// The truck and going to a seat, then every value by part of the cabin: the
-// walkway's limits, the standing height and crouch, then each seat (whether
-// it can be used, where it is and where it looks).
 void DrawValues(SPF_UI_API *ui, CabinWalkEffect &walk) {
   if (!BeginRows(ui, "cabin_values"))
     return;
@@ -206,8 +197,8 @@ void DrawCabinLayoutPanel(SPF_UI_API *ui) {
       "###cabin_layout_advanced";
   if (!ui->UI_CollapsingHeader(advanced.c_str(), SPF_TREE_NODE_FLAG_NONE))
     return;
-  // Only from the cabin, the game running: paused (menus) or in another
-  // view, Cabin Walk doesn't run, so an edit wouldn't show.
+  // Paused or in another view, Cabin Walk doesn't run, so an edit wouldn't
+  // show.
   if (!walk || !walk->truck_known() || !ctx.was_interior_last_frame) {
     ui->UI_TextDisabled(loc::Tr("ui.cabin_walk.layout.no_truck"));
     return;

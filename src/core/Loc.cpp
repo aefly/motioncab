@@ -8,7 +8,7 @@ namespace motioncab::loc {
 
 namespace {
 
-// Node-based, so a cached value's c_str() survives later insertions.
+// Node-based, so the c_str() Tr() hands out survives later insertions.
 std::unordered_map<std::string, std::string> g_cache;
 std::string g_language;
 unsigned g_language_changes = 0;
@@ -27,7 +27,7 @@ std::string Lookup(const std::string &key) {
   if (len < static_cast<int>(sizeof(buffer)))
     return std::string(buffer, static_cast<size_t>(len));
 
-  // Truncated: the return value is then the size needed, NUL included.
+  // Too long for the buffer: len is the size needed, NUL included.
   std::string value(static_cast<size_t>(len), '\0');
   const int written = api->Loc_GetString(ctx.localization_handle, key.c_str(),
                                          value.data(), len);
@@ -48,9 +48,7 @@ void Sync() {
   if (len <= 0 || len >= static_cast<int>(sizeof(lang)) || g_language == lang)
     return;
 
-  // SPF switches the loaded file itself, synchronously, when this setting
-  // changes (Language tab, or the framework's "sync plugin languages"),
-  // so only the cache needs dropping.
+  // SPF has already loaded the new file by now, so only the cache is stale.
   g_language = lang;
   g_cache.clear();
   ++g_language_changes;

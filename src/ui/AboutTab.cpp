@@ -15,9 +15,8 @@ namespace motioncab::ui {
 
 namespace {
 
-// Button in the UI's brand red (the README badges' #B82728) that opens `url`
-// in the browser; the description and the address are shown in its tooltip.
-// `width` 0 sizes it to its label.
+// The tooltip shows the description and the address. A `width` of 0 fits
+// the label.
 void LinkButton(SPF_UI_API *ui, const std::string &label, float width,
                 const char *url, const char *description) {
   const bool clicked = MutedButton(ui, label.c_str(), width);
@@ -29,17 +28,15 @@ void LinkButton(SPF_UI_API *ui, const std::string &label, float width,
     OpenUrl(url);
 }
 
-// Logo shown in the About tab, loaded once from <plugin data dir>/logo.png.
-// `id` stays null if the file is missing or can't be decoded, in which case
-// the tab falls back to plain text for the title.
+// From <plugin data dir>/logo.png. `id` stays null if the file is missing
+// or can't be decoded, and the title falls back to plain text.
 struct LogoTexture {
   void *id = nullptr;
   int width = 0;
   int height = 0;
 };
 
-// Namespace-scope (not function-local) so DestroyLogoTexture below can also
-// reach it, to free the texture on plugin unload.
+// Not function-local, so DestroyLogoTexture can free it on unload.
 LogoTexture g_logo_texture;
 
 bool g_logo_texture_tried = false;
@@ -71,14 +68,11 @@ void DestroyLogoTexture(SPF_UI_API *ui) {
 }
 
 void DrawAboutTab(SPF_UI_API *ui) {
-  // A little breathing room from the tab bar above the logo.
   ui->UI_Dummy(0.0f, 6.0f);
 
-  // Title: the logo image in place of the plugin name, via SPF's image API,
-  // centered; falls back to plain colored text if the file couldn't load.
   const LogoTexture &logo = GetLogoTexture(ui);
   if (logo.id && logo.width > 0 && logo.height > 0) {
-    constexpr float kLogoBox = 64.0f; // fitted into a square, aspect kept
+    constexpr float kLogoBox = 64.0f; // aspect ratio kept
     const float scale =
         kLogoBox / static_cast<float>(std::max(logo.width, logo.height));
     const float w = static_cast<float>(logo.width) * scale;
@@ -97,8 +91,7 @@ void DrawAboutTab(SPF_UI_API *ui) {
 
   ui->UI_Spacing();
 
-  // Tagline, centered: its own styled text since Markdown has no alignment
-  // option of its own.
+  // Styled text of its own, since Markdown can't center.
   SPF_TextStyle_Handle tagline_style = ui->UI_Style_Create();
   ui->UI_Style_SetColor(tagline_style, 0.63f, 0.63f, 0.63f, 1.0f);
   ui->UI_Style_SetAlign(tagline_style, SPF_TEXT_ALIGN_CENTER);
@@ -110,7 +103,6 @@ void DrawAboutTab(SPF_UI_API *ui) {
   DrawSectionTitle(ui, loc::Tr("ui.about.details"));
   ui->UI_Spacing();
 
-  // Version and developer, left-aligned.
   const std::string intro =
       std::string(ICON_FA_TAG "  ") +
       loc::Tr("ui.about.version", {{"version", PLUGIN_VERSION}}) +
@@ -123,7 +115,7 @@ void DrawAboutTab(SPF_UI_API *ui) {
   DrawSectionTitle(ui, loc::Tr("ui.about.links"));
   ui->UI_Spacing();
 
-  // Two equal-width buttons per row, filling the tab's width.
+  // Two buttons per row, filling the tab's width.
   constexpr float kButtonGap = 8.0f;
   float avail_x = 0.0f, avail_y = 0.0f;
   ui->UI_GetContentRegionAvail(&avail_x, &avail_y);

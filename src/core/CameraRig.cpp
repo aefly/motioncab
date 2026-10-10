@@ -19,12 +19,10 @@ CameraRig::ReadPose(SPF_Camera_API *camera) const {
 }
 
 bool CameraRig::DetectNativeRecenter(SPF_Camera_API *camera, const Pose &pose) {
-  // Inferred heuristically: our contribution is non-trivial, and rotation
-  // jumps away from what we wrote to land exactly on default. Landing on
-  // default alone isn't enough: free-look sweeping through the default
-  // while an effect is active (e.g. steering camera) passes within epsilon
-  // of it, and a false positive re-bases the pose, snapping the player's
-  // own look back to center.
+  // There's no event for it, so it's a guess: the rotation jumped away from
+  // what we wrote and landed right on the default. Landing there isn't
+  // enough on its own, since free-look sweeps through it too, and a false
+  // positive would snap the player's own look back to center.
   float default_yaw_deg, default_pitch_deg;
   if (!has_last_written_rot_ || !camera->Cam_GetInteriorRotationDefaults(
                                     &default_yaw_deg, &default_pitch_deg))
@@ -56,8 +54,7 @@ bool CameraRig::DetectExternalSeatWrite(const Pose &pose) {
   if (!has_last_written_seat_)
     return false;
 
-  // Far below any change a player or the game makes, far above float
-  // round-trip noise through the setter/getter.
+  // Well below any real change, well above float round-trip noise.
   constexpr float kEpsilonMeters = 1e-4f;
   auto rewritten = [&](float live, float written) {
     return std::fabs(live - written) > kEpsilonMeters;
@@ -82,8 +79,6 @@ bool CameraRig::DetectExternalFovWrite(SPF_Camera_API *camera) {
   float fov_deg = 0.0f;
   if (!has_last_written_fov_ || !camera->Cam_GetInteriorFov(&fov_deg))
     return false;
-  // Far below any change a player or the game makes, far above float
-  // round-trip noise through the setter/getter.
   constexpr float kEpsilonDeg = 0.01f;
   if (std::fabs(fov_deg - last_written_fov_) <= kEpsilonDeg)
     return false;
@@ -126,15 +121,14 @@ void CameraRig::Apply(SPF_Camera_API *camera, const Pose &pose,
 }
 
 void CameraRig::Remove(SPF_Camera_API *camera) {
-  // Channel by channel, so one failing getter doesn't keep the others'
-  // offset in the pose.
+  // Channel by channel, so one failing getter doesn't leave the others'
+  // offset behind.
   const HeadOffset none{};
   float x, y, z;
   if (camera->Cam_GetInteriorSeatPos(&x, &y, &z)) {
-    // The seat may have been rewritten since our last write without a
-    // cabin frame to notice it (F4 seat menu, then unload from another
-    // view): subtracting an offset that's no longer there would shift the
-    // player's own seat for good.
+    // The F4 menu may have rewritten the seat while we weren't looking
+    // (unloading from another view): subtracting an offset that's no longer
+    // there would move the player's seat for good.
     DetectExternalSeatWrite({x, y, z, 0.0f, 0.0f});
     WriteSeat(camera, x, y, z, none);
   }
@@ -142,14 +136,12 @@ void CameraRig::Remove(SPF_Camera_API *camera) {
   if (camera->Cam_GetInteriorHeadRot(&yaw_rad, &pitch_rad))
     WriteHeadRot(camera, yaw_rad, pitch_rad, none);
   WriteRoll(camera, none);
-  // Same as the seat above (F4 FOV slider, then unload from another view).
   DetectExternalFovWrite(camera);
   WriteFov(camera, none);
   applied_ = {};
 }
 
 bool CameraRig::RemoveFov(SPF_Camera_API *camera) {
-  // Something else rewrote the FOV since: our offset isn't in it any more.
   DetectExternalFovWrite(camera);
   if (applied_.fov == 0.0f)
     return true;
@@ -158,8 +150,8 @@ bool CameraRig::RemoveFov(SPF_Camera_API *camera) {
     return false;
   const float base_fov_deg = fov_deg - applied_.fov;
   camera->Cam_SetInteriorFov(base_fov_deg);
-  // Forgotten only once the write has taken: forgetting an offset still in
-  // the FOV would hand it to the player for good.
+  // Only forgotten once the write has taken, or an offset still in the FOV
+  // would become the player's own.
   float check_deg = 0.0f;
   if (!camera->Cam_GetInteriorFov(&check_deg) ||
       std::fabs(check_deg - base_fov_deg) > 0.01f)
@@ -184,8 +176,6 @@ void CameraRig::WriteSeat(SPF_Camera_API *camera, float x, float y, float z,
 
 void CameraRig::WriteHeadRot(SPF_Camera_API *camera, float yaw_rad,
                              float pitch_rad, const HeadOffset &offset) {
-  // HeadOffset.yaw/pitch are degrees (see Effect.hpp); Cam_SetInteriorHeadRot
-  // is documented (and its own usage example confirms) to take radians.
   const float base_yaw_rad = yaw_rad - applied_.yaw * kDegToRad;
   const float base_pitch_rad = pitch_rad - applied_.pitch * kDegToRad;
   const float new_yaw_rad = base_yaw_rad + offset.yaw * kDegToRad;
@@ -207,10 +197,9 @@ void CameraRig::WriteRoll(SPF_Camera_API *camera, const HeadOffset &offset) {
 }
 
 void CameraRig::WriteFov(SPF_Camera_API *camera, const HeadOffset &offset) {
-  // ManualZoomEffect wrote this frame's FOV (if zooming) with the applied
-  // FOV offset already added, so subtracting it still recovers the right
-  // base. Skipped when neither frame has an offset, to leave the FOV alone
-  // for the game's F4 slider.
+  // A zooming ManualZoomEffect wrote this frame's FOV with our offset already
+  // in it, so subtracting it still gives the right base. With no offset
+  // either way, the FOV is left alone for the F4 slider.
   if (offset.fov == 0.0f && applied_.fov == 0.0f)
     return;
   float fov_deg = 0.0f;

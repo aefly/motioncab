@@ -5,14 +5,13 @@
 namespace motioncab {
 
 namespace {
-// Base response gains; the user-facing strength settings scale these.
-constexpr float kLeanGain = 0.4f; // degrees of roll per (m/s^2) lateral
-constexpr float kNodGain = 0.3f;  // degrees of pitch per (m/s^2) longitudinal
-// Cap so a collision or physics spike can't throw the camera around.
+// The strength settings scale these.
+constexpr float kLeanGain = 0.4f; // degrees of roll per m/s^2
+constexpr float kNodGain = 0.3f;  // degrees of pitch per m/s^2
+// So a crash or a physics spike can't throw the camera around.
 constexpr float kMaxLeanDeg = 4.0f;
 constexpr float kMaxNodDeg = 3.0f;
-// Roll direction: -1 tilts the head toward the outside of the corner
-// (assuming positive roll is a tilt to the right). Flip if it feels inverted.
+// Tilts the head toward the outside of the corner.
 constexpr float kLeanSign = -1.0f;
 } // namespace
 
@@ -34,9 +33,8 @@ HeadOffset BodyDynamicsEffect::Update(float dt, const SPF_TruckData &truck,
                                       const SPF_Controls & /*controls*/) {
   const SPF_FVector &accel = truck.local_linear_acceleration;
 
-  // Lateral acceleration points toward the inside of the corner; the head
-  // leans the other way. Braking (positive Z) drops the head forward, i.e.
-  // negative pitch (the interior default pitch is slightly negative = down).
+  // Braking is positive Z and drops the head forward, which is negative
+  // pitch.
   const float target_roll =
       std::clamp(kLeanSign * accel.x * kLeanGain * lean_strength_, -kMaxLeanDeg,
                  kMaxLeanDeg);

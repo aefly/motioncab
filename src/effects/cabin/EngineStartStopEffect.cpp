@@ -11,9 +11,10 @@ namespace motioncab {
 namespace {
 constexpr float kBaseVerticalAmplitude = 0.006f; // meters
 constexpr float kBasePitchAmplitude = 1.2f;      // degrees
-constexpr float kJudderFrequencyHz = 8.0f;       // Hz
-constexpr float kStopDurationRatio = 0.6f;  // of duration_, for the stop shake
-constexpr float kStopAmplitudeRatio = 0.7f; // of intensity_, for the stop shake
+constexpr float kJudderFrequencyHz = 8.0f;
+// The stop's shudder is shorter and weaker than the start's.
+constexpr float kStopDurationRatio = 0.6f;
+constexpr float kStopAmplitudeRatio = 0.7f;
 } // namespace
 
 void EngineStartStopEffect::LoadSettings() {
@@ -31,11 +32,9 @@ void EngineStartStopEffect::OnTruckConstantsChanged(
     const SPF_TruckConstants &constants) {
   is_electric_ = telemetry::IsElectric(constants);
 
-  // OnTruckConstantsChanged fires for more than just a truck purchase
-  // (trailer (dis)connect, a Quick Job cancel reload, etc.), so only
-  // re-baseline when the truck model actually changed, otherwise a real
-  // RPM crossing in flight at the exact same moment would silently lose
-  // its "previous" reading and never fire the start shudder.
+  // This fires for more than a truck switch (trailer, Quick Job reload...),
+  // and dropping the previous reading for nothing could miss a start right
+  // then.
   const bool truck_actually_changed =
       std::strncmp(prev_truck_id_, constants.id, sizeof(prev_truck_id_)) != 0;
   std::strncpy(prev_truck_id_, constants.id, sizeof(prev_truck_id_) - 1);
@@ -43,11 +42,8 @@ void EngineStartStopEffect::OnTruckConstantsChanged(
   if (!truck_actually_changed)
     return;
 
-  // A truck swap leaves prev_rpm_/prev_engine_enabled_ holding the OLD
-  // truck's last values, which can make the new truck's start/stop edge
-  // undetectable (e.g. old rpm already above threshold, so the new
-  // engine's climb through it never reads as a crossing). Re-baseline the
-  // same way Reset() does, matching SuspensionEffect's truck-swap handling.
+  // The old truck's last readings could hide the new one's start, e.g. an
+  // RPM already over the threshold.
   has_prev_state_ = false;
   shake_timer_ = 0.0f;
 }
@@ -58,8 +54,7 @@ HeadOffset EngineStartStopEffect::Update(float dt, const SPF_TruckData &truck,
   const float rpm = truck.engine_rpm;
 
   if (!has_prev_state_) {
-    // First frame: just observe, don't fire a shudder for whatever state
-    // the engine happens to already be in when the plugin activates.
+    // No shudder for whatever state the engine is already in.
     prev_engine_enabled_ = engine_enabled_now;
     prev_rpm_ = rpm;
     has_prev_state_ = true;

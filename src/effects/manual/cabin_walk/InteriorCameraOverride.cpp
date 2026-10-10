@@ -31,22 +31,19 @@ bool InteriorCameraOverride::Engage(SPF_Camera_API *camera) {
                   i, &a.end_head[0], &a.end_head[1], &a.end_head[2]);
     if (!a.valid)
       continue;
-    // An empty angle range with no head offset: the override never kicks
-    // in (how SPF_CabinWalk disables them, confirmed in-game there).
+    // An empty range with no offset never kicks in (SPF_CabinWalk's way,
+    // seen in game).
     camera->Cam_SetInteriorAzimuthOverrideStartAzimuth(i, 0.0f);
     camera->Cam_SetInteriorAzimuthOverrideEndAzimuth(i, 0.0f);
     camera->Cam_SetInteriorAzimuthOverrideOutside(i, false);
     camera->Cam_SetInteriorAzimuthOverrideStartHeadOffset(i, 0.0f, 0.0f, 0.0f);
     camera->Cam_SetInteriorAzimuthOverrideEndHeadOffset(i, 0.0f, 0.0f, 0.0f);
   }
-  // Nothing close to the eyes clipped away (a headrest when looking back
-  // from the passenger seat, a wall walked up to).
   has_near_plane_ = camera->Cam_GetInteriorNearPlane(&near_plane_);
   engaged_ = true;
-  // The zones are the left-hand drive cabin's: a right-hand drive camera
-  // evaluates them at the mirrored yaw (as it does the defaults, see
-  // SetRightHandDrive). Their offsets need no mirroring, being in the seat
-  // frame, which the camera already mirrors.
+  // The zones are the left-hand drive cabin's, which a right-hand drive
+  // camera reads at the mirrored yaw. Their offsets are in the seat frame,
+  // which the camera already mirrors.
   const float look_yaw_deg = look_yaw_rad / math::kDegToRad;
   engage_head_offset_ =
       HeadOffsetAt(right_hand_drive_ ? -look_yaw_deg : look_yaw_deg);
@@ -59,7 +56,7 @@ std::array<float, 3> InteriorCameraOverride::HeadOffsetAt(float yaw_deg) const {
   for (const Azimuth &a : azimuths_) {
     if (!a.valid)
       continue;
-    // Interpolated along the zone (which may run past 180 degrees).
+    // A zone may run past 180 degrees.
     const float lo = std::min(a.start, a.end), hi = std::max(a.start, a.end);
     if (hi <= lo)
       continue;
@@ -117,8 +114,8 @@ void InteriorCameraOverride::RefreshSoundZones(SPF_Camera_API *camera) {
   SPF_CameraType type;
   if (!camera->Cam_GetCurrentCamera(&type) || type != SPF_CAMERA_INTERIOR)
     return;
-  // Re-activating recenters the head onto the rotation defaults: made the
-  // current look first, so that it doesn't move (EndRefresh puts them back).
+  // Re-activating recenters the head onto the rotation defaults, so they're
+  // pointed at the current look first.
   float yaw_rad = 0.0f, pitch_rad = 0.0f;
   if (camera->Cam_GetInteriorHeadRot(&yaw_rad, &pitch_rad))
     RecenterOnto(camera, yaw_rad, pitch_rad);
@@ -135,12 +132,12 @@ void InteriorCameraOverride::RecenterOnto(SPF_Camera_API *camera, float yaw_rad,
 
 void InteriorCameraOverride::EndRefresh(SPF_Camera_API *camera) {
   // Both refreshes happen in the driver's seat, whose defaults are the
-  // truck's own (still known after Restore).
+  // truck's own, still known after Restore.
   camera->Cam_SetInteriorRotationDefaults(default_yaw_deg_, default_pitch_deg_);
 }
 
 void InteriorCameraOverride::KeepNearPlane(SPF_Camera_API *camera) {
-  // Every frame: the camera's re-activation may put its own back.
+  // Re-activating the camera may put its own back.
   if (engaged_ && has_near_plane_)
     camera->Cam_SetInteriorNearPlane(away_near_plane());
 }

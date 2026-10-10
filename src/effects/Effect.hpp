@@ -6,25 +6,16 @@
 
 namespace motioncab {
 
-// Additive offset an effect wants applied to the interior head/seat pose.
-// Multiple effects' offsets are summed by EffectManager before being applied
-// on top of the user's own SPF seat/head-rotation settings.
+// Added on top of the player's own pose, summed over every effect.
 struct HeadOffset {
   float pos_x = 0.0f, pos_y = 0.0f, pos_z = 0.0f; // meters, cabin-local
-  // Degrees, not radians. CameraRig converts at the Cam_SetInteriorHeadRot
-  // call site, to stay consistent with Cam_SetInteriorRotationDefaults
-  // (degrees; a default pitch of -7.0 only makes sense as such).
+  // The angles are all in degrees, like most of the camera API: only
+  // Cam_SetInteriorHeadRot takes radians, and CameraRig converts for it.
   float yaw = 0.0f, pitch = 0.0f;
-  // Degrees, head tilt to either side (Cam_SetInteriorRoll takes degrees).
   float roll = 0.0f;
-  // Degrees added to the interior FOV, layered by CameraRig on top of the
-  // player's FOV (and ManualZoomEffect's zoom, see its class comment).
   float fov = 0.0f;
 };
 
-// Base interface for a MotionCab head-motion effect.
-// Every effect is independently toggleable and reads its own tunables from
-// the plugin's "settings.<group>.<effect>.*" config section.
 class Effect {
 public:
   virtual ~Effect() = default;
@@ -32,40 +23,29 @@ public:
   virtual bool IsEnabled() const = 0;
   virtual void SetEnabled(bool enabled) = 0;
 
-  // (Re)reads tunables from config. Called on init and on OnSettingChanged.
   virtual void LoadConfig() = 0;
 
-  // Clears internal smoothing state (e.g. on entering cabin view).
+  // Back to rest, e.g. on entering the cabin view.
   virtual void Reset() = 0;
 
-  // Advances the effect by `dt` seconds and returns its current contribution.
   virtual HeadOffset Update(float dt, const SPF_TruckData &truck,
                             const SPF_Controls &controls) = 0;
 
-  // True for the effects that only make sense in the driver's seat (driving
-  // motion, looking at the mirrors, road motion, ...): they fade out while
-  // Cabin Walk takes the player elsewhere in the cabin
-  // (EffectManager::SetAtWheel).
+  // For the effects that only make sense in the driver's seat (driving
+  // motion, mirror checks, ...): they fade out while Cabin Walk has the
+  // player elsewhere.
   virtual bool NeedsDriverSeat() const { return false; }
 
-  // The effect's settings prefix, "settings.<group>.<effect>": what
-  // conflicts::kPauses names it by.
+  // "settings.<group>.<effect>", as conflicts::kPauses names it.
   virtual std::string_view Id() const = 0;
 
-  // Called whenever the truck's static configuration changes (bought a new
-  // truck, added/removed axles). Default no-op; only effects that need
-  // per-wheel layout (e.g. front/rear classification) override this.
   virtual void
   OnTruckConstantsChanged(const SPF_TruckConstants & /*constants*/) {}
 
-  // Called whenever common telemetry data changes (includes the substance
-  // name table). Default no-op; only effects that need surface-material
-  // identification override this.
+  // Carries the substance name table, for telling road surfaces apart.
   virtual void OnCommonDataChanged(const SPF_CommonData & /*data*/) {}
 
-  // Called every frame with the current list of attached trailers (fired
-  // by Tel_RegisterForTrailers). Default no-op; only effects that react to
-  // trailer state (e.g. hitch/unhitch) override this.
+  // Every frame.
   virtual void OnTrailersChanged(const SPF_Trailer * /*trailers*/,
                                  uint32_t /*count*/) {}
 };

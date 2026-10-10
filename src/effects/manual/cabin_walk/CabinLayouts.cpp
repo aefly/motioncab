@@ -14,7 +14,6 @@ namespace motioncab {
 namespace {
 
 using L = CabinLayout;
-// The ranges the sliders allow, meters or degrees.
 constexpr CabinLayoutField kFields[] = {
     {"floor_x_min", &L::floor_x_min, -1.5f, 2.0f, false},
     {"floor_x_max", &L::floor_x_max, -1.5f, 2.0f, false},
@@ -42,8 +41,8 @@ std::string Key(const std::string &truck_key, const char *field) {
 
 float CabinCenterlineX(const SPF_TruckConstants &constants) {
   const float head_x = constants.head_position.x;
-  // Whichever side the driver sits on: the camera frame of a right-hand
-  // drive truck is mirrored (see CabinLayout).
+  // Whichever side the driver sits on, since a right-hand drive truck's
+  // camera frame is mirrored.
   return std::fabs(head_x) >= kMinHeadOffsetX ? std::fabs(head_x)
                                               : kTypicalCenterlineX;
 }
@@ -104,8 +103,8 @@ std::string TruckLayoutKey(const SPF_TruckConstants &constants) {
 SPF_Config_Handle *CabinLayoutStore::Handle(bool create) {
   if (handle_ || !config_ || path_.empty())
     return handle_;
-  // Opening a custom context creates a missing file: only once there's a
-  // layout to write.
+  // Opening a custom context creates a missing file, so not before there's
+  // a layout to write.
   std::error_code ec;
   if (create || std::filesystem::exists(path_, ec))
     handle_ = config_->Cfg_CreateCustomContext(path_.c_str());
@@ -115,8 +114,7 @@ SPF_Config_Handle *CabinLayoutStore::Handle(bool create) {
 std::optional<CabinLayout>
 CabinLayoutStore::Read(SPF_Config_Handle *h,
                        const std::string &truck_key) const {
-  // A layout always has its walkway (Save writes every field);
-  // an emptied one (see Forget) doesn't.
+  // Save writes every field, so only an emptied layout lacks this one.
   if (!h || !config_->Cfg_HasKey(h, Key(truck_key, "floor_x_min").c_str()))
     return std::nullopt;
   CabinLayout layout = DefaultCabinLayout();
@@ -166,7 +164,7 @@ void CabinLayoutStore::Forget(const std::string &truck_key) {
   if (!h)
     return;
   // Emptied rather than removed: Cfg_RemoveKey doesn't work on a custom
-  // context file (see Profiles.cpp). An empty layout reads as none.
+  // context file. An empty layout reads as none.
   config_->Cfg_SetJsonString(h, ("layouts." + truck_key).c_str(), "{}");
   config_->Cfg_Save(h);
 }

@@ -4,10 +4,9 @@
 
 #include <string_view>
 
-// Which effects pause which, declared once: the EffectManager fades a
-// paused effect out while an effect pausing it is enabled (its settings
-// left alone), and the Quick Settings window says so in both sections.
-// Effects go by their settings prefix, "settings.<group>.<effect>".
+// Which effects pause which. Both the EffectManager and the Quick Settings
+// window read this, so a conflict is declared here rather than by turning a
+// setting off. Effects go by their settings prefix.
 namespace motioncab::conflicts {
 
 struct Pause {
@@ -16,12 +15,10 @@ struct Pause {
 };
 
 inline constexpr Pause kPauses[] = {
-    //  {"if this effect is enabled (active)", "then pause this one"},
     {"settings.cabin.natural_head_movement", "settings.road.speed_shake"},
     {"settings.cabin.natural_head_movement", "settings.cabin.idle_breathing"},
 };
 
-// True if `effect` pauses `paused`.
 constexpr bool Pauses(std::string_view effect, std::string_view paused) {
   for (const Pause &p : kPauses) {
     if (effect == p.effect && paused == p.paused)
@@ -30,8 +27,7 @@ constexpr bool Pauses(std::string_view effect, std::string_view paused) {
   return false;
 }
 
-// Every effect named in kPauses has its "enabled" toggle in settings::kAll,
-// and none pauses itself.
+// Catches a typo in an effect name, or an effect pausing itself.
 consteval bool PausesAreValid() {
   const auto has_toggle = [](std::string_view prefix) {
     for (const settings::Setting &s : settings::kAll) {

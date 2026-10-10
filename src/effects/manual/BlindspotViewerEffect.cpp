@@ -9,18 +9,16 @@ namespace motioncab {
 
 namespace {
 
-// First stage's time, as a fraction of smoothing_time: how gradually the
-// motion gets going.
+// How gradually the motion gets going, as a share of smoothing_time.
 constexpr float kIntentFraction = 0.25f;
-// SpringDamper1D closes ~95% of the gap in about 2.37 time constants, so
-// this makes the body's own stage settle in about smoothing_time.
+// A spring closes ~95% of the gap in about 2.37 time constants, so the body
+// settles in about smoothing_time.
 constexpr float kBodyFraction = 0.42f;
-// Extra sway from braking/acceleration while off the backrest.
-constexpr float kInertiaGain = 0.015f; // meters per (m/s^2)
+constexpr float kInertiaGain = 0.015f; // meters per m/s^2
 constexpr float kInertiaMax = 0.06f;   // meters
-constexpr float kInertiaTime = 0.3f;   // seconds
-// Postural sway while holding the lean: slow drift of the body and small
-// corrections of the head.
+constexpr float kInertiaTime = 0.3f;
+// Holding the lean, the body drifts slowly and the head makes small
+// corrections.
 constexpr float kSwayPosM = 0.004f;
 constexpr float kSwayPosHz = 0.23f;
 constexpr float kSwayRotDeg = 0.25f;
@@ -63,19 +61,18 @@ HeadOffset BlindspotViewerEffect::Update(float dt, const SPF_TruckData &truck,
                                         keybinds::kBlindspotPeek);
   const bool press_edge = press_edge_.Update(pressed);
   if (!toggle_mode_)
-    peeking_ = false; // no stale toggle state if the mode is switched back
+    peeking_ = false; // no stale toggle if the mode is switched back
   else if (press_edge)
     peeking_ = !peeking_;
 
   const bool want_peek = toggle_mode_ ? peeking_ : pressed;
 
-  // A soft first stage feeding the body's own, both critically damped so
-  // it never overshoots the seat (or the peek) and bounces back.
+  // Two critically damped springs in a row: a slow start and a soft stop
+  // like a real body's, with no overshoot to bounce back from.
   const float intent = intent_.Update(want_peek ? 1.0f : 0.0f, dt);
   const float lean = std::clamp(body_.Update(intent, dt), 0.0f, 1.0f);
 
-  // Off the backrest, braking throws the body forward and accelerating
-  // back more than when seated (HeadMotionEffect's sign convention).
+  // Off the backrest, braking and accelerating throw the body around more.
   const SPF_FVector &accel = truck.local_linear_acceleration;
   auto inertia = [&](math::SpringDamper1D &spring, float a) {
     const float target =
@@ -85,9 +82,8 @@ HeadOffset BlindspotViewerEffect::Update(float dt, const SPF_TruckData &truck,
   const float inertia_x = inertia(inertia_x_, accel.x);
   const float inertia_z = inertia(inertia_z_, accel.z);
 
-  // Sway is scaled by lean, so restarting its clock while seated is
-  // invisible and keeps it from growing (and losing float precision)
-  // over a long session.
+  // The sway is invisible when seated, so its clock restarts there rather
+  // than growing all session and losing float precision.
   sway_time_ = lean > 0.0f ? sway_time_ + dt : 0.0f;
   auto sway = [&](float hz, uint32_t seed) {
     return math::GradientNoise1D(sway_time_ * hz, seed) * lean;

@@ -17,8 +17,7 @@ namespace motioncab::ui {
 
 namespace {
 
-// A setting's title and description live under its own config key, plus
-// ".title" / ".desc".
+// Under the setting's own config key, plus ".title" / ".desc".
 const char *SettingTitle(const char *key) {
   return loc::Tr(std::string(key) + ".title");
 }
@@ -35,9 +34,8 @@ bool IsEnabledToggle(const settings::Setting &setting) {
   return settings::SplitKey(setting.key).name == "enabled";
 }
 
-// Toggle switch drawn as a bare icon button, e.g. for the value column of a
-// settings table row, where the label already lives in its own column. The
-// config key doubles as the button's ID so it stays unique.
+// A bare icon button, for a table's value column where the label has its
+// own. The config key doubles as a unique ID.
 bool DrawToggleCell(SPF_UI_API *ui, const char *key, bool *value,
                     const char *tooltip) {
   char button_id[128];
@@ -60,7 +58,7 @@ bool DrawToggleCell(SPF_UI_API *ui, const char *key, bool *value,
   return clicked;
 }
 
-// An effect's "Enabled" toggle, with its label after the switch.
+// Its label goes after the switch.
 bool DrawEnabled(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
                  const settings::Setting &setting) {
   bool value = cfg->Cfg_GetBool(h, setting.key, setting.default_bool());
@@ -71,23 +69,17 @@ bool DrawEnabled(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   return value;
 }
 
-// Collapsing header of the effect whose settings live under `prefix`
-// ("settings.<group>.<effect>"). The "###" ID keeps its open/closed state
-// across a language switch.
+// The "###" ID keeps it open or closed across a language switch.
 bool EffectHeader(SPF_UI_API *ui, const char *icon, const char *prefix) {
   const std::string label =
       WithIcon(icon, SettingTitle(prefix)) + "###" + prefix;
   return ui->UI_CollapsingHeader(label.c_str(), SPF_TREE_NODE_FLAG_NONE);
 }
 
-// Width of the settings tables' label column, set by DrawSettingsWindow
-// every frame from LabelColumnWidth().
 float g_label_column_w = 160.0f;
 
-// The widest label any settings table can show in the active language, so
-// none runs into its slider and every table's columns line up. Table rows
-// are the settings (bar the effects' "enabled" toggles, drawn above the
-// table) and the polled keybinds.
+// So no label runs into its slider and every table's columns line up. The
+// "enabled" toggles are drawn above the tables, not in them.
 float LabelColumnWidth(SPF_UI_API *ui) {
   float widest = 0.0f;
   auto measure = [&](const char *text) {
@@ -104,9 +96,6 @@ float LabelColumnWidth(SPF_UI_API *ui) {
   return widest;
 }
 
-// Begins the label|value table shared by every effect's settings body.
-// Only one column ("Value") gets a header-style stretch; the label
-// column is as wide as the widest label (see LabelColumnWidth).
 bool BeginSettingsTable(SPF_UI_API *ui, const char *id) {
   if (!ui->UI_BeginTable(id, 2, SPF_TABLE_FLAG_NONE, 0.0f, 0.0f, 0.0f))
     return false;
@@ -119,7 +108,6 @@ bool BeginSettingsTable(SPF_UI_API *ui, const char *id) {
 
 void EndSettingsTable(SPF_UI_API *ui) { ui->UI_EndTable(); }
 
-// One label|toggle row.
 void DrawBool(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
               const settings::Setting &setting) {
   bool value = cfg->Cfg_GetBool(h, setting.key, setting.default_bool());
@@ -131,11 +119,8 @@ void DrawBool(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
     cfg->Cfg_SetBool(h, setting.key, value);
 }
 
-// One label|[-] slider [+] row (StepperFloat), stepped by the format's last
-// decimal. Right-click the slider to reset it to default.
-// `display_scale` shows the value (and the slider's range) multiplied by
-// it, e.g. to show a setting stored in km/h in mph; the stored value
-// doesn't change.
+// Stepped by the format's last decimal. `display_scale` only changes what's
+// shown, e.g. mph for a setting stored in km/h.
 void DrawSlider(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
                 const settings::Setting &setting, const char *format,
                 float display_scale) {
@@ -154,16 +139,14 @@ void DrawSlider(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
     cfg->Cfg_SetFloat(h, key, value / display_scale);
 }
 
-// A slider row for a speed setting, stored in km/h but shown in the
-// active language's unit ("ui.units.speed_system": mph for "imperial",
-// e.g. English, since British and American players drive in mph).
+// In the language's unit: English is "imperial", since British and American
+// players drive in mph.
 void DrawSpeed(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
                const settings::Setting &setting) {
   constexpr float kMphPerKmh = 0.621371f;
   const bool imperial =
       std::string_view(loc::Tr("ui.units.speed_system")) == "imperial";
-  // The unit comes from a translation, so escape any '%' before it goes
-  // into a printf-style format.
+  // The unit comes from a translation and goes into a printf format.
   std::string format = "%.0f ";
   for (const char *c = loc::Tr(imperial ? "ui.units.mph" : "ui.units.kmh"); *c;
        ++c)
@@ -181,7 +164,6 @@ void DrawSettingRow(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
     DrawSlider(ui, cfg, h, setting, setting.format, 1.0f);
 }
 
-// One label|bindings row for a keybind action, inside a settings table.
 void DrawKeybindRow(SPF_UI_API *ui, const keybinds::Action &action) {
   if (!KeybindUiAvailable())
     return;
@@ -193,14 +175,13 @@ void DrawKeybindRow(SPF_UI_API *ui, const keybinds::Action &action) {
   DrawKeybindButtons(ui, action.id);
 }
 
-// One effect's section in its tab. Its settings rows come from
-// settings::kAll, in that order, after its keybinds.
+// Its settings rows come from settings::kAll, after its keybinds.
 struct EffectUi {
   const char *icon;
   const char *prefix; // "settings.<group>.<effect>"
-  bool has_hint;      // shows the "<prefix>.hint" text under its toggle
+  bool has_hint;      // "<prefix>.hint" under its toggle
   std::span<const keybinds::Action> keybinds;
-  // Drawn under its settings, for what doesn't fit a settings row.
+  // For what doesn't fit a settings row.
   void (*extra)(SPF_UI_API *ui) = nullptr;
 };
 
@@ -211,7 +192,7 @@ constexpr keybinds::Action kCabinWalkKeybinds[] = {
     keybinds::kStandSit, keybinds::kWalkForward, keybinds::kWalkBack,
     keybinds::kWalkLeft, keybinds::kWalkRight,   keybinds::kCrouch};
 
-// Every effect, in display order; each tab shows its own group's.
+// In display order.
 constexpr EffectUi kEffects[] = {
     {ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT,
      "settings.driving.head_motion",
@@ -241,7 +222,6 @@ constexpr EffectUi kEffects[] = {
      kCabinWalkKeybinds, &DrawCabinLayoutPanel},
 };
 
-// Every effect section needs its "enabled" toggle in settings::kAll.
 consteval bool EffectsHaveEnabledToggle() {
   for (const EffectUi &effect : kEffects) {
     bool found = false;
@@ -259,7 +239,6 @@ consteval bool EffectsHaveEnabledToggle() {
 static_assert(EffectsHaveEnabledToggle(),
               "every effect in kEffects needs an \"enabled\" setting");
 
-// Whether the effect under `prefix` is enabled.
 bool IsEffectEnabled(SPF_Config_API *cfg, SPF_Config_Handle *h,
                      std::string_view prefix) {
   const settings::Setting &toggle =
@@ -267,8 +246,6 @@ bool IsEffectEnabled(SPF_Config_API *cfg, SPF_Config_Handle *h,
   return cfg->Cfg_GetBool(h, toggle.key, toggle.default_bool());
 }
 
-// "When enabled, this pauses the following effect(s):" and a bullet list,
-// under an effect that pauses others (conflicts::kPauses).
 void DrawPausesHint(SPF_UI_API *ui, std::string_view prefix) {
   bool any = false;
   for (const conflicts::Pause &p : conflicts::kPauses) {
@@ -285,8 +262,7 @@ void DrawPausesHint(SPF_UI_API *ui, std::string_view prefix) {
     ui->UI_PopStyleColor(1);
 }
 
-// "Paused by X, Y." under an effect an enabled one pauses; returns whether
-// it's paused.
+// Returns whether it's paused.
 bool DrawPausedByHint(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
                       std::string_view prefix) {
   std::string names;
@@ -316,7 +292,6 @@ void DrawEffect(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   DrawPausesHint(ui, effect.prefix);
   const bool paused = DrawPausedByHint(ui, cfg, h, effect.prefix);
   ui->UI_BeginDisabled(!enabled || paused);
-  // "<effect>_table", unique per effect.
   const std::string table_id = prefix.substr(prefix.rfind('.') + 1) + "_table";
   if (BeginSettingsTable(ui, table_id.c_str())) {
     for (const keybinds::Action &action : effect.keybinds)
@@ -347,7 +322,7 @@ float DrawEffectTab(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
     if (!std::string_view(effect.prefix).starts_with(group_prefix))
       continue;
     DrawEffect(ui, cfg, h, effect);
-    // A folded section is its header alone, one frame high.
+    // A folded section is its header alone.
     folded_h += ui->UI_GetFrameHeightWithSpacing();
   }
   return folded_h;

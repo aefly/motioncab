@@ -12,36 +12,29 @@
 namespace motioncab {
 
 namespace {
-// Per axis below: X, Y, Z in meters, then yaw, pitch, roll in degrees, at
-// intensity 1. The neck pivot adds its own translation on top.
+// The per-axis values are X, Y, Z in meters, then yaw, pitch, roll in
+// degrees, at intensity 1.
 
-// Noise cells per second of the tremor's two octaves, and their weights.
-constexpr double kTremorRate[] = {0.15, 0.4};
+constexpr double kTremorRate[] = {0.15, 0.4}; // noise cells per second
 constexpr float kOctaveWeight[] = {1.0f, 0.35f};
-// Brings the octaves' sum back to about [-1, 1].
 constexpr float kTremorNorm = 1.0f / (kOctaveWeight[0] + kOctaveWeight[1]);
 constexpr float kTremorAmplitude[] = {0.002f, 0.0015f, 0.002f,
                                       0.35f,  0.25f,   0.2f};
 
-// How far a micro-adjustment goes, how long one takes across its whole
-// range, and the mean seconds between two.
+// The *Seconds are for a move across the whole range.
 constexpr float kMicroRange[] = {0.003f, 0.002f, 0.004f, 1.0f, 0.7f, 0.6f};
 constexpr float kMicroSeconds = 3.0f;
 constexpr float kMicroInterval = 15.0f;
 
-// The farthest a posture goes at scale 1, and how long a change takes
-// across its whole range.
 constexpr float kPostureRange[] = {0.012f, 0.012f, 0.025f, 5.0f, 3.0f, 3.0f};
 constexpr float kPostureSeconds = 2.0f;
 constexpr float kPostureVariation = 0.1f;
 
-// A move with no distance to go takes this share of the duration of one
-// across the whole range (the farther, the longer).
+// How long a move with no distance to go takes, as a share of a full one.
 constexpr float kShortMoveShare = 0.4f;
 
-// The postures, in -1..1 of kPostureRange per axis (X, Y, Z, yaw, pitch,
-// roll), on one side: X, yaw and roll flip for the other. Drawn at 50 to
-// 100% and varied by up to kPostureVariation on each axis.
+// Body shapes rather than random axes, so a posture looks like something a
+// driver would do. Each is on one side: X, yaw and roll flip for the other.
 using PostureShape = float[6];
 constexpr PostureShape kIdlePostures[] = {
     {0.0f, -1.0f, 0.3f, 0.0f, -0.2f, 0.0f},  // slouched
@@ -58,59 +51,48 @@ constexpr PostureShape kDrivingPostures[] = {
     {0.5f, -0.2f, 0.0f, 0.0f, 0.0f, 0.3f},   // leaning a little on one side
 };
 
-// How a mode draws its postures: from which shapes, how often the neutral
-// one, how far (a scale of kPostureRange) and how slowly (a scale of
-// kPostureSeconds).
 struct PostureMode {
   std::span<const PostureShape> shapes;
   float neutral_odds;
-  float scale;
-  float slowness;
+  float scale;    // of kPostureRange
+  float slowness; // of kPostureSeconds
 };
 // Stopped a while, relaxed: wider, slower, rarely back to neutral.
 constexpr PostureMode kIdleMode{kIdlePostures, 0.2f, 1.5f, 1.3f};
 // Driving, focused on the road: small postures, often back to neutral.
 constexpr PostureMode kDrivingMode{kDrivingPostures, 1.0f / 3.0f, 0.6f, 1.0f};
 
-// The idle mode starts once stopped (under kIdleSpeedKmh) this long. The
-// move into its first posture takes kRelaxSeconds, settling in; driving
-// off, the move into the driving mode's takes kFocusSeconds.
+// Switching modes moves to the new one's first posture over a set time,
+// whatever the distance.
 constexpr float kIdleSpeedKmh = 2.0f;
 constexpr float kIdleDelaySeconds = 5.0f;
 constexpr float kRelaxSeconds = 3.0f;
 constexpr float kFocusSeconds = 3.0f;
 
-// The tilt into the turn at full steering lock, in degrees. It follows the
-// square root of the steering, so a lane correction tilts a little already
-// without full lock tilting too much, eased over about this long.
+// At full lock. It follows the square root of the steering, so a lane
+// correction already tilts a little without full lock tilting too much.
 constexpr float kSteeringTiltDeg = 3.0f;
 constexpr float kSteeringTiltSeconds = 0.4f;
 
-// The neck the head turns on, from the eyes, in meters.
+// Where the neck is from the eyes, in meters.
 constexpr float kNeckBelow = 0.10f;
 constexpr float kNeckBehind = 0.08f;
 
-// Each axis' tremor noise gets its own seed, so they don't move together.
+// Each axis gets its own seed, so they don't move together.
 constexpr uint32_t kTremorSeed = 0x4E484D31u;
 constexpr uint32_t kAxisSeedStep = 0x9E3779B9u;
 constexpr uint32_t kOctaveSeedStep = 0x85EBCA6Bu;
 
-// Where the eyes move when the head turns by these angles (radians) on the
-// neck, in the head's frame (X to the driver's right, roll positive to the
-// right, as seen in game). Rolled first, then pitched, then yawed, each
-// about the eyes-to-neck lever.
+// Where the eyes go when the head turns on the neck, in the head's frame.
+// Rolled first, then pitched, then yawed.
 struct Vec3 {
   float x, y, z;
 };
 Vec3 NeckPivot(float yaw, float pitch, float roll) {
-  // The eyes, from the neck: above and in front.
   Vec3 e{0.0f, kNeckBelow, -kNeckBehind};
-  // roll, about the forward axis
   e = {e.y * std::sin(roll), e.y * std::cos(roll), e.z};
-  // pitch, about the right axis (positive up)
   e = {e.x, e.y * std::cos(pitch) - e.z * std::sin(pitch),
        e.y * std::sin(pitch) + e.z * std::cos(pitch)};
-  // yaw, about the up axis (positive left)
   e = {e.x * std::cos(yaw) + e.z * std::sin(yaw), e.y,
        -e.x * std::sin(yaw) + e.z * std::cos(yaw)};
   return {e.x, e.y - kNeckBelow, e.z + kNeckBehind};
@@ -168,7 +150,7 @@ void NaturalHeadMovementEffect::OnTruckConstantsChanged(
 }
 
 void NaturalHeadMovementEffect::Reset() {
-  // The tremor's phases aren't reset: the head picks up somewhere new.
+  // Not the tremor's phases: the head picks up somewhere new.
   micro_.Reset();
   micro_.timer = Jitter(kMicroInterval);
   posture_.Reset();
@@ -220,8 +202,7 @@ HeadOffset NaturalHeadMovementEffect::Update(float dt,
     tremor_phase_[o] =
         math::WrapNoisePhase(tremor_phase_[o] + dt * kTremorRate[o]);
 
-  // Stopped a while, the driver relaxes; driving off, they sit up and look
-  // at the road. A new posture of the new mode at once either way.
+  // Driving off, the driver sits up and looks at the road at once.
   stopped_for_ =
       telemetry::SpeedKmh(truck) < kIdleSpeedKmh ? stopped_for_ + dt : 0.0f;
   const bool idle = stopped_for_ >= kIdleDelaySeconds;
@@ -260,17 +241,15 @@ HeadOffset NaturalHeadMovementEffect::Update(float dt,
     axis[a] = drift + posture * posture_intensity_;
   }
 
-  // Steering is positive to the left; the head tilts the same way (a
-  // negative roll).
+  // Steering is positive to the left, roll positive to the right.
   const float steering =
       std::clamp(controls.effectiveInput.steering, -1.0f, 1.0f);
   const float tilt = std::copysign(std::sqrt(std::fabs(steering)), steering);
   axis[kRoll] +=
       steering_roll_.Update(-kSteeringTiltDeg * tilt * steering_tilt_, dt);
 
-  // The axes are in the head's frame. A right-hand drive truck's camera
-  // mirrors X (see CabinWalkEffect::CameraX) and roll (seen in game), but
-  // not yaw.
+  // A right-hand drive truck's camera mirrors X and roll, not yaw (seen in
+  // game).
   const float camera_x = right_hand_drive_ ? -1.0f : 1.0f;
   const Vec3 neck =
       NeckPivot(axis[kYaw] * math::kDegToRad, axis[kPitch] * math::kDegToRad,

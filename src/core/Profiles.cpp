@@ -16,9 +16,9 @@ namespace {
 
 namespace fs = std::filesystem;
 
-// Quick Settings cache: avoids re-scanning the profiles dir / re-diffing
-// every key each rendered frame the window is open, since these only
-// actually change on a Save/Load/Delete/edit.
+// The Quick Settings window asks every frame, but the answers only change on
+// a save, load, delete or edit: no need to rescan the folder and diff every
+// key each time.
 struct Cache {
   std::vector<std::string> profile_list;
   bool profile_list_dirty = true;
@@ -30,14 +30,9 @@ Cache g_cache;
 
 constexpr size_t kMaxNameLength = 40;
 
-// Float settings renamed/split since a released version: the old key's value
-// is copied into every new key, then the old key is removed (settings.json
-// only, see MigrateLegacyKeys). v1.0.x had one steering camera rotation
-// amount for both turn directions.
-//
-// A setting deleted outright, with no replacement, doesn't belong here: its
-// key just stays in settings.json and old profiles, unused, since nothing
-// reads it anymore.
+// Float settings renamed or split since a release: the old value goes into
+// every new key. A setting deleted with no replacement doesn't belong here,
+// its key just sits unused in old files.
 struct LegacyFloatKey {
   const char *old_key;
   const char *new_keys[2];
@@ -49,16 +44,12 @@ constexpr LegacyFloatKey kLegacyFloatKeys[] = {
       "settings.driving.steering_camera.rotation_right_deg"}},
 };
 
-// Returns true if anything was migrated (the caller decides whether to save).
-//
-// Cfg_RemoveKey works on settings.json but not on a Cfg_CreateCustomContext
-// file (confirmed in-game: a migrated profile still had the old keys after
-// Cfg_Save). So for profiles the old key sticks around, and migrating on its
-// presence alone would overwrite the new per-side values with the old single
-// one every time the profile is opened. Profiles are therefore only migrated
-// while the new keys are missing (`skip_if_migrated`). settings.json can't
-// use that test, since SPF fills the new keys in from the manifest defaults
-// before the plugin runs, but there the removal sticks.
+// Cfg_RemoveKey doesn't work on a Cfg_CreateCustomContext file (seen in
+// game), so a profile keeps its old key and would be migrated again on every
+// open, overwriting the new values. Profiles are only migrated while the new
+// keys are missing (`skip_if_migrated`). That test can't work on
+// settings.json, which SPF fills from the manifest defaults first, but there
+// the removal does stick.
 bool MigrateLegacyKeys(SPF_Config_API *cfg, SPF_Config_Handle *h,
                        bool skip_if_migrated) {
   bool migrated = false;
@@ -76,8 +67,8 @@ bool MigrateLegacyKeys(SPF_Config_API *cfg, SPF_Config_Handle *h,
   return migrated;
 }
 
-// Windows device names can't be used as file names (with or without an
-// extension), so a profile called e.g. "con" could never be saved.
+// Windows won't create a file named after a device ("con", "com1", ...),
+// extension or not.
 bool IsReservedWindowsName(const std::string &name) {
   const std::string n = strings::ToLower(name);
   if (n == "con" || n == "prn" || n == "aux" || n == "nul")
@@ -104,9 +95,7 @@ bool ProfileFileExists(PluginContext &ctx, const std::string &name) {
   return !path.empty() && fs::exists(path, ec);
 }
 
-// Config keys are flat dotted strings, not a queryable nested JSON node, so
-// profiles copy every setting of settings::kAll individually instead of one
-// bulk JSON blob.
+// The config API has no way to copy a whole JSON node, so it's key by key.
 void CopyAllKeys(SPF_Config_API *cfg, SPF_Config_Handle *from,
                  SPF_Config_Handle *to) {
   for (const settings::Setting &s : settings::kAll) {
@@ -221,15 +210,12 @@ bool Save(PluginContext &ctx, const std::string &name) {
   ctx.core->config->Cfg_Save(profile_h);
   ctx.core->config->Cfg_SetString(ctx.config_handle, kLastProfileKey,
                                   name.c_str());
-  // Unlike Cfg_SetBool/Cfg_SetFloat, a bare Cfg_SetString on the live
-  // context isn't reliably flushed by the time the game actually exits.
-  // Without this, a restart reads back a stale kLastProfileKey from disk.
+  // Unlike the bool and float setters, a Cfg_SetString on its own isn't
+  // reliably on disk by the time the game exits.
   ctx.core->config->Cfg_Save(ctx.config_handle);
   ctx.LogFmt(SPF_LOG_INFO,
              existed ? "Saved profile '%s'" : "Created profile '%s'",
              name.c_str());
-  // A new profile file may have just been created, and live config now
-  // exactly matches this one, so force both caches to recompute next read.
   g_cache.profile_list_dirty = true;
   g_cache.matches_dirty = true;
   return true;
@@ -257,16 +243,13 @@ bool Load(PluginContext &ctx, const std::string &name) {
 
   CopyAllKeys(ctx.core->config, profile_h, ctx.config_handle);
   ctx.ReloadEffectsConfig();
-  // Switching profiles mid-drive can carry stale spring/timer state into
-  // the new profile's differently-scaled targets (e.g. a different
-  // smoothing_time), causing a visible snap/overshoot. Reset the same way
-  // Plugin.cpp does on fresh cabin-view entry.
+  // Springs and timers carried over into the new profile's targets would
+  // snap or overshoot.
   ctx.ResetEffects();
   ctx.core->config->Cfg_SetString(ctx.config_handle, kLastProfileKey,
                                   name.c_str());
   ctx.core->config->Cfg_Save(ctx.config_handle);
   ctx.LogFmt(SPF_LOG_INFO, "Loaded profile '%s'", name.c_str());
-  // Live config just changed wholesale, so the match answer is stale.
   g_cache.matches_dirty = true;
   return true;
 }
@@ -299,11 +282,9 @@ void EnsureDefaultExists(PluginContext &ctx) {
   cfg->Cfg_Save(profile_h);
   g_cache.profile_list_dirty = true;
   g_cache.matches_dirty = true;
-  // Only claim it as active if live settings really equal the defaults just
-  // written. If they differ (e.g. settings.json was customized but the
-  // profiles folder is gone), marking Default active would make
-  // RevertUnsavedChanges() overwrite the user's values with defaults on
-  // unload. Callers that want Default applied Load() it explicitly.
+  // Only made active if the live settings are the defaults: if the player's
+  // settings.json outlived a deleted profiles folder, RevertUnsavedChanges()
+  // would otherwise wipe their values on unload.
   if (Matches(ctx, kDefaultProfileName)) {
     cfg->Cfg_SetString(ctx.config_handle, kLastProfileKey, kDefaultProfileName);
     cfg->Cfg_Save(ctx.config_handle);
@@ -367,8 +348,6 @@ void ResolveUnknownActiveProfile(PluginContext &ctx) {
   if (!last.empty()) {
     if (ProfileFileExists(ctx, last))
       return;
-    // Active profile's file is gone (e.g. deleted on disk), so fall back
-    // to "Default" instead of leaving the UI on a dead name.
     ctx.LogFmt(SPF_LOG_INFO,
                "Active profile '%s' no longer exists on disk, loading '%s'",
                last.c_str(), kDefaultProfileName);
@@ -393,10 +372,8 @@ void InvalidateMatchCache() { g_cache.matches_dirty = true; }
 
 void RevertUnsavedChanges(PluginContext &ctx) {
   const std::string name = LastUsedName(ctx);
-  // The exists check must come before Matches(): Matches() also returns
-  // false for a missing file, and without this we'd fall through to
-  // OpenProfileContext() below, which would create a blank profile file
-  // and reset live settings to hardcoded defaults on unload.
+  // Matches() is false for a missing file too, and opening it below would
+  // create a blank one and reset the live settings to the defaults.
   if (name.empty() || !ProfileFileExists(ctx, name) || Matches(ctx, name))
     return;
 

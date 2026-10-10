@@ -25,7 +25,6 @@ struct TabInfo {
   const char *id;
 };
 
-// The window's tabs, in display order.
 constexpr TabInfo kTabs[] = {
     {ICON_FA_VIDEO, "settings.driving.title", "driving"},
     {ICON_FA_ROAD, "settings.road.title", "road"},
@@ -37,17 +36,15 @@ constexpr TabInfo kTabs[] = {
 
 constexpr size_t kTabCount = std::size(kTabs);
 
-// The first tabs, one per settings group; the rest (Settings, About) aren't
-// effect tabs.
+// The first ones, one per settings group.
 constexpr size_t kEffectTabCount = 4;
 
 std::string TabTitle(const TabInfo &tab) {
   return WithIcon(tab.icon, loc::Tr(tab.title_key));
 }
 
-// Mirrors ImGui's TabBarLayout(): each tab's own width is its title
-// (rounded up to a whole pixel) + FramePadding on both sides + 1 px, and
-// tabs are ItemInnerSpacing apart. Everything is whole pixels.
+// Has to match ImGui's TabBarLayout() to the pixel: a tab is its title plus
+// FramePadding on both sides plus 1 px, ItemInnerSpacing apart.
 struct TabMetrics {
   float width[kTabCount];
   float gap;
@@ -62,9 +59,8 @@ TabMetrics MeasureTabs(SPF_UI_API *ui) {
   ui->UI_Style_GetItemSpacing(style, &spacing_x, &spacing_y);
 
   TabMetrics m{};
-  // The gap is ItemInnerSpacing.x, which the SDK can't read; SPF's style
-  // sets it to the same 4 px as ItemSpacing.y, scaled and truncated the
-  // same way at every UI scale.
+  // The SDK can't read ItemInnerSpacing.x, but SPF's style sets it to the
+  // same 4 px as ItemSpacing.y, scaled the same way at every UI scale.
   m.gap = spacing_y;
   m.frame_pad_y = pad_y;
   m.total = m.gap * static_cast<float>(kTabCount - 1);
@@ -77,11 +73,9 @@ TabMetrics MeasureTabs(SPF_UI_API *ui) {
   return m;
 }
 
-// Widths that make the tabs fill the whole tab bar, spreading the spare
-// room evenly (whole pixels, the leftover ones going to the first tabs).
-// All 0 when the tabs don't even fit at their own width: ImGui then
-// shrinks them itself, for the frame until FitWindowSize widens the
-// window. Call right before UI_BeginTabBar.
+// Spreads the spare room evenly so the tabs fill the bar. All 0 when they
+// don't even fit: ImGui then shrinks them itself, for the one frame until
+// FitWindowSize widens the window. Call right before UI_BeginTabBar.
 std::array<float, kTabCount> StretchTabs(SPF_UI_API *ui, const TabMetrics &m) {
   std::array<float, kTabCount> widths{};
   float avail_x = 0.0f, avail_y = 0.0f;
@@ -97,9 +91,8 @@ std::array<float, kTabCount> StretchTabs(SPF_UI_API *ui, const TabMetrics &m) {
   return widths;
 }
 
-// Tab whose "###" ID keeps it selected across a language switch. With a
-// `width`, the tab is stretched to it and its title drawn centered, since
-// ImGui always left-aligns tab titles.
+// The "###" ID keeps the tab selected across a language switch. A stretched
+// tab draws its title itself, since ImGui always left-aligns them.
 bool BeginTab(SPF_UI_API *ui, const TabInfo &tab, float width,
               const TabMetrics &m) {
   const std::string title = TabTitle(tab);
@@ -129,16 +122,13 @@ bool BeginTab(SPF_UI_API *ui, const TabInfo &tab, float width,
   return open;
 }
 
-// The window height the open tab needs to show all its content with every
-// section folded, as of the last frame (0 until then); FitWindowSize keeps
-// the window at least that tall. It depends on the language and the width
-// (text wrapping), so it's measured every frame.
+// What the open tab needs with every section folded, as of the last frame.
+// Text wrapping makes it depend on the width and the language, so it's
+// measured every frame.
 float g_tab_min_h = 0.0f;
 
-// Starts the scrolling region a tab's content is drawn in, filling the
-// window's height below the tab bar (minus the footer line, if the tab has
-// one). Expanding a section then shows a scrollbar in it, and the tab bar
-// stays in view. Pair with UI_EndChild.
+// Its own scrolling region, so expanding a section scrolls the content and
+// the tab bar stays in view. Pair with UI_EndChild.
 void BeginTabContent(SPF_UI_API *ui, const TabInfo &tab, bool with_footer) {
   float avail_x = 0.0f, avail_y = 0.0f;
   ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
@@ -150,11 +140,8 @@ void BeginTabContent(SPF_UI_API *ui, const TabInfo &tab, bool with_footer) {
                     SPF_WINDOW_FLAG_NONE);
 }
 
-// The window height at which a tab's region exactly fits `content_h` of
-// content (with the footer line under it, if the tab has one), measured
-// like the cursor's height: one ItemSpacing below the last item.
-// `region_top` is the window-local Y the region starts at; a borderless
-// child has no padding.
+// The window height that exactly fits `content_h`, measured like the
+// cursor's height (one ItemSpacing below the last item).
 float FitHeight(SPF_UI_API *ui, float region_top, float content_h,
                 bool with_footer) {
   SPF_Style_Handle *style = ui->UI_GetStyle();
@@ -166,10 +153,8 @@ float FitHeight(SPF_UI_API *ui, float region_top, float content_h,
   return std::ceil(region_top + content_h - spacing_y + footer_h + pad_y);
 }
 
-// True on the first frame after a language switch. `seen` must start at
-// the count from the window's first frame, so the language SPF starts with
-// doesn't count as a switch (that would undo the width the player left the
-// window at last session).
+// `seen` must start at the window's first frame, or the starting language
+// would count as a switch and undo the width the player left last session.
 bool LanguageSwitched(unsigned &seen) {
   const unsigned now = loc::LanguageChangeCount();
   const bool switched = now != seen;
@@ -177,20 +162,18 @@ bool LanguageSwitched(unsigned &seen) {
   return switched;
 }
 
-// Lets the player resize the window, but never narrower than the tab
-// titles (snapped to exactly that on the first launch and a language
-// switch), nor shorter than the open tab's folded content or taller than
-// the screen.
+// Never narrower than the tab titles (snapped to them on the first launch
+// and a language switch), nor shorter than the open tab's folded content or
+// taller than the screen.
 void FitWindowSize(SPF_UI_API *ui, const TabMetrics &m) {
   static unsigned s_seen_lang = loc::LanguageChangeCount();
   static bool s_first_frame = true;
 
   float win_pad_x = 0.0f, win_pad_y = 0.0f;
   ui->UI_Style_GetWindowPadding(ui->UI_GetStyle(), &win_pad_x, &win_pad_y);
-  // ImGui only shrinks tabs once they overflow the window's width minus
-  // WindowPadding on both sides by 1 px or more, and everything is whole
-  // pixels, so this is the exact limit (the tab content scrolls in its own
-  // region, so its scrollbar never narrows the tab bar).
+  // ImGui only shrinks tabs once they overflow by 1 px or more, so this is
+  // the exact limit. The content's scrollbar is in its own region and never
+  // narrows the tab bar.
   const float required_w = std::round(m.total + win_pad_x * 2.0f);
 
   float win_w = 0.0f, win_h = 0.0f;
@@ -199,12 +182,10 @@ void FitWindowSize(SPF_UI_API *ui, const TabMetrics &m) {
   float target_h = std::max(win_h, g_tab_min_h);
   float vp_w = 0.0f, vp_h = 0.0f;
   ui->UI_GetMainViewportSize(&vp_w, &vp_h);
-  // The screen wins over the minimum, on one too small for both.
   if (vp_h > 0.0f)
     target_h = std::min(target_h, std::floor(vp_h));
 
-  // The first launch ever is the window still at its manifest default;
-  // later launches keep whatever width the player left it at.
+  // Later launches keep whatever width the player left.
   const bool first_launch =
       s_first_frame &&
       std::fabs(win_w - static_cast<float>(kWindowWidth)) < 0.5f;
@@ -257,7 +238,7 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
     return;
   }
 
-  // The effect tabs: each one's id is its settings group.
+  // An effect tab's id is its settings group.
   for (size_t i = 0; i < kEffectTabCount; ++i) {
     if (!BeginTab(ui, kTabs[i], tab_widths[i], tab_metrics))
       continue;

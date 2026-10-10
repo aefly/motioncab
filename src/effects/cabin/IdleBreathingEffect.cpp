@@ -9,11 +9,9 @@
 namespace motioncab {
 
 namespace {
-// Head rotation leads the torso's vertical rise slightly, like a neck
-// following the chest rather than moving in lockstep with it.
+// The head nods slightly ahead of the chest's rise rather than in lockstep.
 constexpr float kPitchLeadPhase = 0.35f;
 
-// 1.0 at/below fade_start, 0.0 at/above fade_end, linear in between.
 float FadeFactor(float speed_kmh, float fade_start_kmh, float fade_end_kmh) {
   if (speed_kmh <= fade_start_kmh)
     return 1.0f;
@@ -22,8 +20,8 @@ float FadeFactor(float speed_kmh, float fade_start_kmh, float fade_end_kmh) {
   return 1.0f - (speed_kmh - fade_start_kmh) / (fade_end_kmh - fade_start_kmh);
 }
 
-// Asymmetric breath shape (quicker inhale, slower exhale) instead of a pure
-// sine, so the motion doesn't look like a metronome. Peaks around +-1.1.
+// A quicker inhale than exhale, so it doesn't look like a metronome. Peaks
+// around +-1.1.
 float BreathWave(float phase) {
   return std::sin(phase) + 0.25f * std::sin(2.0f * phase - 1.2f);
 }
@@ -40,8 +38,7 @@ void IdleBreathingEffect::LoadSettings() {
   breathing_rate_bpm_ = Float("breathing_rate_bpm", breathing_rate_bpm_);
   fade_start_kmh_ = Float("fade_start_kmh", fade_start_kmh_);
   fade_end_kmh_ = Float("fade_end_kmh", fade_end_kmh_);
-  // The two sliders are independent, so End can be dragged below Start.
-  // Treat that as the same fade range rather than an abrupt cutoff.
+  // Nothing stops the end slider from going below the start one.
   if (fade_end_kmh_ < fade_start_kmh_)
     std::swap(fade_start_kmh_, fade_end_kmh_);
 }
@@ -62,7 +59,7 @@ HeadOffset IdleBreathingEffect::Update(float dt, const SPF_TruckData &truck,
   phase_ += math::kTwoPi * breaths_per_second * dt;
   if (phase_ >= math::kTwoPi) {
     phase_ = math::WrapPhase(phase_);
-    // Redraw jitter once per cycle so consecutive breaths aren't identical.
+    // So no two breaths are the same.
     std::uniform_real_distribution<float> rate_jitter(0.92f, 1.08f);
     std::uniform_real_distribution<float> amp_jitter(0.85f, 1.15f);
     cycle_rate_scale_ = rate_jitter(rng_);

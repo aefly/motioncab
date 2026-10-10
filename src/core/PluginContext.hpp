@@ -23,8 +23,7 @@
 
 namespace motioncab {
 
-// Shared state for the plugin's lifetime. One instance, owned by Plugin.cpp.
-// Populated progressively as SPF lifecycle callbacks fire (see SPF_Plugin.h).
+// Filled in bit by bit as SPF's lifecycle callbacks fire.
 struct PluginContext {
   static constexpr const char *kPluginName = "MotionCab";
 
@@ -38,44 +37,34 @@ struct PluginContext {
 
   EffectManager effects;
   std::unique_ptr<ManualZoomEffect> manual_zoom;
-  // Held apart like manual_zoom, see its class comment.
   std::unique_ptr<CabinLayoutStore> cabin_layouts;
   std::unique_ptr<CabinWalkEffect> cabin_walk;
   CabinWalkSounds cabin_walk_sounds;
 
-  // Latest truck telemetry snapshot, refreshed via Tel_RegisterForTruckData.
   SPF_TruckData latest_truck_data{};
   std::atomic<bool> has_truck_data{false};
 
-  // Latest control input snapshot, refreshed via Tel_RegisterForControls.
-  // Used instead of SPF_TruckData.effective_steering, which was found to
-  // never update at runtime.
+  // Our steering source: SPF_TruckData.effective_steering never updates.
   SPF_Controls latest_controls_data{};
   std::atomic<bool> has_controls_data{false};
 
-  // Writes the effects' offset into the interior camera (differential
-  // write) and remembers what it applied.
   CameraRig camera_rig;
-  // "<brand_id>/<id>" of the last truck telemetry described, to tell a
-  // truck switch from a change to the same truck.
+  // "<brand_id>/<id>", to tell a truck switch from a change to the same
+  // truck.
   std::string truck_identity;
   bool was_interior_last_frame = false;
 
   std::chrono::steady_clock::time_point last_update_time{};
   bool has_last_update_time = false;
 
-  // Re-reads every effect's settings, ManualZoomEffect's and
-  // CabinWalkEffect's included.
+  // Use these two rather than going through each effect by hand, so the
+  // ones held apart aren't forgotten.
   void ReloadEffectsConfig();
-
-  // Clears every effect's smoothing state (settling their fades, see
-  // EffectManager::ResetAll), ManualZoomEffect's included. Not Cabin
-  // Walk's: a player up in the cabin stays there across a view switch or a
-  // recenter.
+  // Leaves Cabin Walk alone: a player up in the cabin stays there across a
+  // view switch or a recenter.
   void ResetEffects();
 
-  // The plugin's data directory (Env_GetPluginDataDir), or empty if the
-  // environment API isn't available yet or the call fails.
+  // Empty if the environment API isn't there yet or the call fails.
   std::string PluginDataDir() const;
 
   void Log(SPF_LogLevel level, const char *message) const;

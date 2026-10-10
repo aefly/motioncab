@@ -2,8 +2,7 @@
 
 namespace motioncab::links {
 
-// Single source of truth for the plugin's public links: used by
-// native SPF and Quick Settings windows.
+// Shared by the manifest and the About tab.
 inline constexpr const char *kWebsite = "https://motioncab.com";
 inline constexpr const char *kGithub = "https://github.com/aefly/motioncab";
 inline constexpr const char *kYoutube =

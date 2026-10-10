@@ -5,14 +5,13 @@
 
 namespace motioncab::math {
 
-// Damped mass-spring driven by an external acceleration:
+// Damped mass-spring driven by an acceleration:
 //   x'' + 2 * zeta * omega * x' + omega^2 * x = drive
-// Unlike SpringDamper1D (critically damped, follows a target), it can
-// overshoot and ring, which is what a sprung seat does after a bump. At
-// rest under a constant drive it settles at drive / omega^2.
+// Unlike SpringDamper1D it can overshoot and ring, like a sprung seat after
+// a bump. A constant drive settles it at drive / omega^2.
 class Oscillator1D {
 public:
-  // `omega` in rad/s (natural frequency), `zeta` the damping ratio.
+  // `omega` is the natural frequency in rad/s, `zeta` the damping ratio.
   void Configure(float omega, float zeta) {
     omega_ = omega > 1e-3f ? omega : 1e-3f;
     zeta_ = zeta > 0.0f ? zeta : 0.0f;
@@ -28,8 +27,8 @@ public:
       return x_;
     // A frame hitch shouldn't be integrated as one huge step.
     dt = std::min(dt, kMaxFrameSeconds);
-    // Semi-implicit Euler stays stable only while omega * step is well
-    // below 2, so a stiff spring at a low frame rate is substepped.
+    // Semi-implicit Euler goes unstable as omega * step nears 2, so a stiff
+    // spring at a low frame rate gets substepped.
     const int steps =
         std::max(1, static_cast<int>(std::ceil(dt / kMaxStepSeconds)));
     const float h = dt / static_cast<float>(steps);

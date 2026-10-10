@@ -10,31 +10,19 @@
 
 namespace motioncab {
 
-// Speed-driven body sway: the driver never sits perfectly still in a moving
-// cab. Procedural, built from continuous noise (math/Noise.hpp):
-//  - three frequency bands (cab sway, cab/seat bounce, fine vibration) with
-//    different weights per axis: vertical is dominated by the faster
-//    bounce, lateral by the sway;
-//  - the head mostly moves rather than turns, the eyes staying on the road:
-//    little yaw, roll following lateral motion, and pitch nodding against
-//    the vertical bounce, plus a little independent noise;
-//  - the head settles a moment, then shifts, like a real head, rather than
-//    swaying steadily;
-//  - a very slow amplitude envelope makes some stretches rougher than others.
-// Both amplitude and noise speed grow with truck speed. The amplitude also
-// follows the ground: calmer on smooth asphalt, rougher on gravel or dirt
-// (see Surface.hpp). Corners are left to BodyDynamicsEffect and
-// HeadMotionEffect.
-// Independent of SuspensionEffect (real wheel travel) and
-// RoadIrregularityEffect (surface texture): this one is the slow body sway.
+// The slow body sway of a driver who never sits quite still in a moving cab,
+// built from noise. The head mostly moves rather than turns, since the eyes
+// stay on the road, and it settles a moment, then shifts, rather than
+// swaying steadily. It grows with speed and with rougher ground.
+//
+// SuspensionEffect has the real wheel travel and RoadIrregularityEffect the
+// surface texture; corners belong to BodyDynamicsEffect and HeadMotionEffect.
 class SpeedShakeEffect final : public ConfigurableEffect {
 public:
   SpeedShakeEffect(SPF_Config_API *config_api,
                    SPF_Config_Handle *config_handle);
 
   void Reset() override;
-  // Road motion is for driving: standing in the parked truck, it'd be idle
-  // noise.
   bool NeedsDriverSeat() const override { return true; }
   HeadOffset Update(float dt, const SPF_TruckData &truck,
                     const SPF_Controls &controls) override;
@@ -45,34 +33,30 @@ private:
   void LoadSettings() override;
 
   static constexpr int kBands = 3;
-  // Independent noise channels: x, y, yaw, roll (own part), pitch (own part).
   static constexpr int kChannels = 5;
 
   float intensity_ = settings::Default("settings.road.speed_shake.intensity");
-  // seconds; slows the noise down (higher) or speeds it up (lower), without
-  // changing its size
+  // Changes how fast the noise runs, not its size.
   float smoothing_ =
       settings::Default("settings.road.speed_shake.smoothing_time");
-  float rate_multiplier_ = 1.0f; // from smoothing_ in LoadSettings()
-  // multiplier on yaw/pitch/roll only
+  float rate_multiplier_ = 1.0f;
   float rotation_ = settings::Default("settings.road.speed_shake.rotation");
-  // multiplier on the up/down bounce only
   float vertical_ = settings::Default("settings.road.speed_shake.vertical");
-  // 0..1, depth of the slow amplitude envelope
+  // How much some stretches of road get rougher than others.
   float roughness_ = settings::Default("settings.road.speed_shake.roughness");
 
   uint32_t wheel_count_ = 0;
   SurfaceMap surfaces_;
 
   uint32_t seed_;
-  // Noise-domain time per band, not reset either, so each cabin entry picks
-  // up a new stretch of noise instead of replaying the same one.
-  // Both wrapped with math::WrapNoisePhase.
+  // Never reset, so each cabin entry picks up a new stretch of noise rather
+  // than replaying the same one.
   std::array<double, kBands> phase_{};
-  double envelope_phase_ = 0.0;       // not reset: keeps the roughness varying
-  double activity_phase_ = 0.0;       // not reset: holds and shifts
-  math::SpringDamper1D entry_fade_;   // 0 -> 1 after Reset(), no pop
-  math::SpringDamper1D surface_gain_; // amplitude factor from the ground
+  double envelope_phase_ = 0.0;
+  double activity_phase_ = 0.0;
+  // The phases don't restart at 0, so the shake fades in after a Reset().
+  math::SpringDamper1D entry_fade_;
+  math::SpringDamper1D surface_gain_;
 };
 
 } // namespace motioncab

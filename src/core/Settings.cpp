@@ -6,8 +6,7 @@ namespace motioncab::settings {
 
 namespace {
 
-// Shortest form that reads back as the same float, always with a decimal
-// point so JSON parses it as a float, not an integer.
+// Always with a decimal point, or the JSON would read it as an integer.
 std::string JsonNumber(float value) {
   std::string s = std::format("{}", value);
   if (s.find_first_of(".e") == std::string::npos)
@@ -27,7 +26,7 @@ const Setting *Find(std::string_view key) {
 
 std::string DefaultsJson() {
   // kAll keeps each group's and effect's settings together (see
-  // SettingsAreGrouped), so a change of group/effect closes the previous one.
+  // SettingsAreGrouped), so a new group or effect closes the previous one.
   std::string json = "{";
   std::string_view group, effect;
   for (const Setting &s : kAll) {

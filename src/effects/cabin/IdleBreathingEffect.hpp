@@ -7,12 +7,9 @@
 
 namespace motioncab {
 
-// Gives the camera a subtle, rhythmic rise and fall at idle, as if the
-// driver is breathing: a pitch nod leads, with a smaller phase-lagged
-// vertical translation underneath (a pure up/down bob reads as mechanical).
-// The waveform is asymmetric (quicker inhale, slower exhale) and jitters
-// cycle-to-cycle so it doesn't repeat. Fades out with speed, since it reads
-// as noise once road/handling motion dominates.
+// A pitch nod with a smaller rise and fall under it, since a pure up/down
+// bob looks mechanical. It fades out with speed, where it would only add
+// noise to the road's motion.
 class IdleBreathingEffect final : public ConfigurableEffect {
 public:
   IdleBreathingEffect(SPF_Config_API *config_api,
@@ -28,22 +25,19 @@ private:
   // meters
   float vertical_amplitude_ =
       settings::Default("settings.cabin.idle_breathing.vertical_amplitude");
-  // degrees
   float pitch_amplitude_deg_ =
       settings::Default("settings.cabin.idle_breathing.pitch_amplitude_deg");
-  // breaths per minute
   float breathing_rate_bpm_ =
       settings::Default("settings.cabin.idle_breathing.breathing_rate_bpm");
-  // full strength at/below this speed
   float fade_start_kmh_ =
       settings::Default("settings.cabin.idle_breathing.fade_start_kmh");
-  // fully faded out at/above this speed
   float fade_end_kmh_ =
       settings::Default("settings.cabin.idle_breathing.fade_end_kmh");
 
-  float phase_ = 0.0f;            // radians
-  float cycle_rate_scale_ = 1.0f; // randomized once per breath cycle
-  float cycle_amp_scale_ = 1.0f;  // randomized once per breath cycle
+  float phase_ = 0.0f; // radians
+  // Redrawn every breath.
+  float cycle_rate_scale_ = 1.0f;
+  float cycle_amp_scale_ = 1.0f;
   std::minstd_rand rng_;
 };
 
