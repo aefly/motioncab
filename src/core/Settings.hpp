@@ -127,9 +127,17 @@ inline constexpr Setting kAll[] = {
           3.0f, "%.2f"),
     // manual.mirror_check
     Bool("settings.manual.mirror_check.enabled", true),
-    Float("settings.manual.mirror_check.look_angle_deg", 28.0f, 15.0f, 50.0f,
+    Float("settings.manual.mirror_check.left_angle_deg", 28.0f, 15.0f, 50.0f,
           "%.0f deg"),
-    Float("settings.manual.mirror_check.pitch_offset_deg", 3.0f, 0.0f, 10.0f,
+    Float("settings.manual.mirror_check.left_pitch_deg", 0.0f, -10.0f, 10.0f,
+          "%.0f deg"),
+    Float("settings.manual.mirror_check.left_fov_deg", 0.0f, -20.0f, 20.0f,
+          "%.0f deg"),
+    Float("settings.manual.mirror_check.right_angle_deg", 28.0f, 15.0f, 50.0f,
+          "%.0f deg"),
+    Float("settings.manual.mirror_check.right_pitch_deg", 0.0f, -10.0f, 10.0f,
+          "%.0f deg"),
+    Float("settings.manual.mirror_check.right_fov_deg", 0.0f, -20.0f, 20.0f,
           "%.0f deg"),
     Float("settings.manual.mirror_check.smoothing_time", 0.35f, 0.0f, 0.7f,
           "%.2f s"),
@@ -143,12 +151,16 @@ inline constexpr Setting kAll[] = {
           "%.0f deg"),
     Float("settings.manual.manual_look.glance_left_deg", 20.0f, 5.0f, 45.0f,
           "%.0f deg"),
-    Float("settings.manual.manual_look.glance_left_pitch_deg", 3.0f, 0.0f,
+    Float("settings.manual.manual_look.glance_left_pitch_deg", 0.0f, -10.0f,
           10.0f, "%.0f deg"),
+    Float("settings.manual.manual_look.glance_left_fov_deg", 0.0f, -20.0f,
+          20.0f, "%.0f deg"),
     Float("settings.manual.manual_look.glance_right_deg", 30.0f, 5.0f, 45.0f,
           "%.0f deg"),
-    Float("settings.manual.manual_look.glance_right_pitch_deg", 3.0f, 0.0f,
+    Float("settings.manual.manual_look.glance_right_pitch_deg", 0.0f, -10.0f,
           10.0f, "%.0f deg"),
+    Float("settings.manual.manual_look.glance_right_fov_deg", 0.0f, -20.0f,
+          20.0f, "%.0f deg"),
     Float("settings.manual.manual_look.smoothing_time", 0.35f, 0.0f, 0.7f,
           "%.2f s"),
     Bool("settings.manual.manual_look.toggle_mode", false),
@@ -208,15 +220,20 @@ constexpr bool InEffect(const Setting &setting,
 // The manifest's JSON needs each group's and each
 // effect's settings in one run: a group or effect seen again after another
 // one would be a duplicate JSON key.
+// Each key is split once: splitting them all again for every pair runs
+// past clang's constant evaluation step limit.
 consteval bool SettingsAreGrouped() {
   constexpr size_t n = std::size(kAll);
+  KeyParts parts[n];
+  for (size_t i = 0; i < n; ++i)
+    parts[i] = SplitKey(kAll[i].key);
   for (size_t i = 1; i < n; ++i) {
-    const KeyParts cur = SplitKey(kAll[i].key);
-    const KeyParts prev = SplitKey(kAll[i - 1].key);
+    const KeyParts &cur = parts[i];
+    const KeyParts &prev = parts[i - 1];
     const bool new_group = cur.group != prev.group;
     const bool new_effect = new_group || cur.effect != prev.effect;
     for (size_t j = 0; j + 1 < i; ++j) {
-      const KeyParts old = SplitKey(kAll[j].key);
+      const KeyParts &old = parts[j];
       if (new_group && old.group == cur.group)
         return false;
       if (new_effect && old.group == cur.group && old.effect == cur.effect)

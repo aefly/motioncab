@@ -8,6 +8,8 @@ namespace motioncab {
 
 // Looks toward the corresponding side mirror while a turn signal is on,
 // recentering when it's off, a driver's blind-spot check before a turn.
+// Every angle and the FOV change are set per side, since the passenger
+// mirror is further away than the driver's.
 //
 // Level-triggered, not one-shot: target is simply "mirror" while
 // lblinker/rblinker is true, "center" otherwise; the spring does the
@@ -35,16 +37,26 @@ public:
   // to take out of its looks.
   float yaw() const { return yaw_.value(); }
   float pitch() const { return pitch_.value(); }
+  float fov() const { return fov_.value(); }
 
 private:
   void LoadSettings() override;
 
-  // yaw toward the mirror, in degrees
-  float look_angle_deg_ =
-      settings::Default("settings.manual.mirror_check.look_angle_deg");
-  // mirrors sit a little low
-  float pitch_offset_deg_ =
-      settings::Default("settings.manual.mirror_check.pitch_offset_deg");
+  // yaw toward each mirror, in degrees
+  float left_angle_deg_ =
+      settings::Default("settings.manual.mirror_check.left_angle_deg");
+  float right_angle_deg_ =
+      settings::Default("settings.manual.mirror_check.right_angle_deg");
+  // in degrees, positive up
+  float left_pitch_deg_ =
+      settings::Default("settings.manual.mirror_check.left_pitch_deg");
+  float right_pitch_deg_ =
+      settings::Default("settings.manual.mirror_check.right_pitch_deg");
+  // FOV change, in degrees, negative zooms in
+  float left_fov_deg_ =
+      settings::Default("settings.manual.mirror_check.left_fov_deg");
+  float right_fov_deg_ =
+      settings::Default("settings.manual.mirror_check.right_fov_deg");
   // seconds, spring time constant
   float smoothing_time_ =
       settings::Default("settings.manual.mirror_check.smoothing_time");
@@ -62,6 +74,7 @@ private:
 
   math::SpringDamper1D yaw_;
   math::SpringDamper1D pitch_;
+  math::SpringDamper1D fov_;
 };
 
 } // namespace motioncab
