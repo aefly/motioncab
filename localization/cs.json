@@ -267,13 +267,29 @@
       "mirror_check": {
         "title": "Kontrola zrcátek",
         "hint": "Vyžaduje, aby byly ve hře přiřazeny klávesy „Levý blinkr“ a „Pravý blinkr“.",
-        "look_angle_deg": {
-          "title": "Úhel pohledu",
-          "desc": "Jak daleko se hlava otočí k zrcátku."
+        "left_angle_deg": {
+          "title": "Úhel pohledu do levého zrcátka",
+          "desc": "Jak daleko se hlava otočí k levému zrcátku."
         },
-        "pitch_offset_deg": {
-          "title": "Sklon",
-          "desc": "Jak moc se hlava při pohledu do zrcátka skloní dolů."
+        "left_pitch_deg": {
+          "title": "Sklon u levého zrcátka",
+          "desc": "Jak moc se hlava při pohledu do levého zrcátka nakloní. Kladné = nahoru, záporné = dolů."
+        },
+        "left_fov_deg": {
+          "title": "Změna FOV u levého zrcátka",
+          "desc": "O kolik se při pohledu do levého zrcátka rozšíří zorné pole. Záporné = užší (přiblížení)."
+        },
+        "right_angle_deg": {
+          "title": "Úhel pohledu do pravého zrcátka",
+          "desc": "Jak daleko se hlava otočí k pravému zrcátku."
+        },
+        "right_pitch_deg": {
+          "title": "Sklon u pravého zrcátka",
+          "desc": "Jak moc se hlava při pohledu do pravého zrcátka nakloní. Kladné = nahoru, záporné = dolů."
+        },
+        "right_fov_deg": {
+          "title": "Změna FOV u pravého zrcátka",
+          "desc": "O kolik se při pohledu do pravého zrcátka rozšíří zorné pole. Záporné = užší (přiblížení)."
         },
         "smoothing_time": {
           "title": "Vyhlazení",
@@ -305,7 +321,11 @@
         },
         "glance_left_pitch_deg": {
           "title": "Sklon při pohledu do levého zrcátka",
-          "desc": "Jak moc se hlava při pohledu do levého zrcátka skloní dolů."
+          "desc": "Jak moc se hlava při pohledu do levého zrcátka nakloní. Kladné = nahoru, záporné = dolů."
+        },
+        "glance_left_fov_deg": {
+          "title": "Změna FOV při pohledu do levého zrcátka",
+          "desc": "O kolik se při pohledu do levého zrcátka rozšíří zorné pole. Záporné = užší (přiblížení)."
         },
         "glance_right_deg": {
           "title": "Úhel pohledu do pravého zrcátka",
@@ -313,7 +333,11 @@
         },
         "glance_right_pitch_deg": {
           "title": "Sklon při pohledu do pravého zrcátka",
-          "desc": "Jak moc se hlava při pohledu do pravého zrcátka skloní dolů."
+          "desc": "Jak moc se hlava při pohledu do pravého zrcátka nakloní. Kladné = nahoru, záporné = dolů."
+        },
+        "glance_right_fov_deg": {
+          "title": "Změna FOV při pohledu do pravého zrcátka",
+          "desc": "O kolik se při pohledu do pravého zrcátka rozšíří zorné pole. Záporné = užší (přiblížení)."
         },
         "smoothing_time": {
           "title": "Vyhlazení",

@@ -267,13 +267,29 @@
       "mirror_check": {
         "title": "Mirar los espejos",
         "hint": "Requiere que las teclas nativas del juego «Intermitente izquierdo» e «Intermitente derecho» estén asignadas.",
-        "look_angle_deg": {
-          "title": "Ángulo de mirada",
-          "desc": "Cuánto gira tu cabeza para mirar el espejo."
+        "left_angle_deg": {
+          "title": "Ángulo del espejo izquierdo",
+          "desc": "Cuánto gira tu cabeza para mirar el espejo izquierdo."
         },
-        "pitch_offset_deg": {
-          "title": "Inclinación",
-          "desc": "Cuánto baja tu cabeza al mirar el espejo."
+        "left_pitch_deg": {
+          "title": "Inclinación del espejo izquierdo",
+          "desc": "Cuánto se inclina tu cabeza al mirar el espejo izquierdo. Positivo = hacia arriba, negativo = hacia abajo."
+        },
+        "left_fov_deg": {
+          "title": "Cambio de FOV del espejo izquierdo",
+          "desc": "Cuánto se amplía el campo de visión al mirar el espejo izquierdo. Negativo = más estrecho (zoom)."
+        },
+        "right_angle_deg": {
+          "title": "Ángulo del espejo derecho",
+          "desc": "Cuánto gira tu cabeza para mirar el espejo derecho."
+        },
+        "right_pitch_deg": {
+          "title": "Inclinación del espejo derecho",
+          "desc": "Cuánto se inclina tu cabeza al mirar el espejo derecho. Positivo = hacia arriba, negativo = hacia abajo."
+        },
+        "right_fov_deg": {
+          "title": "Cambio de FOV del espejo derecho",
+          "desc": "Cuánto se amplía el campo de visión al mirar el espejo derecho. Negativo = más estrecho (zoom)."
         },
         "smoothing_time": {
           "title": "Suavizado",
@@ -305,7 +321,11 @@
         },
         "glance_left_pitch_deg": {
           "title": "Inclinación del vistazo izquierdo",
-          "desc": "Cuánto baja tu cabeza al echar un vistazo al espejo izquierdo."
+          "desc": "Cuánto se inclina tu cabeza al echar un vistazo al espejo izquierdo. Positivo = hacia arriba, negativo = hacia abajo."
+        },
+        "glance_left_fov_deg": {
+          "title": "Cambio de FOV del vistazo izquierdo",
+          "desc": "Cuánto se amplía el campo de visión al echar un vistazo al espejo izquierdo. Negativo = más estrecho (zoom)."
         },
         "glance_right_deg": {
           "title": "Ángulo del vistazo derecho",
@@ -313,7 +333,11 @@
         },
         "glance_right_pitch_deg": {
           "title": "Inclinación del vistazo derecho",
-          "desc": "Cuánto baja tu cabeza al echar un vistazo al espejo derecho."
+          "desc": "Cuánto se inclina tu cabeza al echar un vistazo al espejo derecho. Positivo = hacia arriba, negativo = hacia abajo."
+        },
+        "glance_right_fov_deg": {
+          "title": "Cambio de FOV del vistazo derecho",
+          "desc": "Cuánto se amplía el campo de visión al echar un vistazo al espejo derecho. Negativo = más estrecho (zoom)."
         },
         "smoothing_time": {
           "title": "Suavizado",

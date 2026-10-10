@@ -267,13 +267,29 @@
       "mirror_check": {
         "title": "Ayna kontrolü",
         "hint": "Oyunun \"Sol sinyal\" ve \"Sağ sinyal\" tuşlarının atanmış olmasını gerektirir.",
-        "look_angle_deg": {
-          "title": "Bakış açısı",
-          "desc": "Aynayı kontrol etmek için kafanızın ne kadar döndüğü."
+        "left_angle_deg": {
+          "title": "Sol ayna açısı",
+          "desc": "Sol aynayı kontrol etmek için kafanızın ne kadar döndüğü."
         },
-        "pitch_offset_deg": {
-          "title": "Eğim ofseti",
-          "desc": "Aynayı kontrol ederken kafanızın ne kadar aşağı eğildiği."
+        "left_pitch_deg": {
+          "title": "Sol ayna eğimi",
+          "desc": "Sol aynayı kontrol ederken kafanızın ne kadar eğildiği. Pozitif = yukarı, negatif = aşağı."
+        },
+        "left_fov_deg": {
+          "title": "Sol ayna FOV değişimi",
+          "desc": "Sol aynayı kontrol ederken görüş alanının ne kadar genişlediği. Negatif = daha dar (yakınlaştırma)."
+        },
+        "right_angle_deg": {
+          "title": "Sağ ayna açısı",
+          "desc": "Sağ aynayı kontrol etmek için kafanızın ne kadar döndüğü."
+        },
+        "right_pitch_deg": {
+          "title": "Sağ ayna eğimi",
+          "desc": "Sağ aynayı kontrol ederken kafanızın ne kadar eğildiği. Pozitif = yukarı, negatif = aşağı."
+        },
+        "right_fov_deg": {
+          "title": "Sağ ayna FOV değişimi",
+          "desc": "Sağ aynayı kontrol ederken görüş alanının ne kadar genişlediği. Negatif = daha dar (yakınlaştırma)."
         },
         "smoothing_time": {
           "title": "Yumuşatma",
@@ -305,7 +321,11 @@
         },
         "glance_left_pitch_deg": {
           "title": "Sol göz atma eğimi",
-          "desc": "Sol aynaya göz atarken kafanızın ne kadar aşağı eğildiği."
+          "desc": "Sol aynaya göz atarken kafanızın ne kadar eğildiği. Pozitif = yukarı, negatif = aşağı."
+        },
+        "glance_left_fov_deg": {
+          "title": "Sol göz atma FOV değişimi",
+          "desc": "Sol aynaya göz atarken görüş alanının ne kadar genişlediği. Negatif = daha dar (yakınlaştırma)."
         },
         "glance_right_deg": {
           "title": "Sağ göz atma açısı",
@@ -313,7 +333,11 @@
         },
         "glance_right_pitch_deg": {
           "title": "Sağ göz atma eğimi",
-          "desc": "Sağ aynaya göz atarken kafanızın ne kadar aşağı eğildiği."
+          "desc": "Sağ aynaya göz atarken kafanızın ne kadar eğildiği. Pozitif = yukarı, negatif = aşağı."
+        },
+        "glance_right_fov_deg": {
+          "title": "Sağ göz atma FOV değişimi",
+          "desc": "Sağ aynaya göz atarken görüş alanının ne kadar genişlediği. Negatif = daha dar (yakınlaştırma)."
         },
         "smoothing_time": {
           "title": "Yumuşatma",

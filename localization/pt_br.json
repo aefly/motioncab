@@ -267,13 +267,29 @@
       "mirror_check": {
         "title": "Checagem dos espelhos",
         "hint": "Requer que as teclas nativas do jogo \"Seta para a esquerda\" e \"Seta para a direita\" estejam atribuídas.",
-        "look_angle_deg": {
-          "title": "Ângulo do olhar",
-          "desc": "Quanto sua cabeça gira para olhar o espelho."
+        "left_angle_deg": {
+          "title": "Ângulo do espelho esquerdo",
+          "desc": "Quanto sua cabeça gira para olhar o espelho esquerdo."
         },
-        "pitch_offset_deg": {
-          "title": "Inclinação",
-          "desc": "Quanto sua cabeça abaixa ao olhar o espelho."
+        "left_pitch_deg": {
+          "title": "Inclinação do espelho esquerdo",
+          "desc": "Quanto sua cabeça se inclina ao olhar o espelho esquerdo. Positivo = para cima, negativo = para baixo."
+        },
+        "left_fov_deg": {
+          "title": "Variação do FOV do espelho esquerdo",
+          "desc": "Quanto o campo de visão se amplia ao olhar o espelho esquerdo. Negativo = mais estreito (zoom)."
+        },
+        "right_angle_deg": {
+          "title": "Ângulo do espelho direito",
+          "desc": "Quanto sua cabeça gira para olhar o espelho direito."
+        },
+        "right_pitch_deg": {
+          "title": "Inclinação do espelho direito",
+          "desc": "Quanto sua cabeça se inclina ao olhar o espelho direito. Positivo = para cima, negativo = para baixo."
+        },
+        "right_fov_deg": {
+          "title": "Variação do FOV do espelho direito",
+          "desc": "Quanto o campo de visão se amplia ao olhar o espelho direito. Negativo = mais estreito (zoom)."
         },
         "smoothing_time": {
           "title": "Suavização",
@@ -305,7 +321,11 @@
         },
         "glance_left_pitch_deg": {
           "title": "Inclinação da espiada à esquerda",
-          "desc": "Quanto sua cabeça abaixa ao espiar o espelho esquerdo."
+          "desc": "Quanto sua cabeça se inclina ao espiar o espelho esquerdo. Positivo = para cima, negativo = para baixo."
+        },
+        "glance_left_fov_deg": {
+          "title": "Variação do FOV da espiada à esquerda",
+          "desc": "Quanto o campo de visão se amplia ao espiar o espelho esquerdo. Negativo = mais estreito (zoom)."
         },
         "glance_right_deg": {
           "title": "Ângulo da espiada à direita",
@@ -313,7 +333,11 @@
         },
         "glance_right_pitch_deg": {
           "title": "Inclinação da espiada à direita",
-          "desc": "Quanto sua cabeça abaixa ao espiar o espelho direito."
+          "desc": "Quanto sua cabeça se inclina ao espiar o espelho direito. Positivo = para cima, negativo = para baixo."
+        },
+        "glance_right_fov_deg": {
+          "title": "Variação do FOV da espiada à direita",
+          "desc": "Quanto o campo de visão se amplia ao espiar o espelho direito. Negativo = mais estreito (zoom)."
         },
         "smoothing_time": {
           "title": "Suavização",

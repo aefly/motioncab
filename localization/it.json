@@ -267,13 +267,29 @@
       "mirror_check": {
         "title": "Controllo specchietti",
         "hint": "Richiede che i tasti nativi del gioco «Indicatore di direzione sinistro» e «Indicatore di direzione destro» siano assegnati.",
-        "look_angle_deg": {
-          "title": "Angolo dello sguardo",
-          "desc": "Quanto ruota la tua testa per guardare lo specchietto."
+        "left_angle_deg": {
+          "title": "Angolo dello specchietto sinistro",
+          "desc": "Quanto ruota la tua testa per guardare lo specchietto sinistro."
         },
-        "pitch_offset_deg": {
-          "title": "Inclinazione",
-          "desc": "Quanto si abbassa la tua testa mentre guardi lo specchietto."
+        "left_pitch_deg": {
+          "title": "Inclinazione dello specchietto sinistro",
+          "desc": "Quanto si inclina la tua testa mentre guardi lo specchietto sinistro. Positivo = verso l'alto, negativo = verso il basso."
+        },
+        "left_fov_deg": {
+          "title": "Variazione FOV dello specchietto sinistro",
+          "desc": "Quanto si allarga il campo visivo mentre guardi lo specchietto sinistro. Negativo = più stretto (zoom)."
+        },
+        "right_angle_deg": {
+          "title": "Angolo dello specchietto destro",
+          "desc": "Quanto ruota la tua testa per guardare lo specchietto destro."
+        },
+        "right_pitch_deg": {
+          "title": "Inclinazione dello specchietto destro",
+          "desc": "Quanto si inclina la tua testa mentre guardi lo specchietto destro. Positivo = verso l'alto, negativo = verso il basso."
+        },
+        "right_fov_deg": {
+          "title": "Variazione FOV dello specchietto destro",
+          "desc": "Quanto si allarga il campo visivo mentre guardi lo specchietto destro. Negativo = più stretto (zoom)."
         },
         "smoothing_time": {
           "title": "Smorzamento",
@@ -305,7 +321,11 @@
         },
         "glance_left_pitch_deg": {
           "title": "Inclinazione dell'occhiata a sinistra",
-          "desc": "Quanto si abbassa la tua testa mentre dai un'occhiata allo specchietto sinistro."
+          "desc": "Quanto si inclina la tua testa mentre dai un'occhiata allo specchietto sinistro. Positivo = verso l'alto, negativo = verso il basso."
+        },
+        "glance_left_fov_deg": {
+          "title": "Variazione FOV dell'occhiata a sinistra",
+          "desc": "Quanto si allarga il campo visivo mentre dai un'occhiata allo specchietto sinistro. Negativo = più stretto (zoom)."
         },
         "glance_right_deg": {
           "title": "Angolo dell'occhiata a destra",
@@ -313,7 +333,11 @@
         },
         "glance_right_pitch_deg": {
           "title": "Inclinazione dell'occhiata a destra",
-          "desc": "Quanto si abbassa la tua testa mentre dai un'occhiata allo specchietto destro."
+          "desc": "Quanto si inclina la tua testa mentre dai un'occhiata allo specchietto destro. Positivo = verso l'alto, negativo = verso il basso."
+        },
+        "glance_right_fov_deg": {
+          "title": "Variazione FOV dell'occhiata a destra",
+          "desc": "Quanto si allarga il campo visivo mentre dai un'occhiata allo specchietto destro. Negativo = più stretto (zoom)."
         },
         "smoothing_time": {
           "title": "Smorzamento",

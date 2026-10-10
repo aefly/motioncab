@@ -267,13 +267,29 @@
       "mirror_check": {
         "title": "Spiegelblick",
         "hint": "Erfordert, dass die spieleigenen Tasten „Blinker links“ und „Blinker rechts“ belegt sind.",
-        "look_angle_deg": {
-          "title": "Blickwinkel",
-          "desc": "Wie weit sich dein Kopf zum Spiegel dreht."
+        "left_angle_deg": {
+          "title": "Blickwinkel Spiegel links",
+          "desc": "Wie weit sich dein Kopf zum linken Spiegel dreht."
         },
-        "pitch_offset_deg": {
-          "title": "Neigungsversatz",
-          "desc": "Wie stark dein Kopf beim Spiegelblick nach unten kippt."
+        "left_pitch_deg": {
+          "title": "Neigung Spiegel links",
+          "desc": "Wie stark dein Kopf beim Blick in den linken Spiegel kippt. Positiv = nach oben, negativ = nach unten."
+        },
+        "left_fov_deg": {
+          "title": "Sichtfeld-Änderung Spiegel links",
+          "desc": "Wie stark sich das Sichtfeld beim Blick in den linken Spiegel weitet. Negativ = enger (Zoom)."
+        },
+        "right_angle_deg": {
+          "title": "Blickwinkel Spiegel rechts",
+          "desc": "Wie weit sich dein Kopf zum rechten Spiegel dreht."
+        },
+        "right_pitch_deg": {
+          "title": "Neigung Spiegel rechts",
+          "desc": "Wie stark dein Kopf beim Blick in den rechten Spiegel kippt. Positiv = nach oben, negativ = nach unten."
+        },
+        "right_fov_deg": {
+          "title": "Sichtfeld-Änderung Spiegel rechts",
+          "desc": "Wie stark sich das Sichtfeld beim Blick in den rechten Spiegel weitet. Negativ = enger (Zoom)."
         },
         "smoothing_time": {
           "title": "Glättung",
@@ -305,7 +321,11 @@
         },
         "glance_left_pitch_deg": {
           "title": "Neigung Spiegelblick links",
-          "desc": "Wie stark dein Kopf beim Blick in den linken Spiegel nach unten kippt."
+          "desc": "Wie stark dein Kopf beim Blick in den linken Spiegel kippt. Positiv = nach oben, negativ = nach unten."
+        },
+        "glance_left_fov_deg": {
+          "title": "Sichtfeld-Änderung Spiegelblick links",
+          "desc": "Wie stark sich das Sichtfeld beim Blick in den linken Spiegel weitet. Negativ = enger (Zoom)."
         },
         "glance_right_deg": {
           "title": "Spiegelblick rechts",
@@ -313,7 +333,11 @@
         },
         "glance_right_pitch_deg": {
           "title": "Neigung Spiegelblick rechts",
-          "desc": "Wie stark dein Kopf beim Blick in den rechten Spiegel nach unten kippt."
+          "desc": "Wie stark dein Kopf beim Blick in den rechten Spiegel kippt. Positiv = nach oben, negativ = nach unten."
+        },
+        "glance_right_fov_deg": {
+          "title": "Sichtfeld-Änderung Spiegelblick rechts",
+          "desc": "Wie stark sich das Sichtfeld beim Blick in den rechten Spiegel weitet. Negativ = enger (Zoom)."
         },
         "smoothing_time": {
           "title": "Glättung",

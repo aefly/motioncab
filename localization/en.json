@@ -267,13 +267,29 @@
       "mirror_check": {
         "title": "Mirror Check",
         "hint": "Requires the game's native \"Left-Turn Indicator\" and \"Right-Turn Indicator\" keys to be assigned.",
-        "look_angle_deg": {
-          "title": "Look Angle",
-          "desc": "How far your head turns to check the mirror."
+        "left_angle_deg": {
+          "title": "Left Mirror Angle",
+          "desc": "How far your head turns to check the left mirror."
         },
-        "pitch_offset_deg": {
-          "title": "Pitch Offset",
-          "desc": "How much your head tilts down while checking the mirror."
+        "left_pitch_deg": {
+          "title": "Left Mirror Pitch",
+          "desc": "How much your head tilts while checking the left mirror. Positive = up, negative = down."
+        },
+        "left_fov_deg": {
+          "title": "Left Mirror FOV Change",
+          "desc": "How much the field of view widens while checking the left mirror. Negative = narrower (zoom in)."
+        },
+        "right_angle_deg": {
+          "title": "Right Mirror Angle",
+          "desc": "How far your head turns to check the right mirror."
+        },
+        "right_pitch_deg": {
+          "title": "Right Mirror Pitch",
+          "desc": "How much your head tilts while checking the right mirror. Positive = up, negative = down."
+        },
+        "right_fov_deg": {
+          "title": "Right Mirror FOV Change",
+          "desc": "How much the field of view widens while checking the right mirror. Negative = narrower (zoom in)."
         },
         "smoothing_time": {
           "title": "Smoothing",
@@ -305,7 +321,11 @@
         },
         "glance_left_pitch_deg": {
           "title": "Left Glance Pitch",
-          "desc": "How much your head tilts down while glancing at the left mirror."
+          "desc": "How much your head tilts while glancing at the left mirror. Positive = up, negative = down."
+        },
+        "glance_left_fov_deg": {
+          "title": "Left Glance FOV Change",
+          "desc": "How much the field of view widens while glancing at the left mirror. Negative = narrower (zoom in)."
         },
         "glance_right_deg": {
           "title": "Right Glance Angle",
@@ -313,7 +333,11 @@
         },
         "glance_right_pitch_deg": {
           "title": "Right Glance Pitch",
-          "desc": "How much your head tilts down while glancing at the right mirror."
+          "desc": "How much your head tilts while glancing at the right mirror. Positive = up, negative = down."
+        },
+        "glance_right_fov_deg": {
+          "title": "Right Glance FOV Change",
+          "desc": "How much the field of view widens while glancing at the right mirror. Negative = narrower (zoom in)."
         },
         "smoothing_time": {
           "title": "Smoothing",

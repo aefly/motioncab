@@ -267,13 +267,29 @@
       "mirror_check": {
         "title": "Contrôle des rétroviseurs",
         "hint": "Nécessite que les touches natives « Clignotant gauche » et « Clignotant droit » du jeu soient assignées.",
-        "look_angle_deg": {
-          "title": "Angle de regard",
-          "desc": "De combien votre tête tourne pour regarder le rétroviseur."
+        "left_angle_deg": {
+          "title": "Angle du rétroviseur gauche",
+          "desc": "De combien votre tête tourne pour regarder le rétroviseur gauche."
         },
-        "pitch_offset_deg": {
-          "title": "Inclinaison",
-          "desc": "De combien votre tête s'abaisse en regardant le rétroviseur."
+        "left_pitch_deg": {
+          "title": "Inclinaison du rétroviseur gauche",
+          "desc": "De combien votre tête s'incline en regardant le rétroviseur gauche. Positif = vers le haut, négatif = vers le bas."
+        },
+        "left_fov_deg": {
+          "title": "Variation du FOV du rétroviseur gauche",
+          "desc": "De combien le champ de vision s'élargit en regardant le rétroviseur gauche. Négatif = plus étroit (zoom avant)."
+        },
+        "right_angle_deg": {
+          "title": "Angle du rétroviseur droit",
+          "desc": "De combien votre tête tourne pour regarder le rétroviseur droit."
+        },
+        "right_pitch_deg": {
+          "title": "Inclinaison du rétroviseur droit",
+          "desc": "De combien votre tête s'incline en regardant le rétroviseur droit. Positif = vers le haut, négatif = vers le bas."
+        },
+        "right_fov_deg": {
+          "title": "Variation du FOV du rétroviseur droit",
+          "desc": "De combien le champ de vision s'élargit en regardant le rétroviseur droit. Négatif = plus étroit (zoom avant)."
         },
         "smoothing_time": {
           "title": "Lissage",
@@ -305,7 +321,11 @@
         },
         "glance_left_pitch_deg": {
           "title": "Inclinaison du coup d'œil gauche",
-          "desc": "De combien votre tête s'abaisse pendant un coup d'œil au rétroviseur gauche."
+          "desc": "De combien votre tête s'incline pendant un coup d'œil au rétroviseur gauche. Positif = vers le haut, négatif = vers le bas."
+        },
+        "glance_left_fov_deg": {
+          "title": "Variation du FOV du coup d'œil gauche",
+          "desc": "De combien le champ de vision s'élargit pendant un coup d'œil au rétroviseur gauche. Négatif = plus étroit (zoom avant)."
         },
         "glance_right_deg": {
           "title": "Angle du coup d'œil droit",
@@ -313,7 +333,11 @@
         },
         "glance_right_pitch_deg": {
           "title": "Inclinaison du coup d'œil droit",
-          "desc": "De combien votre tête s'abaisse pendant un coup d'œil au rétroviseur droit."
+          "desc": "De combien votre tête s'incline pendant un coup d'œil au rétroviseur droit. Positif = vers le haut, négatif = vers le bas."
+        },
+        "glance_right_fov_deg": {
+          "title": "Variation du FOV du coup d'œil droit",
+          "desc": "De combien le champ de vision s'élargit pendant un coup d'œil au rétroviseur droit. Négatif = plus étroit (zoom avant)."
         },
         "smoothing_time": {
           "title": "Lissage",
