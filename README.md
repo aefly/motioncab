@@ -137,8 +137,12 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | **Engine Vibration**         |         |                                                                                                                                      |
 | `intensity`                  | 1.0     | How strong the engine rumble feels.                                                                                                  |
 | **Mirror Check**             |         |                                                                                                                                      |
-| `look_angle_deg`             | 28.0    | How far your head turns to check the mirror.                                                                                         |
-| `pitch_offset_deg`           | 3.0     | How much your head tilts down while checking the mirror.                                                                             |
+| `left_angle_deg`             | 28.0    | How far your head turns to check the left mirror.                                                                                    |
+| `left_pitch_deg`             | 0.0     | How much your head tilts while checking the left mirror.                                                                             |
+| `left_fov_deg`               | 0.0     | How much the field of view widens while checking the left mirror.                                                                    |
+| `right_angle_deg`            | 28.0    | How far your head turns to check the right mirror.                                                                                   |
+| `right_pitch_deg`            | 0.0     | How much your head tilts while checking the right mirror.                                                                            |
+| `right_fov_deg`              | 0.0     | How much the field of view widens while checking the right mirror.                                                                   |
 | `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                            |
 | `require_stationary`         | true    | Only check the mirror when the truck is stopped.                                                                                     |
 | `ignore_after_moving_signal` | true    | Don't check the mirror for a turn signal you switched on while already driving, even after you stop.                                 |
@@ -146,9 +150,11 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `look_left_deg`              | 45.0    | How far your head turns when you look left.                                                                                          |
 | `look_right_deg`             | 45.0    | How far your head turns when you look right.                                                                                         |
 | `glance_left_deg`            | 20.0    | How far your head turns when you glance at the left mirror.                                                                          |
-| `glance_left_pitch_deg`      | 3.0     | How much your head tilts down while glancing at the left mirror.                                                                     |
+| `glance_left_pitch_deg`      | 0.0     | How much your head tilts while glancing at the left mirror.                                                                          |
+| `glance_left_fov_deg`        | 0.0     | How much the field of view widens while glancing at the left mirror. Negative = narrower (zoom in).                                  |
 | `glance_right_deg`           | 30.0    | How far your head turns when you glance at the right mirror.                                                                         |
-| `glance_right_pitch_deg`     | 3.0     | How much your head tilts down while glancing at the right mirror.                                                                    |
+| `glance_right_pitch_deg`     | 0.0     | How much your head tilts while glancing at the right mirror.                                                                         |
+| `glance_right_fov_deg`       | 0.0     | How much the field of view widens while glancing at the right mirror. Negative = narrower (zoom in).                                 |
 | `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                            |
 | `toggle_mode`                | false   | On: press once to look, press again to look back. Off: look while held, let go to look back.                                         |
 | **Road Irregularity**        |         |                                                                                                                                      |
