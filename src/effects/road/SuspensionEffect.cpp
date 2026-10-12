@@ -67,6 +67,10 @@ constexpr float kSettleSeconds = 1.0f;
 constexpr float kDeltaBaselineTimeConstant = 1.0f;
 
 constexpr float kGradeGain = 1.0f; // meters per radian of pitch
+// A steep descent kept raising the head with no end: about 10 cm on a 20%
+// grade at the default strength. Past this pitch (~6%) the grade barely adds
+// anything, so the head tops out near 3 cm at the default strength.
+constexpr float kMaxGradeRadians = 0.06f;
 // The road's pitch changes in steps at each segment joint, which a fast
 // follow turned into jolts at speed.
 constexpr float kGradeTimeConstant = 1.0f;
@@ -281,7 +285,8 @@ HeadOffset SuspensionEffect::Update(float dt, const SPF_TruckData &truck,
       pitch_radians += (front_rear_delta - delta_baseline) / axle_separation_;
     }
 
-    grade_target = -pitch_radians * kGradeGain * grade_strength_;
+    grade_target = -SoftLimit(pitch_radians, kMaxGradeRadians) * kGradeGain *
+                   grade_strength_;
   }
   offset.pos_y += grade_y_.Update(grade_target, dt);
   return offset;
