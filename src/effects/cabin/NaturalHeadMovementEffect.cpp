@@ -33,6 +33,16 @@ constexpr float kPostureVariation = 0.1f;
 // How long a move with no distance to go takes, as a share of a full one.
 constexpr float kShortMoveShare = 0.4f;
 
+// A micro-adjustment is led by one rotation, the other axes only follow a
+// little, so it reads as one gesture. Most are small, now and then one goes
+// farther.
+constexpr double kMicroLeadOdds[] = {0.5, 0.35, 0.15}; // yaw, pitch, roll
+constexpr float kMicroSpread = 0.45f;
+constexpr float kMicroFollowSpread = 0.15f;
+// The neck bends to the side it turns to: a yaw left brings a little roll
+// left. In shares of each axis' kMicroRange.
+constexpr float kMicroYawRoll = 0.25f;
+
 // Body shapes rather than random axes, so a posture looks like something a
 // driver would do. Each is on one side: X, yaw and roll flip for the other.
 using PostureShape = float[6];
@@ -44,35 +54,86 @@ constexpr PostureShape kIdlePostures[] = {
     {0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.2f},    // looking out the window
     {0.0f, -0.2f, -0.3f, 0.0f, -1.0f, 0.0f}, // head down, at the lap
 };
-constexpr PostureShape kDrivingPostures[] = {
+constexpr PostureShape kManeuveringPostures[] = {
+    {0.0f, 0.3f, -0.6f, 0.0f, -0.2f, 0.0f}, // leaning in, watching close
+    {0.0f, 0.6f, 0.0f, 0.0f, 0.2f, 0.0f},   // sitting up tall
+    {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f},   // head slightly tilted
+};
+constexpr PostureShape kTownPostures[] = {
     {0.0f, -0.2f, -1.0f, 0.0f, -0.3f, 0.0f}, // forward, toward the road
     {0.0f, 0.6f, 0.0f, 0.0f, 0.2f, 0.0f},    // sitting up tall
     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.5f},    // head slightly tilted
     {0.5f, -0.2f, 0.0f, 0.0f, 0.0f, 0.3f},   // leaning a little on one side
 };
+constexpr PostureShape kHighwayPostures[] = {
+    {0.0f, -0.4f, 0.3f, 0.0f, 0.0f, 0.0f},   // settled back in the seat
+    {0.0f, -0.2f, -0.5f, 0.0f, -0.2f, 0.0f}, // forward, toward the road
+    {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.4f},    // head slightly tilted
+};
+// Sitting up to see down the mirrors, the head kept straight.
+constexpr PostureShape kReversingPostures[] = {
+    {0.0f, 1.0f, 0.0f, 0.0f, 0.3f, 0.0f}, // sitting up, neck stretched
+    {0.0f, 0.6f, 0.2f, 0.0f, 0.5f, 0.0f}, // chin up
+    {0.0f, 0.8f, 0.0f, 0.0f, 0.0f, 0.3f}, // sitting up, head tilted
+};
 
-struct PostureMode {
+// Each is a share of the base values above.
+struct ModeProfile {
   std::span<const PostureShape> shapes;
   float neutral_odds;
-  float scale;    // of kPostureRange
-  float slowness; // of kPostureSeconds
+  float scale;          // of kPostureRange
+  float slowness;       // of kPostureSeconds
+  float hold;           // of the posture interval setting
+  float change_seconds; // to the mode's first posture, whatever the distance
+  float micro;          // of kMicroRange
+  float micro_interval; // of kMicroInterval
+  float tremor;         // of kTremorAmplitude
+  float tremor_pace;    // of kTremorRate
 };
-// Stopped a while, relaxed: wider, slower, rarely back to neutral.
-constexpr PostureMode kIdleMode{kIdlePostures, 0.2f, 1.5f, 1.3f};
-// Driving, focused on the road: small postures, often back to neutral.
-constexpr PostureMode kDrivingMode{kDrivingPostures, 1.0f / 3.0f, 0.6f, 1.0f};
+// In Mode's order.
+constexpr ModeProfile kModes[] = {
+    // Stopped a while, relaxed: wider, slower, rarely back to neutral.
+    {kIdlePostures, 0.2f, 1.5f, 1.3f, 1.0f, 3.0f, 1.0f, 1.0f, 1.0f, 0.8f},
+    // Slow, maneuvering: upright and busy, shorter holds.
+    {kManeuveringPostures, 0.4f, 0.7f, 0.9f, 0.7f, 2.0f, 1.1f, 0.6f, 1.0f,
+     1.1f},
+    // In town, focused on the road: small postures, often back to neutral.
+    {kTownPostures, 1.0f / 3.0f, 0.6f, 1.0f, 1.0f, 3.0f, 1.0f, 1.0f, 1.0f,
+     1.0f},
+    // On the highway, settled: smaller, slower, held longer, a steadier head.
+    {kHighwayPostures, 0.4f, 0.45f, 1.2f, 1.4f, 3.0f, 0.7f, 1.4f, 0.8f, 0.9f},
+    // Backing up, alert: quick, short holds.
+    {kReversingPostures, 0.25f, 0.7f, 0.8f, 0.5f, 1.5f, 1.2f, 0.5f, 1.0f, 1.2f},
+};
 
-// Switching modes moves to the new one's first posture over a set time,
-// whatever the distance.
+const ModeProfile &Profile(int mode) { return kModes[mode]; }
+
+// Whether the shape leans or turns one way (X, yaw or roll), so that it has a
+// side.
+bool IsSided(const float *shape) {
+  return shape[0] != 0.0f || shape[3] != 0.0f || shape[5] != 0.0f;
+}
+
 constexpr float kIdleSpeedKmh = 2.0f;
 constexpr float kIdleDelaySeconds = 5.0f;
-constexpr float kRelaxSeconds = 3.0f;
-constexpr float kFocusSeconds = 3.0f;
+// Each with a lower way out, so a speed around the line doesn't flip the
+// mode back and forth.
+constexpr float kTownEnterKmh = 30.0f;
+constexpr float kTownExitKmh = 25.0f;
+constexpr float kHighwayEnterKmh = 70.0f;
+constexpr float kHighwayExitKmh = 60.0f;
+// How long the tremor and the micro-adjustments take to change with the mode.
+constexpr float kModeBlendSeconds = 2.0f;
 
-// At full lock. It follows the square root of the steering, so a lane
-// correction already tilts a little without full lock tilting too much.
+// Follows how hard the turn is taken, the lateral acceleration, rather than
+// the wheel: a tight turn at walking pace takes full lock but barely leans
+// anyone, a sweeping bend on the highway does. Full tilt at kFullTiltAccel,
+// along the square root, so a gentle bend already tilts a little. The dead
+// zone keeps road bumps out.
 constexpr float kSteeringTiltDeg = 3.0f;
 constexpr float kSteeringTiltSeconds = 0.4f;
+constexpr float kTiltDeadZone = 0.2f;  // m/s²
+constexpr float kFullTiltAccel = 3.0f; // m/s²
 
 // Where the neck is from the eyes, in meters.
 constexpr float kNeckBelow = 0.10f;
@@ -97,11 +158,33 @@ Vec3 NeckPivot(float yaw, float pitch, float roll) {
        -e.x * std::sin(yaw) + e.z * std::cos(yaw)};
   return {e.x, e.y - kNeckBelow, e.z + kNeckBehind};
 }
+
+// A minimum-jerk move (SmootherStep) with a starting speed: this curve adds
+// that speed at the start and fades it out with no jolt, ending still.
+float CarryOver(float s) {
+  const float s3 = s * s * s;
+  return s - 6.0f * s3 + 8.0f * s3 * s - 3.0f * s3 * s * s;
+}
+float CarryOverSlope(float s) {
+  const float s2 = s * s;
+  return 1.0f - 18.0f * s2 + 32.0f * s2 * s - 15.0f * s2 * s2;
+}
+float SmootherStepSlope(float s) {
+  const float rest = 1.0f - s;
+  return 30.0f * s * s * rest * rest;
+}
 } // namespace
 
 float NaturalHeadMovementEffect::Layer::Value(int axis) const {
-  return math::Lerp(from[axis], to[axis],
-                    math::SmootherStep(elapsed / duration));
+  const float s = std::min(elapsed / duration, 1.0f);
+  return math::Lerp(from[axis], to[axis], math::SmootherStep(s)) +
+         velocity[axis] * duration * CarryOver(s);
+}
+
+float NaturalHeadMovementEffect::Layer::Velocity(int axis) const {
+  const float s = std::min(elapsed / duration, 1.0f);
+  return (to[axis] - from[axis]) * SmootherStepSlope(s) / duration +
+         velocity[axis] * CarryOverSlope(s);
 }
 
 void NaturalHeadMovementEffect::Layer::MoveTo(const Pose &target,
@@ -109,7 +192,9 @@ void NaturalHeadMovementEffect::Layer::MoveTo(const Pose &target,
                                               float max_seconds) {
   float distance = 0.0f;
   for (int a = 0; a < kAxes; ++a) {
+    const float speed = Velocity(a);
     from[a] = Value(a);
+    velocity[a] = speed;
     distance = std::max(distance, std::fabs(target[a] - from[a]));
   }
   to = target;
@@ -124,6 +209,7 @@ void NaturalHeadMovementEffect::Layer::Advance(float dt) {
 void NaturalHeadMovementEffect::Layer::Reset() {
   from.fill(0.0f);
   to.fill(0.0f);
+  velocity.fill(0.0f);
   elapsed = duration;
 }
 
@@ -133,6 +219,9 @@ NaturalHeadMovementEffect::NaturalHeadMovementEffect(
                          "natural_head_movement"),
       rng_(std::random_device{}()) {
   steering_roll_.SetTimeConstant(kSteeringTiltSeconds);
+  tremor_gain_.SetTimeConstant(kModeBlendSeconds);
+  tremor_pace_.SetTimeConstant(kModeBlendSeconds);
+  micro_gain_.SetTimeConstant(kModeBlendSeconds);
   Reset();
 }
 
@@ -155,8 +244,14 @@ void NaturalHeadMovementEffect::Reset() {
   micro_.timer = Jitter(kMicroInterval);
   posture_.Reset();
   posture_.timer = Jitter(posture_interval_);
+  posture_shape_ = nullptr;
+  posture_side_ = 0.0f;
   stopped_for_ = 0.0f;
-  idle_ = false;
+  mode_ = Mode::kTown;
+  const ModeProfile &town = Profile(static_cast<int>(mode_));
+  tremor_gain_.Reset(town.tremor);
+  tremor_pace_.Reset(town.tremor_pace);
+  micro_gain_.Reset(town.micro);
   steering_roll_.Reset();
 }
 
@@ -165,60 +260,100 @@ float NaturalHeadMovementEffect::Jitter(float mean) {
   return mean * jitter(rng_);
 }
 
+NaturalHeadMovementEffect::Mode
+NaturalHeadMovementEffect::Assess(const SPF_TruckData &truck, float dt) {
+  const float speed = telemetry::SpeedKmh(truck);
+  stopped_for_ = speed < kIdleSpeedKmh ? stopped_for_ + dt : 0.0f;
+  // Stopped in reverse too: about to back up.
+  if (truck.gear < 0)
+    return Mode::kReversing;
+  if (stopped_for_ >= kIdleDelaySeconds)
+    return Mode::kStopped;
+  const bool highway = mode_ == Mode::kHighway;
+  if (speed > (highway ? kHighwayExitKmh : kHighwayEnterKmh))
+    return Mode::kHighway;
+  const bool town = mode_ == Mode::kTown || highway;
+  return speed > (town ? kTownExitKmh : kTownEnterKmh) ? Mode::kTown
+                                                       : Mode::kManeuvering;
+}
+
 void NaturalHeadMovementEffect::DrawMicro() {
-  std::uniform_real_distribution<float> side(-1.0f, 1.0f);
+  std::normal_distribution<float> follow(0.0f, kMicroFollowSpread);
+  std::normal_distribution<float> lead(0.0f, kMicroSpread);
+  std::discrete_distribution<int> pick(std::begin(kMicroLeadOdds),
+                                       std::end(kMicroLeadOdds));
   Pose target;
   for (float &axis : target)
-    axis = side(rng_);
+    axis = follow(rng_);
+  target[kYaw + pick(rng_)] = lead(rng_);
+  // Roll positive right, yaw positive left.
+  target[kRoll] -= kMicroYawRoll * target[kYaw];
+  for (float &axis : target)
+    axis = std::clamp(axis, -1.0f, 1.0f);
   micro_.MoveTo(target, kShortMoveShare * kMicroSeconds, kMicroSeconds);
+  micro_.timer =
+      Jitter(kMicroInterval * Profile(static_cast<int>(mode_)).micro_interval);
 }
 
 void NaturalHeadMovementEffect::DrawPosture() {
-  const PostureMode &mode = idle_ ? kIdleMode : kDrivingMode;
+  const ModeProfile &mode = Profile(static_cast<int>(mode_));
   Pose target{};
   std::uniform_real_distribution<float> unit(0.0f, 1.0f);
+  const PostureShape *shape = nullptr;
+  float side = unit(rng_) < 0.5f ? -1.0f : 1.0f;
   if (unit(rng_) >= mode.neutral_odds) {
+    // Not the one held: the head would only wobble in place.
     std::uniform_int_distribution<size_t> pick(0, mode.shapes.size() - 1);
-    const PostureShape &shape = mode.shapes[pick(rng_)];
-    const float side = unit(rng_) < 0.5f ? -1.0f : 1.0f;
+    do {
+      shape = &mode.shapes[pick(rng_)];
+    } while (mode.shapes.size() > 1 && *shape == posture_shape_);
+    // A lean to the other side goes back to neutral first.
+    if (posture_shape_ && IsSided(*shape) && IsSided(posture_shape_) &&
+        side != posture_side_)
+      shape = nullptr;
+  }
+  posture_shape_ = shape ? *shape : nullptr;
+  posture_side_ = side;
+  if (shape) {
     std::uniform_real_distribution<float> strength(0.5f, 1.0f);
     std::uniform_real_distribution<float> vary(-kPostureVariation,
                                                kPostureVariation);
     const float amount = strength(rng_) * mode.scale;
     for (int a = 0; a < kAxes; ++a) {
       const bool lateral = a == kX || a == kYaw || a == kRoll;
-      target[a] = (lateral ? side : 1.0f) * shape[a] * amount + vary(rng_);
+      target[a] = (lateral ? side : 1.0f) * (*shape)[a] * amount + vary(rng_);
     }
   }
   const float duration = kPostureSeconds * mode.slowness;
   posture_.MoveTo(target, kShortMoveShare * duration, duration);
-  posture_.timer = Jitter(posture_interval_);
+  posture_.timer = Jitter(posture_interval_ * mode.hold);
 }
 
-HeadOffset NaturalHeadMovementEffect::Update(float dt,
-                                             const SPF_TruckData &truck,
-                                             const SPF_Controls &controls) {
-  for (size_t o = 0; o < tremor_phase_.size(); ++o)
-    tremor_phase_[o] =
-        math::WrapNoisePhase(tremor_phase_[o] + dt * kTremorRate[o]);
-
-  // Driving off, the driver sits up and looks at the road at once.
-  stopped_for_ =
-      telemetry::SpeedKmh(truck) < kIdleSpeedKmh ? stopped_for_ + dt : 0.0f;
-  const bool idle = stopped_for_ >= kIdleDelaySeconds;
-  if (idle != idle_) {
-    idle_ = idle;
+HeadOffset
+NaturalHeadMovementEffect::Update(float dt, const SPF_TruckData &truck,
+                                  const SPF_Controls & /*controls*/) {
+  // Driving off or shifting into reverse, the driver's posture changes at
+  // once.
+  const Mode mode = Assess(truck, dt);
+  if (mode != mode_) {
+    mode_ = mode;
     DrawPosture();
-    posture_.duration = idle ? kRelaxSeconds : kFocusSeconds;
+    posture_.duration = Profile(static_cast<int>(mode)).change_seconds;
   }
+  const ModeProfile &profile = Profile(static_cast<int>(mode_));
+  const float tremor_gain = tremor_gain_.Update(profile.tremor, dt);
+  const float tremor_pace = tremor_pace_.Update(profile.tremor_pace, dt);
+  const float micro_gain = micro_gain_.Update(profile.micro, dt);
+
+  for (size_t o = 0; o < tremor_phase_.size(); ++o)
+    tremor_phase_[o] = math::WrapNoisePhase(tremor_phase_[o] +
+                                            dt * kTremorRate[o] * tremor_pace);
 
   micro_.Advance(dt);
   posture_.Advance(dt);
   micro_.timer -= dt;
-  if (micro_.timer <= 0.0f) {
+  if (micro_.timer <= 0.0f)
     DrawMicro();
-    micro_.timer = Jitter(kMicroInterval);
-  }
   posture_.timer -= dt;
   if (posture_.timer <= 0.0f)
     DrawPosture();
@@ -235,16 +370,19 @@ HeadOffset NaturalHeadMovementEffect::Update(float dt,
           math::GradientNoise1D(static_cast<float>(tremor_phase_[o]), seed);
     }
     const float drift =
-        tremor * kTremorNorm * kTremorAmplitude[a] * tremor_intensity_ +
-        micro_.Value(a) * kMicroRange[a] * micro_intensity_;
+        tremor * kTremorNorm * kTremorAmplitude[a] * tremor_gain *
+            tremor_intensity_ +
+        micro_.Value(a) * kMicroRange[a] * micro_gain * micro_intensity_;
     const float posture = posture_.Value(a) * kPostureRange[a];
     axis[a] = drift + posture * posture_intensity_;
   }
 
-  // Steering is positive to the left, roll positive to the right.
-  const float steering =
-      std::clamp(controls.effectiveInput.steering, -1.0f, 1.0f);
-  const float tilt = std::copysign(std::sqrt(std::fabs(steering)), steering);
+  // Turning left accelerates the truck toward -X. Roll is positive right.
+  const float lateral = -truck.local_linear_acceleration.x;
+  const float turn = std::clamp((std::fabs(lateral) - kTiltDeadZone) /
+                                    (kFullTiltAccel - kTiltDeadZone),
+                                0.0f, 1.0f);
+  const float tilt = std::copysign(std::sqrt(turn), lateral);
   axis[kRoll] +=
       steering_roll_.Update(-kSteeringTiltDeg * tilt * steering_tilt_, dt);
 

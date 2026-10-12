@@ -35,15 +35,19 @@ private:
 
   using Pose = std::array<float, kAxes>;
 
-  // Poses are in -1..1 of the layer's range on each axis.
+  // Poses are in -1..1 of the layer's range on each axis. A move starts at
+  // the speed the previous one had reached, so cutting one short doesn't
+  // stop the head dead before it sets off again.
   struct Layer {
     Pose from{};
     Pose to{};
+    Pose velocity{}; // at `from`, per second
     float elapsed = 0.0f;
     float duration = 1.0f;
     float timer = 0.0f; // seconds until the next move
 
     float Value(int axis) const;
+    float Velocity(int axis) const;
     // From wherever the layer is now, over `min_seconds` for no distance up
     // to `max_seconds` for a whole range.
     void MoveTo(const Pose &target, float min_seconds, float max_seconds);
@@ -51,6 +55,11 @@ private:
     void Reset();
   };
 
+  // What the truck is doing sets how the head moves. In the order of the
+  // .cpp's kModes.
+  enum class Mode { kStopped, kManeuvering, kTown, kHighway, kReversing };
+
+  Mode Assess(const SPF_TruckData &truck, float dt);
   float Jitter(float mean); // `mean` times a random 0.5..1.5
   void DrawMicro();
   void DrawPosture();
@@ -71,11 +80,18 @@ private:
   std::array<double, 2> tremor_phase_{}; // one per octave
   Layer micro_;
   Layer posture_;
+  // The posture held, so the next one isn't the same, and a lean doesn't
+  // swap sides without going through neutral first. Null when neutral.
+  const float *posture_shape_ = nullptr;
+  float posture_side_ = 0.0f;
   float stopped_for_ = 0.0f;
-  // Stopped a while, the postures are wider and slower.
-  bool idle_ = false;
-  // The steering is a continuous input, so it gets a spring rather than a
-  // Layer.
+  Mode mode_ = Mode::kTown;
+  // The mode's share of the tremor and the micro-adjustments, eased so a
+  // change of mode doesn't step them.
+  math::SpringDamper1D tremor_gain_;
+  math::SpringDamper1D tremor_pace_;
+  math::SpringDamper1D micro_gain_;
+  // The turn is a continuous input, so it gets a spring rather than a Layer.
   math::SpringDamper1D steering_roll_;
 
   std::minstd_rand rng_;
