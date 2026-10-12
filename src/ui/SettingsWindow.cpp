@@ -222,10 +222,8 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
                                                : active_profile}}));
   ui->UI_TextDisabled(badge.c_str());
   if (!active_profile.empty()) {
-    if (!profiles::Matches(ctx, active_profile)) {
-      ui->UI_SameLine(0.0f, 4.0f);
-      ui->UI_TextColored(1.0f, 0.6f, 0.0f, 1.0f, "*");
-    }
+    if (!profiles::Matches(ctx, active_profile))
+      DrawModifiedMark(ui);
   }
   ui->UI_Spacing();
 

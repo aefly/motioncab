@@ -53,6 +53,12 @@ void DrawSectionTitle(SPF_UI_API *ui, const char *title);
 // running off it.
 void DrawWrappedHint(SPF_UI_API *ui, const char *text);
 
+// The orange "*" after the item before it: the profile's unsaved changes, a
+// setting changed from its default.
+void DrawModifiedMark(SPF_UI_API *ui, const char *tooltip = nullptr);
+// Its width, spacing included, for a column that has to fit it.
+float ModifiedMarkWidth(SPF_UI_API *ui);
+
 // Whether the framework can draw the rebind popups. Without them, the hint
 // text still points to SPF's Keybinds menu.
 bool KeybindUiAvailable();

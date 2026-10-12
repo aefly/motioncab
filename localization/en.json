@@ -546,6 +546,7 @@
         "bunk_sit_yaw": "Turn",
         "bunk_sit_pitch": "Tilt"
       }
-    }
+    },
+    "modified": "Changed from its default."
   }
 }

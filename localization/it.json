@@ -546,6 +546,7 @@
         "bunk_sit_yaw": "Rotazione",
         "bunk_sit_pitch": "Inclinazione"
       }
-    }
+    },
+    "modified": "Modificato rispetto al valore predefinito."
   }
 }

@@ -546,6 +546,7 @@
         "bunk_sit_yaw": "回転",
         "bunk_sit_pitch": "傾き"
       }
-    }
+    },
+    "modified": "デフォルトから変更されています。"
   }
 }

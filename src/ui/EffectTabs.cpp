@@ -9,6 +9,7 @@
 #include "ui/Widgets.hpp"
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <span>
 #include <string>
@@ -32,6 +33,19 @@ const char *KeybindTitle(const keybinds::Action &action) {
 
 bool IsEnabledToggle(const settings::Setting &setting) {
   return settings::SplitKey(setting.key).name == "enabled";
+}
+
+bool IsModified(SPF_Config_API *cfg, SPF_Config_Handle *h,
+                const settings::Setting &setting) {
+  if (setting.type == settings::Type::kBool)
+    return cfg->Cfg_GetBool(h, setting.key, setting.default_bool()) !=
+           setting.default_bool();
+  const float value = static_cast<float>(
+      cfg->Cfg_GetFloat(h, setting.key, setting.default_value));
+  // Stored as a double: a value stepped back to its default may not land on
+  // it exactly.
+  return std::fabs(value - setting.default_value) >
+         1e-4f * std::max(1.0f, std::fabs(setting.default_value));
 }
 
 // A bare icon button, for a table's value column where the label has its
@@ -93,7 +107,7 @@ float LabelColumnWidth(SPF_UI_API *ui) {
   }
   for (const keybinds::Action &action : keybinds::kPolledActions)
     measure(KeybindTitle(action));
-  return widest;
+  return widest + ModifiedMarkWidth(ui);
 }
 
 bool BeginSettingsTable(SPF_UI_API *ui, const char *id) {
@@ -114,6 +128,8 @@ void DrawBool(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableSetColumnIndex(0);
   ui->UI_Text(SettingTitle(setting.key));
+  if (IsModified(cfg, h, setting))
+    DrawModifiedMark(ui, loc::Tr("ui.modified"));
   ui->UI_TableSetColumnIndex(1);
   if (DrawToggleCell(ui, setting.key, &value, SettingDesc(setting.key)))
     cfg->Cfg_SetBool(h, setting.key, value);
@@ -131,6 +147,8 @@ void DrawSlider(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableSetColumnIndex(0);
   ui->UI_Text(SettingTitle(key));
+  if (IsModified(cfg, h, setting))
+    DrawModifiedMark(ui, loc::Tr("ui.modified"));
   ui->UI_TableSetColumnIndex(1);
   if (StepperFloat(ui, key, &value, setting.min * display_scale,
                    setting.max * display_scale, FormatStep(format), format,

@@ -14,6 +14,8 @@ namespace motioncab::ui {
 
 namespace {
 
+constexpr float kModifiedMarkSpacing = 4.0f;
+
 // The sliders' FRAME_BG values. Pop 3 colors.
 void PushMutedButtonColors(SPF_UI_API *ui) {
   ui->UI_PushStyleColor(SPF_COLOR_BUTTON, kAccentR, kAccentG, kAccentB, 0.25f);
@@ -156,6 +158,19 @@ void DrawSectionTitle(SPF_UI_API *ui, const char *title) {
   const float y = (min_y + max_y) * 0.5f;
   ui->UI_DrawList_AddLine(ui->UI_GetWindowDrawList(), max_x + 8.0f, y,
                           start_x + avail_x, y, kRuleColor, 1.0f);
+}
+
+void DrawModifiedMark(SPF_UI_API *ui, const char *tooltip) {
+  ui->UI_SameLine(0.0f, kModifiedMarkSpacing);
+  ui->UI_TextColored(1.0f, 0.6f, 0.0f, 1.0f, "*");
+  if (tooltip)
+    ui->UI_SetItemTooltip(tooltip);
+}
+
+float ModifiedMarkWidth(SPF_UI_API *ui) {
+  float w = 0.0f, h = 0.0f;
+  ui->UI_CalcTextSize("*", &w, &h);
+  return w + kModifiedMarkSpacing;
 }
 
 void DrawWrappedHint(SPF_UI_API *ui, const char *text) {

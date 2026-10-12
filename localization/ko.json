@@ -546,6 +546,7 @@
         "bunk_sit_yaw": "회전",
         "bunk_sit_pitch": "기울기"
       }
-    }
+    },
+    "modified": "기본값에서 변경되었습니다."
   }
 }

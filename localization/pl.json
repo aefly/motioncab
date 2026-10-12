@@ -546,6 +546,7 @@
         "bunk_sit_yaw": "Obrót",
         "bunk_sit_pitch": "Pochylenie"
       }
-    }
+    },
+    "modified": "Zmienione względem domyślnej wartości."
   }
 }

@@ -546,6 +546,7 @@
         "bunk_sit_yaw": "Drehung",
         "bunk_sit_pitch": "Neigung"
       }
-    }
+    },
+    "modified": "Vom Standardwert geändert."
   }
 }

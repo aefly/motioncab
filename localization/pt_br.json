@@ -546,6 +546,7 @@
         "bunk_sit_yaw": "Giro",
         "bunk_sit_pitch": "Inclinação"
       }
-    }
+    },
+    "modified": "Alterado em relação ao padrão."
   }
 }

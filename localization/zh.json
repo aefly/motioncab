@@ -546,6 +546,7 @@
         "bunk_sit_yaw": "转向",
         "bunk_sit_pitch": "倾斜"
       }
-    }
+    },
+    "modified": "已更改默认值。"
   }
 }
