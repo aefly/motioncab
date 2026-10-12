@@ -2,19 +2,21 @@
 
 #include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
+#include "math/SpringDamper.hpp"
 
 namespace motioncab {
 
-// A fine buzz whose frequency and size climb with the RPM.
+// An uneven throb at idle plus a buzz following load and RPM. The real
+// firing frequencies (30 Hz and up) alias into strobing at any frame rate,
+// so every layer stays well under it. Mostly rotations: sub-millimeter
+// translation doesn't show past the dashboard.
 //
 // Off for an electric truck, through IsEnabled() rather than the player's
 // toggle, so it comes back with a diesel.
 class EngineVibrationEffect final : public ConfigurableEffect {
 public:
   EngineVibrationEffect(SPF_Config_API *config_api,
-                        SPF_Config_Handle *config_handle)
-      : ConfigurableEffect(config_api, config_handle, "cabin",
-                           "engine_vibration") {}
+                        SPF_Config_Handle *config_handle);
 
   bool IsEnabled() const override {
     return ConfigurableEffect::IsEnabled() && !is_electric_;
@@ -34,7 +36,11 @@ private:
   bool is_electric_ = false;
   float rpm_limit_ = 2500.0f;
 
-  float phase_ = 0.0f; // radians
+  float throb_phase_ = 0.0f; // radians
+  double throb_cycles_ = 0.0;
+  double buzz_phase_ = 0.0;
+  math::SpringDamper1D load_;
+  math::SpringDamper1D frame_; // seconds
 };
 
 } // namespace motioncab
