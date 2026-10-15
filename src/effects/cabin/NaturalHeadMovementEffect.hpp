@@ -37,14 +37,17 @@ private:
 
   // Poses are in -1..1 of the layer's range on each axis. A move starts at
   // the speed the previous one had reached, so cutting one short doesn't
-  // stop the head dead before it sets off again.
+  // stop the head dead before it sets off again. The head leads and the body
+  // follows: the rotations finish early, a touch past the target before
+  // settling back, while the translations start a moment later and take the
+  // whole move.
   struct Layer {
     Pose from{};
     Pose to{};
     Pose velocity{}; // at `from`, per second
     float elapsed = 0.0f;
-    float duration = 1.0f;
-    float timer = 0.0f; // seconds until the next move
+    float duration = 1.0f; // the whole move, the body's part included
+    float timer = 0.0f;    // seconds until the next move
 
     float Value(int axis) const;
     float Velocity(int axis) const;
@@ -53,6 +56,11 @@ private:
     void MoveTo(const Pose &target, float min_seconds, float max_seconds);
     void Advance(float dt);
     void Reset();
+
+  private:
+    // When the axis starts and ends its part of the move, in seconds.
+    float Start(int axis) const;
+    float End(int axis) const;
   };
 
   // What the truck is doing sets how the head moves. In the order of the
@@ -61,8 +69,10 @@ private:
 
   Mode Assess(const SPF_TruckData &truck, float dt);
   float Jitter(float mean); // `mean` times a random 0.5..1.5
+  float Pace();             // a move's duration factor, around 1
   void DrawMicro();
-  void DrawPosture();
+  // `seconds` fixes how long the move takes, whatever the distance.
+  void DrawPosture(float seconds = 0.0f);
 
   float tremor_intensity_ = settings::Default(
       "settings.cabin.natural_head_movement.tremor_intensity");
@@ -78,6 +88,7 @@ private:
   bool right_hand_drive_ = false;
 
   std::array<double, 2> tremor_phase_{}; // one per octave
+  double drift_phase_ = 0.0;
   Layer micro_;
   Layer posture_;
   // The posture held, so the next one isn't the same, and a lean doesn't
