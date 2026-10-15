@@ -9,6 +9,7 @@
 #include <cctype>
 #include <cmath>
 #include <filesystem>
+#include <unordered_map>
 
 namespace motioncab::profiles {
 
@@ -25,6 +26,10 @@ struct Cache {
   bool matches = true;
   std::string matches_profile_name;
   bool matches_dirty = true;
+  // SPF has no call to close a custom context, so each profile is opened
+  // once. The "matches?" check runs every frame while a slider is dragged.
+  // Keyed in lowercase: Windows sees "default" and "Default" as one file.
+  std::unordered_map<std::string, SPF_Config_Handle *> contexts;
 };
 Cache g_cache;
 
@@ -113,6 +118,10 @@ SPF_Config_Handle *OpenProfileContext(PluginContext &ctx,
   if (!ctx.core || !ctx.core->config || !ctx.core->environment ||
       !ctx.environment_handle)
     return nullptr;
+  const std::string cache_key = strings::ToLower(name);
+  if (const auto it = g_cache.contexts.find(cache_key);
+      it != g_cache.contexts.end())
+    return it->second;
   const std::string dir = ProfilesDir(ctx);
   if (dir.empty() || !ctx.core->environment->Env_CreatePath(
                          ctx.environment_handle, dir.c_str()))
@@ -122,9 +131,12 @@ SPF_Config_Handle *OpenProfileContext(PluginContext &ctx,
     return nullptr;
   SPF_Config_Handle *h =
       ctx.core->config->Cfg_CreateCustomContext(path.c_str());
+  if (!h)
+    return nullptr;
   // Profiles saved by an older version still carry the old keys.
-  if (h && MigrateLegacyKeys(ctx.core->config, h, true))
+  if (MigrateLegacyKeys(ctx.core->config, h, true))
     ctx.core->config->Cfg_Save(h);
+  g_cache.contexts.emplace(cache_key, h);
   return h;
 }
 
