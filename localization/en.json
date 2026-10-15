@@ -127,7 +127,7 @@
         },
         "center_zone_pct": {
           "title": "Center Zone",
-          "desc": "How much of the wheel's turn keeps the camera turning alike both ways. Past it, each side turns at its own rotation amount."
+          "desc": "How much of the wheel's turn keeps the camera turning equally in both directions. Past it, each side turns at its own rotation amount."
         },
         "smoothing_time": {
           "title": "Smoothing",
@@ -404,7 +404,7 @@
         "hint": "Default layouts are set for each truck's smallest sleeper cabin. Other cabins may need adjustments.",
         "require_parking_brake": {
           "title": "Require Parking Brake",
-          "desc": "On: needs the parking brake, releasing it sends you back. Off: stopping is enough."
+          "desc": "On: needs the parking brake; releasing it sends you back. Off: stopping is enough."
         }
       }
     }

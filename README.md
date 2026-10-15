@@ -111,89 +111,89 @@ right-click any slider to reset it to default, and the **Settings** tab has a
 button to reset every effect at once.
 Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/settings.json`.
 
-| Setting                      | Default | Description                                                                                                                          |
-| ---------------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **Head Motion**              |         |                                                                                                                                      |
-| `sway_strength`              | 0.2     | How much your head gets pushed around when you speed up, brake, or take a turn.                                                      |
-| `tilt_strength`              | 0.15    | How much your head tilts when the cab leans or rocks.                                                                                |
-| `smoothing_time`             | 0.2     | How quickly your head settles into place. Higher = slower and smoother, lower = snappier.                                            |
-| **Steering Camera**          |         |                                                                                                                                      |
-| `rotation_left_deg`          | 30.0    | How far the camera turns when you crank the wheel all the way to the left.                                                           |
-| `rotation_right_deg`         | 30.0    | How far the camera turns when you crank the wheel all the way to the right.                                                          |
-| `center_zone_pct`            | 15.0    | How much of the wheel's turn keeps the camera turning alike both ways. Past it, each side turns at its own rotation amount.          |
-| `smoothing_time`             | 0.5     | How smooth the camera turn feels once it gets going. Higher = smoother and slower.                                                   |
-| `delay_seconds`              | 0.2     | How long the camera waits after you turn the wheel before it starts moving.                                                          |
-| `disable_in_reverse`         | true    | Keep the camera centered while the truck is in reverse gear.                                                                         |
-| **Idle Breathing**           |         |                                                                                                                                      |
-| `vertical_amplitude`         | 0.002   | How far the camera rises and falls with each breath.                                                                                 |
-| `pitch_amplitude_deg`        | 0.15    | How much your head tips forward/back with each breath.                                                                               |
-| `breathing_rate_bpm`         | 15.0    | How fast the breathing happens.                                                                                                      |
-| `fade_start_kmh`             | 30.0    | The speed at which this effect starts fading away as you speed up.                                                                   |
-| `fade_end_kmh`               | 50.0    | The speed at which this effect has completely faded away.                                                                            |
-| **Suspension**               |         |                                                                                                                                      |
-| `vertical_strength`          | 1.0     | How much bumps in the road bounce and tilt the camera.                                                                               |
-| `reactivity`                 | 0.25    | How quickly the seat settles after a bump. Lower = firmer and snappier.                                                              |
-| `grade_strength`             | 0.5     | Raises your head on downhill stretches and lowers it on uphill ones.                                                                 |
-| **Engine Vibration**         |         |                                                                                                                                      |
-| `intensity`                  | 1.0     | How strong the engine rumble feels.                                                                                                  |
-| **Mirror Check**             |         |                                                                                                                                      |
-| `left_angle_deg`             | 28.0    | How far your head turns to check the left mirror.                                                                                    |
-| `left_pitch_deg`             | 0.0     | How much your head tilts while checking the left mirror.                                                                             |
-| `left_fov_deg`               | 0.0     | How much the field of view widens while checking the left mirror.                                                                    |
-| `right_angle_deg`            | 28.0    | How far your head turns to check the right mirror.                                                                                   |
-| `right_pitch_deg`            | 0.0     | How much your head tilts while checking the right mirror.                                                                            |
-| `right_fov_deg`              | 0.0     | How much the field of view widens while checking the right mirror.                                                                   |
-| `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                            |
-| `require_stationary`         | true    | Only check the mirror when the truck is stopped.                                                                                     |
-| `ignore_after_moving_signal` | true    | Don't check the mirror for a turn signal you switched on while already driving, even after you stop.                                 |
-| **Manual Look**              |         |                                                                                                                                      |
-| `look_left_deg`              | 45.0    | How far your head turns when you look left.                                                                                          |
-| `look_right_deg`             | 45.0    | How far your head turns when you look right.                                                                                         |
-| `glance_left_deg`            | 20.0    | How far your head turns when you glance at the left mirror.                                                                          |
-| `glance_left_pitch_deg`      | 0.0     | How much your head tilts while glancing at the left mirror.                                                                          |
-| `glance_left_fov_deg`        | 0.0     | How much the field of view widens while glancing at the left mirror. Negative = narrower (zoom in).                                  |
-| `glance_right_deg`           | 30.0    | How far your head turns when you glance at the right mirror.                                                                         |
-| `glance_right_pitch_deg`     | 0.0     | How much your head tilts while glancing at the right mirror.                                                                         |
-| `glance_right_fov_deg`       | 0.0     | How much the field of view widens while glancing at the right mirror. Negative = narrower (zoom in).                                 |
-| `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                            |
-| `toggle_mode`                | false   | On: press once to look, press again to look back. Off: look while held, let go to look back.                                         |
-| **Road Irregularity**        |         |                                                                                                                                      |
-| `intensity`                  | 1.0     | How strong the road-texture shake and off-road rocking feel.                                                                         |
-| `reactivity`                 | 0.05    | How sharp and buzzy the road-texture shake feels. Lower = sharper.                                                                   |
-| **Speed Shake**              |         |                                                                                                                                      |
-| `intensity`                  | 1.0     | Overall strength of the shake you feel from driving fast.                                                                            |
-| `smoothing_time`             | 0.3     | How the shake feels over time. Higher = slower and smoother, lower = jumpier and more nervous.                                       |
-| `rotation`                   | 1.0     | How much your view tilts/turns as part of the shake, versus just moving side to side. Set to 0 to keep only the side-to-side motion. |
-| `vertical`                   | 1.0     | How much up-and-down bounce is mixed into the shake.                                                                                 |
-| `roughness`                  | 0.5     | How uneven the shake feels over time. 0 keeps it constant; higher gives bursts of calm and rough stretches.                          |
-| **Body Dynamics**            |         |                                                                                                                                      |
-| `lean_strength`              | 1.0     | How much your head leans toward the outside of a turn.                                                                               |
-| `nod_strength`               | 1.0     | How much your head dips forward when braking and pulls back when accelerating.                                                       |
-| `smoothing_time`             | 0.25    | How quickly the lean and nod settle. Lower = snappier.                                                                               |
-| **Engine Start/Stop**        |         |                                                                                                                                      |
-| `intensity`                  | 0.1     | How strong the shudder feels when the engine starts or stops.                                                                        |
-| `duration`                   | 1.0     | How long the start-up shudder lasts. The stop shudder is shorter and gentler than this.                                              |
-| **Natural Head Movement**    |         |                                                                                                                                      |
-| `tremor_intensity`           | 5.0     | How much your head trembles slightly, all the time.                                                                                  |
-| `micro_intensity`            | 2.5     | How far your head moves when it makes a small adjustment.                                                                            |
-| `posture_intensity`          | 1.3     | How far your head shifts when it settles into a new position: tilted, leaning forward or to one side.                                |
-| `posture_interval`           | 15.0    | About how long your head holds a position before settling into a new one.                                                            |
-| `steering_tilt`              | 1.5     | How much your head tilts into the turn as you turn the steering wheel.                                                               |
-| **Manual Zoom**              |         |                                                                                                                                      |
-| `zoom_fov_deg`               | 40.0    | How zoomed in the view gets while holding the zoom key. Lower = more zoomed in.                                                      |
-| `smoothing_time`             | 0.25    | How smooth the zoom in/out feels.                                                                                                    |
-| **Blindspot Viewer**         |         |                                                                                                                                      |
-| `pos_x`                      | -0.06   | How far your head moves left or right while peeking.                                                                                 |
-| `pos_y`                      | -0.1    | How far your head moves up or down while peeking.                                                                                    |
-| `pos_z`                      | -0.88   | How far your head moves forward while peeking. Negative = forward.                                                                   |
-| `yaw_deg`                    | -1.7    | How far your head turns left or right while peeking.                                                                                 |
-| `pitch_deg`                  | 33.0    | How far your head tilts up or down while peeking.                                                                                    |
-| `roll_deg`                   | 3.0     | How far your head tilts to the side while peeking.                                                                                   |
-| `fov_offset_deg`             | 10.0    | How much the field of view widens while peeking. Negative = narrower.                                                                |
-| `smoothing_time`             | 0.6     | How smooth the lean-and-return motion is.                                                                                            |
-| `toggle_mode`                | true    | On: press once to peek, press again to sit back. Off: peek while held, let go to sit back.                                           |
-| **Cabin Walk**               |         |                                                                                                                                      |
-| `require_parking_brake`      | true    | On: needs the parking brake, releasing it sends you back. Off: stopping is enough.                                                   |
+| Setting                      | Default | Description                                                                                                                            |
+| ---------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **Head Motion**              |         |                                                                                                                                        |
+| `sway_strength`              | 0.2     | How much your head gets pushed around when you speed up, brake, or take a turn.                                                        |
+| `tilt_strength`              | 0.15    | How much your head tilts when the cab leans or rocks.                                                                                  |
+| `smoothing_time`             | 0.2     | How quickly your head settles into place. Higher = slower and smoother, lower = snappier.                                              |
+| **Steering Camera**          |         |                                                                                                                                        |
+| `rotation_left_deg`          | 30.0    | How far the camera turns when you crank the wheel all the way to the left.                                                             |
+| `rotation_right_deg`         | 30.0    | How far the camera turns when you crank the wheel all the way to the right.                                                            |
+| `center_zone_pct`            | 15.0    | How much of the wheel's turn keeps the camera turning equally in both directions. Past it, each side turns at its own rotation amount. |
+| `smoothing_time`             | 0.5     | How smooth the camera turn feels once it gets going. Higher = smoother and slower.                                                     |
+| `delay_seconds`              | 0.2     | How long the camera waits after you turn the wheel before it starts moving.                                                            |
+| `disable_in_reverse`         | true    | Keep the camera centered while the truck is in reverse gear.                                                                           |
+| **Idle Breathing**           |         |                                                                                                                                        |
+| `vertical_amplitude`         | 0.002   | How far the camera rises and falls with each breath.                                                                                   |
+| `pitch_amplitude_deg`        | 0.15    | How much your head tips forward/back with each breath.                                                                                 |
+| `breathing_rate_bpm`         | 15.0    | How fast the breathing happens.                                                                                                        |
+| `fade_start_kmh`             | 30.0    | The speed at which this effect starts fading away as you speed up.                                                                     |
+| `fade_end_kmh`               | 50.0    | The speed at which this effect has completely faded away.                                                                              |
+| **Suspension**               |         |                                                                                                                                        |
+| `vertical_strength`          | 1.0     | How much bumps in the road bounce and tilt the camera.                                                                                 |
+| `reactivity`                 | 0.25    | How quickly the seat settles after a bump. Lower = firmer and snappier.                                                                |
+| `grade_strength`             | 0.5     | Raises your head on downhill stretches and lowers it on uphill ones.                                                                   |
+| **Engine Vibration**         |         |                                                                                                                                        |
+| `intensity`                  | 1.0     | How strong the engine rumble feels.                                                                                                    |
+| **Mirror Check**             |         |                                                                                                                                        |
+| `left_angle_deg`             | 28.0    | How far your head turns to check the left mirror.                                                                                      |
+| `left_pitch_deg`             | 0.0     | How much your head tilts while checking the left mirror.                                                                               |
+| `left_fov_deg`               | 0.0     | How much the field of view widens while checking the left mirror.                                                                      |
+| `right_angle_deg`            | 28.0    | How far your head turns to check the right mirror.                                                                                     |
+| `right_pitch_deg`            | 0.0     | How much your head tilts while checking the right mirror.                                                                              |
+| `right_fov_deg`              | 0.0     | How much the field of view widens while checking the right mirror.                                                                     |
+| `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                              |
+| `require_stationary`         | true    | Only check the mirror when the truck is stopped.                                                                                       |
+| `ignore_after_moving_signal` | true    | Don't check the mirror for a turn signal you switched on while already driving, even after you stop.                                   |
+| **Manual Look**              |         |                                                                                                                                        |
+| `look_left_deg`              | 45.0    | How far your head turns when you look left.                                                                                            |
+| `look_right_deg`             | 45.0    | How far your head turns when you look right.                                                                                           |
+| `glance_left_deg`            | 20.0    | How far your head turns when you glance at the left mirror.                                                                            |
+| `glance_left_pitch_deg`      | 0.0     | How much your head tilts while glancing at the left mirror.                                                                            |
+| `glance_left_fov_deg`        | 0.0     | How much the field of view widens while glancing at the left mirror. Negative = narrower (zoom in).                                    |
+| `glance_right_deg`           | 30.0    | How far your head turns when you glance at the right mirror.                                                                           |
+| `glance_right_pitch_deg`     | 0.0     | How much your head tilts while glancing at the right mirror.                                                                           |
+| `glance_right_fov_deg`       | 0.0     | How much the field of view widens while glancing at the right mirror. Negative = narrower (zoom in).                                   |
+| `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                              |
+| `toggle_mode`                | false   | On: press once to look, press again to look back. Off: look while held, let go to look back.                                           |
+| **Road Irregularity**        |         |                                                                                                                                        |
+| `intensity`                  | 1.0     | How strong the road-texture shake and off-road rocking feel.                                                                           |
+| `reactivity`                 | 0.05    | How sharp and buzzy the road-texture shake feels. Lower = sharper.                                                                     |
+| **Speed Shake**              |         |                                                                                                                                        |
+| `intensity`                  | 1.0     | Overall strength of the shake you feel from driving fast.                                                                              |
+| `smoothing_time`             | 0.3     | How the shake feels over time. Higher = slower and smoother, lower = jumpier and more nervous.                                         |
+| `rotation`                   | 1.0     | How much your view tilts/turns as part of the shake, versus just moving side to side. Set to 0 to keep only the side-to-side motion.   |
+| `vertical`                   | 1.0     | How much up-and-down bounce is mixed into the shake.                                                                                   |
+| `roughness`                  | 0.5     | How uneven the shake feels over time. 0 keeps it constant; higher gives bursts of calm and rough stretches.                            |
+| **Body Dynamics**            |         |                                                                                                                                        |
+| `lean_strength`              | 1.0     | How much your head leans toward the outside of a turn.                                                                                 |
+| `nod_strength`               | 1.0     | How much your head dips forward when braking and pulls back when accelerating.                                                         |
+| `smoothing_time`             | 0.25    | How quickly the lean and nod settle. Lower = snappier.                                                                                 |
+| **Engine Start/Stop**        |         |                                                                                                                                        |
+| `intensity`                  | 0.1     | How strong the shudder feels when the engine starts or stops.                                                                          |
+| `duration`                   | 1.0     | How long the start-up shudder lasts. The stop shudder is shorter and gentler than this.                                                |
+| **Natural Head Movement**    |         |                                                                                                                                        |
+| `tremor_intensity`           | 5.0     | How much your head trembles slightly, all the time.                                                                                    |
+| `micro_intensity`            | 2.5     | How far your head moves when it makes a small adjustment.                                                                              |
+| `posture_intensity`          | 1.3     | How far your head shifts when it settles into a new position: tilted, leaning forward or to one side.                                  |
+| `posture_interval`           | 15.0    | About how long your head holds a position before settling into a new one.                                                              |
+| `steering_tilt`              | 1.5     | How much your head tilts into the turn as you turn the steering wheel.                                                                 |
+| **Manual Zoom**              |         |                                                                                                                                        |
+| `zoom_fov_deg`               | 40.0    | How zoomed in the view gets while holding the zoom key. Lower = more zoomed in.                                                        |
+| `smoothing_time`             | 0.25    | How smooth the zoom in/out feels.                                                                                                      |
+| **Blindspot Viewer**         |         |                                                                                                                                        |
+| `pos_x`                      | -0.06   | How far your head moves left or right while peeking.                                                                                   |
+| `pos_y`                      | -0.1    | How far your head moves up or down while peeking.                                                                                      |
+| `pos_z`                      | -0.88   | How far your head moves forward while peeking. Negative = forward.                                                                     |
+| `yaw_deg`                    | -1.7    | How far your head turns left or right while peeking.                                                                                   |
+| `pitch_deg`                  | 33.0    | How far your head tilts up or down while peeking.                                                                                      |
+| `roll_deg`                   | 3.0     | How far your head tilts to the side while peeking.                                                                                     |
+| `fov_offset_deg`             | 10.0    | How much the field of view widens while peeking. Negative = narrower.                                                                  |
+| `smoothing_time`             | 0.6     | How smooth the lean-and-return motion is.                                                                                              |
+| `toggle_mode`                | true    | On: press once to peek, press again to sit back. Off: peek while held, let go to sit back.                                             |
+| **Cabin Walk**               |         |                                                                                                                                        |
+| `require_parking_brake`      | true    | On: needs the parking brake; releasing it sends you back. Off: stopping is enough.                                                     |
 
 Every effect also has its own `enabled` toggle, defaulting to on.
 
