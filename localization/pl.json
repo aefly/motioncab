@@ -104,7 +104,7 @@
         "title": "Dynamika ciała",
         "lean_strength": {
           "title": "Siła wychylenia",
-          "desc": "Jak mocno głowa wychyla się na zewnątrz zakrętu."
+          "desc": "Jak mocno głowa wychyla się do wewnątrz zakrętu."
         },
         "nod_strength": {
           "title": "Siła pochylenia",

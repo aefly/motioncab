@@ -104,7 +104,7 @@
         "title": "Dynamika těla",
         "lean_strength": {
           "title": "Síla náklonu do strany",
-          "desc": "Jak moc se hlava naklání ven ze zatáčky."
+          "desc": "Jak moc se hlava naklání do zatáčky."
         },
         "nod_strength": {
           "title": "Síla kývnutí",

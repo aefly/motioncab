@@ -104,7 +104,7 @@
         "title": "Lichaamsdynamiek",
         "lean_strength": {
           "title": "Leunsterkte",
-          "desc": "Hoeveel je hoofd naar de buitenkant van een bocht leunt."
+          "desc": "Hoeveel je hoofd naar de binnenkant van een bocht leunt."
         },
         "nod_strength": {
           "title": "Knikkracht",

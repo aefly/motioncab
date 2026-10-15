@@ -49,8 +49,7 @@ camera control, keybind rebinding, and the in-game settings UI.
 - **Manual Look** — smooth look-left/look-right and mirror glances
 - **Road Irregularity** — ground chatter, plus rocking off-road
 - **Speed Shake** — body sway growing with speed and rough ground
-- **Body Dynamics** — head leans outward in corners and nods forward when
-  braking
+- **Body Dynamics** — head leans into corners and nods forward when braking
 - **Engine Start/Stop** — mechanical shudder when the engine catches or
   dies
 - **Natural Head Movement** — TrackIR-like head movement, without a
@@ -167,7 +166,7 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `vertical`                   | 1.0     | How much up-and-down bounce is mixed into the shake.                                                                                   |
 | `roughness`                  | 0.5     | How uneven the shake feels over time. 0 keeps it constant; higher gives bursts of calm and rough stretches.                            |
 | **Body Dynamics**            |         |                                                                                                                                        |
-| `lean_strength`              | 1.0     | How much your head leans toward the outside of a turn.                                                                                 |
+| `lean_strength`              | 1.0     | How much your head leans into a turn.                                                                                                  |
 | `nod_strength`               | 1.0     | How much your head dips forward when braking and pulls back when accelerating.                                                         |
 | `smoothing_time`             | 0.25    | How quickly the lean and nod settle. Lower = snappier.                                                                                 |
 | **Engine Start/Stop**        |         |                                                                                                                                        |

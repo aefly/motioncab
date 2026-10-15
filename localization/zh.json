@@ -104,7 +104,7 @@
         "title": "身体动态",
         "lean_strength": {
           "title": "侧倾强度",
-          "desc": "转弯时头部向外侧倾斜的幅度。"
+          "desc": "转弯时头部向内侧倾斜的幅度。"
         },
         "nod_strength": {
           "title": "点头强度",

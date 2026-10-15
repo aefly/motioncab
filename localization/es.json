@@ -104,7 +104,7 @@
         "title": "Dinámica corporal",
         "lean_strength": {
           "title": "Fuerza de inclinación lateral",
-          "desc": "Cuánto se inclina tu cabeza hacia el exterior de una curva."
+          "desc": "Cuánto se inclina tu cabeza hacia el interior de una curva."
         },
         "nod_strength": {
           "title": "Fuerza del cabeceo",

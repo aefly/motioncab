@@ -104,7 +104,7 @@
         "title": "Körperdynamik",
         "lean_strength": {
           "title": "Neigung in Kurven",
-          "desc": "Wie stark sich dein Kopf in einer Kurve nach außen lehnt."
+          "desc": "Wie stark sich dein Kopf in eine Kurve hineinlehnt."
         },
         "nod_strength": {
           "title": "Nickstärke",

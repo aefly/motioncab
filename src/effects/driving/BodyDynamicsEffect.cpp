@@ -11,7 +11,8 @@ constexpr float kNodGain = 0.3f;  // degrees of pitch per m/s^2
 // So a crash or a physics spike can't throw the camera around.
 constexpr float kMaxLeanDeg = 4.0f;
 constexpr float kMaxNodDeg = 3.0f;
-// Tilts the head toward the outside of the corner.
+// Tilts the head into the corner (seen in game): a driver leans against the
+// cabin's roll to keep their eyes level, unlike a passenger.
 constexpr float kLeanSign = -1.0f;
 } // namespace
 

@@ -104,7 +104,7 @@
         "title": "Dinâmica do corpo",
         "lean_strength": {
           "title": "Força da inclinação lateral",
-          "desc": "Quanto sua cabeça se inclina para fora de uma curva."
+          "desc": "Quanto sua cabeça se inclina para dentro de uma curva."
         },
         "nod_strength": {
           "title": "Força do aceno",

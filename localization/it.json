@@ -104,7 +104,7 @@
         "title": "Dinamica del corpo",
         "lean_strength": {
           "title": "Intensità dell'inclinazione laterale",
-          "desc": "Quanto si inclina la tua testa verso l'esterno di una curva."
+          "desc": "Quanto si inclina la tua testa verso l'interno di una curva."
         },
         "nod_strength": {
           "title": "Intensità del beccheggio",

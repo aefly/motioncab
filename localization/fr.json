@@ -104,7 +104,7 @@
         "title": "Dynamique du corps",
         "lean_strength": {
           "title": "Force de penchement",
-          "desc": "À quel point votre tête penche vers l'extérieur d'un virage."
+          "desc": "À quel point votre tête penche vers l'intérieur d'un virage."
         },
         "nod_strength": {
           "title": "Force de hochement",

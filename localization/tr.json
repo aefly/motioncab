@@ -104,7 +104,7 @@
         "title": "Vücut dinamikleri",
         "lean_strength": {
           "title": "Yatma gücü",
-          "desc": "Kafanızın virajın dışına doğru ne kadar yattığı."
+          "desc": "Kafanızın virajın içine doğru ne kadar yattığı."
         },
         "nod_strength": {
           "title": "Öne eğilme gücü",

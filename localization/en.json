@@ -104,7 +104,7 @@
         "title": "Body Dynamics",
         "lean_strength": {
           "title": "Lean Strength",
-          "desc": "How much your head leans toward the outside of a turn."
+          "desc": "How much your head leans into a turn."
         },
         "nod_strength": {
           "title": "Nod Strength",
