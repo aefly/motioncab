@@ -15,7 +15,7 @@ namespace motioncab {
 // neck, which moves the eyes too.
 //
 // Signs, as seen in game: yaw positive left, pitch negative down, roll
-// positive right. A right-hand drive truck mirrors X and roll.
+// positive right. A right-hand drive truck mirrors X only.
 class NaturalHeadMovementEffect final : public ConfigurableEffect {
 public:
   NaturalHeadMovementEffect(SPF_Config_API *config_api,

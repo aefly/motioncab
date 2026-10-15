@@ -386,8 +386,7 @@ NaturalHeadMovementEffect::Update(float dt, const SPF_TruckData &truck,
   axis[kRoll] +=
       steering_roll_.Update(-kSteeringTiltDeg * tilt * steering_tilt_, dt);
 
-  // A right-hand drive truck's camera mirrors X and roll, not yaw (seen in
-  // game).
+  // A right-hand drive truck's camera mirrors X, not roll or yaw.
   const float camera_x = right_hand_drive_ ? -1.0f : 1.0f;
   const Vec3 neck =
       NeckPivot(axis[kYaw] * math::kDegToRad, axis[kPitch] * math::kDegToRad,
@@ -399,7 +398,7 @@ NaturalHeadMovementEffect::Update(float dt, const SPF_TruckData &truck,
   offset.pos_z = axis[kZ] + neck.z;
   offset.yaw = axis[kYaw];
   offset.pitch = axis[kPitch];
-  offset.roll = camera_x * axis[kRoll];
+  offset.roll = axis[kRoll];
   return offset;
 }
 
