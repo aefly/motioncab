@@ -27,11 +27,13 @@ std::string Lookup(const std::string &key) {
   if (len < static_cast<int>(sizeof(buffer)))
     return std::string(buffer, static_cast<size_t>(len));
 
-  // Too long for the buffer: len is the size needed, NUL included.
-  std::string value(static_cast<size_t>(len), '\0');
+  // Too long for the buffer: len is the full length, NUL not included.
+  const int size = len + 1;
+  std::string value(static_cast<size_t>(size), '\0');
   const int written = api->Loc_GetString(ctx.localization_handle, key.c_str(),
-                                         value.data(), len);
-  value.resize(written > 0 && written < len ? static_cast<size_t>(written) : 0);
+                                         value.data(), size);
+  value.resize(written > 0 && written < size ? static_cast<size_t>(written)
+                                             : 0);
   return value;
 }
 
