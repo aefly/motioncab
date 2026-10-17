@@ -2,7 +2,6 @@
 
 #include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
-#include "math/DelayLine.hpp"
 #include "math/SpringDamper.hpp"
 
 #include <array>
@@ -40,8 +39,8 @@ private:
   // the speed the previous one had reached, so cutting one short doesn't
   // stop the head dead before it sets off again. The head leads and the body
   // follows: the rotations finish early, a touch past the target before
-  // settling back, while the translations start a moment later and take the
-  // whole move.
+  // settling back, while the translations start a moment later and run on a
+  // little past its end.
   struct Layer {
     Pose from{};
     Pose to{};
@@ -52,6 +51,8 @@ private:
 
     float Value(int axis) const;
     float Velocity(int axis) const;
+    // Seconds until the move, body included, comes to rest.
+    float Remaining() const;
     // From wherever the layer is now, over `min_seconds` for no distance up
     // to `max_seconds` for a whole range.
     void MoveTo(const Pose &target, float min_seconds, float max_seconds);
@@ -70,9 +71,11 @@ private:
 
   Mode Assess(const SPF_TruckData &truck, float dt);
   float Jitter(float mean); // `mean` times a random 0.5..1.5
+  // A random wait averaging `mean`, short ones the most likely.
+  float Interval(float mean);
   float Pace();             // a move's duration factor, around 1
   void DrawMicro();
-  // `seconds` fixes how long the move takes, whatever the distance.
+  // `seconds`, when set, is how long even the shortest move takes.
   void DrawPosture(float seconds = 0.0f);
 
   float tremor_intensity_ = settings::Default(
@@ -83,6 +86,10 @@ private:
       "settings.cabin.natural_head_movement.posture_intensity");
   float posture_interval_ = settings::Default(
       "settings.cabin.natural_head_movement.posture_interval");
+  // Every layer's roll but the turn's tilt: tilting the horizon is what
+  // turns stomachs, so it can be cut on its own.
+  float roll_scale_ =
+      settings::Default("settings.cabin.natural_head_movement.roll_scale");
   float steering_tilt_ =
       settings::Default("settings.cabin.natural_head_movement.steering_tilt");
 
@@ -96,8 +103,14 @@ private:
   // swap sides without going through neutral first. Null when neutral.
   const float *posture_shape_ = nullptr;
   float posture_side_ = 0.0f;
+  // A micro-adjustment waits for a posture change only once: with postures
+  // close together, it kept waiting and never came.
+  bool micro_waited_ = false;
   float stopped_for_ = 0.0f;
   Mode mode_ = Mode::kTown;
+  // Unset after a reset, so the first frame takes the truck's mode as it is
+  // instead of changing posture for it.
+  bool mode_known_ = false;
   // The mode's share of the tremor and the micro-adjustments, eased so a
   // change of mode doesn't step them.
   math::SpringDamper1D tremor_gain_;
@@ -105,7 +118,6 @@ private:
   math::SpringDamper1D micro_gain_;
   // The turn is a continuous input, so it gets a spring rather than a Layer.
   math::SpringDamper1D steering_roll_;
-  math::DelayLine tilt_delay_;
 
   std::minstd_rand rng_;
 };
