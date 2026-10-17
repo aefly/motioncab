@@ -23,14 +23,18 @@ constexpr float kTremorAmplitude[] = {0.002f, 0.0015f, 0.002f,
 
 // The *Seconds are for a move across the whole range.
 constexpr float kMicroRange[] = {0.003f, 0.002f, 0.004f, 1.0f, 0.7f, 0.6f};
-constexpr float kMicroSeconds = 3.0f;
+// Not much quicker than a posture change, small ones included: at 3 s, and
+// under a second for the smallest, they twitched against the slow postures.
+constexpr float kMicroSeconds = 4.5f;
+constexpr float kMicroShortShare = 0.6f;
 constexpr float kMicroInterval = 15.0f;
 
 // Leaning toward the windshield takes the head well forward: at 2.5 cm it
 // barely showed.
 constexpr float kPostureRange[] = {0.012f, 0.012f, 0.05f, 5.0f, 3.0f, 3.0f};
-// Slow enough for the wider lean toward the windshield: at 2 s it lurched.
-constexpr float kPostureSeconds = 3.0f;
+// Slow enough that one posture melts into the next rather than snapping to
+// it: at 3 s the change still read as a move of its own.
+constexpr float kPostureSeconds = 5.0f;
 constexpr float kPostureVariation = 0.1f;
 
 // How long a move with no distance to go takes, as a share of a full one.
@@ -39,9 +43,12 @@ constexpr float kShortMoveShare = 0.4f;
 constexpr float kPaceVariation = 0.2f;
 
 // The head leads, the body follows: the rotations take this share of the
-// move, the translations start this share in and run to its end.
-constexpr float kHeadShare = 0.7f;
-constexpr float kBodyDelayShare = 0.15f;
+// move, the translations start this share in and run on past its end, to
+// this share of it. Kept overlapping, so the head and the body read as one
+// change: further apart, the body's lean came as a second move.
+constexpr float kHeadShare = 0.8f;
+constexpr float kBodyDelayShare = 0.1f;
+constexpr float kBodyEndShare = 1.2f;
 // A rotation goes this far past its target, at this share of its part, then
 // settles back: stopping dead on it looked mechanical.
 constexpr float kOvershoot = 0.06f;
@@ -89,6 +96,8 @@ constexpr PostureShape kHighwayPostures[] = {
     {0.0f, -0.4f, 0.3f, 0.0f, 0.0f, 0.0f},   // settled back in the seat
     {0.0f, -0.2f, -0.5f, 0.0f, -0.2f, 0.0f}, // forward, toward the road
     {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.4f},    // head slightly tilted
+    {0.4f, -0.3f, 0.0f, 0.0f, 0.0f, 0.3f},   // leaning on the armrest
+    {0.0f, 0.0f, 0.0f, 0.4f, 0.0f, 0.1f},    // glancing at the scenery
 };
 // Sitting up to see down the mirrors, the head kept straight.
 constexpr PostureShape kReversingPostures[] = {
@@ -121,9 +130,10 @@ constexpr ModeProfile kModes[] = {
     // In town, focused on the road: small postures, often back to neutral.
     {kTownPostures, 1.0f / 3.0f, 0.6f, 1.0f, 1.0f, 3.0f, 1.0f, 1.0f, 1.0f,
      1.0f},
-    // On the highway, settled: slower and held longer, a steadier head, but
-    // still alive (any calmer and nothing showed at speed).
-    {kHighwayPostures, 0.4f, 0.7f, 1.2f, 1.4f, 3.0f, 1.0f, 1.0f, 0.8f, 0.9f},
+    // On the highway, settled: slower, a steadier head, but still alive. Held
+    // as long as in town and rarely back to neutral: with longer holds and a
+    // calmer tremor, nothing showed at speed.
+    {kHighwayPostures, 0.25f, 0.85f, 1.2f, 1.0f, 3.0f, 1.0f, 0.8f, 0.9f, 0.9f},
     // Backing up, alert: quick, short holds.
     {kReversingPostures, 0.25f, 0.7f, 0.8f, 0.5f, 1.5f, 1.2f, 0.5f, 1.0f, 1.2f},
 };
@@ -154,6 +164,9 @@ constexpr float kModeBlendSeconds = 2.0f;
 // zone keeps road bumps out.
 constexpr float kSteeringTiltDeg = 3.0f;
 constexpr float kSteeringTiltSeconds = 0.4f;
+// The body only gives in to the turn a moment after it starts, like Steering
+// Camera's default delay.
+constexpr float kSteeringTiltDelay = 0.2f;
 constexpr float kTiltDeadZone = 0.2f;  // m/s²
 constexpr float kFullTiltAccel = 3.0f; // m/s²
 
@@ -225,7 +238,7 @@ float NaturalHeadMovementEffect::Layer::Start(int axis) const {
 }
 
 float NaturalHeadMovementEffect::Layer::End(int axis) const {
-  return IsRotation(axis) ? kHeadShare * duration : duration;
+  return (IsRotation(axis) ? kHeadShare : kBodyEndShare) * duration;
 }
 
 float NaturalHeadMovementEffect::Layer::Value(int axis) const {
@@ -262,14 +275,14 @@ void NaturalHeadMovementEffect::Layer::MoveTo(const Pose &target,
 }
 
 void NaturalHeadMovementEffect::Layer::Advance(float dt) {
-  elapsed = std::min(elapsed + dt, duration);
+  elapsed = std::min(elapsed + dt, kBodyEndShare * duration);
 }
 
 void NaturalHeadMovementEffect::Layer::Reset() {
   from.fill(0.0f);
   to.fill(0.0f);
   velocity.fill(0.0f);
-  elapsed = duration;
+  elapsed = kBodyEndShare * duration;
 }
 
 NaturalHeadMovementEffect::NaturalHeadMovementEffect(
@@ -312,6 +325,7 @@ void NaturalHeadMovementEffect::Reset() {
   tremor_pace_.Reset(town.tremor_pace);
   micro_gain_.Reset(town.micro);
   steering_roll_.Reset();
+  tilt_delay_.Reset();
 }
 
 float NaturalHeadMovementEffect::Jitter(float mean) {
@@ -356,7 +370,7 @@ void NaturalHeadMovementEffect::DrawMicro() {
   for (float &axis : target)
     axis = std::clamp(axis, -1.0f, 1.0f);
   const float pace = Pace();
-  micro_.MoveTo(target, kShortMoveShare * kMicroSeconds * pace,
+  micro_.MoveTo(target, kMicroShortShare * kMicroSeconds * pace,
                 kMicroSeconds * pace);
   micro_.timer =
       Jitter(kMicroInterval * Profile(static_cast<int>(mode_)).micro_interval);
@@ -391,12 +405,13 @@ void NaturalHeadMovementEffect::DrawPosture(float seconds) {
       target[a] = (lateral ? side : 1.0f) * (*shape)[a] * amount + vary(rng_);
     }
   }
-  if (seconds > 0.0f) {
-    posture_.MoveTo(target, seconds, seconds);
-  } else {
-    const float duration = kPostureSeconds * mode.slowness * Pace();
+  const float duration = kPostureSeconds * mode.slowness * Pace();
+  // A change of mode sets off at once, but a long way back still takes its
+  // time: in a fixed 1.5 s, leaving a look out the window snapped the head.
+  if (seconds > 0.0f)
+    posture_.MoveTo(target, seconds, std::max(seconds, duration));
+  else
     posture_.MoveTo(target, kShortMoveShare * duration, duration);
-  }
   posture_.timer = Jitter(posture_interval_ * mode.hold);
 }
 
@@ -458,7 +473,8 @@ NaturalHeadMovementEffect::Update(float dt, const SPF_TruckData &truck,
   const float turn = std::clamp((std::fabs(lateral) - kTiltDeadZone) /
                                     (kFullTiltAccel - kTiltDeadZone),
                                 0.0f, 1.0f);
-  const float tilt = std::copysign(std::sqrt(turn), lateral);
+  tilt_delay_.Push(std::copysign(std::sqrt(turn), lateral), dt);
+  const float tilt = tilt_delay_.Read(kSteeringTiltDelay);
   axis[kRoll] +=
       steering_roll_.Update(-kSteeringTiltDeg * tilt * steering_tilt_, dt);
 

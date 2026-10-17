@@ -2,6 +2,7 @@
 
 #include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
+#include "math/DelayLine.hpp"
 #include "math/SpringDamper.hpp"
 
 #include <array>
@@ -46,7 +47,7 @@ private:
     Pose to{};
     Pose velocity{}; // at `from`, per second
     float elapsed = 0.0f;
-    float duration = 1.0f; // the whole move, the body's part included
+    float duration = 1.0f; // the move's; the body's part runs on past it
     float timer = 0.0f;    // seconds until the next move
 
     float Value(int axis) const;
@@ -104,6 +105,7 @@ private:
   math::SpringDamper1D micro_gain_;
   // The turn is a continuous input, so it gets a spring rather than a Layer.
   math::SpringDamper1D steering_roll_;
+  math::DelayLine tilt_delay_;
 
   std::minstd_rand rng_;
 };
