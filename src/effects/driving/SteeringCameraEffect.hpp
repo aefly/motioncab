@@ -2,9 +2,8 @@
 
 #include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
+#include "math/DelayLine.hpp"
 #include "math/SpringDamper.hpp"
-
-#include <array>
 
 namespace motioncab {
 
@@ -33,19 +32,6 @@ public:
 private:
   void LoadSettings() override;
 
-  // A float clock loses sub-millisecond precision after a couple of hours,
-  // and the delay line then turns short and jittery.
-  struct Sample {
-    double time_s = 0.0;
-    float steering = 0.0f;
-  };
-
-  // Plenty for the longest delay at any frame rate.
-  static constexpr int kDelayBufferCapacity = 300;
-
-  void PushSample(double time_s, float steering);
-  float GetDelayedSteering(double target_time_s) const;
-
   // At full lock.
   float rotation_left_deg_ =
       settings::Default("settings.driving.steering_camera.rotation_left_deg");
@@ -67,10 +53,7 @@ private:
   // 0 in reverse.
   float follow_ = 1.0f;
 
-  double elapsed_time_s_ = 0.0;
-  std::array<Sample, kDelayBufferCapacity> delay_buffer_{};
-  int delay_head_ = 0;
-  int delay_count_ = 0;
+  math::DelayLine steering_delay_;
 };
 
 } // namespace motioncab

@@ -56,55 +56,13 @@ void SteeringCameraEffect::Reset() {
   // re-entry and then swing back. The next Update() puts the spring right
   // where the wheel is instead.
   needs_resync_ = true;
-  elapsed_time_s_ = 0.0;
-  delay_head_ = 0;
-  delay_count_ = 0;
-}
-
-void SteeringCameraEffect::PushSample(double time_s, float steering) {
-  delay_buffer_[delay_head_] = {time_s, steering};
-  delay_head_ = (delay_head_ + 1) % kDelayBufferCapacity;
-  if (delay_count_ < kDelayBufferCapacity)
-    ++delay_count_;
-}
-
-float SteeringCameraEffect::GetDelayedSteering(double target_time_s) const {
-  if (delay_count_ == 0)
-    return 0.0f;
-
-  int newer_index =
-      (delay_head_ - 1 + kDelayBufferCapacity) % kDelayBufferCapacity;
-  Sample newer = delay_buffer_[newer_index];
-
-  for (int i = 1; i < delay_count_; ++i) {
-    const int older_index =
-        (newer_index - 1 + kDelayBufferCapacity) % kDelayBufferCapacity;
-    const Sample older = delay_buffer_[older_index];
-
-    if (older.time_s <= target_time_s) {
-      const double span = newer.time_s - older.time_s;
-      const float t =
-          span > 1e-6
-              ? static_cast<float>((target_time_s - older.time_s) / span)
-              : 0.0f;
-      return older.steering + (newer.steering - older.steering) * t;
-    }
-
-    newer = older;
-    newer_index = older_index;
-  }
-
-  // Older than anything buffered: the oldest will do.
-  return newer.steering;
+  steering_delay_.Reset();
 }
 
 HeadOffset SteeringCameraEffect::Update(float dt, const SPF_TruckData &truck,
                                         const SPF_Controls &controls) {
-  elapsed_time_s_ += dt;
-  PushSample(elapsed_time_s_, controls.effectiveInput.steering);
-
-  const float delayed_steering =
-      GetDelayedSteering(elapsed_time_s_ - delay_seconds_);
+  steering_delay_.Push(controls.effectiveInput.steering, dt);
+  const float delayed_steering = steering_delay_.Read(delay_seconds_);
   // Reversing, the driver looks at the mirrors rather than down the road, so
   // following the wheel only gets in the way.
   const bool reversing = disable_in_reverse_ && truck.gear < 0;
