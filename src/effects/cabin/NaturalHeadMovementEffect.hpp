@@ -9,7 +9,7 @@
 
 namespace motioncab {
 
-// The head moving on its own, as with a head tracker: a noise tremor,
+// The head moving on its own, as with a head tracker: a slow noise sway,
 // micro-adjustments, resting postures and a tilt into the turn, summed. A
 // move takes longer the farther it goes, and every rotation pivots on the
 // neck, which moves the eyes too.
@@ -67,7 +67,7 @@ private:
 
   // What the truck is doing sets how the head moves. In the order of the
   // .cpp's kModes.
-  enum class Mode { kStopped, kManeuvering, kTown, kHighway, kReversing };
+  enum class Mode { kStopped, kManeuvering, kTown, kHighway };
 
   Mode Assess(const SPF_TruckData &truck, float dt);
   float Jitter(float mean); // `mean` times a random 0.5..1.5
@@ -78,24 +78,26 @@ private:
   // `seconds`, when set, is how long even the shortest move takes.
   void DrawPosture(float seconds = 0.0f);
 
-  float tremor_intensity_ = settings::Default(
-      "settings.cabin.natural_head_movement.tremor_intensity");
-  float micro_intensity_ =
-      settings::Default("settings.cabin.natural_head_movement.micro_intensity");
-  float posture_intensity_ = settings::Default(
-      "settings.cabin.natural_head_movement.posture_intensity");
-  float posture_interval_ = settings::Default(
-      "settings.cabin.natural_head_movement.posture_interval");
-  // Every layer's roll but the turn's tilt: tilting the horizon is what
+  // The settings scale each mode's values: at their defaults, a mode plays
+  // exactly its values. The roll's
+  // covers every layer but the turn's tilt: tilting the horizon is what
   // turns stomachs, so it can be cut on its own.
-  float roll_scale_ =
-      settings::Default("settings.cabin.natural_head_movement.roll_scale");
+  float sway_share_ = 1.0f;
+  float micro_share_ = 1.0f;
+  float micro_interval_share_ = 1.0f;
+  float posture_share_ = 1.0f;
+  float interval_share_ = 1.0f;
+  float roll_share_ = 1.0f;
   float steering_tilt_ =
       settings::Default("settings.cabin.natural_head_movement.steering_tilt");
 
   bool right_hand_drive_ = false;
 
-  std::array<double, 2> tremor_phase_{}; // one per octave
+  // Fades the whole effect out while reversing, 1 when it plays. The layers
+  // keep moving underneath, so it fades back in on a live head.
+  float presence_ = 1.0f;
+
+  std::array<double, 2> sway_phase_{}; // one per octave
   double drift_phase_ = 0.0;
   Layer micro_;
   Layer posture_;
@@ -107,15 +109,18 @@ private:
   // close together, it kept waiting and never came.
   bool micro_waited_ = false;
   float stopped_for_ = 0.0f;
+  float since_posture_ = 0.0f; // seconds since the last posture was drawn
   Mode mode_ = Mode::kTown;
   // Unset after a reset, so the first frame takes the truck's mode as it is
   // instead of changing posture for it.
   bool mode_known_ = false;
-  // The mode's share of the tremor and the micro-adjustments, eased so a
-  // change of mode doesn't step them.
-  math::SpringDamper1D tremor_gain_;
-  math::SpringDamper1D tremor_pace_;
+  // The mode's sway, micro-adjustments, drift and roll, eased so a change of
+  // mode doesn't step them.
+  math::SpringDamper1D sway_gain_;
+  math::SpringDamper1D sway_pace_;
   math::SpringDamper1D micro_gain_;
+  math::SpringDamper1D drift_gain_;
+  math::SpringDamper1D roll_gain_;
   // The turn is a continuous input, so it gets a spring rather than a Layer.
   math::SpringDamper1D steering_roll_;
 
