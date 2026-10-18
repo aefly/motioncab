@@ -16,6 +16,7 @@ struct Pause {
 
 inline constexpr Pause kPauses[] = {
     {"settings.cabin.natural_head_movement", "settings.cabin.idle_breathing"},
+    {"settings.cabin.natural_head_movement", "settings.road.speed_shake"},
 };
 
 constexpr bool Pauses(std::string_view effect, std::string_view paused) {
