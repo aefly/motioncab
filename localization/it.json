@@ -423,6 +423,11 @@
     "slider_reset_hint": "Clic destro su un cursore per ripristinarlo.",
     "profile_badge": "Profilo: {name}",
     "unsaved_changes": "(Modifiche non salvate)",
+    "search": {
+      "hint": "Cerca impostazioni...",
+      "no_results": "Nessuna impostazione corrisponde a \"{query}\".",
+      "clear_tip": "Cancella la ricerca."
+    },
     "tabs": {
       "settings": "Impostazioni",
       "about": "Informazioni"

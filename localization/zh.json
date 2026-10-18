@@ -423,6 +423,11 @@
     "slider_reset_hint": "右键单击滑块可将其重置为默认值。",
     "profile_badge": "配置：{name}",
     "unsaved_changes": "（未保存的更改）",
+    "search": {
+      "hint": "搜索设置...",
+      "no_results": "没有与“{query}”匹配的设置。",
+      "clear_tip": "清除搜索"
+    },
     "tabs": {
       "settings": "设置",
       "about": "关于"

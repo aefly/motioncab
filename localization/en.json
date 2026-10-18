@@ -423,6 +423,11 @@
     "slider_reset_hint": "Right-click a slider to reset it to default.",
     "profile_badge": "Profile: {name}",
     "unsaved_changes": "(Unsaved changes)",
+    "search": {
+      "hint": "Search settings...",
+      "no_results": "No setting matches \"{query}\".",
+      "clear_tip": "Clear the search."
+    },
     "tabs": {
       "settings": "Settings",
       "about": "About"

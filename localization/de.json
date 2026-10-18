@@ -423,6 +423,11 @@
     "slider_reset_hint": "Rechtsklick auf einen Regler setzt ihn auf den Standardwert zurück.",
     "profile_badge": "Profil: {name}",
     "unsaved_changes": "(Ungespeicherte Änderungen)",
+    "search": {
+      "hint": "Einstellungen durchsuchen...",
+      "no_results": "Keine Einstellung passt zu „{query}“.",
+      "clear_tip": "Suche löschen."
+    },
     "tabs": {
       "settings": "Einstellungen",
       "about": "Über"

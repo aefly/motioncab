@@ -423,6 +423,11 @@
     "slider_reset_hint": "Haz clic derecho en un control deslizante para restablecerlo.",
     "profile_badge": "Perfil: {name}",
     "unsaved_changes": "(Cambios sin guardar)",
+    "search": {
+      "hint": "Buscar ajustes...",
+      "no_results": "Ningún ajuste coincide con «{query}».",
+      "clear_tip": "Borrar la búsqueda."
+    },
     "tabs": {
       "settings": "Ajustes",
       "about": "Acerca de"

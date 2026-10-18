@@ -423,6 +423,11 @@
     "slider_reset_hint": "Sıfırlamak için bir kaydırıcıya sağ tıklayın.",
     "profile_badge": "Profil: {name}",
     "unsaved_changes": "(Kaydedilmemiş değişiklikler)",
+    "search": {
+      "hint": "Ayarlarda ara...",
+      "no_results": "\"{query}\" ile eşleşen ayar yok.",
+      "clear_tip": "Aramayı temizle."
+    },
     "tabs": {
       "settings": "Ayarlar",
       "about": "Hakkında"

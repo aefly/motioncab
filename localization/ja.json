@@ -423,6 +423,11 @@
     "slider_reset_hint": "スライダーを右クリックするとデフォルトに戻ります。",
     "profile_badge": "プロファイル：{name}",
     "unsaved_changes": "（未保存の変更）",
+    "search": {
+      "hint": "設定を検索...",
+      "no_results": "「{query}」に一致する設定はありません。",
+      "clear_tip": "検索をクリア"
+    },
     "tabs": {
       "settings": "設定",
       "about": "情報"

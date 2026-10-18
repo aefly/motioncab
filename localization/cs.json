@@ -423,6 +423,11 @@
     "slider_reset_hint": "Pravým kliknutím na posuvník jej obnovíte.",
     "profile_badge": "Profil: {name}",
     "unsaved_changes": "(Neuložené změny)",
+    "search": {
+      "hint": "Hledat nastavení...",
+      "no_results": "Žádné nastavení neodpovídá „{query}“.",
+      "clear_tip": "Vymazat hledání."
+    },
     "tabs": {
       "settings": "Nastavení",
       "about": "O pluginu"

@@ -423,6 +423,11 @@
     "slider_reset_hint": "Kliknij prawym przyciskiem suwak, aby go zresetować.",
     "profile_badge": "Profil: {name}",
     "unsaved_changes": "(Niezapisane zmiany)",
+    "search": {
+      "hint": "Szukaj ustawień...",
+      "no_results": "Żadne ustawienie nie pasuje do „{query}”.",
+      "clear_tip": "Wyczyść wyszukiwanie."
+    },
     "tabs": {
       "settings": "Ustawienia",
       "about": "O wtyczce"

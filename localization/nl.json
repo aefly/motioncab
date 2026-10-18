@@ -423,6 +423,11 @@
     "slider_reset_hint": "Klik met rechts op een schuifregelaar om hem te resetten.",
     "profile_badge": "Profiel: {name}",
     "unsaved_changes": "(Niet-opgeslagen wijzigingen)",
+    "search": {
+      "hint": "Instellingen zoeken...",
+      "no_results": "Geen instelling komt overeen met \"{query}\".",
+      "clear_tip": "Zoekopdracht wissen."
+    },
     "tabs": {
       "settings": "Instellingen",
       "about": "Over"

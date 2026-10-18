@@ -423,6 +423,11 @@
     "slider_reset_hint": "Clic droit sur un curseur pour le réinitialiser.",
     "profile_badge": "Profil : {name}",
     "unsaved_changes": "(Modifications non enregistrées)",
+    "search": {
+      "hint": "Rechercher un réglage...",
+      "no_results": "Aucun réglage ne correspond à « {query} ».",
+      "clear_tip": "Effacer la recherche."
+    },
     "tabs": {
       "settings": "Paramètres",
       "about": "À propos"
