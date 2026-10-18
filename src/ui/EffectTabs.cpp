@@ -5,6 +5,7 @@
 #include "core/Keybinds.hpp"
 #include "core/Loc.hpp"
 #include "core/Settings.hpp"
+#include "core/Strings.hpp"
 #include "ui/CabinLayoutPanel.hpp"
 #include "ui/Widgets.hpp"
 
@@ -13,6 +14,7 @@
 #include <cstdio>
 #include <span>
 #include <string>
+#include <vector>
 
 namespace motioncab::ui {
 
@@ -83,10 +85,17 @@ bool DrawEnabled(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   return value;
 }
 
-// The "###" ID keeps it open or closed across a language switch.
-bool EffectHeader(SPF_UI_API *ui, const char *icon, const char *prefix) {
-  const std::string label =
-      WithIcon(icon, SettingTitle(prefix)) + "###" + prefix;
+// The "###" ID keeps it open or closed across a language switch. Search
+// results get IDs of their own, so they never fold or unfold the tabs'
+// sections: a new search opens them all.
+bool EffectHeader(SPF_UI_API *ui, const char *icon, const char *prefix,
+                  const std::string &search_id = {}) {
+  std::string label = WithIcon(icon, SettingTitle(prefix)) + "###";
+  if (!search_id.empty()) {
+    label += search_id;
+    ui->UI_SetNextItemOpen(true, SPF_COND_ONCE);
+  }
+  label += prefix;
   return ui->UI_CollapsingHeader(label.c_str(), SPF_TREE_NODE_FLAG_NONE);
 }
 
@@ -298,10 +307,64 @@ bool DrawPausedByHint(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   return true;
 }
 
+// A search's words, folded. Empty when there's no search.
+using SearchWords = std::vector<std::string>;
+
+bool HasAllWords(std::string_view text, const SearchWords &words) {
+  const std::string folded = strings::FoldCase(text);
+  return std::ranges::all_of(words, [&](const std::string &word) {
+    return folded.find(word) != std::string::npos;
+  });
+}
+
+// The effect's title counts toward each of its rows.
+bool RowMatches(const EffectUi &effect, std::string_view title,
+                std::string_view desc, const SearchWords &words) {
+  if (words.empty())
+    return true;
+  std::string text(SettingTitle(effect.prefix));
+  text.append("\n").append(title).append("\n").append(desc);
+  return HasAllWords(text, words);
+}
+
+// An effect whose title matches shows whole.
+bool TitleMatches(const EffectUi &effect, const SearchWords &words) {
+  return words.empty() || HasAllWords(SettingTitle(effect.prefix), words);
+}
+
+bool SettingRowMatches(const EffectUi &effect, const settings::Setting &s,
+                       const SearchWords &words) {
+  return RowMatches(effect, SettingTitle(s.key), SettingDesc(s.key), words);
+}
+
+bool KeybindRowMatches(const EffectUi &effect, const keybinds::Action &action,
+                       const SearchWords &words) {
+  return RowMatches(effect, KeybindTitle(action), {}, words);
+}
+
+bool EffectMatches(const EffectUi &effect, const SearchWords &words) {
+  if (TitleMatches(effect, words))
+    return true;
+  if (KeybindUiAvailable() &&
+      std::ranges::any_of(effect.keybinds, [&](const keybinds::Action &a) {
+        return KeybindRowMatches(effect, a, words);
+      }))
+    return true;
+  return std::ranges::any_of(settings::kAll, [&](const settings::Setting &s) {
+    return settings::InEffect(s, effect.prefix) && !IsEnabledToggle(s) &&
+           SettingRowMatches(effect, s, words);
+  });
+}
+
+// With search words, only the rows that match, unless the title does.
 void DrawEffect(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
-                const EffectUi &effect) {
-  if (!EffectHeader(ui, effect.icon, effect.prefix))
+                const EffectUi &effect, const SearchWords &words = {},
+                const std::string &search_id = {}) {
+  if (!EffectHeader(ui, effect.icon, effect.prefix, search_id))
     return;
+  const bool whole = TitleMatches(effect, words);
+  const SearchWords no_filter;
+  const SearchWords &filter = whole ? no_filter : words;
   const std::string prefix(effect.prefix);
   const bool enabled =
       DrawEnabled(ui, cfg, h, *settings::Find(prefix + ".enabled"));
@@ -312,21 +375,103 @@ void DrawEffect(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   ui->UI_BeginDisabled(!enabled || paused);
   const std::string table_id = prefix.substr(prefix.rfind('.') + 1) + "_table";
   if (BeginSettingsTable(ui, table_id.c_str())) {
-    for (const keybinds::Action &action : effect.keybinds)
-      DrawKeybindRow(ui, action);
+    for (const keybinds::Action &action : effect.keybinds) {
+      if (KeybindRowMatches(effect, action, filter))
+        DrawKeybindRow(ui, action);
+    }
     for (const settings::Setting &s : settings::kAll) {
-      if (!settings::InEffect(s, effect.prefix) || IsEnabledToggle(s))
+      if (!settings::InEffect(s, effect.prefix) || IsEnabledToggle(s) ||
+          !SettingRowMatches(effect, s, filter))
         continue;
       DrawSettingRow(ui, cfg, h, s);
     }
     EndSettingsTable(ui);
   }
-  if (effect.extra)
+  if (effect.extra && whole)
     effect.extra(ui);
   ui->UI_EndDisabled();
 }
 
+char g_search[64] = "";
+// Bumped as a search starts, for its sections' IDs.
+unsigned g_search_generation = 0;
+
+SearchWords SplitSearch(std::string_view query) {
+  SearchWords words;
+  const std::string folded = strings::FoldCase(query);
+  size_t start = 0;
+  while (start < folded.size()) {
+    const size_t end = std::min(folded.find(' ', start), folded.size());
+    if (end > start)
+      words.push_back(folded.substr(start, end - start));
+    start = end + 1;
+  }
+  return words;
+}
+
 } // namespace
+
+bool DrawSearchBar(SPF_UI_API *ui) {
+  const bool was_searching = !SplitSearch(g_search).empty();
+
+  float avail_x = 0.0f, avail_y = 0.0f;
+  ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
+  constexpr float kButtonGap = 8.0f;
+  float clear_w = 0.0f;
+  if (was_searching) {
+    float pad_x = 0.0f, pad_y = 0.0f, text_w = 0.0f, text_h = 0.0f;
+    ui->UI_Style_GetFramePadding(ui->UI_GetStyle(), &pad_x, &pad_y);
+    ui->UI_CalcTextSize(ICON_FA_XMARK, &text_w, &text_h);
+    clear_w = text_w + pad_x * 2.0f + kButtonGap;
+  }
+
+  const std::string hint =
+      WithIcon(ICON_FA_MAGNIFYING_GLASS, loc::Tr("ui.search.hint"));
+  ui->UI_SetNextItemWidth(std::max(1.0f, avail_x - clear_w));
+  ui->UI_InputTextWithHint("##search", hint.c_str(), g_search, sizeof(g_search),
+                           SPF_INPUT_TEXT_FLAG_NONE);
+  if (was_searching) {
+    ui->UI_SameLine(0.0f, kButtonGap);
+    if (MutedButton(ui, ICON_FA_XMARK "##clear_search"))
+      g_search[0] = '\0';
+    ui->UI_SetItemTooltip(loc::Tr("ui.search.clear_tip"));
+  }
+
+  const bool searching = !SplitSearch(g_search).empty();
+  if (searching && !was_searching)
+    ++g_search_generation;
+  return searching;
+}
+
+float DrawSearchResults(SPF_UI_API *ui, SPF_Config_API *cfg,
+                        SPF_Config_Handle *h) {
+  const SearchWords words = SplitSearch(g_search);
+  const std::string search_id =
+      "search" + std::to_string(g_search_generation) + "_";
+  float folded_h = 0.0f;
+  std::string_view group;
+  for (const EffectUi &effect : kEffects) {
+    if (!EffectMatches(effect, words))
+      continue;
+    // Under its tab's name, since the results mix every group.
+    const std::string_view effect_group =
+        settings::SplitKey(effect.prefix).group;
+    if (effect_group != group) {
+      group = effect_group;
+      DrawSectionTitle(ui,
+                       loc::Tr("settings." + std::string(group) + ".title"));
+      folded_h += ui->UI_GetTextLineHeightWithSpacing();
+    }
+    DrawEffect(ui, cfg, h, effect, words, search_id);
+    folded_h += ui->UI_GetFrameHeightWithSpacing();
+  }
+  if (group.empty()) {
+    DrawWrappedHint(
+        ui, loc::Tr("ui.search.no_results", {{"query", g_search}}).c_str());
+    folded_h = ui->UI_GetCursorPosY();
+  }
+  return folded_h;
+}
 
 void UpdateLabelColumnWidth(SPF_UI_API *ui) {
   g_label_column_w = LabelColumnWidth(ui);

@@ -14,6 +14,7 @@
 #include <cmath>
 #include <iterator>
 #include <string>
+#include <string_view>
 
 namespace motioncab::ui {
 
@@ -129,13 +130,13 @@ float g_tab_min_h = 0.0f;
 
 // Its own scrolling region, so expanding a section scrolls the content and
 // the tab bar stays in view. Pair with UI_EndChild.
-void BeginTabContent(SPF_UI_API *ui, const TabInfo &tab, bool with_footer) {
+void BeginTabContent(SPF_UI_API *ui, std::string_view id, bool with_footer) {
   float avail_x = 0.0f, avail_y = 0.0f;
   ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
   const float footer_h =
       with_footer ? ui->UI_GetTextLineHeightWithSpacing() : 0.0f;
-  const std::string id = std::string("##content_") + tab.id;
-  ui->UI_BeginChild(id.c_str(), 0.0f,
+  const std::string child_id = "##content_" + std::string(id);
+  ui->UI_BeginChild(child_id.c_str(), 0.0f,
                     std::max(1.0f, std::floor(avail_y - footer_h)), false,
                     SPF_WINDOW_FLAG_NONE);
 }
@@ -198,6 +199,60 @@ void FitWindowSize(SPF_UI_API *ui, const TabMetrics &m) {
   ui->UI_SetWindowSize(target_w, target_h, SPF_COND_ALWAYS);
 }
 
+// Returns whether an effect tab is open, which has the footer hint.
+bool DrawTabs(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
+              const TabMetrics &tab_metrics) {
+  const std::array<float, kTabCount> tab_widths = StretchTabs(ui, tab_metrics);
+  if (!ui->UI_BeginTabBar("MotionCabTabs", SPF_TAB_BAR_FLAG_NONE))
+    return false;
+
+  // An effect tab's id is its settings group.
+  for (size_t i = 0; i < kEffectTabCount; ++i) {
+    if (!BeginTab(ui, kTabs[i], tab_widths[i], tab_metrics))
+      continue;
+    const float region_top = ui->UI_GetCursorPosY();
+    BeginTabContent(ui, kTabs[i].id, true);
+    const float folded_h = DrawEffectTab(ui, cfg, h, kTabs[i].id);
+    g_tab_min_h = FitHeight(ui, region_top, folded_h, true);
+    ui->UI_EndChild();
+    ui->UI_EndTabItem();
+  }
+
+  const bool settings_tab_open =
+      BeginTab(ui, kTabs[4], tab_widths[4], tab_metrics);
+  if (settings_tab_open) {
+    const float region_top = ui->UI_GetCursorPosY();
+    BeginTabContent(ui, kTabs[4].id, false);
+    DrawSettingsTab(ui, cfg, h);
+    g_tab_min_h = FitHeight(ui, region_top, ui->UI_GetCursorPosY(), false);
+    ui->UI_EndChild();
+    ui->UI_EndTabItem();
+  }
+
+  const bool about_tab_open =
+      BeginTab(ui, kTabs[5], tab_widths[5], tab_metrics);
+  if (about_tab_open) {
+    const float region_top = ui->UI_GetCursorPosY();
+    BeginTabContent(ui, kTabs[5].id, false);
+    DrawAboutTab(ui);
+    g_tab_min_h = FitHeight(ui, region_top, ui->UI_GetCursorPosY(), false);
+    ui->UI_EndChild();
+    ui->UI_EndTabItem();
+  }
+
+  ui->UI_EndTabBar();
+  return !settings_tab_open && !about_tab_open;
+}
+
+// In place of the tabs, with the same footer as an effect tab.
+void DrawSearch(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
+  const float region_top = ui->UI_GetCursorPosY();
+  BeginTabContent(ui, "search", true);
+  const float folded_h = DrawSearchResults(ui, cfg, h);
+  g_tab_min_h = FitHeight(ui, region_top, folded_h, true);
+  ui->UI_EndChild();
+}
+
 } // namespace
 
 void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
@@ -225,54 +280,19 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
     if (!profiles::Matches(ctx, active_profile))
       DrawModifiedMark(ui);
   }
+
+  const bool searching = DrawSearchBar(ui);
   ui->UI_Spacing();
 
   const TabMetrics tab_metrics = MeasureTabs(ui);
   FitWindowSize(ui, tab_metrics);
-  const std::array<float, kTabCount> tab_widths = StretchTabs(ui, tab_metrics);
-  if (!ui->UI_BeginTabBar("MotionCabTabs", SPF_TAB_BAR_FLAG_NONE)) {
-    ui->UI_PopStyleVar(pushed_vars);
-    ui->UI_PopStyleColor(pushed_colors);
-    return;
-  }
+  bool footer = true;
+  if (searching)
+    DrawSearch(ui, cfg, h);
+  else
+    footer = DrawTabs(ui, cfg, h, tab_metrics);
 
-  // An effect tab's id is its settings group.
-  for (size_t i = 0; i < kEffectTabCount; ++i) {
-    if (!BeginTab(ui, kTabs[i], tab_widths[i], tab_metrics))
-      continue;
-    const float region_top = ui->UI_GetCursorPosY();
-    BeginTabContent(ui, kTabs[i], true);
-    const float folded_h = DrawEffectTab(ui, cfg, h, kTabs[i].id);
-    g_tab_min_h = FitHeight(ui, region_top, folded_h, true);
-    ui->UI_EndChild();
-    ui->UI_EndTabItem();
-  }
-
-  const bool settings_tab_open =
-      BeginTab(ui, kTabs[4], tab_widths[4], tab_metrics);
-  if (settings_tab_open) {
-    const float region_top = ui->UI_GetCursorPosY();
-    BeginTabContent(ui, kTabs[4], false);
-    DrawSettingsTab(ui, cfg, h);
-    g_tab_min_h = FitHeight(ui, region_top, ui->UI_GetCursorPosY(), false);
-    ui->UI_EndChild();
-    ui->UI_EndTabItem();
-  }
-
-  const bool about_tab_open =
-      BeginTab(ui, kTabs[5], tab_widths[5], tab_metrics);
-  if (about_tab_open) {
-    const float region_top = ui->UI_GetCursorPosY();
-    BeginTabContent(ui, kTabs[5], false);
-    DrawAboutTab(ui);
-    g_tab_min_h = FitHeight(ui, region_top, ui->UI_GetCursorPosY(), false);
-    ui->UI_EndChild();
-    ui->UI_EndTabItem();
-  }
-
-  ui->UI_EndTabBar();
-
-  if (!settings_tab_open && !about_tab_open)
+  if (footer)
     ui->UI_TextDisabled(
         WithIcon(ICON_FA_CIRCLE_INFO, loc::Tr("ui.slider_reset_hint")).c_str());
 
