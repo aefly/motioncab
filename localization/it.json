@@ -240,25 +240,33 @@
       },
       "natural_head_movement": {
         "title": "Movimento naturale della testa",
-        "tremor_intensity": {
-          "title": "Tremore",
-          "desc": "Quanto la tua testa trema leggermente, in ogni momento."
+        "sway_intensity": {
+          "title": "Ondeggiamento",
+          "desc": "Quanto la tua testa ondeggia lentamente da sola, anche quando la tieni ferma."
         },
         "micro_intensity": {
           "title": "Microaggiustamenti",
           "desc": "Quanto si muove la tua testa durante un piccolo aggiustamento."
         },
+        "micro_interval": {
+          "title": "Intervallo dei microaggiustamenti",
+          "desc": "Quanto tempo la tua testa aspetta tra due piccoli aggiustamenti."
+        },
         "posture_intensity": {
           "title": "Cambi di postura",
-          "desc": "Quanto si sposta la tua testa quando assume una nuova posizione: inclinata, in avanti o di lato."
+          "desc": "Quanto si sposta la tua testa quando assume una nuova posizione."
         },
         "posture_interval": {
           "title": "Intervallo di postura",
-          "desc": "Per quanto tempo circa la tua testa mantiene una posizione prima di assumerne una nuova."
+          "desc": "Per quanto tempo la tua testa mantiene una posizione prima di assumerne una nuova."
+        },
+        "roll_scale": {
+          "title": "Inclinazione laterale",
+          "desc": "Quanto la tua testa si inclina di lato, in tutti i movimenti tranne l'inclinazione in curva."
         },
         "steering_tilt": {
           "title": "Inclinazione in sterzata",
-          "desc": "Quanto la tua testa si inclina verso l'interno della curva quando giri il volante."
+          "desc": "Quanto la tua testa si inclina verso l'interno della curva: più velocemente la prendi, più si inclina."
         }
       }
     },

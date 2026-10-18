@@ -240,25 +240,33 @@
       },
       "natural_head_movement": {
         "title": "Natürliche Kopfbewegung",
-        "tremor_intensity": {
-          "title": "Zittern",
-          "desc": "Wie stark dein Kopf ständig leicht zittert."
+        "sway_intensity": {
+          "title": "Schwanken",
+          "desc": "Wie stark dein Kopf von selbst langsam schwankt, auch wenn du ihn ruhig hältst."
         },
         "micro_intensity": {
           "title": "Mikrobewegungen",
           "desc": "Wie weit sich dein Kopf bei einer kleinen Korrektur bewegt."
         },
+        "micro_interval": {
+          "title": "Mikroanpassungs-Intervall",
+          "desc": "Wie lange dein Kopf zwischen zwei kleinen Anpassungen wartet."
+        },
         "posture_intensity": {
           "title": "Haltungswechsel",
-          "desc": "Wie weit sich dein Kopf verschiebt, wenn er eine neue Haltung einnimmt: geneigt, nach vorn oder zur Seite gelehnt."
+          "desc": "Wie weit sich dein Kopf verschiebt, wenn er eine neue Haltung einnimmt."
         },
         "posture_interval": {
           "title": "Haltungsintervall",
-          "desc": "Wie lange dein Kopf ungefähr eine Haltung hält, bevor er eine neue einnimmt."
+          "desc": "Wie lange dein Kopf eine Haltung hält, bevor er eine neue einnimmt."
+        },
+        "roll_scale": {
+          "title": "Seitliche Neigung",
+          "desc": "Wie stark sich dein Kopf zur Seite neigt, bei allen Bewegungen außer der Neigung in Kurven."
         },
         "steering_tilt": {
           "title": "Neigung beim Lenken",
-          "desc": "Wie stark sich dein Kopf beim Lenken in die Kurve neigt."
+          "desc": "Wie stark sich dein Kopf in die Kurve neigt: je schneller du sie nimmst, desto mehr."
         }
       }
     },

@@ -240,25 +240,33 @@
       },
       "natural_head_movement": {
         "title": "Přirozený pohyb hlavy",
-        "tremor_intensity": {
-          "title": "Chvění",
-          "desc": "Jak moc se hlava neustále lehce chvěje."
+        "sway_intensity": {
+          "title": "Pohupování",
+          "desc": "Jak moc se hlava sama od sebe pomalu pohupuje, i když ji držíte v klidu."
         },
         "micro_intensity": {
           "title": "Mikropohyby",
           "desc": "Jak daleko se hlava pohne při drobné korekci."
         },
+        "micro_interval": {
+          "title": "Interval mikropohybů",
+          "desc": "Jak dlouho hlava čeká mezi dvěma drobnými pohyby."
+        },
         "posture_intensity": {
           "title": "Změny držení",
-          "desc": "Jak daleko se hlava posune, když zaujme novou polohu: naklonění, předklon nebo posun do strany."
+          "desc": "Jak daleko se hlava posune, když zaujme novou polohu."
         },
         "posture_interval": {
           "title": "Interval držení",
-          "desc": "Přibližně jak dlouho hlava drží jednu polohu, než zaujme novou."
+          "desc": "Jak dlouho hlava drží jednu polohu, než zaujme novou."
+        },
+        "roll_scale": {
+          "title": "Boční náklon",
+          "desc": "Jak moc se hlava naklání do strany, u všech pohybů kromě náklonu do zatáčky."
         },
         "steering_tilt": {
           "title": "Náklon při zatáčení",
-          "desc": "Jak moc se hlava nakloní do zatáčky, když otáčíte volantem."
+          "desc": "Jak moc se hlava nakloní do zatáčky: čím rychleji ji projíždíte, tím víc."
         }
       }
     },

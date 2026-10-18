@@ -240,25 +240,33 @@
       },
       "natural_head_movement": {
         "title": "Movimento natural da cabeça",
-        "tremor_intensity": {
-          "title": "Tremor",
-          "desc": "O quanto sua cabeça treme levemente, o tempo todo."
+        "sway_intensity": {
+          "title": "Balanço",
+          "desc": "O quanto sua cabeça balança lentamente sozinha, mesmo quando você a mantém parada."
         },
         "micro_intensity": {
           "title": "Microajustes",
           "desc": "O quanto sua cabeça se move ao fazer um pequeno ajuste."
         },
+        "micro_interval": {
+          "title": "Intervalo de microajustes",
+          "desc": "Por quanto tempo sua cabeça espera entre dois pequenos ajustes."
+        },
         "posture_intensity": {
           "title": "Mudanças de postura",
-          "desc": "O quanto sua cabeça se desloca ao assumir uma nova posição: inclinada, para a frente ou para um lado."
+          "desc": "O quanto sua cabeça se desloca ao assumir uma nova posição."
         },
         "posture_interval": {
           "title": "Intervalo de postura",
-          "desc": "Por quanto tempo, aproximadamente, sua cabeça mantém uma posição antes de assumir outra."
+          "desc": "Por quanto tempo sua cabeça mantém uma posição antes de assumir outra."
+        },
+        "roll_scale": {
+          "title": "Inclinação lateral",
+          "desc": "O quanto sua cabeça se inclina para os lados, em todos os movimentos exceto a inclinação nas curvas."
         },
         "steering_tilt": {
           "title": "Inclinação ao esterçar",
-          "desc": "O quanto sua cabeça se inclina para dentro da curva ao girar o volante."
+          "desc": "O quanto sua cabeça se inclina para dentro da curva: quanto mais rápido você a faz, mais ela se inclina."
         }
       }
     },

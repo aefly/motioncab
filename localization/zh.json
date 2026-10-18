@@ -240,25 +240,33 @@
       },
       "natural_head_movement": {
         "title": "自然头部运动",
-        "tremor_intensity": {
-          "title": "颤动",
-          "desc": "头部始终轻微颤动的程度。"
+        "sway_intensity": {
+          "title": "摇晃",
+          "desc": "即使保持不动，头部自行缓慢摇晃的幅度。"
         },
         "micro_intensity": {
           "title": "微调",
           "desc": "头部做小幅调整时移动的幅度。"
         },
+        "micro_interval": {
+          "title": "微调间隔",
+          "desc": "头部两次小幅调整之间间隔多久。"
+        },
         "posture_intensity": {
           "title": "姿势变化",
-          "desc": "头部换到新姿势时的移动幅度：歪头、前倾或偏向一侧。"
+          "desc": "头部换到新姿势时的移动幅度。"
         },
         "posture_interval": {
           "title": "姿势间隔",
-          "desc": "头部保持一个姿势大约多久后再换到新姿势。"
+          "desc": "头部保持一个姿势多久后再换到新姿势。"
+        },
+        "roll_scale": {
+          "title": "侧向倾斜幅度",
+          "desc": "头部向侧面倾斜的幅度，适用于除转向倾斜外的所有动作。"
         },
         "steering_tilt": {
           "title": "转向倾斜",
-          "desc": "转动方向盘时头部向弯道内侧倾斜的幅度。"
+          "desc": "过弯时头部向弯道内侧倾斜的幅度：过弯越快，倾斜越大。"
         }
       }
     },

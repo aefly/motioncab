@@ -240,25 +240,33 @@
       },
       "natural_head_movement": {
         "title": "Mouvement de tête naturel",
-        "tremor_intensity": {
-          "title": "Tremblement",
-          "desc": "À quel point votre tête tremble légèrement, en permanence."
+        "sway_intensity": {
+          "title": "Balancement",
+          "desc": "À quel point votre tête se balance lentement d'elle-même, même quand vous la tenez immobile."
         },
         "micro_intensity": {
           "title": "Micro-ajustements",
           "desc": "À quel point votre tête bouge lors d'un petit ajustement."
         },
+        "micro_interval": {
+          "title": "Intervalle des micro-ajustements",
+          "desc": "Combien de temps votre tête attend entre deux petits ajustements."
+        },
         "posture_intensity": {
           "title": "Changements de posture",
-          "desc": "À quel point votre tête se déplace quand elle prend une nouvelle position : penchée, avancée ou décalée sur un côté."
+          "desc": "À quel point votre tête se déplace quand elle prend une nouvelle position."
         },
         "posture_interval": {
           "title": "Intervalle de posture",
-          "desc": "Combien de temps environ votre tête garde une position avant d'en prendre une nouvelle."
+          "desc": "Combien de temps votre tête garde une position avant d'en prendre une nouvelle."
+        },
+        "roll_scale": {
+          "title": "Inclinaison latérale",
+          "desc": "À quel point votre tête s'incline sur le côté, pour tous les mouvements sauf l'inclinaison en virage."
         },
         "steering_tilt": {
-          "title": "Inclinaison au volant",
-          "desc": "À quel point votre tête s'incline vers l'intérieur du virage quand vous tournez le volant."
+          "title": "Inclinaison en virage",
+          "desc": "À quel point votre tête s'incline vers l'intérieur du virage : plus vous le prenez vite, plus elle s'incline."
         }
       }
     },

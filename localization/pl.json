@@ -240,25 +240,33 @@
       },
       "natural_head_movement": {
         "title": "Naturalny ruch głowy",
-        "tremor_intensity": {
-          "title": "Drżenie",
-          "desc": "Jak bardzo głowa stale lekko drży."
+        "sway_intensity": {
+          "title": "Kołysanie",
+          "desc": "Jak bardzo głowa sama powoli się kołysze, nawet gdy trzymasz ją nieruchomo."
         },
         "micro_intensity": {
           "title": "Mikroruchy",
           "desc": "Jak daleko porusza się głowa przy drobnej korekcie."
         },
+        "micro_interval": {
+          "title": "Odstęp mikroruchów",
+          "desc": "Jak długo głowa czeka między dwoma drobnymi ruchami."
+        },
         "posture_intensity": {
           "title": "Zmiany postawy",
-          "desc": "Jak daleko przesuwa się głowa, gdy przyjmuje nową pozycję: przechyloną, pochyloną do przodu lub na bok."
+          "desc": "Jak daleko przesuwa się głowa, gdy przyjmuje nową pozycję."
         },
         "posture_interval": {
           "title": "Odstęp zmian postawy",
-          "desc": "Mniej więcej jak długo głowa utrzymuje pozycję, zanim przyjmie nową."
+          "desc": "Jak długo głowa utrzymuje pozycję, zanim przyjmie nową."
+        },
+        "roll_scale": {
+          "title": "Przechył na bok",
+          "desc": "Jak bardzo głowa przechyla się na bok, we wszystkich ruchach oprócz przechyłu w zakręcie."
         },
         "steering_tilt": {
           "title": "Przechył przy skręcie",
-          "desc": "Jak bardzo głowa przechyla się do wnętrza zakrętu, gdy kręcisz kierownicą."
+          "desc": "Jak bardzo głowa przechyla się do wnętrza zakrętu: im szybciej go pokonujesz, tym bardziej."
         }
       }
     },

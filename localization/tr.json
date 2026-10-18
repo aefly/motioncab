@@ -240,25 +240,33 @@
       },
       "natural_head_movement": {
         "title": "Doğal Baş Hareketi",
-        "tremor_intensity": {
-          "title": "Titreme",
-          "desc": "Başınızın sürekli ne kadar hafifçe titrediği."
+        "sway_intensity": {
+          "title": "Salınım",
+          "desc": "Başınızın, sabit tutarken bile kendi kendine ne kadar yavaşça salındığı."
         },
         "micro_intensity": {
           "title": "Mikro Ayarlar",
           "desc": "Küçük bir ayarlamada başınızın ne kadar hareket ettiği."
         },
+        "micro_interval": {
+          "title": "Mikro Ayar Aralığı",
+          "desc": "Başınızın iki küçük ayar arasında ne kadar beklediği."
+        },
         "posture_intensity": {
           "title": "Duruş Değişimleri",
-          "desc": "Başınızın yeni bir pozisyona geçerken ne kadar kaydığı: eğik, öne veya bir yana yaslanmış."
+          "desc": "Başınızın yeni bir pozisyona geçerken ne kadar kaydığı."
         },
         "posture_interval": {
           "title": "Duruş Aralığı",
-          "desc": "Başınızın yeni bir pozisyona geçmeden önce bir pozisyonu yaklaşık ne kadar koruduğu."
+          "desc": "Başınızın yeni bir pozisyona geçmeden önce bir pozisyonu ne kadar koruduğu."
+        },
+        "roll_scale": {
+          "title": "Yana Eğim",
+          "desc": "Viraj eğimi dışındaki tüm hareketlerde başınızın yana ne kadar eğildiği."
         },
         "steering_tilt": {
-          "title": "Direksiyon Eğimi",
-          "desc": "Direksiyonu çevirdiğinizde başınızın virajın içine ne kadar eğildiği."
+          "title": "Viraj Eğimi",
+          "desc": "Başınızın virajın içine ne kadar eğildiği: virajı ne kadar hızlı alırsanız o kadar çok eğilir."
         }
       }
     },

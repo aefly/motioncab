@@ -240,25 +240,33 @@
       },
       "natural_head_movement": {
         "title": "Natural Head Movement",
-        "tremor_intensity": {
-          "title": "Tremor",
-          "desc": "How much your head trembles slightly, all the time."
+        "sway_intensity": {
+          "title": "Sway",
+          "desc": "How much your head sways slowly on its own, even when holding still."
         },
         "micro_intensity": {
           "title": "Micro-Adjustments",
           "desc": "How far your head moves when it makes a small adjustment."
         },
+        "micro_interval": {
+          "title": "Micro-Adjustment Interval",
+          "desc": "How long your head waits between two small adjustments."
+        },
         "posture_intensity": {
           "title": "Posture Changes",
-          "desc": "How far your head shifts when it settles into a new position: tilted, leaning forward or to one side."
+          "desc": "How far your head shifts when it settles into a new position."
         },
         "posture_interval": {
           "title": "Posture Interval",
-          "desc": "About how long your head holds a position before settling into a new one."
+          "desc": "How long your head holds a position before settling into a new one."
+        },
+        "roll_scale": {
+          "title": "Side Tilt Amount",
+          "desc": "How much your head tilts to the side, for every movement except the tilt into turns."
         },
         "steering_tilt": {
           "title": "Steering Tilt",
-          "desc": "How much your head tilts into the turn as you turn the steering wheel."
+          "desc": "How much your head tilts into a turn: the faster you take it, the more it tilts."
         }
       }
     },

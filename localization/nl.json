@@ -240,25 +240,33 @@
       },
       "natural_head_movement": {
         "title": "Natuurlijke hoofdbeweging",
-        "tremor_intensity": {
-          "title": "Trilling",
-          "desc": "Hoeveel je hoofd voortdurend licht trilt."
+        "sway_intensity": {
+          "title": "Wiegen",
+          "desc": "Hoeveel je hoofd uit zichzelf langzaam wiegt, ook als je het stilhoudt."
         },
         "micro_intensity": {
           "title": "Microbewegingen",
           "desc": "Hoe ver je hoofd beweegt bij een kleine correctie."
         },
+        "micro_interval": {
+          "title": "Interval microcorrecties",
+          "desc": "Hoe lang je hoofd wacht tussen twee kleine correcties."
+        },
         "posture_intensity": {
           "title": "Houdingswissels",
-          "desc": "Hoe ver je hoofd verschuift als het een nieuwe houding aanneemt: gekanteld, naar voren of opzij geleund."
+          "desc": "Hoe ver je hoofd verschuift als het een nieuwe houding aanneemt."
         },
         "posture_interval": {
           "title": "Houdingsinterval",
-          "desc": "Hoe lang je hoofd ongeveer een houding vasthoudt voordat het een nieuwe aanneemt."
+          "desc": "Hoe lang je hoofd een houding vasthoudt voordat het een nieuwe aanneemt."
+        },
+        "roll_scale": {
+          "title": "Zijwaartse kanteling",
+          "desc": "Hoeveel je hoofd opzij kantelt, bij elke beweging behalve het kantelen in bochten."
         },
         "steering_tilt": {
           "title": "Kanteling bij sturen",
-          "desc": "Hoeveel je hoofd de bocht in kantelt als je aan het stuur draait."
+          "desc": "Hoeveel je hoofd de bocht in kantelt: hoe sneller je de bocht neemt, hoe meer."
         }
       }
     },
