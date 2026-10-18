@@ -5,6 +5,7 @@
 #include "math/Units.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdint>
 #include <numbers>
@@ -24,18 +25,19 @@ constexpr float kLugBoost = 0.8f;
 // idle shakes most and the shake fades as the RPM climbs away from it.
 constexpr float kResonanceHz = 26.0f;
 constexpr float kResonanceDamping = 0.35f;
-constexpr float kShakeWeight = 0.6f;
+constexpr float kShakeWeight = 0.08f;
 
 // The firing pulses grow with the torque: pulling hard hums, coasting
 // barely does. Higher RPM pushes it a bit further.
 constexpr float kHumWeight = 1.0f;
-constexpr float kHumNoLoad = 0.2f;
+constexpr float kHumNoLoad = 0.15f;
 constexpr float kHumLowRpm = 0.3f;
 constexpr float kLoadSeconds = 0.25f;
 
 // No two engine cycles fire quite alike: the strength wanders about once a
-// cycle (every other revolution), which makes the idle lope.
-constexpr float kRoughness = 0.35f;
+// cycle (every other revolution), which makes the idle lope. Kept faint: any
+// more and the idle seemed to come and go.
+constexpr float kRoughness = 0.15f;
 constexpr float kRoughnessCellsPerCycle = 0.8f;
 // At least five frames per cell, or the loping turns into flicker.
 constexpr float kMaxRoughnessCellsPerFrame = 0.2f;
@@ -47,15 +49,21 @@ constexpr float kRollDeg = 0.05f;
 constexpr float kYawDeg = 0.015f;
 constexpr float kY = 0.0003f; // meters
 
-// A rate in cells per second read as a slow wobble, and nearing 0.5 cells
-// per frame (every frame flipping) the eye blurs it into nothing.
-constexpr float kJitterCellsPerFrame = 0.28f;
+// A rate in cycles per second read as a slow wobble, and nearing 0.5 cycles
+// per frame (every frame flipping) the eye blurs it into nothing. A sine
+// rather than noise: noise's strength varies from one cell to the next, so a
+// steady idle shook hard for a moment, then went nearly still. Each axis runs
+// at its own rate and its phase wanders, so the axes never fall into step.
+constexpr std::array<float, 4> kJitterCyclesPerFrame = {0.28f, 0.26f, 0.31f,
+                                                        0.24f};
+constexpr float kWanderCycles = 0.4f;
+constexpr float kWanderCellsPerSecond = 1.5f;
 
 constexpr float kRunningRpm = 300.0f;
 constexpr float kFrameSeconds = 0.5f;
 constexpr float kNominalFrame = 1.0f / 60.0f;
 
-constexpr uint32_t kJitterSeed = 0x45564231u;
+constexpr uint32_t kWanderSeed = 0x45564231u;
 constexpr uint32_t kAxisSeedStep = 0x9E3779B9u;
 constexpr uint32_t kRoughnessSeed = 0x45565448u;
 
@@ -111,9 +119,13 @@ HeadOffset EngineVibrationEffect::Update(float dt, const SPF_TruckData &truck,
     return {};
 
   // Capped by the raw throttle: letting off drops the RPM through the band
-  // while the eased load is still up.
-  const float lug = std::min(load, throttle) *
-                    (1.0f - Ramp(rpm, kLugFadeStartRpm, kLugFadeEndRpm));
+  // while the eased load is still up. In neutral nothing holds the engine
+  // back, and the idle sits under the band.
+  const float lug =
+      truck.gear == 0
+          ? 0.0f
+          : std::min(load, throttle) *
+                (1.0f - Ramp(rpm, kLugFadeStartRpm, kLugFadeEndRpm));
   const float firing_hz = rpm / 60.0f * kFiringsPerRevolution;
   const float shake =
       kShakeWeight * MountResponse(firing_hz, kResonanceHz, kResonanceDamping);
@@ -136,11 +148,18 @@ HeadOffset EngineVibrationEffect::Update(float dt, const SPF_TruckData &truck,
   const float amplitude = (shake + hum) * (1.0f + kLugBoost * lug) * roughness *
                           intensity_ * running;
 
-  jitter_phase_ =
-      math::WrapNoisePhase(jitter_phase_ + kJitterCellsPerFrame / frame * dt);
+  wander_phase_ =
+      math::WrapNoisePhase(wander_phase_ + kWanderCellsPerSecond * dt);
+  for (size_t axis = 0; axis < jitter_phases_.size(); ++axis)
+    jitter_phases_[axis] = std::fmod(
+        jitter_phases_[axis] + kJitterCyclesPerFrame[axis] / frame * dt, 1.0);
   const auto jitter = [&](uint32_t axis) {
-    return math::GradientNoise1D(static_cast<float>(jitter_phase_),
-                                 kJitterSeed + axis * kAxisSeedStep);
+    const float wander =
+        kWanderCycles *
+        math::GradientNoise1D(static_cast<float>(wander_phase_),
+                              kWanderSeed + axis * kAxisSeedStep);
+    return std::sin(math::kTwoPi *
+                    (static_cast<float>(jitter_phases_[axis]) + wander));
   };
 
   HeadOffset offset;

@@ -4,6 +4,8 @@
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
 
+#include <array>
+
 namespace motioncab {
 
 // The engine's firing pulses as they reach the driver's head through the
@@ -39,7 +41,8 @@ private:
   bool is_electric_ = false;
   float rpm_limit_ = 2500.0f;
 
-  double jitter_phase_ = 0.0;
+  std::array<double, 4> jitter_phases_{}; // cycles
+  double wander_phase_ = 0.0;
   double roughness_phase_ = 0.0;
   math::SpringDamper1D load_;
   math::SpringDamper1D frame_; // seconds
