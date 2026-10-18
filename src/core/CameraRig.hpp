@@ -76,8 +76,8 @@ public:
   const HeadOffset &applied() const { return applied_; }
 
 private:
-  // Roll and FOV read their own live value, and keep their applied value if
-  // that read fails.
+  // The FOV reads its own live value, and keeps its applied value if that
+  // read fails. The roll is an offset SPF adds to the game's own.
   void WriteSeat(SPF_Camera_API *camera, float x, float y, float z,
                  const HeadOffset &offset);
   void WriteHeadRot(SPF_Camera_API *camera, float yaw_rad, float pitch_rad,

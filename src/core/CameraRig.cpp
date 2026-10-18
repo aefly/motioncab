@@ -189,11 +189,14 @@ void CameraRig::WriteHeadRot(SPF_Camera_API *camera, float yaw_rad,
 }
 
 void CameraRig::WriteRoll(SPF_Camera_API *camera, const HeadOffset &offset) {
-  float roll_deg = 0.0f;
-  if (!camera->Cam_GetInteriorRoll(&roll_deg))
-    return;
-  camera->Cam_SetInteriorRoll(roll_deg - applied_.roll + offset.roll);
-  applied_.roll = offset.roll;
+  // SPF adds the offset to the game's own roll (a head tracker's), so there's
+  // nothing to subtract. Only an exact 0 hands the roll back to the game's
+  // code, hence no rounding residue.
+  constexpr float kRollEpsilonDeg = 1e-3f;
+  const float target_deg =
+      std::fabs(offset.roll) < kRollEpsilonDeg ? 0.0f : offset.roll;
+  camera->Cam_SetInteriorRollOffset(target_deg);
+  applied_.roll = target_deg;
 }
 
 void CameraRig::WriteFov(SPF_Camera_API *camera, const HeadOffset &offset) {
