@@ -36,8 +36,9 @@ Cache g_cache;
 constexpr size_t kMaxNameLength = 40;
 
 // Float settings renamed or split since a release: the old value goes into
-// every new key. A setting deleted with no replacement doesn't belong here,
-// its key just sits unused in old files.
+// every new key (a rename leaves the second one null). A setting deleted
+// with no replacement doesn't belong here, its key just sits unused in old
+// files.
 struct LegacyFloatKey {
   const char *old_key;
   const char *new_keys[2];
@@ -47,6 +48,9 @@ constexpr LegacyFloatKey kLegacyFloatKeys[] = {
     {"settings.driving.steering_camera.rotation_factor_deg",
      {"settings.driving.steering_camera.rotation_left_deg",
       "settings.driving.steering_camera.rotation_right_deg"}},
+    // It never trembled, it sways slowly: named tremor up to 1.1.0.
+    {"settings.cabin.natural_head_movement.tremor_intensity",
+     {"settings.cabin.natural_head_movement.sway_intensity", nullptr}},
 };
 
 // Cfg_RemoveKey doesn't work on a Cfg_CreateCustomContext file (seen in
@@ -64,8 +68,10 @@ bool MigrateLegacyKeys(SPF_Config_API *cfg, SPF_Config_Handle *h,
     if (skip_if_migrated && cfg->Cfg_HasKey(h, k.new_keys[0]))
       continue;
     const double value = cfg->Cfg_GetFloat(h, k.old_key, 0.0);
-    for (const char *new_key : k.new_keys)
-      cfg->Cfg_SetFloat(h, new_key, value);
+    for (const char *new_key : k.new_keys) {
+      if (new_key)
+        cfg->Cfg_SetFloat(h, new_key, value);
+    }
     cfg->Cfg_RemoveKey(h, k.old_key);
     migrated = true;
   }
