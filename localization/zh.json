@@ -440,7 +440,6 @@
       "name_hint": "配置名称...",
       "save_as": "另存为配置",
       "save_as_tip": "将当前所有效果设置保存到此配置名称下。",
-      "invalid_name": "请先输入有效的配置名称。",
       "saved_toast": "已保存配置“{name}”。",
       "save_failed": "保存配置失败，请查看 MotionCab.log。",
       "overwrite_title": "确认覆盖",

@@ -440,7 +440,6 @@
       "name_hint": "Nazwa profilu...",
       "save_as": "Zapisz jako profil",
       "save_as_tip": "Zapisuje wszystkie bieżące ustawienia efektów pod tą nazwą profilu.",
-      "invalid_name": "Najpierw wpisz prawidłową nazwę profilu.",
       "saved_toast": "Zapisano profil „{name}”.",
       "save_failed": "Nie udało się zapisać profilu, sprawdź MotionCab.log.",
       "overwrite_title": "Potwierdź nadpisanie",

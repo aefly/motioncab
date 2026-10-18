@@ -440,7 +440,6 @@
       "name_hint": "Profilname...",
       "save_as": "Als Profil speichern",
       "save_as_tip": "Speichert alle aktuellen Effekteinstellungen unter diesem Profilnamen.",
-      "invalid_name": "Gib zuerst einen gültigen Profilnamen ein.",
       "saved_toast": "Profil „{name}“ gespeichert.",
       "save_failed": "Profil konnte nicht gespeichert werden, siehe MotionCab.log.",
       "overwrite_title": "Überschreiben bestätigen",

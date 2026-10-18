@@ -440,7 +440,6 @@
       "name_hint": "프로필 이름...",
       "save_as": "프로필로 저장",
       "save_as_tip": "현재 모든 효과 설정을 이 프로필 이름으로 저장합니다.",
-      "invalid_name": "먼저 올바른 프로필 이름을 입력하세요.",
       "saved_toast": "프로필 '{name}'을(를) 저장했습니다.",
       "save_failed": "프로필을 저장하지 못했습니다. MotionCab.log를 확인하세요.",
       "overwrite_title": "덮어쓰기 확인",

@@ -440,7 +440,6 @@
       "name_hint": "Profil adı...",
       "save_as": "Profil olarak kaydet",
       "save_as_tip": "Tüm mevcut efekt ayarlarını bu profil adıyla kaydeder.",
-      "invalid_name": "Önce geçerli bir profil adı girin.",
       "saved_toast": "\"{name}\" profili kaydedildi.",
       "save_failed": "Profil kaydedilemedi, MotionCab.log dosyasını kontrol edin.",
       "overwrite_title": "Üzerine yazmayı onayla",

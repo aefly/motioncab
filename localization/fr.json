@@ -440,7 +440,6 @@
       "name_hint": "Nom du profil...",
       "save_as": "Enregistrer le profil",
       "save_as_tip": "Enregistre tous les réglages actuels des effets sous ce nom de profil.",
-      "invalid_name": "Saisissez d'abord un nom de profil valide.",
       "saved_toast": "Profil « {name} » enregistré.",
       "save_failed": "Échec de l'enregistrement du profil, consultez MotionCab.log.",
       "overwrite_title": "Confirmer l'écrasement",

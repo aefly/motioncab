@@ -440,7 +440,6 @@
       "name_hint": "Profielnaam...",
       "save_as": "Opslaan als profiel",
       "save_as_tip": "Slaat alle huidige effectinstellingen op onder deze profielnaam.",
-      "invalid_name": "Voer eerst een geldige profielnaam in.",
       "saved_toast": "Profiel '{name}' opgeslagen.",
       "save_failed": "Profiel opslaan mislukt, zie MotionCab.log.",
       "overwrite_title": "Overschrijven bevestigen",

@@ -50,27 +50,32 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
                            profile_name_buf, sizeof(profile_name_buf),
                            SPF_INPUT_TEXT_FLAG_NONE);
   ui->UI_SameLine(0.0f, 8.0f);
+  static std::chrono::steady_clock::time_point save_as_confirm_until{};
+  const auto confirm_save_as = [] {
+    save_as_confirm_until =
+        std::chrono::steady_clock::now() + std::chrono::seconds(2);
+  };
   const std::string save_label =
-      WithIcon(ICON_FA_FLOPPY_DISK, loc::Tr("ui.profiles.save_as")) +
+      (std::chrono::steady_clock::now() < save_as_confirm_until
+           ? WithIcon(ICON_FA_CHECK, loc::Tr("ui.profiles.saved"))
+           : WithIcon(ICON_FA_FLOPPY_DISK, loc::Tr("ui.profiles.save_as"))) +
       "###save_as";
+  // Greyed out until the name holds something valid to save under.
+  const std::string sanitized = profiles::Sanitize(profile_name_buf);
+  ui->UI_BeginDisabled(sanitized.empty());
   if (MutedButton(ui, save_label.c_str())) {
-    const std::string sanitized = profiles::Sanitize(profile_name_buf);
-    if (sanitized.empty()) {
-      ShowToast(ui, SPF_NOTIFICATION_WARNING,
-                loc::Tr("ui.profiles.invalid_name"));
-    } else {
-      const std::vector<std::string> existing = profiles::List(ctx);
-      // On Windows "default" is the same file as "Default": the stored
-      // spelling is kept so the active name still matches the dropdown.
-      const std::string *match = profiles::FindIgnoreCase(existing, sanitized);
-      if (match) {
-        pending_overwrite = *match;
-        ui->UI_OpenPopup(kOverwritePopupId, SPF_POPUP_FLAG_NONE);
-      } else {
-        do_save(sanitized);
-      }
+    const std::vector<std::string> existing = profiles::List(ctx);
+    // On Windows "default" is the same file as "Default": the stored
+    // spelling is kept so the active name still matches the dropdown.
+    const std::string *match = profiles::FindIgnoreCase(existing, sanitized);
+    if (match) {
+      pending_overwrite = *match;
+      ui->UI_OpenPopup(kOverwritePopupId, SPF_POPUP_FLAG_NONE);
+    } else if (do_save(sanitized)) {
+      confirm_save_as();
     }
   }
+  ui->UI_EndDisabled();
   ui->UI_SetItemTooltip(loc::Tr("ui.profiles.save_as_tip"));
 
   const std::string overwrite_title =
@@ -78,8 +83,9 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
   const std::string overwrite_message =
       loc::Tr("ui.profiles.overwrite_message", {{"name", pending_overwrite}});
   if (ConfirmPopup(ui, overwrite_title, overwrite_message.c_str(),
-                   loc::Tr("ui.profiles.overwrite_confirm")))
-    do_save(pending_overwrite);
+                   loc::Tr("ui.profiles.overwrite_confirm")) &&
+      do_save(pending_overwrite))
+    confirm_save_as();
 
   ui->UI_Spacing();
   const std::vector<std::string> profile_names = profiles::List(ctx);
@@ -153,9 +159,12 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
              ? WithIcon(ICON_FA_CHECK, loc::Tr("ui.profiles.saved"))
              : WithIcon(ICON_FA_FLOPPY_DISK, loc::Tr("ui.profiles.save"))) +
         "###save";
+    // Nothing to save while the settings match the profile.
+    ui->UI_BeginDisabled(profiles::Matches(ctx, selected_name));
     if (MutedButton(ui, update_label.c_str()) && do_save(selected_name))
       save_confirm_until =
           std::chrono::steady_clock::now() + std::chrono::seconds(2);
+    ui->UI_EndDisabled();
     ui->UI_SetItemTooltip(loc::Tr("ui.profiles.save_tip"));
 
     ui->UI_SameLine(0.0f, 4.0f);

@@ -440,7 +440,6 @@
       "name_hint": "Profile name...",
       "save_as": "Save as Profile",
       "save_as_tip": "Saves every current effect setting under this profile name.",
-      "invalid_name": "Enter a valid profile name first.",
       "saved_toast": "Saved profile \"{name}\".",
       "save_failed": "Failed to save profile, check MotionCab.log.",
       "overwrite_title": "Confirm Overwrite",

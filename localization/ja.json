@@ -440,7 +440,6 @@
       "name_hint": "プロファイル名...",
       "save_as": "プロファイルとして保存",
       "save_as_tip": "現在のすべてのエフェクト設定をこのプロファイル名で保存します。",
-      "invalid_name": "まず有効なプロファイル名を入力してください。",
       "saved_toast": "プロファイル「{name}」を保存しました。",
       "save_failed": "プロファイルを保存できませんでした。MotionCab.log を確認してください。",
       "overwrite_title": "上書きの確認",

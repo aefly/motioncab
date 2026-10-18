@@ -440,7 +440,6 @@
       "name_hint": "Nome del profilo...",
       "save_as": "Salva come profilo",
       "save_as_tip": "Salva tutte le impostazioni correnti degli effetti con questo nome di profilo.",
-      "invalid_name": "Inserisci prima un nome di profilo valido.",
       "saved_toast": "Profilo «{name}» salvato.",
       "save_failed": "Impossibile salvare il profilo, controlla MotionCab.log.",
       "overwrite_title": "Conferma sovrascrittura",

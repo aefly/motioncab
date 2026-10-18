@@ -440,7 +440,6 @@
       "name_hint": "Název profilu...",
       "save_as": "Uložit jako profil",
       "save_as_tip": "Uloží všechna aktuální nastavení efektů pod tímto názvem profilu.",
-      "invalid_name": "Nejprve zadejte platný název profilu.",
       "saved_toast": "Profil „{name}“ uložen.",
       "save_failed": "Profil se nepodařilo uložit, zkontrolujte MotionCab.log.",
       "overwrite_title": "Potvrdit přepsání",

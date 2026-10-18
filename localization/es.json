@@ -440,7 +440,6 @@
       "name_hint": "Nombre del perfil...",
       "save_as": "Guardar como perfil",
       "save_as_tip": "Guarda todos los ajustes actuales de los efectos con este nombre de perfil.",
-      "invalid_name": "Introduce primero un nombre de perfil válido.",
       "saved_toast": "Perfil «{name}» guardado.",
       "save_failed": "No se pudo guardar el perfil, revisa MotionCab.log.",
       "overwrite_title": "Confirmar sobrescritura",
