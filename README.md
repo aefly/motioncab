@@ -173,11 +173,13 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `intensity`                  | 0.1     | How strong the shudder feels when the engine starts or stops.                                                                          |
 | `duration`                   | 1.0     | How long the start-up shudder lasts. The stop shudder is shorter and gentler than this.                                                |
 | **Natural Head Movement**    |         |                                                                                                                                        |
-| `tremor_intensity`           | 5.0     | How much your head trembles slightly, all the time.                                                                                    |
-| `micro_intensity`            | 2.5     | How far your head moves when it makes a small adjustment.                                                                              |
-| `posture_intensity`          | 1.3     | How far your head shifts when it settles into a new position: tilted, leaning forward or to one side.                                  |
-| `posture_interval`           | 15.0    | About how long your head holds a position before settling into a new one.                                                              |
-| `steering_tilt`              | 1.5     | How much your head tilts into the turn as you turn the steering wheel.                                                                 |
+| `sway_intensity`             | 8.0     | How much your head sways slowly on its own, even when holding still.                                                                   |
+| `micro_intensity`            | 3.0     | How far your head moves when it makes a small adjustment.                                                                              |
+| `micro_interval`             | 10.0    | How long your head waits between two small adjustments.                                                                                |
+| `posture_intensity`          | 2.0     | How far your head shifts when it settles into a new position.                                                                          |
+| `posture_interval`           | 25.0    | How long your head holds a position before settling into a new one.                                                                    |
+| `roll_scale`                 | 1.2     | How much your head tilts to the side, for every movement except the tilt into turns.                                                   |
+| `steering_tilt`              | 1.5     | How much your head tilts into a turn: the faster you take it, the more it tilts.                                                       |
 | **Manual Zoom**              |         |                                                                                                                                        |
 | `zoom_fov_deg`               | 40.0    | How zoomed in the view gets while holding the zoom key. Lower = more zoomed in.                                                        |
 | `smoothing_time`             | 0.25    | How smooth the zoom in/out feels.                                                                                                      |
