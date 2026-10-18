@@ -6,10 +6,13 @@
 
 namespace motioncab {
 
-// An uneven throb at idle plus a buzz following load and RPM. The real
-// firing frequencies (30 Hz and up) alias into strobing at any frame rate,
-// so every layer stays well under it. Mostly rotations: sub-millimeter
-// translation doesn't show past the dashboard.
+// The engine's firing pulses as they reach the driver's head through the
+// mounts, the cab and the seat. An inline six fires three times a turn (30 Hz
+// at idle, 90 Hz at 1800 RPM), far beyond what a frame can show, so the
+// motion is a fine jitter at a fixed share of the frame rate and the engine
+// only sets how strong it is: a mount resonance near idle (the truck shakes
+// most there and smooths out at cruise), plus a hum following the torque,
+// unevenly from one engine cycle to the next.
 //
 // Off for an electric truck, through IsEnabled() rather than the player's
 // toggle, so it comes back with a diesel.
@@ -36,9 +39,8 @@ private:
   bool is_electric_ = false;
   float rpm_limit_ = 2500.0f;
 
-  float throb_phase_ = 0.0f; // radians
-  double throb_cycles_ = 0.0;
-  double buzz_phase_ = 0.0;
+  double jitter_phase_ = 0.0;
+  double roughness_phase_ = 0.0;
   math::SpringDamper1D load_;
   math::SpringDamper1D frame_; // seconds
 };

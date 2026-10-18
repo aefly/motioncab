@@ -7,53 +7,72 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <numbers>
 
 namespace motioncab {
 
 namespace {
-// Roll leads: the crankshaft's torque rocks the cabin about its length.
-constexpr float kThrobRollDeg = 0.01f;
-constexpr float kThrobPitchDeg = 0.004f;
-constexpr float kThrobY = 0.00004f; // meters
-// So the head doesn't trace a clean ellipse.
-constexpr float kThrobPitchLag = 0.9f; // radians
-constexpr float kThrobYLag = 2.1f;
-constexpr float kThrobUnevenness = 0.3f;
-constexpr double kUnevennessRate = 0.6; // noise cells per engine cycle
-
-constexpr float kIdleFadeStartRpm = 750.0f;
-constexpr float kIdleFadeEndRpm = 1200.0f;
-
-constexpr float kBuzzPitchDeg = 0.0085f;
-constexpr float kBuzzRollDeg = 0.0065f;
-constexpr float kBuzzYawDeg = 0.0025f;
-constexpr float kBuzzY = 0.00005f; // meters
-constexpr float kBuzzNoLoadShare = 0.3f;
-constexpr float kBuzzIdleShare = 0.4f;
-constexpr float kBuzzCellsPerRevolution = 0.5f;
-constexpr float kMinBuzzRate = 6.0f; // cells per second
+constexpr float kFiringsPerRevolution = 3.0f; // inline six, four-stroke
 
 // Below a truck diesel's torque band (~1000 RPM), so an upshift doesn't
 // count as lugging.
 constexpr float kLugFadeStartRpm = 650.0f;
 constexpr float kLugFadeEndRpm = 900.0f;
-constexpr float kLugBoost = 0.5f;
+constexpr float kLugBoost = 0.8f;
+
+// The mounts and cab resonate a little under the idle firing frequency, so
+// idle shakes most and the shake fades as the RPM climbs away from it.
+constexpr float kResonanceHz = 26.0f;
+constexpr float kResonanceDamping = 0.35f;
+constexpr float kShakeWeight = 0.6f;
+
+// The firing pulses grow with the torque: pulling hard hums, coasting
+// barely does. Higher RPM pushes it a bit further.
+constexpr float kHumWeight = 1.0f;
+constexpr float kHumNoLoad = 0.2f;
+constexpr float kHumLowRpm = 0.3f;
+constexpr float kLoadSeconds = 0.25f;
+
+// No two engine cycles fire quite alike: the strength wanders about once a
+// cycle (every other revolution), which makes the idle lope.
+constexpr float kRoughness = 0.35f;
+constexpr float kRoughnessCellsPerCycle = 0.8f;
+// At least five frames per cell, or the loping turns into flicker.
+constexpr float kMaxRoughnessCellsPerFrame = 0.2f;
+
+// At amplitude 1. Pitch and roll lead: the firing torque rocks the engine
+// about the crankshaft, and the cab with it.
+constexpr float kPitchDeg = 0.06f;
+constexpr float kRollDeg = 0.05f;
+constexpr float kYawDeg = 0.015f;
+constexpr float kY = 0.0003f; // meters
+
+// A rate in cells per second read as a slow wobble, and nearing 0.5 cells
+// per frame (every frame flipping) the eye blurs it into nothing.
+constexpr float kJitterCellsPerFrame = 0.28f;
 
 constexpr float kRunningRpm = 300.0f;
-
-// At least five frames per cycle, or the motion strobes.
-constexpr float kMaxCyclesPerFrame = 0.2f;
-
-constexpr float kLoadSeconds = 0.25f;
 constexpr float kFrameSeconds = 0.5f;
 constexpr float kNominalFrame = 1.0f / 60.0f;
 
-constexpr uint32_t kBuzzSeed = 0x45564231u;
+constexpr uint32_t kJitterSeed = 0x45564231u;
 constexpr uint32_t kAxisSeedStep = 0x9E3779B9u;
-constexpr uint32_t kUnevennessSeed = 0x45565448u;
+constexpr uint32_t kRoughnessSeed = 0x45565448u;
 
 float Ramp(float x, float from, float to) {
   return math::SmoothStep(std::clamp((x - from) / (to - from), 0.0f, 1.0f));
+}
+
+// A driven oscillator's response to the firing frequency, 1 at its peak.
+// Damped past 1/sqrt(2), it has no peak and only falls from 1.
+float MountResponse(float firing_hz, float resonance_hz, float damping) {
+  const float r = firing_hz / resonance_hz;
+  const float stiffness = 1.0f - r * r;
+  const float friction = 2.0f * damping * r;
+  const float peak = damping < std::numbers::sqrt2_v<float> / 2.0f
+                         ? 2.0f * damping * std::sqrt(1.0f - damping * damping)
+                         : 1.0f;
+  return peak / std::sqrt(stiffness * stiffness + friction * friction);
 }
 } // namespace
 
@@ -91,47 +110,44 @@ HeadOffset EngineVibrationEffect::Update(float dt, const SPF_TruckData &truck,
   if (rpm <= telemetry::kRpmStartThreshold)
     return {};
 
-  const float max_rate = kMaxCyclesPerFrame / frame;
-  const float running = Ramp(rpm, telemetry::kRpmStartThreshold, kRunningRpm);
   // Capped by the raw throttle: letting off drops the RPM through the band
   // while the eased load is still up.
   const float lug = std::min(load, throttle) *
                     (1.0f - Ramp(rpm, kLugFadeStartRpm, kLugFadeEndRpm));
-  const float scale = intensity_ * running;
-
-  const float cycle_rate = std::min(rpm / 120.0f, max_rate);
-  throb_phase_ = math::WrapPhase(throb_phase_ + math::kTwoPi * cycle_rate * dt);
-  throb_cycles_ =
-      math::WrapNoisePhase(throb_cycles_ + cycle_rate * dt * kUnevennessRate);
-  const float unevenness =
-      1.0f + kThrobUnevenness *
-                 math::GradientNoise1D(static_cast<float>(throb_cycles_),
-                                       kUnevennessSeed);
-  const float idle = 1.0f - Ramp(rpm, kIdleFadeStartRpm, kIdleFadeEndRpm);
-  const float throb = (idle + kLugBoost * lug) * unevenness * scale;
-
-  const float buzz_rate =
-      std::clamp(rpm / 60.0f * kBuzzCellsPerRevolution,
-                 std::min(kMinBuzzRate, max_rate), max_rate);
-  buzz_phase_ = math::WrapNoisePhase(buzz_phase_ + buzz_rate * dt);
+  const float firing_hz = rpm / 60.0f * kFiringsPerRevolution;
+  const float shake =
+      kShakeWeight * MountResponse(firing_hz, kResonanceHz, kResonanceDamping);
   const float rpm_share = std::clamp(rpm / rpm_limit_, 0.0f, 1.0f);
-  const float buzz = math::Lerp(kBuzzNoLoadShare, 1.0f, load) *
-                     math::Lerp(kBuzzIdleShare, 1.0f, rpm_share) *
-                     (1.0f + kLugBoost * lug) * scale;
-  const auto noise = [&](uint32_t axis) {
-    return math::GradientNoise1D(static_cast<float>(buzz_phase_),
-                                 kBuzzSeed + axis * kAxisSeedStep);
+  const float hum = kHumWeight * math::Lerp(kHumNoLoad, 1.0f, load) *
+                    math::Lerp(kHumLowRpm, 1.0f, rpm_share);
+
+  const float cycles_per_second = rpm / 120.0f;
+  const float roughness_rate =
+      std::min(cycles_per_second * kRoughnessCellsPerCycle,
+               kMaxRoughnessCellsPerFrame / frame);
+  roughness_phase_ =
+      math::WrapNoisePhase(roughness_phase_ + roughness_rate * dt);
+  const float roughness =
+      1.0f +
+      kRoughness * math::GradientNoise1D(static_cast<float>(roughness_phase_),
+                                         kRoughnessSeed);
+
+  const float running = Ramp(rpm, telemetry::kRpmStartThreshold, kRunningRpm);
+  const float amplitude = (shake + hum) * (1.0f + kLugBoost * lug) * roughness *
+                          intensity_ * running;
+
+  jitter_phase_ =
+      math::WrapNoisePhase(jitter_phase_ + kJitterCellsPerFrame / frame * dt);
+  const auto jitter = [&](uint32_t axis) {
+    return math::GradientNoise1D(static_cast<float>(jitter_phase_),
+                                 kJitterSeed + axis * kAxisSeedStep);
   };
 
   HeadOffset offset;
-  offset.roll = throb * kThrobRollDeg * std::sin(throb_phase_) +
-                buzz * kBuzzRollDeg * noise(0);
-  offset.pitch =
-      throb * kThrobPitchDeg * std::sin(throb_phase_ - kThrobPitchLag) +
-      buzz * kBuzzPitchDeg * noise(1);
-  offset.yaw = buzz * kBuzzYawDeg * noise(2);
-  offset.pos_y = throb * kThrobY * std::sin(throb_phase_ - kThrobYLag) +
-                 buzz * kBuzzY * noise(3);
+  offset.pitch = amplitude * kPitchDeg * jitter(0);
+  offset.roll = amplitude * kRollDeg * jitter(1);
+  offset.yaw = amplitude * kYawDeg * jitter(2);
+  offset.pos_y = amplitude * kY * jitter(3);
   return offset;
 }
 

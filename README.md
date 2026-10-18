@@ -44,7 +44,7 @@ camera control, keybind rebinding, and the in-game settings UI.
 - **Steering Camera** — smoothed camera yaw following the steering wheel
 - **Idle Breathing** — subtle breathing motion that fades out with speed
 - **Suspension** — seat bounce and head tilt over bumps, plus grade follow
-- **Engine Vibration** — RPM-scaled engine buzz
+- **Engine Vibration** — engine shake, strongest at idle, humming under load
 - **Mirror Check** — looks toward the mirror on turn signal
 - **Manual Look** — smooth look-left/look-right and mirror glances
 - **Road Irregularity** — ground chatter, plus rocking off-road
