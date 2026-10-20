@@ -103,7 +103,7 @@ inline constexpr Setting kAll[] = {
     Speed("settings.cabin.idle_breathing.fade_end_kmh", 50.0f, 0.0f, 100.0f),
     // cabin.engine_vibration
     Bool("settings.cabin.engine_vibration.enabled", true),
-    Float("settings.cabin.engine_vibration.intensity", 1.0f, 0.0f, 2.0f,
+    Float("settings.cabin.engine_vibration.intensity", 1.0f, 0.0f, 3.0f,
           "%.2f"),
     // cabin.engine_start_stop
     Bool("settings.cabin.engine_start_stop.enabled", true),
