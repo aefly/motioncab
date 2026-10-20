@@ -138,16 +138,16 @@ struct ModeValues {
 constexpr ModeValues kModes[] = {
     // Stopped a while, relaxed: wide, slow postures, rarely back to neutral,
     // the body still.
-    {5.0f, 0.8f, 3.0f, 15.0f, 5.0f, 2.2f, 25.0f, 6.5f, 3.0f, 0.2f, 0.5f, 1.0f,
+    {5.0f, 0.8f, 1.0f, 15.0f, 5.0f, 2.2f, 25.0f, 6.5f, 3.0f, 0.2f, 0.5f, 1.0f,
      kIdlePostures},
     // Slow, maneuvering: upright and focused, the body steady.
-    {6.0f, 1.0f, 2.7f, 10.0f, 5.0f, 1.9f, 25.0f, 5.0f, 2.0f, 0.4f, 0.3f, 1.0f,
+    {6.0f, 1.0f, 0.9f, 10.0f, 5.0f, 1.9f, 25.0f, 5.0f, 2.0f, 0.4f, 0.3f, 1.0f,
      kManeuveringPostures},
     // In town, focused on the road, often back to neutral.
-    {8.0f, 1.0f, 3.0f, 10.0f, 5.0f, 1.85f, 25.0f, 8.0f, 3.0f, 0.4f, 1.0f, 1.2f,
+    {8.0f, 1.0f, 1.0f, 10.0f, 5.0f, 1.85f, 25.0f, 8.0f, 3.0f, 0.4f, 1.0f, 1.2f,
      kTownPostures},
     // On the highway, settled: rarely back to neutral.
-    {8.0f, 1.0f, 3.0f, 8.0f, 5.0f, 2.0f, 25.0f, 6.0f, 3.0f, 0.25f, 1.0f, 1.2f,
+    {8.0f, 1.0f, 1.0f, 8.0f, 5.0f, 2.0f, 25.0f, 6.0f, 3.0f, 0.25f, 1.0f, 1.2f,
      kHighwayPostures},
 };
 

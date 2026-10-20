@@ -115,7 +115,7 @@ inline constexpr Setting kAll[] = {
     Bool("settings.cabin.natural_head_movement.enabled", false),
     Float("settings.cabin.natural_head_movement.sway_intensity", 8.0f, 0.0f,
           8.0f, "%.2f"),
-    Float("settings.cabin.natural_head_movement.micro_intensity", 3.0f, 0.0f,
+    Float("settings.cabin.natural_head_movement.micro_intensity", 1.0f, 0.0f,
           5.0f, "%.2f"),
     Float("settings.cabin.natural_head_movement.micro_interval", 10.0f, 2.0f,
           30.0f, "%.0f s"),

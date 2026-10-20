@@ -174,7 +174,7 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `duration`                   | 1.0     | How long the start-up shudder lasts. The stop shudder is shorter and gentler than this.                                                |
 | **Natural Head Movement**    |         |                                                                                                                                        |
 | `sway_intensity`             | 8.0     | How much your head sways slowly on its own, even when holding still.                                                                   |
-| `micro_intensity`            | 3.0     | How far your head moves when it makes a small adjustment.                                                                              |
+| `micro_intensity`            | 1.0     | How far your head moves when it makes a small adjustment.                                                                              |
 | `micro_interval`             | 10.0    | How long your head waits between two small adjustments.                                                                                |
 | `posture_intensity`          | 2.0     | How far your head shifts when it settles into a new position.                                                                          |
 | `posture_interval`           | 25.0    | How long your head holds a position before settling into a new one.                                                                    |
