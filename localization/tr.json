@@ -330,7 +330,6 @@
       },
       "manual_zoom": {
         "title": "Manuel yakınlaştırma",
-        "hint": "Bu tuş, oyunun \"İç kamerayı yakınlaştır\" tuşundan bağımsızdır.",
         "zoom_fov_deg": {
           "title": "Yakınlaştırma seviyesi",
           "desc": "Yakınlaştırma tuşunu basılı tutarken görüntünün ne kadar yakınlaştığı. Düşük = daha fazla yakınlaştırma."

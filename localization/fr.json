@@ -330,7 +330,6 @@
       },
       "manual_zoom": {
         "title": "Zoom manuel",
-        "hint": "Cette touche est indépendante de la touche native « Zoom caméra intérieure » du jeu.",
         "zoom_fov_deg": {
           "title": "Niveau de zoom",
           "desc": "Niveau de zoom atteint en maintenant la touche. Plus bas = zoom plus fort."

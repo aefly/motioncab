@@ -330,7 +330,6 @@
       },
       "manual_zoom": {
         "title": "Manueller Zoom",
-        "hint": "Diese Taste ist unabhängig von der spieleigenen Taste „Innenkamera zoomen“.",
         "zoom_fov_deg": {
           "title": "Zoomstufe",
           "desc": "Wie stark herangezoomt wird, solange die Zoomtaste gehalten wird. Niedriger = stärker gezoomt."

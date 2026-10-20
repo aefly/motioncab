@@ -330,7 +330,6 @@
       },
       "manual_zoom": {
         "title": "Handmatige zoom",
-        "hint": "Deze toets staat los van de standaardtoets 'Binnencamera zoomen' van het spel.",
         "zoom_fov_deg": {
           "title": "Zoomniveau",
           "desc": "Hoe ver het beeld inzoomt zolang je de zoomtoets vasthoudt. Lager = verder ingezoomd."

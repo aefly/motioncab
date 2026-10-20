@@ -330,7 +330,6 @@
       },
       "manual_zoom": {
         "title": "Zoom manual",
-        "hint": "Esta tecla es independiente de la tecla nativa del juego «Zoom de la cámara interior».",
         "zoom_fov_deg": {
           "title": "Nivel de zoom",
           "desc": "Cuánto se acerca la vista mientras mantienes la tecla de zoom. Más bajo = más zoom."

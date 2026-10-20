@@ -330,7 +330,6 @@
       },
       "manual_zoom": {
         "title": "Manual Zoom",
-        "hint": "This key is separate from the game's native \"Zoom Interior Camera\" key.",
         "zoom_fov_deg": {
           "title": "Zoom Level",
           "desc": "How zoomed in the view gets while holding the zoom key. Lower = more zoomed in."

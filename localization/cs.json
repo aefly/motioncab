@@ -330,7 +330,6 @@
       },
       "manual_zoom": {
         "title": "Ruční přiblížení",
-        "hint": "Tato klávesa je nezávislá na herní klávese „Přiblížení vnitřní kamery“.",
         "zoom_fov_deg": {
           "title": "Úroveň přiblížení",
           "desc": "Jak moc se pohled přiblíží při držení klávesy přiblížení. Nižší = větší přiblížení."

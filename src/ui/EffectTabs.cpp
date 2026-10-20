@@ -238,7 +238,7 @@ constexpr EffectUi kEffects[] = {
      kManualLookKeybinds},
     {ICON_FA_MAGNIFYING_GLASS_PLUS,
      "settings.manual.manual_zoom",
-     true,
+     false,
      {&keybinds::kZoom, 1}},
     {ICON_FA_TRAFFIC_LIGHT,
      "settings.manual.blindspot_viewer",

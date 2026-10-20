@@ -330,7 +330,6 @@
       },
       "manual_zoom": {
         "title": "Ręczne przybliżenie",
-        "hint": "Ten klawisz jest niezależny od klawisza gry „Przybliżenie kamery wewnętrznej”.",
         "zoom_fov_deg": {
           "title": "Poziom przybliżenia",
           "desc": "Jak bardzo przybliża się widok, gdy trzymasz klawisz zoomu. Niżej = większe przybliżenie."

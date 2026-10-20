@@ -330,7 +330,6 @@
       },
       "manual_zoom": {
         "title": "Zoom manuale",
-        "hint": "Questo tasto è separato dal tasto nativo del gioco «Zoom telecamera interna».",
         "zoom_fov_deg": {
           "title": "Livello di zoom",
           "desc": "Quanto si ingrandisce la vista tenendo premuto il tasto zoom. Più basso = più ingrandito."
