@@ -34,7 +34,7 @@ MotionCab is a plugin for Euro Truck Simulator 2 and American Truck
 Simulator that adds realistic dynamic head-motion camera effects for a
 next-level driving experience.
 
-It's built on the [SPF Framework][spf-framework], which handles telemetry,
+It's built on [SPF Framework][spf-framework], which handles telemetry,
 camera control, keybind rebinding, and the in-game settings UI.
 
 ## Features
