@@ -272,49 +272,9 @@
     },
     "manual": {
       "title": "手动",
-      "mirror_check": {
-        "title": "查看后视镜",
-        "hint": "需要在游戏中绑定原生的“左转向灯”和“右转向灯”按键。",
-        "left_angle_deg": {
-          "title": "左后视镜角度",
-          "desc": "查看左后视镜时头部转动的角度。"
-        },
-        "left_pitch_deg": {
-          "title": "左后视镜俯仰",
-          "desc": "查看左后视镜时头部倾斜的幅度。正值 = 向上，负值 = 向下。"
-        },
-        "left_fov_deg": {
-          "title": "左后视镜视野变化",
-          "desc": "查看左后视镜时视野扩大的幅度。负值 = 变窄（放大）。"
-        },
-        "right_angle_deg": {
-          "title": "右后视镜角度",
-          "desc": "查看右后视镜时头部转动的角度。"
-        },
-        "right_pitch_deg": {
-          "title": "右后视镜俯仰",
-          "desc": "查看右后视镜时头部倾斜的幅度。正值 = 向上，负值 = 向下。"
-        },
-        "right_fov_deg": {
-          "title": "右后视镜视野变化",
-          "desc": "查看右后视镜时视野扩大的幅度。负值 = 变窄（放大）。"
-        },
-        "smoothing_time": {
-          "title": "平滑",
-          "desc": "观察与回正动作的平滑程度。"
-        },
-        "require_stationary": {
-          "title": "仅在静止时",
-          "desc": "仅在卡车停止时查看后视镜。"
-        },
-        "ignore_after_moving_signal": {
-          "title": "行驶中忽略",
-          "desc": "对于行驶中打开的转向灯，即使停车后也不查看后视镜。"
-        }
-      },
       "manual_look": {
-        "title": "手动观察",
-        "hint": "这些按键独立于游戏的原生控制。",
+        "title": "侧向观察",
+        "hint": "按键独立于游戏。转向灯时看后视镜需要游戏的转向灯按键。",
         "look_left_deg": {
           "title": "向左观察角度",
           "desc": "向左看时头部转动的角度。"
@@ -327,24 +287,24 @@
           "title": "左后视镜瞥视角度",
           "desc": "瞥一眼左后视镜时头部转动的角度。"
         },
-        "glance_left_pitch_deg": {
-          "title": "左后视镜瞥视俯仰",
-          "desc": "瞥一眼左后视镜时头部倾斜的幅度。正值 = 向上，负值 = 向下。"
-        },
-        "glance_left_fov_deg": {
-          "title": "左后视镜瞥视视野变化",
-          "desc": "瞥一眼左后视镜时视野扩大的幅度。负值 = 变窄（放大）。"
-        },
         "glance_right_deg": {
           "title": "右后视镜瞥视角度",
           "desc": "瞥一眼右后视镜时头部转动的角度。"
+        },
+        "glance_left_pitch_deg": {
+          "title": "左后视镜瞥视俯仰",
+          "desc": "瞥一眼左后视镜时头部倾斜的幅度。正值 = 向上，负值 = 向下。"
         },
         "glance_right_pitch_deg": {
           "title": "右后视镜瞥视俯仰",
           "desc": "瞥一眼右后视镜时头部倾斜的幅度。正值 = 向上，负值 = 向下。"
         },
+        "glance_left_fov_deg": {
+          "title": "左后视镜瞥视视野",
+          "desc": "瞥一眼左后视镜时视野扩大的幅度。负值 = 变窄（放大）。"
+        },
         "glance_right_fov_deg": {
-          "title": "右后视镜瞥视视野变化",
+          "title": "右后视镜瞥视视野",
           "desc": "瞥一眼右后视镜时视野扩大的幅度。负值 = 变窄（放大）。"
         },
         "smoothing_time": {
@@ -354,6 +314,18 @@
         "toggle_mode": {
           "title": "切换模式",
           "desc": "开启：按一次观察，再按一次回正。关闭：按住时观察，松开后回正。"
+        },
+        "mirror_on_signal": {
+          "title": "转向灯时看后视镜",
+          "desc": "转向灯亮着时，看向该侧的后视镜。"
+        },
+        "require_stationary": {
+          "title": "仅在静止时",
+          "desc": "仅在卡车停下时，打转向灯才看后视镜。"
+        },
+        "ignore_after_moving_signal": {
+          "title": "行驶中忽略",
+          "desc": "对于行驶中打开的转向灯，即使停车后也不查看后视镜。"
         }
       },
       "manual_zoom": {

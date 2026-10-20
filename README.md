@@ -45,8 +45,8 @@ camera control, keybind rebinding, and the in-game settings UI.
 - **Idle Breathing** — subtle breathing motion that fades out with speed
 - **Suspension** — seat bounce and head tilt over bumps, plus grade follow
 - **Engine Vibration** — engine shake, strongest at idle, humming under load
-- **Mirror Check** — looks toward the mirror on turn signal
-- **Manual Look** — smooth look-left/look-right and mirror glances
+- **Side Look** — look left/right and glance at the mirrors, on a key
+  or the turn signal
 - **Road Irregularity** — ground chatter, plus rocking off-road
 - **Speed Shake** — body sway growing with speed and rough ground
 - **Body Dynamics** — head leans into corners and nods forward when braking
@@ -93,10 +93,10 @@ Disabling these settings ensures that MotionCab has full control over the camera
 | Action                 | Default key | Behavior                                                                              |
 | ---------------------- | ----------- | ------------------------------------------------------------------------------------- |
 | Toggle Settings Window | F9          | Shows/hides the MotionCab Quick Settings window                                       |
-| Look Left              | Numpad /    | Manual Look — hold or toggle to look left                                             |
-| Look Right             | Numpad *    | Manual Look — hold or toggle to look right                                            |
-| Glance at Left Mirror  | Numpad 7    | Manual Look — hold or toggle to glance at the left mirror                             |
-| Glance at Right Mirror | Numpad 9    | Manual Look — hold or toggle to glance at the right mirror                            |
+| Look Left              | Numpad /    | Side Look — hold or toggle to look left                                               |
+| Look Right             | Numpad *    | Side Look — hold or toggle to look right                                              |
+| Glance at Left Mirror  | Numpad 7    | Side Look — hold or toggle to glance at the left mirror                               |
+| Glance at Right Mirror | Numpad 9    | Side Look — hold or toggle to glance at the right mirror                              |
 | Zoom                   | Numpad -    | Manual Zoom — hold to zoom in, release to return to normal                            |
 | Blindspot Viewer       | F10         | Blindspot Viewer — Toggle or hold to lean forward and look up                         |
 | Stand Up / Sit Down    | Page Up     | Cabin Walk — get up; tap to sit at the seat you look at, hold to go back to the wheel |
@@ -135,27 +135,20 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `grade_strength`             | 0.5     | Raises your head on downhill stretches and lowers it on uphill ones.                                                                   |
 | **Engine Vibration**         |         |                                                                                                                                        |
 | `intensity`                  | 1.0     | How strong the engine rumble feels.                                                                                                    |
-| **Mirror Check**             |         |                                                                                                                                        |
-| `left_angle_deg`             | 28.0    | How far your head turns to check the left mirror.                                                                                      |
-| `left_pitch_deg`             | 0.0     | How much your head tilts while checking the left mirror.                                                                               |
-| `left_fov_deg`               | 0.0     | How much the field of view widens while checking the left mirror.                                                                      |
-| `right_angle_deg`            | 28.0    | How far your head turns to check the right mirror.                                                                                     |
-| `right_pitch_deg`            | 0.0     | How much your head tilts while checking the right mirror.                                                                              |
-| `right_fov_deg`              | 0.0     | How much the field of view widens while checking the right mirror.                                                                     |
-| `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                              |
-| `require_stationary`         | true    | Only check the mirror when the truck is stopped.                                                                                       |
-| `ignore_after_moving_signal` | true    | Don't check the mirror for a turn signal you switched on while already driving, even after you stop.                                   |
-| **Manual Look**              |         |                                                                                                                                        |
+| **Side Look**                |         |                                                                                                                                        |
 | `look_left_deg`              | 45.0    | How far your head turns when you look left.                                                                                            |
 | `look_right_deg`             | 45.0    | How far your head turns when you look right.                                                                                           |
 | `glance_left_deg`            | 20.0    | How far your head turns when you glance at the left mirror.                                                                            |
-| `glance_left_pitch_deg`      | 0.0     | How much your head tilts while glancing at the left mirror.                                                                            |
-| `glance_left_fov_deg`        | 0.0     | How much the field of view widens while glancing at the left mirror. Negative = narrower (zoom in).                                    |
 | `glance_right_deg`           | 30.0    | How far your head turns when you glance at the right mirror.                                                                           |
-| `glance_right_pitch_deg`     | 0.0     | How much your head tilts while glancing at the right mirror.                                                                           |
+| `glance_left_pitch_deg`      | 0.0     | How much your head tilts while glancing at the left mirror. Positive = up, negative = down.                                            |
+| `glance_right_pitch_deg`     | 0.0     | How much your head tilts while glancing at the right mirror. Positive = up, negative = down.                                           |
+| `glance_left_fov_deg`        | 0.0     | How much the field of view widens while glancing at the left mirror. Negative = narrower (zoom in).                                    |
 | `glance_right_fov_deg`       | 0.0     | How much the field of view widens while glancing at the right mirror. Negative = narrower (zoom in).                                   |
 | `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                              |
 | `toggle_mode`                | false   | On: press once to look, press again to look back. Off: look while held, let go to look back.                                           |
+| `mirror_on_signal`           | false   | Glance at the mirror on the side of the turn signal while it's on.                                                                     |
+| `require_stationary`         | true    | Only glance at the mirror for a turn signal when the truck is stopped.                                                                 |
+| `ignore_after_moving_signal` | true    | Don't check the mirror for a turn signal you switched on while already driving, even after you stop.                                   |
 | **Road Irregularity**        |         |                                                                                                                                        |
 | `intensity`                  | 1.0     | How strong the road-texture shake and off-road rocking feel.                                                                           |
 | `reactivity`                 | 0.05    | How sharp and buzzy the road-texture shake feels. Lower = sharper.                                                                     |
@@ -248,7 +241,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   │                             Surface (ground classification)
 │   │   ├── cabin/                    IdleBreathing, EngineVibration, EngineStartStop,
 │   │   │                             NaturalHeadMovement
-│   │   └── manual/                   MirrorCheck, ManualLook, ManualZoom, BlindspotViewer
+│   │   └── manual/                   SideLook, ManualZoom, BlindspotViewer
 │   │       └── cabin_walk/
 │   │           ├── CabinWalkEffect.*     The effect: standing up, walking, sitting down
 │   │           ├── CabinLayouts.*        Per-truck cabin layouts

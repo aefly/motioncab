@@ -53,6 +53,22 @@ constexpr LegacyFloatKey kLegacyFloatKeys[] = {
      {"settings.cabin.natural_head_movement.sway_intensity", nullptr}},
 };
 
+// The same for bools. Mirror Check became part of Side Look after 1.1.0:
+// its angles are Side Look's mirror glances, its toggle and options moved.
+struct LegacyBoolKey {
+  const char *old_key;
+  const char *new_key;
+};
+
+constexpr LegacyBoolKey kLegacyBoolKeys[] = {
+    {"settings.manual.mirror_check.enabled",
+     "settings.manual.manual_look.mirror_on_signal"},
+    {"settings.manual.mirror_check.require_stationary",
+     "settings.manual.manual_look.require_stationary"},
+    {"settings.manual.mirror_check.ignore_after_moving_signal",
+     "settings.manual.manual_look.ignore_after_moving_signal"},
+};
+
 // Cfg_RemoveKey doesn't work on a Cfg_CreateCustomContext file (seen in
 // game), so a profile keeps its old key and would be migrated again on every
 // open, overwriting the new values. Profiles are only migrated while the new
@@ -72,6 +88,15 @@ bool MigrateLegacyKeys(SPF_Config_API *cfg, SPF_Config_Handle *h,
       if (new_key)
         cfg->Cfg_SetFloat(h, new_key, value);
     }
+    cfg->Cfg_RemoveKey(h, k.old_key);
+    migrated = true;
+  }
+  for (const LegacyBoolKey &k : kLegacyBoolKeys) {
+    if (!cfg->Cfg_HasKey(h, k.old_key))
+      continue;
+    if (skip_if_migrated && cfg->Cfg_HasKey(h, k.new_key))
+      continue;
+    cfg->Cfg_SetBool(h, k.new_key, cfg->Cfg_GetBool(h, k.old_key, true));
     cfg->Cfg_RemoveKey(h, k.old_key);
     migrated = true;
   }

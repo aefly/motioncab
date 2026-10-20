@@ -272,49 +272,9 @@
     },
     "manual": {
       "title": "Manuel",
-      "mirror_check": {
-        "title": "Contrôle des rétroviseurs",
-        "hint": "Nécessite que les touches natives « Clignotant gauche » et « Clignotant droit » du jeu soient assignées.",
-        "left_angle_deg": {
-          "title": "Angle du rétroviseur gauche",
-          "desc": "De combien votre tête tourne pour regarder le rétroviseur gauche."
-        },
-        "left_pitch_deg": {
-          "title": "Inclinaison du rétroviseur gauche",
-          "desc": "De combien votre tête s'incline en regardant le rétroviseur gauche. Positif = vers le haut, négatif = vers le bas."
-        },
-        "left_fov_deg": {
-          "title": "Variation du FOV du rétroviseur gauche",
-          "desc": "De combien le champ de vision s'élargit en regardant le rétroviseur gauche. Négatif = plus étroit (zoom avant)."
-        },
-        "right_angle_deg": {
-          "title": "Angle du rétroviseur droit",
-          "desc": "De combien votre tête tourne pour regarder le rétroviseur droit."
-        },
-        "right_pitch_deg": {
-          "title": "Inclinaison du rétroviseur droit",
-          "desc": "De combien votre tête s'incline en regardant le rétroviseur droit. Positif = vers le haut, négatif = vers le bas."
-        },
-        "right_fov_deg": {
-          "title": "Variation du FOV du rétroviseur droit",
-          "desc": "De combien le champ de vision s'élargit en regardant le rétroviseur droit. Négatif = plus étroit (zoom avant)."
-        },
-        "smoothing_time": {
-          "title": "Lissage",
-          "desc": "Douceur du mouvement aller-retour du regard."
-        },
-        "require_stationary": {
-          "title": "Seulement à l'arrêt",
-          "desc": "Ne regarder le rétroviseur que lorsque le camion est à l'arrêt."
-        },
-        "ignore_after_moving_signal": {
-          "title": "Ignorer en roulant",
-          "desc": "Ne pas regarder le rétroviseur pour un clignotant activé en roulant, même après l'arrêt."
-        }
-      },
       "manual_look": {
-        "title": "Regard manuel",
-        "hint": "Ces touches sont indépendantes des commandes natives du jeu.",
+        "title": "Regard latéral",
+        "hint": "Ses touches sont indépendantes de celles du jeu. Le coup d'œil au clignotant nécessite les touches de clignotant du jeu.",
         "look_left_deg": {
           "title": "Angle de regard à gauche",
           "desc": "De combien votre tête tourne quand vous regardez à gauche."
@@ -327,24 +287,24 @@
           "title": "Angle du coup d'œil gauche",
           "desc": "De combien votre tête tourne quand vous jetez un coup d'œil au rétroviseur gauche."
         },
-        "glance_left_pitch_deg": {
-          "title": "Inclinaison du coup d'œil gauche",
-          "desc": "De combien votre tête s'incline pendant un coup d'œil au rétroviseur gauche. Positif = vers le haut, négatif = vers le bas."
-        },
-        "glance_left_fov_deg": {
-          "title": "Variation du FOV du coup d'œil gauche",
-          "desc": "De combien le champ de vision s'élargit pendant un coup d'œil au rétroviseur gauche. Négatif = plus étroit (zoom avant)."
-        },
         "glance_right_deg": {
           "title": "Angle du coup d'œil droit",
           "desc": "De combien votre tête tourne quand vous jetez un coup d'œil au rétroviseur droit."
+        },
+        "glance_left_pitch_deg": {
+          "title": "Inclinaison du coup d'œil gauche",
+          "desc": "De combien votre tête s'incline pendant un coup d'œil au rétroviseur gauche. Positif = vers le haut, négatif = vers le bas."
         },
         "glance_right_pitch_deg": {
           "title": "Inclinaison du coup d'œil droit",
           "desc": "De combien votre tête s'incline pendant un coup d'œil au rétroviseur droit. Positif = vers le haut, négatif = vers le bas."
         },
+        "glance_left_fov_deg": {
+          "title": "FOV du coup d'œil gauche",
+          "desc": "De combien le champ de vision s'élargit pendant un coup d'œil au rétroviseur gauche. Négatif = plus étroit (zoom avant)."
+        },
         "glance_right_fov_deg": {
-          "title": "Variation du FOV du coup d'œil droit",
+          "title": "FOV du coup d'œil droit",
           "desc": "De combien le champ de vision s'élargit pendant un coup d'œil au rétroviseur droit. Négatif = plus étroit (zoom avant)."
         },
         "smoothing_time": {
@@ -354,6 +314,18 @@
         "toggle_mode": {
           "title": "Mode bascule",
           "desc": "Activé : appuyer une fois pour regarder, une seconde fois pour revenir. Désactivé : regarder tant que la touche est maintenue, relâcher pour revenir."
+        },
+        "mirror_on_signal": {
+          "title": "Coup d'œil au clignotant",
+          "desc": "Regarde le rétroviseur du côté du clignotant tant qu'il est allumé."
+        },
+        "require_stationary": {
+          "title": "Seulement à l'arrêt",
+          "desc": "Ne regarde le rétroviseur au clignotant que lorsque le camion est à l'arrêt."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Ignorer en roulant",
+          "desc": "Ne pas regarder le rétroviseur pour un clignotant activé en roulant, même après l'arrêt."
         }
       },
       "manual_zoom": {

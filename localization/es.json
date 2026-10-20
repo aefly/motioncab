@@ -272,49 +272,9 @@
     },
     "manual": {
       "title": "Manual",
-      "mirror_check": {
-        "title": "Mirar los espejos",
-        "hint": "Requiere que las teclas nativas del juego «Intermitente izquierdo» e «Intermitente derecho» estén asignadas.",
-        "left_angle_deg": {
-          "title": "Ángulo del espejo izquierdo",
-          "desc": "Cuánto gira tu cabeza para mirar el espejo izquierdo."
-        },
-        "left_pitch_deg": {
-          "title": "Inclinación del espejo izquierdo",
-          "desc": "Cuánto se inclina tu cabeza al mirar el espejo izquierdo. Positivo = hacia arriba, negativo = hacia abajo."
-        },
-        "left_fov_deg": {
-          "title": "Cambio de FOV del espejo izquierdo",
-          "desc": "Cuánto se amplía el campo de visión al mirar el espejo izquierdo. Negativo = más estrecho (zoom)."
-        },
-        "right_angle_deg": {
-          "title": "Ángulo del espejo derecho",
-          "desc": "Cuánto gira tu cabeza para mirar el espejo derecho."
-        },
-        "right_pitch_deg": {
-          "title": "Inclinación del espejo derecho",
-          "desc": "Cuánto se inclina tu cabeza al mirar el espejo derecho. Positivo = hacia arriba, negativo = hacia abajo."
-        },
-        "right_fov_deg": {
-          "title": "Cambio de FOV del espejo derecho",
-          "desc": "Cuánto se amplía el campo de visión al mirar el espejo derecho. Negativo = más estrecho (zoom)."
-        },
-        "smoothing_time": {
-          "title": "Suavizado",
-          "desc": "Lo suave que es el movimiento de ida y vuelta de la mirada."
-        },
-        "require_stationary": {
-          "title": "Solo parado",
-          "desc": "Mirar el espejo solo cuando el camión está detenido."
-        },
-        "ignore_after_moving_signal": {
-          "title": "Ignorar en marcha",
-          "desc": "No mirar el espejo por un intermitente activado en marcha, ni siquiera después de parar."
-        }
-      },
       "manual_look": {
-        "title": "Mirada manual",
-        "hint": "Estas teclas son independientes de los controles nativos del juego.",
+        "title": "Mirada lateral",
+        "hint": "Teclas propias, independientes del juego. La mirada al poner el intermitente necesita las teclas de intermitente del juego.",
         "look_left_deg": {
           "title": "Ángulo de mirada izquierda",
           "desc": "Cuánto gira tu cabeza al mirar a la izquierda."
@@ -327,24 +287,24 @@
           "title": "Ángulo del vistazo izquierdo",
           "desc": "Cuánto gira tu cabeza al echar un vistazo al espejo izquierdo."
         },
-        "glance_left_pitch_deg": {
-          "title": "Inclinación del vistazo izquierdo",
-          "desc": "Cuánto se inclina tu cabeza al echar un vistazo al espejo izquierdo. Positivo = hacia arriba, negativo = hacia abajo."
-        },
-        "glance_left_fov_deg": {
-          "title": "Cambio de FOV del vistazo izquierdo",
-          "desc": "Cuánto se amplía el campo de visión al echar un vistazo al espejo izquierdo. Negativo = más estrecho (zoom)."
-        },
         "glance_right_deg": {
           "title": "Ángulo del vistazo derecho",
           "desc": "Cuánto gira tu cabeza al echar un vistazo al espejo derecho."
+        },
+        "glance_left_pitch_deg": {
+          "title": "Inclinación del vistazo izquierdo",
+          "desc": "Cuánto se inclina tu cabeza al echar un vistazo al espejo izquierdo. Positivo = hacia arriba, negativo = hacia abajo."
         },
         "glance_right_pitch_deg": {
           "title": "Inclinación del vistazo derecho",
           "desc": "Cuánto se inclina tu cabeza al echar un vistazo al espejo derecho. Positivo = hacia arriba, negativo = hacia abajo."
         },
+        "glance_left_fov_deg": {
+          "title": "FOV del vistazo izquierdo",
+          "desc": "Cuánto se amplía el campo de visión al echar un vistazo al espejo izquierdo. Negativo = más estrecho (zoom)."
+        },
         "glance_right_fov_deg": {
-          "title": "Cambio de FOV del vistazo derecho",
+          "title": "FOV del vistazo derecho",
           "desc": "Cuánto se amplía el campo de visión al echar un vistazo al espejo derecho. Negativo = más estrecho (zoom)."
         },
         "smoothing_time": {
@@ -354,6 +314,18 @@
         "toggle_mode": {
           "title": "Modo alternar",
           "desc": "Activado: pulsa una vez para mirar y otra vez para volver. Desactivado: mira mientras mantienes pulsado y suelta para volver."
+        },
+        "mirror_on_signal": {
+          "title": "Mirar al poner el intermitente",
+          "desc": "Mira al espejo del lado del intermitente mientras está encendido."
+        },
+        "require_stationary": {
+          "title": "Solo parado",
+          "desc": "Solo mira al espejo con el intermitente cuando el camión está parado."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Ignorar en marcha",
+          "desc": "No mirar el espejo por un intermitente activado en marcha, ni siquiera después de parar."
         }
       },
       "manual_zoom": {

@@ -234,7 +234,6 @@ constexpr EffectUi kEffects[] = {
     {ICON_FA_WAVE_SQUARE, "settings.cabin.engine_vibration", false, {}},
     {ICON_FA_POWER_OFF, "settings.cabin.engine_start_stop", false, {}},
     {ICON_FA_PERSON_RAYS, "settings.cabin.natural_head_movement", false, {}},
-    {ICON_FA_EYE, "settings.manual.mirror_check", true, {}},
     {ICON_FA_ARROWS_LEFT_RIGHT, "settings.manual.manual_look", true,
      kManualLookKeybinds},
     {ICON_FA_MAGNIFYING_GLASS_PLUS,

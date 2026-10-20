@@ -2,7 +2,6 @@
 
 #include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
-#include "effects/manual/MirrorCheckEffect.hpp"
 #include "math/SpringDamper.hpp"
 
 #include "SPF_KeyBinds_API.h"
@@ -10,25 +9,22 @@
 namespace motioncab {
 
 // Two looks per side, each on its own key: a wide one for cross traffic and
-// a mirror glance.
+// a mirror glance. The turn signal glances at its mirror too, the same look
+// as the key's: every mirror value is set per side, since the passenger
+// mirror is farther away.
 //
-// A look's values are where the head ends up, Mirror Check included: while
-// a look is on, the springs hold the whole offset and Mirror Check's is
-// taken back out, so a blinker mid-look doesn't move the head. The springs
-// are shifted by Mirror Check's offset as a look starts or ends, so the
-// head doesn't jump.
-class ManualLookEffect final : public ConfigurableEffect {
+// A key wins over the signal, so a blinker mid-look doesn't move the head.
+// By default the signal only looks standing still: while driving, the head
+// turning away from the road reads as a distraction, not a deliberate check.
+class SideLookEffect final : public ConfigurableEffect {
 public:
   enum class Look { kCenter, kLeft, kRight, kGlanceLeft, kGlanceRight };
 
-  // mirror_check must be registered first, to be read the same frame.
-  ManualLookEffect(SPF_Config_API *config_api, SPF_Config_Handle *config_handle,
-                   SPF_KeyBinds_API *keybinds_api,
-                   SPF_KeyBinds_Handle *keybinds_handle,
-                   const MirrorCheckEffect *mirror_check)
+  SideLookEffect(SPF_Config_API *config_api, SPF_Config_Handle *config_handle,
+                 SPF_KeyBinds_API *keybinds_api,
+                 SPF_KeyBinds_Handle *keybinds_handle)
       : ConfigurableEffect(config_api, config_handle, "manual", "manual_look"),
-        keybinds_api_(keybinds_api), keybinds_handle_(keybinds_handle),
-        mirror_check_(mirror_check) {}
+        keybinds_api_(keybinds_api), keybinds_handle_(keybinds_handle) {}
 
   void Reset() override;
   bool NeedsDriverSeat() const override { return true; }
@@ -40,11 +36,12 @@ private:
 
   SPF_KeyBinds_API *keybinds_api_;
   SPF_KeyBinds_Handle *keybinds_handle_;
-  const MirrorCheckEffect *mirror_check_;
 
   // A combination wins over its keys alone.
   Look HeldLook() const;
   bool HasChord(Look look) const;
+  // The mirror glance the turn signal asks for, if any.
+  Look SignalLook(const SPF_TruckData &truck);
 
   float look_left_deg_ =
       settings::Default("settings.manual.manual_look.look_left_deg");
@@ -68,8 +65,14 @@ private:
       settings::Default("settings.manual.manual_look.smoothing_time");
   bool toggle_mode_ =
       settings::DefaultBool("settings.manual.manual_look.toggle_mode");
+  bool mirror_on_signal_ =
+      settings::DefaultBool("settings.manual.manual_look.mirror_on_signal");
+  bool require_stationary_ =
+      settings::DefaultBool("settings.manual.manual_look.require_stationary");
+  // A blinker switched on while moving stays ignored once stopped.
+  bool ignore_after_moving_signal_ = settings::DefaultBool(
+      "settings.manual.manual_look.ignore_after_moving_signal");
 
-  // Mirror Check included while engaged_.
   math::SpringDamper1D yaw_intent_;
   math::SpringDamper1D yaw_;
   math::SpringDamper1D pitch_intent_;
@@ -81,7 +84,11 @@ private:
   Look pressed_ = Look::kCenter;
   Look toggled_ = Look::kCenter;
   Look toggled_before_press_ = Look::kCenter;
-  bool engaged_ = false;
+
+  bool prev_lblinker_ = false;
+  bool prev_rblinker_ = false;
+  bool lblinker_moving_at_activation_ = false;
+  bool rblinker_moving_at_activation_ = false;
 };
 
 } // namespace motioncab

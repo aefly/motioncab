@@ -272,49 +272,9 @@
     },
     "manual": {
       "title": "Ręczne",
-      "mirror_check": {
-        "title": "Sprawdzanie lusterek",
-        "hint": "Wymaga przypisania w grze klawiszy „Lewy kierunkowskaz” i „Prawy kierunkowskaz”.",
-        "left_angle_deg": {
-          "title": "Kąt spojrzenia w lewe lusterko",
-          "desc": "Jak daleko obraca się głowa, aby spojrzeć w lewe lusterko."
-        },
-        "left_pitch_deg": {
-          "title": "Pochylenie przy lewym lusterku",
-          "desc": "Jak mocno pochyla się głowa podczas patrzenia w lewe lusterko. Dodatnie = w górę, ujemne = w dół."
-        },
-        "left_fov_deg": {
-          "title": "Zmiana FOV przy lewym lusterku",
-          "desc": "Jak bardzo poszerza się pole widzenia podczas patrzenia w lewe lusterko. Ujemne = węższe (przybliżenie)."
-        },
-        "right_angle_deg": {
-          "title": "Kąt spojrzenia w prawe lusterko",
-          "desc": "Jak daleko obraca się głowa, aby spojrzeć w prawe lusterko."
-        },
-        "right_pitch_deg": {
-          "title": "Pochylenie przy prawym lusterku",
-          "desc": "Jak mocno pochyla się głowa podczas patrzenia w prawe lusterko. Dodatnie = w górę, ujemne = w dół."
-        },
-        "right_fov_deg": {
-          "title": "Zmiana FOV przy prawym lusterku",
-          "desc": "Jak bardzo poszerza się pole widzenia podczas patrzenia w prawe lusterko. Ujemne = węższe (przybliżenie)."
-        },
-        "smoothing_time": {
-          "title": "Wygładzanie",
-          "desc": "Jak płynny jest ruch spojrzenia i powrotu."
-        },
-        "require_stationary": {
-          "title": "Tylko na postoju",
-          "desc": "Spoglądaj w lusterko tylko wtedy, gdy ciężarówka stoi."
-        },
-        "ignore_after_moving_signal": {
-          "title": "Ignoruj podczas jazdy",
-          "desc": "Nie spoglądaj w lusterko dla kierunkowskazu włączonego w trakcie jazdy, nawet po zatrzymaniu."
-        }
-      },
       "manual_look": {
-        "title": "Ręczne spojrzenie",
-        "hint": "Te klawisze są niezależne od sterowania w grze.",
+        "title": "Spojrzenie w bok",
+        "hint": "Własne klawisze, niezależne od gry. Spojrzenie przy kierunkowskazie wymaga klawiszy kierunkowskazów w grze.",
         "look_left_deg": {
           "title": "Kąt spojrzenia w lewo",
           "desc": "Jak daleko obraca się głowa, gdy patrzysz w lewo."
@@ -327,24 +287,24 @@
           "title": "Kąt zerknięcia w lewo",
           "desc": "Jak daleko obraca się głowa, gdy zerkasz w lewe lusterko."
         },
-        "glance_left_pitch_deg": {
-          "title": "Pochylenie przy zerknięciu w lewo",
-          "desc": "Jak mocno pochyla się głowa podczas zerkania w lewe lusterko. Dodatnie = w górę, ujemne = w dół."
-        },
-        "glance_left_fov_deg": {
-          "title": "Zmiana FOV przy zerknięciu w lewo",
-          "desc": "Jak bardzo poszerza się pole widzenia podczas zerkania w lewe lusterko. Ujemne = węższe (przybliżenie)."
-        },
         "glance_right_deg": {
           "title": "Kąt zerknięcia w prawo",
           "desc": "Jak daleko obraca się głowa, gdy zerkasz w prawe lusterko."
+        },
+        "glance_left_pitch_deg": {
+          "title": "Pochylenie przy zerknięciu w lewo",
+          "desc": "Jak mocno pochyla się głowa podczas zerkania w lewe lusterko. Dodatnie = w górę, ujemne = w dół."
         },
         "glance_right_pitch_deg": {
           "title": "Pochylenie przy zerknięciu w prawo",
           "desc": "Jak mocno pochyla się głowa podczas zerkania w prawe lusterko. Dodatnie = w górę, ujemne = w dół."
         },
+        "glance_left_fov_deg": {
+          "title": "FOV przy zerknięciu w lewo",
+          "desc": "Jak bardzo poszerza się pole widzenia podczas zerkania w lewe lusterko. Ujemne = węższe (przybliżenie)."
+        },
         "glance_right_fov_deg": {
-          "title": "Zmiana FOV przy zerknięciu w prawo",
+          "title": "FOV przy zerknięciu w prawo",
           "desc": "Jak bardzo poszerza się pole widzenia podczas zerkania w prawe lusterko. Ujemne = węższe (przybliżenie)."
         },
         "smoothing_time": {
@@ -354,6 +314,18 @@
         "toggle_mode": {
           "title": "Tryb przełączania",
           "desc": "Wł.: naciśnij raz, aby spojrzeć, i ponownie, aby wrócić. Wył.: patrz, dopóki trzymasz klawisz, puść, aby wrócić."
+        },
+        "mirror_on_signal": {
+          "title": "Spojrzenie przy kierunkowskazie",
+          "desc": "Patrzy w lusterko po stronie kierunkowskazu, dopóki jest włączony."
+        },
+        "require_stationary": {
+          "title": "Tylko na postoju",
+          "desc": "Patrzy w lusterko przy kierunkowskazie tylko wtedy, gdy ciężarówka stoi."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Ignoruj podczas jazdy",
+          "desc": "Nie spoglądaj w lusterko dla kierunkowskazu włączonego w trakcie jazdy, nawet po zatrzymaniu."
         }
       },
       "manual_zoom": {

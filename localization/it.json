@@ -272,49 +272,9 @@
     },
     "manual": {
       "title": "Manuale",
-      "mirror_check": {
-        "title": "Controllo specchietti",
-        "hint": "Richiede che i tasti nativi del gioco «Indicatore di direzione sinistro» e «Indicatore di direzione destro» siano assegnati.",
-        "left_angle_deg": {
-          "title": "Angolo dello specchietto sinistro",
-          "desc": "Quanto ruota la tua testa per guardare lo specchietto sinistro."
-        },
-        "left_pitch_deg": {
-          "title": "Inclinazione dello specchietto sinistro",
-          "desc": "Quanto si inclina la tua testa mentre guardi lo specchietto sinistro. Positivo = verso l'alto, negativo = verso il basso."
-        },
-        "left_fov_deg": {
-          "title": "Variazione FOV dello specchietto sinistro",
-          "desc": "Quanto si allarga il campo visivo mentre guardi lo specchietto sinistro. Negativo = più stretto (zoom)."
-        },
-        "right_angle_deg": {
-          "title": "Angolo dello specchietto destro",
-          "desc": "Quanto ruota la tua testa per guardare lo specchietto destro."
-        },
-        "right_pitch_deg": {
-          "title": "Inclinazione dello specchietto destro",
-          "desc": "Quanto si inclina la tua testa mentre guardi lo specchietto destro. Positivo = verso l'alto, negativo = verso il basso."
-        },
-        "right_fov_deg": {
-          "title": "Variazione FOV dello specchietto destro",
-          "desc": "Quanto si allarga il campo visivo mentre guardi lo specchietto destro. Negativo = più stretto (zoom)."
-        },
-        "smoothing_time": {
-          "title": "Smorzamento",
-          "desc": "Quanto è morbido il movimento di andata e ritorno dello sguardo."
-        },
-        "require_stationary": {
-          "title": "Solo da fermo",
-          "desc": "Guarda lo specchietto solo quando il camion è fermo."
-        },
-        "ignore_after_moving_signal": {
-          "title": "Ignora in movimento",
-          "desc": "Non guardare lo specchietto per un indicatore attivato in movimento, anche dopo esserti fermato."
-        }
-      },
       "manual_look": {
-        "title": "Sguardo manuale",
-        "hint": "Questi tasti sono separati dai comandi nativi del gioco.",
+        "title": "Sguardo laterale",
+        "hint": "Tasti propri, separati dal gioco. Lo sguardo con la freccia richiede i tasti delle frecce del gioco.",
         "look_left_deg": {
           "title": "Angolo dello sguardo a sinistra",
           "desc": "Quanto ruota la tua testa quando guardi a sinistra."
@@ -327,24 +287,24 @@
           "title": "Angolo dell'occhiata a sinistra",
           "desc": "Quanto ruota la tua testa quando dai un'occhiata allo specchietto sinistro."
         },
-        "glance_left_pitch_deg": {
-          "title": "Inclinazione dell'occhiata a sinistra",
-          "desc": "Quanto si inclina la tua testa mentre dai un'occhiata allo specchietto sinistro. Positivo = verso l'alto, negativo = verso il basso."
-        },
-        "glance_left_fov_deg": {
-          "title": "Variazione FOV dell'occhiata a sinistra",
-          "desc": "Quanto si allarga il campo visivo mentre dai un'occhiata allo specchietto sinistro. Negativo = più stretto (zoom)."
-        },
         "glance_right_deg": {
           "title": "Angolo dell'occhiata a destra",
           "desc": "Quanto ruota la tua testa quando dai un'occhiata allo specchietto destro."
+        },
+        "glance_left_pitch_deg": {
+          "title": "Inclinazione dell'occhiata a sinistra",
+          "desc": "Quanto si inclina la tua testa mentre dai un'occhiata allo specchietto sinistro. Positivo = verso l'alto, negativo = verso il basso."
         },
         "glance_right_pitch_deg": {
           "title": "Inclinazione dell'occhiata a destra",
           "desc": "Quanto si inclina la tua testa mentre dai un'occhiata allo specchietto destro. Positivo = verso l'alto, negativo = verso il basso."
         },
+        "glance_left_fov_deg": {
+          "title": "FOV dell'occhiata a sinistra",
+          "desc": "Quanto si allarga il campo visivo mentre dai un'occhiata allo specchietto sinistro. Negativo = più stretto (zoom)."
+        },
         "glance_right_fov_deg": {
-          "title": "Variazione FOV dell'occhiata a destra",
+          "title": "FOV dell'occhiata a destra",
           "desc": "Quanto si allarga il campo visivo mentre dai un'occhiata allo specchietto destro. Negativo = più stretto (zoom)."
         },
         "smoothing_time": {
@@ -354,6 +314,18 @@
         "toggle_mode": {
           "title": "Modalità alternata",
           "desc": "Attiva: premi una volta per guardare, di nuovo per tornare. Disattiva: guarda finché tieni premuto, rilascia per tornare."
+        },
+        "mirror_on_signal": {
+          "title": "Sguardo con la freccia",
+          "desc": "Guarda lo specchietto dal lato della freccia finché è accesa."
+        },
+        "require_stationary": {
+          "title": "Solo da fermo",
+          "desc": "Guarda lo specchietto con la freccia solo quando il camion è fermo."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Ignora in movimento",
+          "desc": "Non guardare lo specchietto per un indicatore attivato in movimento, anche dopo esserti fermato."
         }
       },
       "manual_zoom": {

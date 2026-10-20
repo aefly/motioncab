@@ -20,9 +20,8 @@
 #include "effects/driving/HeadMotionEffect.hpp"
 #include "effects/driving/SteeringCameraEffect.hpp"
 #include "effects/manual/BlindspotViewerEffect.hpp"
-#include "effects/manual/ManualLookEffect.hpp"
 #include "effects/manual/ManualZoomEffect.hpp"
-#include "effects/manual/MirrorCheckEffect.hpp"
+#include "effects/manual/SideLookEffect.hpp"
 #include "effects/manual/cabin_walk/CabinWalkEffect.hpp"
 #include "effects/road/RoadIrregularityEffect.hpp"
 #include "effects/road/SpeedShakeEffect.hpp"
@@ -210,14 +209,9 @@ void OnActivated(const SPF_Core_API *core_api) {
       std::make_unique<SuspensionEffect>(core_api->config, ctx.config_handle));
   ctx.effects.Register(std::make_unique<EngineVibrationEffect>(
       core_api->config, ctx.config_handle));
-  // Mirror Check first: Manual Look reads it the same frame.
-  auto mirror_check =
-      std::make_unique<MirrorCheckEffect>(core_api->config, ctx.config_handle);
-  const MirrorCheckEffect *mirror_check_ptr = mirror_check.get();
-  ctx.effects.Register(std::move(mirror_check));
-  ctx.effects.Register(std::make_unique<ManualLookEffect>(
+  ctx.effects.Register(std::make_unique<SideLookEffect>(
       core_api->config, ctx.config_handle, core_api->keybinds,
-      ctx.keybinds_handle, mirror_check_ptr));
+      ctx.keybinds_handle));
   ctx.effects.Register(std::make_unique<RoadIrregularityEffect>(
       core_api->config, ctx.config_handle));
   ctx.effects.Register(

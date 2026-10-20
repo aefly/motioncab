@@ -272,49 +272,9 @@
     },
     "manual": {
       "title": "Manuell",
-      "mirror_check": {
-        "title": "Spiegelblick",
-        "hint": "Erfordert, dass die spieleigenen Tasten „Blinker links“ und „Blinker rechts“ belegt sind.",
-        "left_angle_deg": {
-          "title": "Blickwinkel Spiegel links",
-          "desc": "Wie weit sich dein Kopf zum linken Spiegel dreht."
-        },
-        "left_pitch_deg": {
-          "title": "Neigung Spiegel links",
-          "desc": "Wie stark dein Kopf beim Blick in den linken Spiegel kippt. Positiv = nach oben, negativ = nach unten."
-        },
-        "left_fov_deg": {
-          "title": "Sichtfeld-Änderung Spiegel links",
-          "desc": "Wie stark sich das Sichtfeld beim Blick in den linken Spiegel weitet. Negativ = enger (Zoom)."
-        },
-        "right_angle_deg": {
-          "title": "Blickwinkel Spiegel rechts",
-          "desc": "Wie weit sich dein Kopf zum rechten Spiegel dreht."
-        },
-        "right_pitch_deg": {
-          "title": "Neigung Spiegel rechts",
-          "desc": "Wie stark dein Kopf beim Blick in den rechten Spiegel kippt. Positiv = nach oben, negativ = nach unten."
-        },
-        "right_fov_deg": {
-          "title": "Sichtfeld-Änderung Spiegel rechts",
-          "desc": "Wie stark sich das Sichtfeld beim Blick in den rechten Spiegel weitet. Negativ = enger (Zoom)."
-        },
-        "smoothing_time": {
-          "title": "Glättung",
-          "desc": "Wie weich die Hin- und Rückbewegung des Blicks ist."
-        },
-        "require_stationary": {
-          "title": "Nur im Stand",
-          "desc": "Nur in den Spiegel schauen, wenn der Lkw steht."
-        },
-        "ignore_after_moving_signal": {
-          "title": "Während der Fahrt ignorieren",
-          "desc": "Nicht in den Spiegel schauen, wenn der Blinker während der Fahrt gesetzt wurde, auch nicht nach dem Anhalten."
-        }
-      },
       "manual_look": {
-        "title": "Manueller Blick",
-        "hint": "Diese Tasten sind unabhängig von der Steuerung des Spiels.",
+        "title": "Seitenblick",
+        "hint": "Eigene Tasten, unabhängig vom Spiel. Der Blick beim Blinken braucht die Blinkertasten des Spiels.",
         "look_left_deg": {
           "title": "Blickwinkel links",
           "desc": "Wie weit sich dein Kopf beim Blick nach links dreht."
@@ -327,24 +287,24 @@
           "title": "Spiegelblick links",
           "desc": "Wie weit sich dein Kopf beim Blick in den linken Spiegel dreht."
         },
-        "glance_left_pitch_deg": {
-          "title": "Neigung Spiegelblick links",
-          "desc": "Wie stark dein Kopf beim Blick in den linken Spiegel kippt. Positiv = nach oben, negativ = nach unten."
-        },
-        "glance_left_fov_deg": {
-          "title": "Sichtfeld-Änderung Spiegelblick links",
-          "desc": "Wie stark sich das Sichtfeld beim Blick in den linken Spiegel weitet. Negativ = enger (Zoom)."
-        },
         "glance_right_deg": {
           "title": "Spiegelblick rechts",
           "desc": "Wie weit sich dein Kopf beim Blick in den rechten Spiegel dreht."
+        },
+        "glance_left_pitch_deg": {
+          "title": "Neigung Spiegelblick links",
+          "desc": "Wie stark dein Kopf beim Blick in den linken Spiegel kippt. Positiv = nach oben, negativ = nach unten."
         },
         "glance_right_pitch_deg": {
           "title": "Neigung Spiegelblick rechts",
           "desc": "Wie stark dein Kopf beim Blick in den rechten Spiegel kippt. Positiv = nach oben, negativ = nach unten."
         },
+        "glance_left_fov_deg": {
+          "title": "Sichtfeld Spiegelblick links",
+          "desc": "Wie stark sich das Sichtfeld beim Blick in den linken Spiegel weitet. Negativ = enger (Zoom)."
+        },
         "glance_right_fov_deg": {
-          "title": "Sichtfeld-Änderung Spiegelblick rechts",
+          "title": "Sichtfeld Spiegelblick rechts",
           "desc": "Wie stark sich das Sichtfeld beim Blick in den rechten Spiegel weitet. Negativ = enger (Zoom)."
         },
         "smoothing_time": {
@@ -354,6 +314,18 @@
         "toggle_mode": {
           "title": "Umschaltmodus",
           "desc": "An: einmal drücken zum Schauen, erneut drücken zum Zurückschauen. Aus: schauen, solange die Taste gehalten wird, loslassen zum Zurückschauen."
+        },
+        "mirror_on_signal": {
+          "title": "Blick beim Blinken",
+          "desc": "Blickt in den Spiegel auf der Seite des Blinkers, solange er an ist."
+        },
+        "require_stationary": {
+          "title": "Nur im Stand",
+          "desc": "Blickt beim Blinken nur in den Spiegel, wenn der Lkw steht."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Während der Fahrt ignorieren",
+          "desc": "Nicht in den Spiegel schauen, wenn der Blinker während der Fahrt gesetzt wurde, auch nicht nach dem Anhalten."
         }
       },
       "manual_zoom": {

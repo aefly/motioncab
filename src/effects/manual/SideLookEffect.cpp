@@ -1,10 +1,15 @@
-#include "ManualLookEffect.hpp"
+#include "SideLookEffect.hpp"
 
 #include "core/Keybinds.hpp"
+
+#include <cmath>
 
 namespace motioncab {
 
 namespace {
+
+// A little over 0, since a stopped truck still creeps a bit.
+constexpr float kStationarySpeedThreshold = 0.3f; // m/s
 
 // Two springs in a row, as shares of smoothing_time: the first eases the
 // head into the move instead of throwing it at full acceleration on the
@@ -13,8 +18,8 @@ namespace {
 constexpr float kIntentFraction = 0.3f;
 constexpr float kHeadFraction = 0.85f;
 
-const keybinds::Action *ActionOf(ManualLookEffect::Look look) {
-  using enum ManualLookEffect::Look;
+const keybinds::Action *ActionOf(SideLookEffect::Look look) {
+  using enum SideLookEffect::Look;
   switch (look) {
   case kLeft:
     return &keybinds::kLookLeft;
@@ -32,7 +37,7 @@ const keybinds::Action *ActionOf(ManualLookEffect::Look look) {
 
 } // namespace
 
-void ManualLookEffect::LoadSettings() {
+void SideLookEffect::LoadSettings() {
   look_left_deg_ = Float("look_left_deg", look_left_deg_);
   look_right_deg_ = Float("look_right_deg", look_right_deg_);
   glance_left_deg_ = Float("glance_left_deg", glance_left_deg_);
@@ -45,6 +50,10 @@ void ManualLookEffect::LoadSettings() {
   glance_right_fov_deg_ = Float("glance_right_fov_deg", glance_right_fov_deg_);
   smoothing_time_ = Float("smoothing_time", smoothing_time_);
   toggle_mode_ = Bool("toggle_mode", toggle_mode_);
+  mirror_on_signal_ = Bool("mirror_on_signal", mirror_on_signal_);
+  require_stationary_ = Bool("require_stationary", require_stationary_);
+  ignore_after_moving_signal_ =
+      Bool("ignore_after_moving_signal", ignore_after_moving_signal_);
 
   yaw_intent_.SetTimeConstant(smoothing_time_ * kIntentFraction);
   yaw_.SetTimeConstant(smoothing_time_ * kHeadFraction);
@@ -54,7 +63,7 @@ void ManualLookEffect::LoadSettings() {
   fov_.SetTimeConstant(smoothing_time_ * kHeadFraction);
 }
 
-void ManualLookEffect::Reset() {
+void SideLookEffect::Reset() {
   yaw_intent_.Reset();
   yaw_.Reset();
   pitch_intent_.Reset();
@@ -64,15 +73,17 @@ void ManualLookEffect::Reset() {
   pressed_ = Look::kCenter;
   toggled_ = Look::kCenter;
   toggled_before_press_ = Look::kCenter;
-  engaged_ = false;
+  // The blinker state is kept: this runs on every cabin re-entry, and a
+  // blinker switched on while driving would then look freshly switched on
+  // while stopped.
 }
 
-bool ManualLookEffect::HasChord(Look look) const {
+bool SideLookEffect::HasChord(Look look) const {
   const keybinds::Action *action = ActionOf(look);
   return action && keybinds::HasChord(keybinds_api_, keybinds_handle_, *action);
 }
 
-ManualLookEffect::Look ManualLookEffect::HeldLook() const {
+SideLookEffect::Look SideLookEffect::HeldLook() const {
   // When no combination decides, a wide look wins.
   static constexpr Look kLooks[] = {Look::kLeft, Look::kRight,
                                     Look::kGlanceLeft, Look::kGlanceRight};
@@ -88,8 +99,34 @@ ManualLookEffect::Look ManualLookEffect::HeldLook() const {
   return first_held;
 }
 
-HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
-                                    const SPF_Controls & /*controls*/) {
+SideLookEffect::Look SideLookEffect::SignalLook(const SPF_TruckData &truck) {
+  const bool is_moving = std::fabs(truck.speed) > kStationarySpeedThreshold;
+
+  // A signal started while driving stays ignored even if the truck then
+  // stops, e.g. waiting in traffic mid lane change.
+  if (truck.lblinker && !prev_lblinker_)
+    lblinker_moving_at_activation_ = is_moving;
+  if (truck.rblinker && !prev_rblinker_)
+    rblinker_moving_at_activation_ = is_moving;
+  prev_lblinker_ = truck.lblinker;
+  prev_rblinker_ = truck.rblinker;
+
+  if (!mirror_on_signal_)
+    return Look::kCenter;
+  const auto allowed = [&](bool moving_at_activation) {
+    return !require_stationary_ ||
+           !(ignore_after_moving_signal_ ? moving_at_activation : is_moving);
+  };
+  if (truck.lblinker && allowed(lblinker_moving_at_activation_))
+    return Look::kGlanceLeft;
+  if (truck.rblinker && allowed(rblinker_moving_at_activation_))
+    return Look::kGlanceRight;
+  return Look::kCenter;
+}
+
+HeadOffset SideLookEffect::Update(float dt, const SPF_TruckData &truck,
+                                  const SPF_Controls & /*controls*/) {
+  const Look signal = SignalLook(truck);
   if (!keybinds_api_ || !keybinds_handle_)
     return {};
 
@@ -106,7 +143,8 @@ HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
     pressed_ = held;
     toggled_ = (toggled_before_press_ == held) ? Look::kCenter : held;
   }
-  const Look look = toggle_mode_ ? toggled_ : pressed_;
+  const Look key_look = toggle_mode_ ? toggled_ : pressed_;
+  const Look look = key_look != Look::kCenter ? key_look : signal;
 
   float target_yaw_deg = 0.0f;
   float target_pitch_deg = 0.0f;
@@ -132,30 +170,10 @@ HeadOffset ManualLookEffect::Update(float dt, const SPF_TruckData & /*truck*/,
     break;
   }
 
-  const float mirror_yaw = mirror_check_ ? mirror_check_->yaw() : 0.0f;
-  const float mirror_pitch = mirror_check_ ? mirror_check_->pitch() : 0.0f;
-  const float mirror_fov = mirror_check_ ? mirror_check_->fov() : 0.0f;
-  if (engaged_ != (look != Look::kCenter)) {
-    engaged_ = !engaged_;
-    const float sign = engaged_ ? 1.0f : -1.0f;
-    yaw_intent_.Shift(sign * mirror_yaw);
-    yaw_.Shift(sign * mirror_yaw);
-    pitch_intent_.Shift(sign * mirror_pitch);
-    pitch_.Shift(sign * mirror_pitch);
-    fov_intent_.Shift(sign * mirror_fov);
-    fov_.Shift(sign * mirror_fov);
-  }
-  const float base_yaw = engaged_ ? mirror_yaw : 0.0f;
-  const float base_pitch = engaged_ ? mirror_pitch : 0.0f;
-  const float base_fov = engaged_ ? mirror_fov : 0.0f;
-
   HeadOffset offset;
-  offset.yaw =
-      yaw_.Update(yaw_intent_.Update(target_yaw_deg, dt), dt) - base_yaw;
-  offset.pitch = pitch_.Update(pitch_intent_.Update(target_pitch_deg, dt), dt) -
-                 base_pitch;
-  offset.fov =
-      fov_.Update(fov_intent_.Update(target_fov_deg, dt), dt) - base_fov;
+  offset.yaw = yaw_.Update(yaw_intent_.Update(target_yaw_deg, dt), dt);
+  offset.pitch = pitch_.Update(pitch_intent_.Update(target_pitch_deg, dt), dt);
+  offset.fov = fov_.Update(fov_intent_.Update(target_fov_deg, dt), dt);
   return offset;
 }
 

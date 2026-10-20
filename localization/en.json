@@ -272,49 +272,9 @@
     },
     "manual": {
       "title": "Manual",
-      "mirror_check": {
-        "title": "Mirror Check",
-        "hint": "Requires the game's native \"Left-Turn Indicator\" and \"Right-Turn Indicator\" keys to be assigned.",
-        "left_angle_deg": {
-          "title": "Left Mirror Angle",
-          "desc": "How far your head turns to check the left mirror."
-        },
-        "left_pitch_deg": {
-          "title": "Left Mirror Pitch",
-          "desc": "How much your head tilts while checking the left mirror. Positive = up, negative = down."
-        },
-        "left_fov_deg": {
-          "title": "Left Mirror FOV Change",
-          "desc": "How much the field of view widens while checking the left mirror. Negative = narrower (zoom in)."
-        },
-        "right_angle_deg": {
-          "title": "Right Mirror Angle",
-          "desc": "How far your head turns to check the right mirror."
-        },
-        "right_pitch_deg": {
-          "title": "Right Mirror Pitch",
-          "desc": "How much your head tilts while checking the right mirror. Positive = up, negative = down."
-        },
-        "right_fov_deg": {
-          "title": "Right Mirror FOV Change",
-          "desc": "How much the field of view widens while checking the right mirror. Negative = narrower (zoom in)."
-        },
-        "smoothing_time": {
-          "title": "Smoothing",
-          "desc": "How smooth the look-and-return motion is."
-        },
-        "require_stationary": {
-          "title": "Only When Stationary",
-          "desc": "Only check the mirror when the truck is stopped."
-        },
-        "ignore_after_moving_signal": {
-          "title": "Ignore While Moving",
-          "desc": "Don't check the mirror for a turn signal you switched on while already driving, even after you stop."
-        }
-      },
       "manual_look": {
-        "title": "Manual Look",
-        "hint": "These keys are separate from the game's native controls.",
+        "title": "Side Look",
+        "hint": "Its keys are separate from the game's. The turn signal glance needs the game's turn indicator keys assigned.",
         "look_left_deg": {
           "title": "Look Left Angle",
           "desc": "How far your head turns when you look left."
@@ -327,24 +287,24 @@
           "title": "Left Glance Angle",
           "desc": "How far your head turns when you glance at the left mirror."
         },
-        "glance_left_pitch_deg": {
-          "title": "Left Glance Pitch",
-          "desc": "How much your head tilts while glancing at the left mirror. Positive = up, negative = down."
-        },
-        "glance_left_fov_deg": {
-          "title": "Left Glance FOV Change",
-          "desc": "How much the field of view widens while glancing at the left mirror. Negative = narrower (zoom in)."
-        },
         "glance_right_deg": {
           "title": "Right Glance Angle",
           "desc": "How far your head turns when you glance at the right mirror."
+        },
+        "glance_left_pitch_deg": {
+          "title": "Left Glance Pitch",
+          "desc": "How much your head tilts while glancing at the left mirror. Positive = up, negative = down."
         },
         "glance_right_pitch_deg": {
           "title": "Right Glance Pitch",
           "desc": "How much your head tilts while glancing at the right mirror. Positive = up, negative = down."
         },
+        "glance_left_fov_deg": {
+          "title": "Left Glance FOV",
+          "desc": "How much the field of view widens while glancing at the left mirror. Negative = narrower (zoom in)."
+        },
         "glance_right_fov_deg": {
-          "title": "Right Glance FOV Change",
+          "title": "Right Glance FOV",
           "desc": "How much the field of view widens while glancing at the right mirror. Negative = narrower (zoom in)."
         },
         "smoothing_time": {
@@ -354,6 +314,18 @@
         "toggle_mode": {
           "title": "Toggle Mode",
           "desc": "On: press once to look, press again to look back. Off: look while held, let go to look back."
+        },
+        "mirror_on_signal": {
+          "title": "Glance on Turn Signal",
+          "desc": "Glance at the mirror on the side of the turn signal while it's on."
+        },
+        "require_stationary": {
+          "title": "Only When Stationary",
+          "desc": "Only glance at the mirror for a turn signal when the truck is stopped."
+        },
+        "ignore_after_moving_signal": {
+          "title": "Ignore While Moving",
+          "desc": "Don't check the mirror for a turn signal you switched on while already driving, even after you stop."
         }
       },
       "manual_zoom": {
