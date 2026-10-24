@@ -53,6 +53,54 @@ typedef struct SPF_GameConsole_API {
    */
   void (*GCon_ExecuteCommand)(const char* command);
 
+  /**
+   * @brief Returns the total number of console commands the game supports.
+   * @details The list is discovered once (one-time pattern scan of the game's
+   *          three command sources: console commands, script commands and input
+   *          constants) and cached; subsequent calls return the cached count.
+   * @return Number of available commands, or 0 if discovery failed.
+   */
+  int (*GCon_GetCommandCount)(void);
+
+  /**
+   * @brief Copies the command name at 'index' into 'out_buffer'.
+   * @details Use after GCon_GetCommandCount to iterate the full command list
+   *          (e.g. for building an autocomplete UI in your plugin).
+   * @param index Zero-based command index (0 .. GCon_GetCommandCount()-1).
+   * @param out_buffer Destination buffer for the null-terminated command name.
+   * @param buffer_size Size of 'out_buffer' in bytes. The name is truncated if needed.
+   * @return 1 on success, 0 on failure (NULL buffer, buffer_size <= 0, or index out of range).
+   */
+  int (*GCon_GetCommandNameByIndex)(int index, char* out_buffer, int buffer_size);
+
+  /**
+   * @brief Returns whether developer cheats are currently enabled.
+   * @details Reads the game's 'g_developer' cvar (cached for up to 1000 ms).
+   *          Cheat commands routed through GCon_ExecuteCommand are rejected
+   *          while this returns 0.
+   * @return 1 if cheats are enabled (g_developer > 0), 0 otherwise.
+   */
+  int (*GCon_IsCheatsEnabled)(void);
+
+  /**
+   * @brief Enables developer cheats by setting 'g_developer 1'.
+   * @details Submits the cvar write through the game's console queue
+   *          (same path as a user typing 'g_developer 1').
+   */
+  void (*GCon_EnableCheats)(void);
+
+  /**
+   * @brief Executes a command and reports the rejection reason.
+   * @details Same routing as GCon_ExecuteCommand, but returns success/failure
+   *          and fills 'out_error' with a human-readable reason on failure
+   *          (e.g. world not loaded, cheats disabled, unknown command).
+   * @param command The command string to execute (e.g. "cheat money 10000").
+   * @param out_error Optional destination for the error text; may be NULL.
+   * @param error_size Size of 'out_error' in bytes; ignored if out_error is NULL.
+   * @return 1 if the command was dispatched/accepted, 0 if rejected.
+   */
+  int (*GCon_ExecuteCommandEx)(const char* command, char* out_error, int error_size);
+
 } SPF_GameConsole_API;
 
 #ifdef __cplusplus
