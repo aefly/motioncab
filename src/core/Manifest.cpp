@@ -18,7 +18,7 @@ void Build(SPF_Manifest_Builder_Handle *h,
   api->Info_SetVersion(h, PLUGIN_VERSION);
   api->Info_SetAuthor(h, PLUGIN_AUTHOR);
   api->Info_SetDescriptionKey(h, "plugin.description");
-  api->Info_SetMinFrameworkVersion(h, "1.2.5");
+  api->Info_SetMinFrameworkVersion(h, "1.2.6");
   api->Info_SetWebsiteUrl(h, links::kWebsite);
   api->Info_SetGithubUrl(h, links::kGithub);
   api->Info_SetYoutubeUrl(h, links::kYoutube);
