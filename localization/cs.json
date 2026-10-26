@@ -44,6 +44,10 @@
       "title": "Pohled do pravého zrcátka",
       "desc": "Plynule se podívá do pravého zrcátka, např. při připojování."
     },
+    "look_forward": {
+      "title": "Podívat se dopředu",
+      "desc": "Plynule otočí hlavu zpět přímo dopředu a ukončí jakýkoli pohled."
+    },
     "zoom": {
       "title": "Přiblížení",
       "desc": "Podržením plynule přiblížíte; uvolněním se pohled postupně vrátí do normálu."

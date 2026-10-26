@@ -44,6 +44,10 @@
       "title": "Vistazo al espejo derecho",
       "desc": "Echa suavemente un vistazo al espejo derecho, por ejemplo al incorporarte."
     },
+    "look_forward": {
+      "title": "Mirar al frente",
+      "desc": "Gira suavemente la cabeza de vuelta al frente y termina cualquier mirada."
+    },
     "zoom": {
       "title": "Zoom",
       "desc": "Mantén pulsado para acercar suavemente; suelta para volver poco a poco a la vista normal."

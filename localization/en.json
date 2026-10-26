@@ -44,6 +44,10 @@
       "title": "Glance at Right Mirror",
       "desc": "Smoothly glances at the right mirror, e.g. when merging."
     },
+    "look_forward": {
+      "title": "Look Forward",
+      "desc": "Smoothly turns your head back to straight ahead, ending any look."
+    },
     "zoom": {
       "title": "Zoom",
       "desc": "Hold to smoothly zoom in; release to ease back to normal."

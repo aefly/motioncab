@@ -11,13 +11,6 @@ namespace {
 // A little over 0, since a stopped truck still creeps a bit.
 constexpr float kStationarySpeedThreshold = 0.3f; // m/s
 
-// Two springs in a row, as shares of smoothing_time: the first eases the
-// head into the move instead of throwing it at full acceleration on the
-// press (or a quick switch to another look). Together they take about as
-// long as the single spring did.
-constexpr float kIntentFraction = 0.3f;
-constexpr float kHeadFraction = 0.85f;
-
 const keybinds::Action *ActionOf(SideLookEffect::Look look) {
   using enum SideLookEffect::Look;
   switch (look) {
@@ -73,6 +66,7 @@ void SideLookEffect::Reset() {
   pressed_ = Look::kCenter;
   toggled_ = Look::kCenter;
   toggled_before_press_ = Look::kCenter;
+  forward_edge_.Reset();
   // The blinker state is kept: this runs on every cabin re-entry, and a
   // blinker switched on while driving would then look freshly switched on
   // while stopped.
@@ -130,6 +124,15 @@ HeadOffset SideLookEffect::Update(float dt, const SPF_TruckData &truck,
   if (!keybinds_api_ || !keybinds_handle_)
     return {};
 
+  if (forward_edge_.Update(keybinds::IsHeld(keybinds_api_, keybinds_handle_,
+                                            keybinds::kLookForward))) {
+    toggled_ = Look::kCenter;
+    toggled_before_press_ = Look::kCenter;
+    signal_dismissed_ = signal != Look::kCenter;
+  }
+  if (signal == Look::kCenter)
+    signal_dismissed_ = false;
+
   const Look held = HeldLook();
   if (held == Look::kCenter) {
     pressed_ = Look::kCenter;
@@ -144,7 +147,9 @@ HeadOffset SideLookEffect::Update(float dt, const SPF_TruckData &truck,
     toggled_ = (toggled_before_press_ == held) ? Look::kCenter : held;
   }
   const Look key_look = toggle_mode_ ? toggled_ : pressed_;
-  const Look look = key_look != Look::kCenter ? key_look : signal;
+  const Look look = key_look != Look::kCenter ? key_look
+                    : signal_dismissed_       ? Look::kCenter
+                                              : signal;
 
   float target_yaw_deg = 0.0f;
   float target_pitch_deg = 0.0f;

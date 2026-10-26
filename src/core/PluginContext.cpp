@@ -1,5 +1,9 @@
 #include "PluginContext.hpp"
 
+#include "core/Settings.hpp"
+#include "effects/ConfigurableEffect.hpp"
+#include "effects/manual/SideLookEffect.hpp"
+
 namespace motioncab {
 
 void PluginContext::Log(SPF_LogLevel level, const char *message) const {
@@ -14,6 +18,15 @@ void PluginContext::ReloadEffectsConfig() {
     manual_zoom->LoadConfig();
   if (cabin_walk)
     cabin_walk->LoadConfig();
+  const EffectConfig side_look(core ? core->config : nullptr, config_handle,
+                               "manual", "manual_look");
+  if (side_look.IsAvailable()) {
+    const float smoothing = side_look.Float(
+        "smoothing_time",
+        settings::Default("settings.manual.manual_look.smoothing_time"));
+    camera_rig.SetRecenterSmoothing(smoothing * SideLookEffect::kIntentFraction,
+                                    smoothing * SideLookEffect::kHeadFraction);
+  }
 }
 
 void PluginContext::ResetEffects() {

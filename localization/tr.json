@@ -44,6 +44,10 @@
       "title": "Sağ aynaya göz at",
       "desc": "Örneğin şeride girerken yumuşakça sağ aynaya göz atar."
     },
+    "look_forward": {
+      "title": "İleri bak",
+      "desc": "Başınızı yumuşakça yeniden tam karşıya çevirir ve her bakışı sonlandırır."
+    },
     "zoom": {
       "title": "Yakınlaştırma",
       "desc": "Yumuşakça yakınlaştırmak için basılı tutun; yavaşça normale dönmek için bırakın."

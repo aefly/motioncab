@@ -57,6 +57,7 @@ private:
 
   bool peeking_ = false; // in toggle mode
   keybinds::PressEdge press_edge_;
+  keybinds::PressEdge forward_edge_;
 
   // 0 seated, 1 fully peeking.
   math::SpringDamper1D intent_;

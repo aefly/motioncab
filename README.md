@@ -97,6 +97,7 @@ Disabling these settings ensures that MotionCab has full control over the camera
 | Look Right             | Numpad *    | Side Look — hold or toggle to look right                                              |
 | Glance at Left Mirror  | Numpad 7    | Side Look — hold or toggle to glance at the left mirror                               |
 | Glance at Right Mirror | Numpad 9    | Side Look — hold or toggle to glance at the right mirror                              |
+| Look Forward           | Numpad 5    | Side Look — turn back to straight ahead, ending any look                              |
 | Zoom                   | Numpad -    | Manual Zoom — hold to zoom in, release to return to normal                            |
 | Blindspot Viewer       | F10         | Blindspot Viewer — Toggle or hold to lean forward and look up                         |
 | Stand Up / Sit Down    | Page Up     | Cabin Walk — get up; tap to sit at the seat you look at, hold to go back to the wheel |

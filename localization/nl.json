@@ -44,6 +44,10 @@
       "title": "Blik in rechterspiegel",
       "desc": "Werpt vloeiend een blik in de rechterspiegel, bijvoorbeeld bij het invoegen."
     },
+    "look_forward": {
+      "title": "Naar voren kijken",
+      "desc": "Draait je hoofd soepel terug naar recht vooruit en beëindigt elke blik."
+    },
     "zoom": {
       "title": "Zoom",
       "desc": "Ingedrukt houden om vloeiend in te zoomen; loslaten om geleidelijk terug te keren naar normaal."

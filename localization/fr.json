@@ -44,6 +44,10 @@
       "title": "Coup d'œil au rétro droit",
       "desc": "Jette un coup d'œil au rétroviseur droit, par exemple pour s'insérer."
     },
+    "look_forward": {
+      "title": "Regarder devant",
+      "desc": "Ramène doucement la tête droit devant, en mettant fin à tout regard."
+    },
     "zoom": {
       "title": "Zoom",
       "desc": "Maintenir pour zoomer en douceur ; relâcher pour revenir progressivement à la normale."

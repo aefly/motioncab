@@ -44,6 +44,10 @@
       "title": "Espiar o espelho direito",
       "desc": "Dá suavemente uma espiada no espelho direito, por exemplo ao entrar na rodovia."
     },
+    "look_forward": {
+      "title": "Olhar para a frente",
+      "desc": "Gira suavemente a cabeça de volta para a frente, encerrando qualquer olhada."
+    },
     "zoom": {
       "title": "Zoom",
       "desc": "Segure para aproximar suavemente; solte para voltar aos poucos à visão normal."

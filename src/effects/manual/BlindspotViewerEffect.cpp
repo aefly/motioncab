@@ -46,6 +46,7 @@ void BlindspotViewerEffect::LoadSettings() {
 void BlindspotViewerEffect::Reset() {
   peeking_ = false;
   press_edge_.Reset();
+  forward_edge_.Reset();
   intent_.Reset();
   body_.Reset();
   inertia_x_.Reset();
@@ -64,6 +65,9 @@ HeadOffset BlindspotViewerEffect::Update(float dt, const SPF_TruckData &truck,
     peeking_ = false; // no stale toggle if the mode is switched back
   else if (press_edge)
     peeking_ = !peeking_;
+  if (forward_edge_.Update(keybinds::IsHeld(keybinds_api_, keybinds_handle_,
+                                            keybinds::kLookForward)))
+    peeking_ = false;
 
   const bool want_peek = toggle_mode_ ? peeking_ : pressed;
 

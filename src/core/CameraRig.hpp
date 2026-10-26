@@ -2,6 +2,7 @@
 
 #include "SPF_Camera_API.h"
 #include "effects/Effect.hpp"
+#include "math/SpringDamper.hpp"
 
 #include <optional>
 
@@ -25,8 +26,9 @@ public:
   std::optional<Pose> ReadPose(SPF_Camera_API *camera) const;
 
   // The game's recenter hotkey wipes our rotation offset without any event
-  // to hook. When it's caught, the applied yaw/pitch are forgotten and the
-  // caller should reset the effects.
+  // to hook. When it's caught (once the view has settled, if the game glides
+  // it back), the applied yaw/pitch are forgotten and the caller should reset
+  // the effects.
   bool DetectNativeRecenter(SPF_Camera_API *camera, const Pose &pose);
 
   // The game's F4 seat menu (or a new camera) sets the seat outright,
@@ -44,6 +46,11 @@ public:
     last_written_fov_ = fov_deg;
     has_last_written_fov_ = true;
   }
+
+  // Our look-forward key: like the game's, without it then holding the view.
+  void StartRecenterGlide() { recenter_glide_ = {.active = true}; }
+  void SetRecenterSmoothing(float intent_seconds, float head_seconds);
+  void UpdateRecenterGlide(SPF_Camera_API *camera, float dt, Pose &pose);
 
   // The player's own pose, under our offset.
   Pose Base(const Pose &pose) const;
@@ -85,7 +92,24 @@ private:
   void WriteRoll(SPF_Camera_API *camera, const HeadOffset &offset);
   void WriteFov(SPF_Camera_API *camera, const HeadOffset &offset);
 
+  struct RecenterRun {
+    bool active = false;
+    bool approaching = false;
+    float max_offset_deg = 0.0f;
+  };
+
+  struct RecenterGlide {
+    bool active = false;
+    bool started = false;
+    // To notice the mouse.
+    float set_yaw_rad = 0.0f, set_pitch_rad = 0.0f;
+  };
+
   HeadOffset applied_{};
+  RecenterRun recenter_run_{};
+  RecenterGlide recenter_glide_{};
+  math::SpringDamper1D glide_yaw_intent_, glide_yaw_;
+  math::SpringDamper1D glide_pitch_intent_, glide_pitch_;
   // What we last wrote, to spot another writer's changes.
   float last_written_yaw_deg_ = 0.0f, last_written_pitch_deg_ = 0.0f;
   bool has_last_written_rot_ = false;

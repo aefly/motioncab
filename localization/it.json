@@ -44,6 +44,10 @@
       "title": "Occhiata allo specchietto destro",
       "desc": "Dà dolcemente un'occhiata allo specchietto destro, ad esempio quando ti immetti."
     },
+    "look_forward": {
+      "title": "Guarda avanti",
+      "desc": "Riporta dolcemente la testa dritta in avanti, terminando ogni sguardo."
+    },
     "zoom": {
       "title": "Zoom",
       "desc": "Tieni premuto per ingrandire dolcemente; rilascia per tornare gradualmente alla vista normale."

@@ -347,7 +347,7 @@ void OnUpdate() {
   if (!pose)
     return;
   if (ctx.camera_rig.DetectNativeRecenter(camera, *pose))
-    ctx.effects.ResetAll();
+    ctx.effects.Recenter();
   ctx.camera_rig.DetectExternalSeatWrite(*pose);
 
   // Cabin Walk first: whether the player is at the wheel decides which
@@ -364,6 +364,14 @@ void OnUpdate() {
     for (float volume : ctx.cabin_walk->TakeFootsteps())
       ctx.cabin_walk_sounds.PlayFootstep(ctx.core->sound, volume);
   }
+
+  const bool at_wheel = !ctx.cabin_walk || ctx.cabin_walk->AtWheel();
+  if (ctx.look_forward_edge.Update(keybinds::IsHeld(
+          ctx.core->keybinds, ctx.keybinds_handle, keybinds::kLookForward)) &&
+      at_wheel)
+    ctx.camera_rig.StartRecenterGlide();
+  if (at_wheel)
+    ctx.camera_rig.UpdateRecenterGlide(camera, dt, *pose);
 
   HeadOffset offset = ctx.effects.UpdateAndAccumulate(dt, ctx.latest_truck_data,
                                                       ctx.latest_controls_data);

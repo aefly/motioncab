@@ -28,6 +28,11 @@ inline constexpr Action kGlanceLeft{"ManualLook", "glance_left",
 inline constexpr Action kGlanceRight{"ManualLook", "glance_right",
                                      "ManualLook.glance_right",
                                      "keybinds.glance_right", "KEY_NUMPAD9"};
+// Meant to replace the game's look forward, which holds the view ahead until
+// the mouse moves, pulling back every look we add.
+inline constexpr Action kLookForward{"ManualLook", "look_forward",
+                                     "ManualLook.look_forward",
+                                     "keybinds.look_forward", "KEY_NUMPAD5"};
 inline constexpr Action kZoom{"ManualZoom", "zoom", "ManualZoom.zoom",
                               "keybinds.zoom", "KEY_SUBTRACT"};
 inline constexpr Action kBlindspotPeek{"BlindspotViewer", "peek",
@@ -57,15 +62,15 @@ inline constexpr Action kCrouch{"CabinWalk", "crouch", "CabinWalk.crouch",
 
 // In the manifest's order.
 inline constexpr Action kAllActions[] = {
-    kLookLeft,      kLookRight,    kGlanceLeft, kGlanceRight, kZoom,
-    kBlindspotPeek, kToggleWindow, kStandSit,   kWalkForward, kWalkBack,
-    kWalkLeft,      kWalkRight,    kCrouch};
+    kLookLeft, kLookRight,     kGlanceLeft,   kGlanceRight, kLookForward,
+    kZoom,     kBlindspotPeek, kToggleWindow, kStandSit,    kWalkForward,
+    kWalkBack, kWalkLeft,      kWalkRight,    kCrouch};
 
 // The ones read every frame rather than through a Kbind_Register callback.
 inline constexpr Action kPolledActions[] = {
-    kLookLeft, kLookRight,     kGlanceLeft, kGlanceRight,
-    kZoom,     kBlindspotPeek, kStandSit,   kWalkForward,
-    kWalkBack, kWalkLeft,      kWalkRight,  kCrouch};
+    kLookLeft, kLookRight,     kGlanceLeft, kGlanceRight, kLookForward,
+    kZoom,     kBlindspotPeek, kStandSit,   kWalkForward, kWalkBack,
+    kWalkLeft, kWalkRight,     kCrouch};
 
 // Keys the game drives with get the "manual" consume policy, so
 // CabinWalkEffect decides when the game stops seeing them.

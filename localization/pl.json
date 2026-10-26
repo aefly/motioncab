@@ -44,6 +44,10 @@
       "title": "Zerknij w prawe lusterko",
       "desc": "Płynnie zerka w prawe lusterko, np. podczas włączania się do ruchu."
     },
+    "look_forward": {
+      "title": "Spójrz przed siebie",
+      "desc": "Płynnie obraca głowę z powrotem na wprost, kończąc każde spojrzenie."
+    },
     "zoom": {
       "title": "Przybliżenie",
       "desc": "Przytrzymaj, aby płynnie przybliżyć; puść, aby stopniowo wrócić do normalnego widoku."

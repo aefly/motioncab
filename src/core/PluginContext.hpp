@@ -10,6 +10,7 @@
 #include "SPF_TelemetryData.h"
 #include "SPF_Telemetry_API.h"
 #include "core/CameraRig.hpp"
+#include "core/Keybinds.hpp"
 #include "effects/EffectManager.hpp"
 #include "effects/manual/ManualZoomEffect.hpp"
 #include "effects/manual/cabin_walk/CabinLayouts.hpp"
@@ -49,6 +50,7 @@ struct PluginContext {
   std::atomic<bool> has_controls_data{false};
 
   CameraRig camera_rig;
+  keybinds::PressEdge look_forward_edge;
   // "<brand_id>/<id>", to tell a truck switch from a change to the same
   // truck.
   std::string truck_identity;

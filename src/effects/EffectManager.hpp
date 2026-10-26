@@ -20,6 +20,8 @@ public:
   // Settles every fade at once too, since the camera is being resynced
   // anyway.
   void ResetAll();
+  // The game's recenter key only puts the rotation back: the rest glides out.
+  void Recenter();
 
   void SetAtWheel(bool at_wheel) { at_wheel_ = at_wheel; }
 
@@ -32,6 +34,7 @@ public:
 
 private:
   static constexpr float kFadeSeconds = 0.5f;
+  static constexpr float kRecenterGlideSeconds = 0.4f;
 
   struct Slot {
     std::unique_ptr<Effect> effect;
@@ -47,6 +50,9 @@ private:
   std::vector<Slot> effects_;
   bool at_wheel_ = true;
   float seat_fade_ = 1.0f; // shared by the NeedsDriverSeat effects
+  HeadOffset last_total_{};
+  HeadOffset recenter_residual_{};
+  float recenter_glide_ = 0.0f;
 };
 
 } // namespace motioncab

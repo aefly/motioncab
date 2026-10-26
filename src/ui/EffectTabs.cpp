@@ -214,7 +214,7 @@ struct EffectUi {
 
 constexpr keybinds::Action kManualLookKeybinds[] = {
     keybinds::kLookLeft, keybinds::kLookRight, keybinds::kGlanceLeft,
-    keybinds::kGlanceRight};
+    keybinds::kGlanceRight, keybinds::kLookForward};
 constexpr keybinds::Action kCabinWalkKeybinds[] = {
     keybinds::kStandSit, keybinds::kWalkForward, keybinds::kWalkBack,
     keybinds::kWalkLeft, keybinds::kWalkRight,   keybinds::kCrouch};

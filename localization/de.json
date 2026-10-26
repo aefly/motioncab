@@ -44,6 +44,10 @@
       "title": "Blick in den rechten Spiegel",
       "desc": "Wirft sanft einen Blick in den rechten Spiegel, z. B. beim Einfädeln."
     },
+    "look_forward": {
+      "title": "Nach vorne schauen",
+      "desc": "Dreht den Kopf sanft wieder geradeaus und beendet jeden Blick."
+    },
     "zoom": {
       "title": "Zoom",
       "desc": "Gedrückt halten, um sanft heranzuzoomen; loslassen, um langsam zur Normalansicht zurückzukehren."

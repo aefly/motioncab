@@ -2,7 +2,9 @@
 
 #include "math/Units.hpp"
 
+#include <algorithm>
 #include <cmath>
+#include <utility>
 
 namespace motioncab {
 
@@ -19,30 +21,45 @@ CameraRig::ReadPose(SPF_Camera_API *camera) const {
 }
 
 bool CameraRig::DetectNativeRecenter(SPF_Camera_API *camera, const Pose &pose) {
-  // There's no event for it, so it's a guess: the rotation jumped away from
-  // what we wrote and landed right on the default. Landing there isn't
-  // enough on its own, since free-look sweeps through it too, and a false
-  // positive would snap the player's own look back to center.
+  // No event for it, so it's a guess: the game snaps or glides the rotation
+  // to the default (both seen in game), so look for a run of frames moved by
+  // someone else, each closer to the default, that stops on it.
   float default_yaw_deg, default_pitch_deg;
   if (!has_last_written_rot_ || !camera->Cam_GetInteriorRotationDefaults(
-                                    &default_yaw_deg, &default_pitch_deg))
+                                    &default_yaw_deg, &default_pitch_deg)) {
+    recenter_run_ = {};
     return false;
+  }
 
-  constexpr float kEpsilonDeg = 0.01f;
-  constexpr float kMeaningfulOffsetDeg = 0.5f;
-  auto was_reset = [&](float live_deg, float default_deg, float written_deg,
-                       float offset_deg) {
-    return std::fabs(offset_deg) > kMeaningfulOffsetDeg &&
-           std::fabs(live_deg - written_deg) > kMeaningfulOffsetDeg &&
-           std::fabs(live_deg - default_deg) < kEpsilonDeg;
+  const float live_yaw_deg = pose.yaw_rad / kDegToRad;
+  const float live_pitch_deg = pose.pitch_rad / kDegToRad;
+  auto distance = [&](float yaw_deg, float pitch_deg) {
+    return std::hypot(yaw_deg - default_yaw_deg, pitch_deg - default_pitch_deg);
   };
-  const bool yaw_was_reset =
-      was_reset(pose.yaw_rad / kDegToRad, default_yaw_deg,
-                last_written_yaw_deg_, applied_.yaw);
-  const bool pitch_was_reset =
-      was_reset(pose.pitch_rad / kDegToRad, default_pitch_deg,
-                last_written_pitch_deg_, applied_.pitch);
-  if (!yaw_was_reset && !pitch_was_reset)
+
+  // Well above float round-trip noise.
+  constexpr float kMovedDeg = 0.05f;
+  if (std::fabs(live_yaw_deg - last_written_yaw_deg_) > kMovedDeg ||
+      std::fabs(live_pitch_deg - last_written_pitch_deg_) > kMovedDeg) {
+    if (!recenter_run_.active)
+      recenter_run_ = {.active = true, .approaching = true};
+    recenter_run_.approaching =
+        recenter_run_.approaching &&
+        distance(live_yaw_deg, live_pitch_deg) <
+            distance(last_written_yaw_deg_, last_written_pitch_deg_);
+    recenter_run_.max_offset_deg =
+        std::max({recenter_run_.max_offset_deg, std::fabs(applied_.yaw),
+                  std::fabs(applied_.pitch)});
+    return false;
+  }
+
+  const RecenterRun run = std::exchange(recenter_run_, {});
+  // The landing isn't exact when the effects move during the game's glide.
+  constexpr float kMeaningfulOffsetDeg = 0.5f;
+  constexpr float kLandedDeg = 0.5f;
+  if (!run.active || !run.approaching ||
+      run.max_offset_deg <= kMeaningfulOffsetDeg ||
+      distance(live_yaw_deg, live_pitch_deg) > kLandedDeg)
     return false;
 
   applied_.yaw = 0.0f;
@@ -85,6 +102,59 @@ bool CameraRig::DetectExternalFovWrite(SPF_Camera_API *camera) {
   applied_.fov = 0.0f;
   last_written_fov_ = fov_deg;
   return true;
+}
+
+void CameraRig::UpdateRecenterGlide(SPF_Camera_API *camera, float dt,
+                                    Pose &pose) {
+  if (!recenter_glide_.active)
+    return;
+  float default_yaw_deg, default_pitch_deg;
+  if (!camera->Cam_GetInteriorRotationDefaults(&default_yaw_deg,
+                                               &default_pitch_deg)) {
+    recenter_glide_ = {};
+    return;
+  }
+
+  RecenterGlide &glide = recenter_glide_;
+  const Pose base = Base(pose);
+  const float default_yaw_rad = default_yaw_deg * kDegToRad;
+  const float default_pitch_rad = default_pitch_deg * kDegToRad;
+  if (!glide.started) {
+    glide.started = true;
+    glide_yaw_intent_.Reset(base.yaw_rad - default_yaw_rad);
+    glide_yaw_.Reset(base.yaw_rad - default_yaw_rad);
+    glide_pitch_intent_.Reset(base.pitch_rad - default_pitch_rad);
+    glide_pitch_.Reset(base.pitch_rad - default_pitch_rad);
+  } else {
+    constexpr float kMovedRad = 0.05f * kDegToRad;
+    if (std::fabs(base.yaw_rad - glide.set_yaw_rad) > kMovedRad ||
+        std::fabs(base.pitch_rad - glide.set_pitch_rad) > kMovedRad) {
+      recenter_glide_ = {};
+      return;
+    }
+  }
+
+  const float yaw_rad =
+      glide_yaw_.Update(glide_yaw_intent_.Update(0.0f, dt), dt);
+  const float pitch_rad =
+      glide_pitch_.Update(glide_pitch_intent_.Update(0.0f, dt), dt);
+  constexpr float kSettledRad = 0.01f * kDegToRad;
+  const bool settled = std::fabs(yaw_rad) < kSettledRad &&
+                       std::fabs(pitch_rad) < kSettledRad &&
+                       std::fabs(glide_yaw_intent_.value()) < kSettledRad &&
+                       std::fabs(glide_pitch_intent_.value()) < kSettledRad;
+  glide.set_yaw_rad = default_yaw_rad + (settled ? 0.0f : yaw_rad);
+  glide.set_pitch_rad = default_pitch_rad + (settled ? 0.0f : pitch_rad);
+  SetBaseRotation(pose, glide.set_yaw_rad, glide.set_pitch_rad);
+  if (settled)
+    recenter_glide_ = {};
+}
+
+void CameraRig::SetRecenterSmoothing(float intent_seconds, float head_seconds) {
+  glide_yaw_intent_.SetTimeConstant(intent_seconds);
+  glide_pitch_intent_.SetTimeConstant(intent_seconds);
+  glide_yaw_.SetTimeConstant(head_seconds);
+  glide_pitch_.SetTimeConstant(head_seconds);
 }
 
 CameraRig::Pose CameraRig::Base(const Pose &pose) const {

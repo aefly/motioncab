@@ -33,6 +33,16 @@ void EffectManager::ResetAll() {
     slot.pause_reset = false;
   }
   seat_fade_ = at_wheel_ ? 1.0f : 0.0f;
+  recenter_glide_ = 0.0f;
+}
+
+void EffectManager::Recenter() {
+  HeadOffset residual = last_total_;
+  residual.yaw = 0.0f;
+  residual.pitch = 0.0f;
+  ResetAll();
+  recenter_residual_ = residual;
+  recenter_glide_ = 1.0f;
 }
 
 bool EffectManager::IsPaused(const Slot &slot) const {
@@ -96,6 +106,17 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
     total.roll += contribution.roll * weight;
     total.fov += contribution.fov * weight;
   }
+  if (recenter_glide_ > 0.0f) {
+    recenter_glide_ =
+        std::max(0.0f, recenter_glide_ - dt / kRecenterGlideSeconds);
+    const float weight = math::SmoothStep(recenter_glide_);
+    total.pos_x += recenter_residual_.pos_x * weight;
+    total.pos_y += recenter_residual_.pos_y * weight;
+    total.pos_z += recenter_residual_.pos_z * weight;
+    total.roll += recenter_residual_.roll * weight;
+    total.fov += recenter_residual_.fov * weight;
+  }
+  last_total_ = total;
   return total;
 }
 

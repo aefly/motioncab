@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/Keybinds.hpp"
 #include "core/Settings.hpp"
 #include "effects/ConfigurableEffect.hpp"
 #include "math/SpringDamper.hpp"
@@ -19,6 +20,13 @@ namespace motioncab {
 class SideLookEffect final : public ConfigurableEffect {
 public:
   enum class Look { kCenter, kLeft, kRight, kGlanceLeft, kGlanceRight };
+
+  // Two springs in a row, as shares of smoothing_time: the first eases the
+  // head into the move instead of throwing it at full acceleration on the
+  // press (or a quick switch to another look). Together they take about as
+  // long as the single spring did.
+  static constexpr float kIntentFraction = 0.3f;
+  static constexpr float kHeadFraction = 0.85f;
 
   SideLookEffect(SPF_Config_API *config_api, SPF_Config_Handle *config_handle,
                  SPF_KeyBinds_API *keybinds_api,
@@ -84,6 +92,9 @@ private:
   Look pressed_ = Look::kCenter;
   Look toggled_ = Look::kCenter;
   Look toggled_before_press_ = Look::kCenter;
+  keybinds::PressEdge forward_edge_;
+  // The look-forward key ends a signal's glance until the blinker is off.
+  bool signal_dismissed_ = false;
 
   bool prev_lblinker_ = false;
   bool prev_rblinker_ = false;
