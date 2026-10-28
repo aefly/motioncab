@@ -32,6 +32,13 @@ inline bool IsRightHandDrive(const SPF_TruckConstants &constants) {
   return constants.head_position.x > 0.0f;
 }
 
+// With the Simple Automatic gearbox, gear only goes negative in short bursts
+// while the truck pulls away backward, and drops back to 0 in between and at a
+// stop. The dashboard keeps showing R until the player drives forward again.
+inline bool IsReversing(const SPF_TruckData &truck) {
+  return truck.gear < 0 || truck.displayed_gear < 0;
+}
+
 // RPM crossing this means the engine has started. engine_enabled lags the
 // real catch by a second or more, so the shudder came well after the fact.
 inline constexpr float kRpmStartThreshold = 5.0f;

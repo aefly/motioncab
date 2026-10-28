@@ -93,10 +93,6 @@ private:
 
   bool right_hand_drive_ = false;
 
-  // Fades the whole effect out while reversing, 1 when it plays. The layers
-  // keep moving underneath, so it fades back in on a live head.
-  float presence_ = 1.0f;
-
   std::array<double, 2> sway_phase_{}; // one per octave
   double drift_phase_ = 0.0;
   Layer micro_;

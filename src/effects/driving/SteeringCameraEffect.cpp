@@ -1,5 +1,6 @@
 #include "SteeringCameraEffect.hpp"
 
+#include "effects/Telemetry.hpp"
 #include "math/Units.hpp"
 
 #include <algorithm>
@@ -65,7 +66,7 @@ HeadOffset SteeringCameraEffect::Update(float dt, const SPF_TruckData &truck,
   const float delayed_steering = steering_delay_.Read(delay_seconds_);
   // Reversing, the driver looks at the mirrors rather than down the road, so
   // following the wheel only gets in the way.
-  const bool reversing = disable_in_reverse_ && truck.gear < 0;
+  const bool reversing = disable_in_reverse_ && telemetry::IsReversing(truck);
   const float follow_target = reversing ? 0.0f : 1.0f;
   if (needs_resync_) {
     follow_ = follow_target;
