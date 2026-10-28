@@ -12,6 +12,7 @@ on:
       - "CMakeUserPresets.json.example"
       - "cliff.toml"
       - ".github/dependabot.yaml"
+      - ".github/FUNDING.yml"
       - ".github/ISSUE_TEMPLATE/**"
   pull_request:
     branches: ["**"]
@@ -72,6 +73,13 @@ jobs:
 
       - name: Check translation keys
         run: python3 .github/scripts/check-localization.py
+
+      - name: Check C++ formatting
+        shell: bash
+        run: |
+          set -e
+          pipx run --spec clang-format==19.1.7 clang-format --dry-run --Werror \
+            $(git ls-files 'src/*.cpp' 'src/*.hpp')
 
       - name: Validate version tag
         if: startsWith(github.ref, 'refs/tags/')

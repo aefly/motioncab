@@ -143,6 +143,12 @@ for a setting, a settings group or effect, an effect's hint or a keybind.
 Commits must follow [Conventional Commits][conventional-commits]
 (`feat:`, `fix:`, `refactor:`, `docs:`, etc.).
 
+## C++ formatting
+
+C++ code follows `.clang-format` (LLVM style). Most editors apply it
+through clangd or clang-format, or run `clang-format -i` on the files you
+changed.
+
 ## Markdown
 
 Any Markdown file you add or change must follow the rules in
