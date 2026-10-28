@@ -73,7 +73,7 @@ private:
   float Jitter(float mean); // `mean` times a random 0.5..1.5
   // A random wait averaging `mean`, short ones the most likely.
   float Interval(float mean);
-  float Pace();             // a move's duration factor, around 1
+  float Pace(); // a move's duration factor, around 1
   void DrawMicro();
   // `seconds`, when set, is how long even the shortest move takes.
   void DrawPosture(float seconds = 0.0f);
