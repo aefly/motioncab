@@ -2,6 +2,7 @@
 
 #include "SPF_TelemetryData.h"
 
+#include <cmath>
 #include <string_view>
 
 namespace motioncab {
@@ -15,6 +16,15 @@ struct HeadOffset {
   float roll = 0.0f;
   float fov = 0.0f;
 };
+
+// A NaN or infinity must never reach the camera: the write is differential,
+// so it would stay in the pose and poison every later frame.
+inline bool IsFinite(const HeadOffset &o) {
+  return std::isfinite(o.pos_x) && std::isfinite(o.pos_y) &&
+         std::isfinite(o.pos_z) && std::isfinite(o.yaw) &&
+         std::isfinite(o.pitch) && std::isfinite(o.roll) &&
+         std::isfinite(o.fov);
+}
 
 class Effect {
 public:

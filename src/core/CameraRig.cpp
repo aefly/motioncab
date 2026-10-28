@@ -1,5 +1,6 @@
 #include "CameraRig.hpp"
 
+#include "core/PluginContext.hpp"
 #include "math/Units.hpp"
 
 #include <algorithm>
@@ -184,6 +185,15 @@ void CameraRig::ForgetApplied() {
 
 void CameraRig::Apply(SPF_Camera_API *camera, const Pose &pose,
                       const HeadOffset &offset) {
+  // Last line of defense, for whatever the per-effect check in EffectManager
+  // doesn't see (Cabin Walk, a bad live pose): keep last frame's offset.
+  if (!IsFinite(offset) || !std::isfinite(pose.seat_x) ||
+      !std::isfinite(pose.seat_y) || !std::isfinite(pose.seat_z) ||
+      !std::isfinite(pose.yaw_rad) || !std::isfinite(pose.pitch_rad)) {
+    Context().LogThrottledFmt(SPF_LOG_ERROR, "camera_rig_non_finite", 10000,
+                              "Skipped a camera write with a non-finite value");
+    return;
+  }
   WriteSeat(camera, pose.seat_x, pose.seat_y, pose.seat_z, offset);
   WriteHeadRot(camera, pose.yaw_rad, pose.pitch_rad, offset);
   WriteRoll(camera, offset);

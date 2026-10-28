@@ -115,6 +115,9 @@ void ManualZoomEffect::SetFov(float fov) {
   if (!camera_api_)
     return;
   const float live_fov = fov + (rig_ ? rig_->applied().fov : 0.0f);
+  // Like CameraRig::Apply: a NaN would stay in the FOV for good.
+  if (!std::isfinite(live_fov))
+    return;
   camera_api_->Cam_SetInteriorFov(live_fov);
   if (rig_)
     rig_->NoteFovWrite(live_fov);

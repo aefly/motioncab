@@ -1,9 +1,11 @@
 #include "EffectManager.hpp"
 
 #include "core/Conflicts.hpp"
+#include "core/PluginContext.hpp"
 #include "math/Units.hpp"
 
 #include <algorithm>
+#include <string>
 
 namespace motioncab {
 
@@ -97,6 +99,15 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
     slot.pause_reset = false;
     context_weight *= math::SmoothStep(slot.pause_fade);
     const HeadOffset contribution = effect.Update(dt, truck, controls);
+    if (!IsFinite(contribution)) {
+      // Dropped and restarted from rest, so one bad frame doesn't stick.
+      const std::string id(effect.Id());
+      Context().LogThrottledFmt(SPF_LOG_ERROR, "effect_non_finite_offset",
+                                10000, "%s returned a non-finite offset",
+                                id.c_str());
+      effect.Reset();
+      continue;
+    }
     const float weight = math::SmoothStep(slot.fade) * context_weight;
     total.pos_x += contribution.pos_x * weight;
     total.pos_y += contribution.pos_y * weight;
