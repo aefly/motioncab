@@ -167,9 +167,6 @@ constexpr float kTownEnterKmh = 30.0f;
 constexpr float kTownExitKmh = 25.0f;
 constexpr float kHighwayEnterKmh = 70.0f;
 constexpr float kHighwayExitKmh = 60.0f;
-// Reversing, the driver watches the mirrors: a head moving on its own only
-// gets in the way, so the effect fades out until the truck leaves reverse.
-constexpr float kReverseFadeSeconds = 1.0f;
 // How long the sway, micro-adjustments, drift and roll take to change with the
 // mode.
 constexpr float kModeBlendSeconds = 2.0f;
@@ -485,11 +482,9 @@ NaturalHeadMovementEffect::Update(float dt, const SPF_TruckData &truck,
                                   const SPF_Controls & /*controls*/) {
   // Driving off or stopping, the driver's posture changes at once.
   const Mode mode = Assess(truck, dt);
-  const float presence_target = truck.gear < 0 ? 0.0f : 1.0f;
   if (!mode_known_) {
     mode_known_ = true;
     mode_ = mode;
-    presence_ = presence_target;
     const ModeValues &start = ModeOf(static_cast<int>(mode_));
     sway_gain_.Reset(start.sway);
     sway_pace_.Reset(start.sway_pace);
@@ -505,8 +500,6 @@ NaturalHeadMovementEffect::Update(float dt, const SPF_TruckData &truck,
           std::min(posture_.timer, kModePostureCooldown - since_posture_);
   }
   since_posture_ += dt;
-  const float step = dt / kReverseFadeSeconds;
-  presence_ = std::clamp(presence_target, presence_ - step, presence_ + step);
   const ModeValues &profile = ModeOf(static_cast<int>(mode_));
   const float sway_gain = sway_gain_.Update(profile.sway, dt) * sway_share_;
   const float sway_pace = sway_pace_.Update(profile.sway_pace, dt);
@@ -571,14 +564,13 @@ NaturalHeadMovementEffect::Update(float dt, const SPF_TruckData &truck,
       NeckPivot(axis[kYaw] * math::kDegToRad, axis[kPitch] * math::kDegToRad,
                 axis[kRoll] * math::kDegToRad);
 
-  const float weight = math::SmoothStep(presence_);
   HeadOffset offset;
-  offset.pos_x = weight * camera_x * (axis[kX] + neck.x);
-  offset.pos_y = weight * (axis[kY] + neck.y);
-  offset.pos_z = weight * (axis[kZ] + neck.z);
-  offset.yaw = weight * axis[kYaw];
-  offset.pitch = weight * axis[kPitch];
-  offset.roll = weight * axis[kRoll];
+  offset.pos_x = camera_x * (axis[kX] + neck.x);
+  offset.pos_y = axis[kY] + neck.y;
+  offset.pos_z = axis[kZ] + neck.z;
+  offset.yaw = axis[kYaw];
+  offset.pitch = axis[kPitch];
+  offset.roll = axis[kRoll];
   return offset;
 }
 
