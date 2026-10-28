@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "Désactiver en marche arrière",
           "desc": "Garde la caméra centrée quand le camion est en marche arrière."
+        },
+        "disable_when_stopped": {
+          "title": "Désactiver à l'arrêt",
+          "desc": "Garde la caméra centrée tant que le camion n'avance pas."
         }
       }
     },

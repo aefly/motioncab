@@ -71,6 +71,7 @@ inline constexpr Setting kAll[] = {
     Float("settings.driving.steering_camera.delay_seconds", 0.2f, 0.0f, 0.3f,
           "%.2f s"),
     Bool("settings.driving.steering_camera.disable_in_reverse", true),
+    Bool("settings.driving.steering_camera.disable_when_stopped", false),
     // road.suspension
     Bool("settings.road.suspension.enabled", true),
     Float("settings.road.suspension.vertical_strength", 1.0f, 0.0f, 2.0f,

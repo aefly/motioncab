@@ -47,11 +47,14 @@ private:
       settings::Default("settings.driving.steering_camera.delay_seconds");
   bool disable_in_reverse_ = settings::DefaultBool(
       "settings.driving.steering_camera.disable_in_reverse");
+  bool disable_when_stopped_ = settings::DefaultBool(
+      "settings.driving.steering_camera.disable_when_stopped");
 
   math::SpringDamper1D yaw_;
   bool needs_resync_ = false;
-  // 0 in reverse.
+  // 0 in reverse, or stopped with disable_when_stopped.
   float follow_ = 1.0f;
+  bool moving_forward_ = false;
 
   math::DelayLine steering_delay_;
 };

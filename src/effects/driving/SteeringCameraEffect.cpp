@@ -13,6 +13,9 @@ namespace {
 // The wheel is often at full lock after a maneuver: aiming straight back at
 // it made the spring swing the camera across in one go.
 constexpr float kReverseFadeSeconds = 1.5f;
+// Apart, so creeping along at the threshold doesn't keep flipping the camera.
+constexpr float kMovingForwardEnterKmh = 3.0f;
+constexpr float kMovingForwardExitKmh = 1.0f;
 
 // Integral of SmoothStep(x / zone) from 0 to x.
 float SmoothStepIntegral(float x, float zone) {
@@ -48,6 +51,7 @@ void SteeringCameraEffect::LoadSettings() {
   smoothing_time_ = Float("smoothing_time", smoothing_time_);
   delay_seconds_ = Float("delay_seconds", delay_seconds_);
   disable_in_reverse_ = Bool("disable_in_reverse", disable_in_reverse_);
+  disable_when_stopped_ = Bool("disable_when_stopped", disable_when_stopped_);
 
   yaw_.SetTimeConstant(smoothing_time_);
 }
@@ -67,7 +71,12 @@ HeadOffset SteeringCameraEffect::Update(float dt, const SPF_TruckData &truck,
   // Reversing, the driver looks at the mirrors rather than down the road, so
   // following the wheel only gets in the way.
   const bool reversing = disable_in_reverse_ && telemetry::IsReversing(truck);
-  const float follow_target = reversing ? 0.0f : 1.0f;
+  // Signed: negative while rolling backward.
+  const float forward_kmh = truck.speed * math::kMsToKmh;
+  moving_forward_ = forward_kmh > (moving_forward_ ? kMovingForwardExitKmh
+                                                   : kMovingForwardEnterKmh);
+  const bool stopped = disable_when_stopped_ && !moving_forward_;
+  const float follow_target = reversing || stopped ? 0.0f : 1.0f;
   if (needs_resync_) {
     follow_ = follow_target;
   } else {

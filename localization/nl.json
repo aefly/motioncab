@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "Uitschakelen in achteruit",
           "desc": "Houdt de camera gecentreerd zolang de truck in de achteruit staat."
+        },
+        "disable_when_stopped": {
+          "title": "Uitschakelen bij stilstand",
+          "desc": "Houdt de camera gecentreerd tot de truck vooruit rijdt."
         }
       }
     },

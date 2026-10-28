@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "Vypnout při couvání",
           "desc": "Udrží kameru uprostřed, když je zařazená zpátečka."
+        },
+        "disable_when_stopped": {
+          "title": "Vypnout při stání",
+          "desc": "Udrží kameru uprostřed, dokud se kamion nerozjede dopředu."
         }
       }
     },

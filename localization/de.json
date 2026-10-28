@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "Im Rückwärtsgang deaktivieren",
           "desc": "Hält die Kamera mittig, solange der Rückwärtsgang eingelegt ist."
+        },
+        "disable_when_stopped": {
+          "title": "Im Stand deaktivieren",
+          "desc": "Hält die Kamera mittig, bis der Lkw vorwärts fährt."
         }
       }
     },

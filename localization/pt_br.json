@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "Desativar na marcha à ré",
           "desc": "Mantém a câmera centralizada enquanto o caminhão está em marcha à ré."
+        },
+        "disable_when_stopped": {
+          "title": "Desativar com o caminhão parado",
+          "desc": "Mantém a câmera centralizada até o caminhão andar para a frente."
         }
       }
     },

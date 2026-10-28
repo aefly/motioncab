@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "Disattiva in retromarcia",
           "desc": "Mantiene la telecamera centrata quando il camion è in retromarcia."
+        },
+        "disable_when_stopped": {
+          "title": "Disattiva da fermo",
+          "desc": "Mantiene la telecamera centrata finché il camion non avanza."
         }
       }
     },

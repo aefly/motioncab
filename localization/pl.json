@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "Wyłącz na biegu wstecznym",
           "desc": "Utrzymuje kamerę na środku, gdy ciężarówka jest na biegu wstecznym."
+        },
+        "disable_when_stopped": {
+          "title": "Wyłącz podczas postoju",
+          "desc": "Utrzymuje kamerę na środku, dopóki ciężarówka nie ruszy do przodu."
         }
       }
     },

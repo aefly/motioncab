@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "倒车时禁用",
           "desc": "卡车挂倒挡时保持镜头居中。"
+        },
+        "disable_when_stopped": {
+          "title": "停车时禁用",
+          "desc": "卡车前进之前保持镜头居中。"
         }
       }
     },

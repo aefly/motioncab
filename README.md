@@ -124,6 +124,7 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `smoothing_time`             | 0.5     | How smooth the camera turn feels once it gets going. Higher = smoother and slower.                                                     |
 | `delay_seconds`              | 0.2     | How long the camera waits after you turn the wheel before it starts moving.                                                            |
 | `disable_in_reverse`         | true    | Keep the camera centered while the truck is in reverse gear.                                                                           |
+| `disable_when_stopped`       | false   | Keep the camera centered until the truck moves forward.                                                                                |
 | **Idle Breathing**           |         |                                                                                                                                        |
 | `vertical_amplitude`         | 0.002   | How far the camera rises and falls with each breath.                                                                                   |
 | `pitch_amplitude_deg`        | 0.15    | How much your head tips forward/back with each breath.                                                                                 |

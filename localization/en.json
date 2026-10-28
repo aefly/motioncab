@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "Disable in Reverse",
           "desc": "Keep the camera centered while the truck is in reverse gear."
+        },
+        "disable_when_stopped": {
+          "title": "Disable When Stopped",
+          "desc": "Keep the camera centered until the truck moves forward."
         }
       }
     },

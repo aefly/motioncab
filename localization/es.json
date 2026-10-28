@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "Desactivar en marcha atrás",
           "desc": "Mantiene la cámara centrada mientras el camión está en marcha atrás."
+        },
+        "disable_when_stopped": {
+          "title": "Desactivar con el camión parado",
+          "desc": "Mantiene la cámara centrada hasta que el camión avanza."
         }
       }
     },

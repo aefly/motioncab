@@ -144,6 +144,10 @@
         "disable_in_reverse": {
           "title": "Geri viteste devre dışı bırak",
           "desc": "Kamyon geri vitesteyken kamerayı ortada tutar."
+        },
+        "disable_when_stopped": {
+          "title": "Dururken devre dışı bırak",
+          "desc": "Kamyon ileri gidene kadar kamerayı ortada tutar."
         }
       }
     },
