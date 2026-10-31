@@ -39,9 +39,10 @@ void Build(SPF_Manifest_Builder_Handle *h,
   api->Defaults_SetLogging(h, "info", true);
   api->Defaults_SetLocalization(h, "en");
   for (const keybinds::Action &action : keybinds::kAllActions)
-    api->Defaults_AddKeybind(
+    api->Defaults_AddKeybindEx(
         h, action.group, action.name, "keyboard", action.default_key,
-        keybinds::IsWalkAction(action) ? "manual" : "always");
+        keybinds::IsWalkAction(action) ? "manual" : "always", nullptr,
+        keybinds::IsHoldByDefault(action) ? "hold" : nullptr, -1);
   // isVisible only counts on the very first launch: SPF remembers the
   // player's choice after that.
   api->Defaults_AddWindow(h, "MotionCab", true, true, 100, 100,

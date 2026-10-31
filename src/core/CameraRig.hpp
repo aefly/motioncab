@@ -36,6 +36,13 @@ public:
   // seat, with nothing left to subtract.
   bool DetectExternalSeatWrite(const Pose &pose);
 
+  // Coming back to the interior view, the game may have put the head back
+  // ahead: a rotation other than ours is then the player's own, with nothing
+  // left to subtract (or a look to the right would come back as one to the
+  // left). Checked once per return, since the mouse moves it otherwise.
+  void OnInteriorEntered() { check_rot_on_entry_ = true; }
+  void DetectRotationResetOnEntry(const Pose &pose);
+
   // Same for the FOV (F4 slider, a truck switch's new camera). Call before
   // ManualZoomEffect writes this frame's FOV.
   bool DetectExternalFovWrite(SPF_Camera_API *camera);
@@ -113,6 +120,7 @@ private:
   // What we last wrote, to spot another writer's changes.
   float last_written_yaw_deg_ = 0.0f, last_written_pitch_deg_ = 0.0f;
   bool has_last_written_rot_ = false;
+  bool check_rot_on_entry_ = false;
   float last_written_seat_x_ = 0.0f, last_written_seat_y_ = 0.0f,
         last_written_seat_z_ = 0.0f;
   bool has_last_written_seat_ = false;

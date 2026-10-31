@@ -319,10 +319,6 @@
           "title": "Demping",
           "desc": "Hoe vloeiend de kijk- en terugbeweging is."
         },
-        "toggle_mode": {
-          "title": "Schakelmodus",
-          "desc": "Aan: één keer drukken om te kijken, nogmaals om terug te kijken. Uit: kijken zolang de toets ingedrukt is, loslaten om terug te kijken."
-        },
         "mirror_on_signal": {
           "title": "Kijken bij richtingaanwijzer",
           "desc": "Kijkt in de spiegel aan de kant van de richtingaanwijzer zolang die aan staat."
@@ -380,10 +376,6 @@
         "smoothing_time": {
           "title": "Demping",
           "desc": "Hoe vloeiend de leun- en terugbeweging is."
-        },
-        "toggle_mode": {
-          "title": "Schakelmodus",
-          "desc": "Aan: één keer drukken om naar voren te leunen, nogmaals om terug te gaan. Uit: naar voren leunen zolang de toets ingedrukt is, loslaten om terug te gaan."
         }
       },
       "cabin_walk": {

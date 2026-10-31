@@ -319,10 +319,6 @@
           "title": "Glättung",
           "desc": "Wie weich die Hin- und Rückbewegung des Blicks ist."
         },
-        "toggle_mode": {
-          "title": "Umschaltmodus",
-          "desc": "An: einmal drücken zum Schauen, erneut drücken zum Zurückschauen. Aus: schauen, solange die Taste gehalten wird, loslassen zum Zurückschauen."
-        },
         "mirror_on_signal": {
           "title": "Blick beim Blinken",
           "desc": "Blickt in den Spiegel auf der Seite des Blinkers, solange er an ist."
@@ -380,10 +376,6 @@
         "smoothing_time": {
           "title": "Glättung",
           "desc": "Wie weich die Vor- und Zurückbewegung ist."
-        },
-        "toggle_mode": {
-          "title": "Umschaltmodus",
-          "desc": "An: einmal drücken zum Vorbeugen, erneut drücken zum Zurücklehnen. Aus: vorbeugen, solange die Taste gehalten wird, loslassen zum Zurücklehnen."
         }
       },
       "cabin_walk": {

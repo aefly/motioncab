@@ -93,6 +93,22 @@ bool CameraRig::DetectExternalSeatWrite(const Pose &pose) {
   return any;
 }
 
+void CameraRig::DetectRotationResetOnEntry(const Pose &pose) {
+  if (!std::exchange(check_rot_on_entry_, false) || !has_last_written_rot_)
+    return;
+  constexpr float kMovedDeg = 0.05f;
+  if (std::fabs(pose.yaw_rad / kDegToRad - last_written_yaw_deg_) <=
+          kMovedDeg &&
+      std::fabs(pose.pitch_rad / kDegToRad - last_written_pitch_deg_) <=
+          kMovedDeg)
+    return;
+  applied_.yaw = 0.0f;
+  applied_.pitch = 0.0f;
+  // Not a look-forward key either.
+  has_last_written_rot_ = false;
+  recenter_run_ = {};
+}
+
 bool CameraRig::DetectExternalFovWrite(SPF_Camera_API *camera) {
   float fov_deg = 0.0f;
   if (!has_last_written_fov_ || !camera->Cam_GetInteriorFov(&fov_deg))

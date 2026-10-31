@@ -42,7 +42,6 @@ void SideLookEffect::LoadSettings() {
   glance_left_fov_deg_ = Float("glance_left_fov_deg", glance_left_fov_deg_);
   glance_right_fov_deg_ = Float("glance_right_fov_deg", glance_right_fov_deg_);
   smoothing_time_ = Float("smoothing_time", smoothing_time_);
-  toggle_mode_ = Bool("toggle_mode", toggle_mode_);
   mirror_on_signal_ = Bool("mirror_on_signal", mirror_on_signal_);
   require_stationary_ = Bool("require_stationary", require_stationary_);
   ignore_after_moving_signal_ =
@@ -63,34 +62,40 @@ void SideLookEffect::Reset() {
   pitch_.Reset();
   fov_intent_.Reset();
   fov_.Reset();
-  pressed_ = Look::kCenter;
-  toggled_ = Look::kCenter;
-  toggled_before_press_ = Look::kCenter;
+  EndKeyLooks();
   forward_edge_.Reset();
   // The blinker state is kept: this runs on every cabin re-entry, and a
   // blinker switched on while driving would then look freshly switched on
   // while stopped.
 }
 
-bool SideLookEffect::HasChord(Look look) const {
-  const keybinds::Action *action = ActionOf(look);
-  return action && keybinds::HasChord(keybinds_api_, keybinds_handle_, *action);
+bool SideLookEffect::IsActive(Look look) const {
+  return keybinds::IsActive(keybinds_api_, keybinds_handle_, *ActionOf(look));
 }
 
-SideLookEffect::Look SideLookEffect::HeldLook() const {
-  // When no combination decides, a wide look wins.
-  static constexpr Look kLooks[] = {Look::kLeft, Look::kRight,
-                                    Look::kGlanceLeft, Look::kGlanceRight};
-  Look first_held = Look::kCenter;
-  for (const Look look : kLooks) {
-    if (!keybinds::IsHeld(keybinds_api_, keybinds_handle_, *ActionOf(look)))
+SideLookEffect::Look SideLookEffect::KeyLook() {
+  for (const Look look : kKeyLooks) {
+    if (look == key_look_ || !IsActive(look))
       continue;
-    if (HasChord(look))
-      return look;
-    if (first_held == Look::kCenter)
-      first_held = look;
+    // A look coming on ends the others, so letting go of a held one never
+    // brings back one toggled before it.
+    for (const Look other : kKeyLooks)
+      if (other != look)
+        keybinds::EndActive(keybinds_api_, keybinds_handle_, *ActionOf(other));
+    key_look_ = look;
+    return key_look_;
   }
-  return first_held;
+  if (key_look_ != Look::kCenter && !IsActive(key_look_))
+    key_look_ = Look::kCenter;
+  return key_look_;
+}
+
+void SideLookEffect::EndKeyLooks() {
+  key_look_ = Look::kCenter;
+  if (!keybinds_api_ || !keybinds_handle_)
+    return;
+  for (const Look look : kKeyLooks)
+    keybinds::EndActive(keybinds_api_, keybinds_handle_, *ActionOf(look));
 }
 
 SideLookEffect::Look SideLookEffect::SignalLook(const SPF_TruckData &truck) {
@@ -126,27 +131,13 @@ HeadOffset SideLookEffect::Update(float dt, const SPF_TruckData &truck,
 
   if (forward_edge_.Update(keybinds::IsHeld(keybinds_api_, keybinds_handle_,
                                             keybinds::kLookForward))) {
-    toggled_ = Look::kCenter;
-    toggled_before_press_ = Look::kCenter;
+    EndKeyLooks();
     signal_dismissed_ = signal != Look::kCenter;
   }
   if (signal == Look::kCenter)
     signal_dismissed_ = false;
 
-  const Look held = HeldLook();
-  if (held == Look::kCenter) {
-    pressed_ = Look::kCenter;
-  } else if (held != pressed_ && !(HasChord(pressed_) && !HasChord(held))) {
-    // A combination completed on top of its own key replaces that key's
-    // look, toggle included; anything else is a new press.
-    const bool completes_chord =
-        pressed_ != Look::kCenter && HasChord(held) && !HasChord(pressed_);
-    if (!completes_chord)
-      toggled_before_press_ = toggled_;
-    pressed_ = held;
-    toggled_ = (toggled_before_press_ == held) ? Look::kCenter : held;
-  }
-  const Look key_look = toggle_mode_ ? toggled_ : pressed_;
+  const Look key_look = KeyLook();
   const Look look = key_look != Look::kCenter ? key_look
                     : signal_dismissed_       ? Look::kCenter
                                               : signal;

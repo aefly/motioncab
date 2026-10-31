@@ -319,10 +319,6 @@
           "title": "Yumuşatma",
           "desc": "Bakıp geri dönme hareketinin ne kadar yumuşak olduğu."
         },
-        "toggle_mode": {
-          "title": "Geçiş modu",
-          "desc": "Açık: bakmak için bir kez, geri dönmek için tekrar basın. Kapalı: basılı tuttuğunuz sürece bakın, geri dönmek için bırakın."
-        },
         "mirror_on_signal": {
           "title": "Sinyalde aynaya bak",
           "desc": "Sinyal açıkken o taraftaki aynaya bakar."
@@ -380,10 +376,6 @@
         "smoothing_time": {
           "title": "Yumuşatma",
           "desc": "Öne eğilip geri dönme hareketinin ne kadar yumuşak olduğu."
-        },
-        "toggle_mode": {
-          "title": "Geçiş modu",
-          "desc": "Açık: eğilmek için bir kez, geri dönmek için tekrar basın. Kapalı: basılı tuttuğunuz sürece eğilin, geri dönmek için bırakın."
         }
       },
       "cabin_walk": {

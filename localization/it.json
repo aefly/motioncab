@@ -319,10 +319,6 @@
           "title": "Smorzamento",
           "desc": "Quanto è morbido il movimento di andata e ritorno dello sguardo."
         },
-        "toggle_mode": {
-          "title": "Modalità alternata",
-          "desc": "Attiva: premi una volta per guardare, di nuovo per tornare. Disattiva: guarda finché tieni premuto, rilascia per tornare."
-        },
         "mirror_on_signal": {
           "title": "Sguardo con la freccia",
           "desc": "Guarda lo specchietto dal lato della freccia finché è accesa."
@@ -380,10 +376,6 @@
         "smoothing_time": {
           "title": "Smorzamento",
           "desc": "Quanto è morbido il movimento di andata e ritorno della sporgenza."
-        },
-        "toggle_mode": {
-          "title": "Modalità alternata",
-          "desc": "Attiva: premi una volta per sporgerti, di nuovo per tornare. Disattiva: sporgiti finché tieni premuto, rilascia per tornare."
         }
       },
       "cabin_walk": {

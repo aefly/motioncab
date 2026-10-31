@@ -319,10 +319,6 @@
           "title": "Suavizado",
           "desc": "Lo suave que es el movimiento de ida y vuelta de la mirada."
         },
-        "toggle_mode": {
-          "title": "Modo alternar",
-          "desc": "Activado: pulsa una vez para mirar y otra vez para volver. Desactivado: mira mientras mantienes pulsado y suelta para volver."
-        },
         "mirror_on_signal": {
           "title": "Mirar al poner el intermitente",
           "desc": "Mira al espejo del lado del intermitente mientras está encendido."
@@ -380,10 +376,6 @@
         "smoothing_time": {
           "title": "Suavizado",
           "desc": "Lo suave que es el movimiento de ida y vuelta al inclinarse."
-        },
-        "toggle_mode": {
-          "title": "Modo alternar",
-          "desc": "Activado: pulsa una vez para inclinarte y otra vez para volver. Desactivado: te inclinas mientras mantienes pulsado y sueltas para volver."
         }
       },
       "cabin_walk": {

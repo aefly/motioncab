@@ -319,10 +319,6 @@
           "title": "Wygładzanie",
           "desc": "Jak płynny jest ruch spojrzenia i powrotu."
         },
-        "toggle_mode": {
-          "title": "Tryb przełączania",
-          "desc": "Wł.: naciśnij raz, aby spojrzeć, i ponownie, aby wrócić. Wył.: patrz, dopóki trzymasz klawisz, puść, aby wrócić."
-        },
         "mirror_on_signal": {
           "title": "Spojrzenie przy kierunkowskazie",
           "desc": "Patrzy w lusterko po stronie kierunkowskazu, dopóki jest włączony."
@@ -380,10 +376,6 @@
         "smoothing_time": {
           "title": "Wygładzanie",
           "desc": "Jak płynny jest ruch pochylenia i powrotu."
-        },
-        "toggle_mode": {
-          "title": "Tryb przełączania",
-          "desc": "Wł.: naciśnij raz, aby się pochylić, i ponownie, aby wrócić. Wył.: pochylaj się, dopóki trzymasz klawisz, puść, aby wrócić."
         }
       },
       "cabin_walk": {

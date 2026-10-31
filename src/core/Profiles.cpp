@@ -1,6 +1,7 @@
 #include "Profiles.hpp"
 
 #include "SPF_Environment_API.h"
+#include "core/Keybinds.hpp"
 #include "core/PluginContext.hpp"
 #include "core/Settings.hpp"
 #include "core/Strings.hpp"
@@ -9,6 +10,7 @@
 #include <cctype>
 #include <cmath>
 #include <filesystem>
+#include <span>
 #include <unordered_map>
 
 namespace motioncab::profiles {
@@ -103,6 +105,49 @@ bool MigrateLegacyKeys(SPF_Config_API *cfg, SPF_Config_Handle *h,
   return migrated;
 }
 
+// Up to 1.x the looks' hold or toggle was a setting of ours. It's now each
+// binding's behavior in SPF's keybind settings, which SPF had saved as
+// Toggle for every player, so the old setting is carried over once.
+struct LegacyToggleMode {
+  const char *key;
+  bool fallback;
+  std::span<const keybinds::Action> actions;
+};
+
+constexpr keybinds::Action kBlindspotActions[] = {keybinds::kBlindspotPeek};
+
+constexpr LegacyToggleMode kLegacyToggleModes[] = {
+    {"settings.manual.manual_look.toggle_mode", false,
+     keybinds::kHoldByDefault},
+    {"settings.manual.blindspot_viewer.toggle_mode", true, kBlindspotActions},
+};
+
+bool MigrateToggleModes(PluginContext &ctx) {
+  SPF_Config_API *cfg = ctx.core->config;
+  SPF_KeyBinds_API *kbind = ctx.core->keybinds;
+  if (!kbind || !ctx.keybinds_handle)
+    return false;
+  bool migrated = false;
+  for (const LegacyToggleMode &mode : kLegacyToggleModes) {
+    if (!cfg->Cfg_HasKey(ctx.config_handle, mode.key))
+      continue;
+    const SPF_ActivationBehavior behavior =
+        cfg->Cfg_GetBool(ctx.config_handle, mode.key, mode.fallback)
+            ? SPF_BEHAVIOR_TOGGLE
+            : SPF_BEHAVIOR_HOLD;
+    for (const keybinds::Action &action : mode.actions) {
+      const int count =
+          kbind->Kbind_GetBindingCount(ctx.keybinds_handle, action.id);
+      for (int i = 0; i < count; ++i)
+        kbind->Kbind_SetBindingBehavior(ctx.keybinds_handle, action.id, i,
+                                        behavior);
+    }
+    cfg->Cfg_RemoveKey(ctx.config_handle, mode.key);
+    migrated = true;
+  }
+  return migrated;
+}
+
 // Windows won't create a file named after a device ("con", "com1", ...),
 // extension or not.
 bool IsReservedWindowsName(const std::string &name) {
@@ -176,7 +221,10 @@ SPF_Config_Handle *OpenProfileContext(PluginContext &ctx,
 void MigrateLegacySettings(PluginContext &ctx) {
   if (!ctx.core || !ctx.core->config || !ctx.config_handle)
     return;
-  if (!MigrateLegacyKeys(ctx.core->config, ctx.config_handle, false))
+  const bool keys =
+      MigrateLegacyKeys(ctx.core->config, ctx.config_handle, false);
+  const bool toggle_modes = MigrateToggleModes(ctx);
+  if (!keys && !toggle_modes)
     return;
   ctx.core->config->Cfg_Save(ctx.config_handle);
   ctx.Log(SPF_LOG_INFO, "Migrated settings from an older version");

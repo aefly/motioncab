@@ -99,7 +99,7 @@ Disabling these settings ensures that MotionCab has full control over the camera
 | Glance at Right Mirror | Numpad 9    | Side Look — hold or toggle to glance at the right mirror                              |
 | Look Forward           | Numpad 5    | Side Look — turn back to straight ahead, ending any look                              |
 | Zoom                   | Numpad -    | Manual Zoom — hold to zoom in, release to return to normal                            |
-| Blindspot Viewer       | F10         | Blindspot Viewer — Toggle or hold to lean forward and look up                         |
+| Blindspot Viewer       | F10         | Blindspot Viewer — toggle or hold to lean forward and look up                         |
 | Stand Up / Sit Down    | Page Up     | Cabin Walk — get up; tap to sit at the seat you look at, hold to go back to the wheel |
 | Walk                   | W/S/A/D     | Cabin Walk — walk forward, back and sideways while standing                           |
 | Crouch                 | C           | Cabin Walk — crouch while standing                                                    |
@@ -147,7 +147,6 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `glance_left_fov_deg`        | 0.0     | How much the field of view widens while glancing at the left mirror. Negative = narrower (zoom in).                                    |
 | `glance_right_fov_deg`       | 0.0     | How much the field of view widens while glancing at the right mirror. Negative = narrower (zoom in).                                   |
 | `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                              |
-| `toggle_mode`                | false   | On: press once to look, press again to look back. Off: look while held, let go to look back.                                           |
 | `mirror_on_signal`           | false   | Glance at the mirror on the side of the turn signal while it's on.                                                                     |
 | `require_stationary`         | true    | Only glance at the mirror for a turn signal when the truck is stopped.                                                                 |
 | `ignore_after_moving_signal` | true    | Don't check the mirror for a turn signal you switched on while already driving, even after you stop.                                   |
@@ -187,7 +186,6 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `roll_deg`                   | 3.0     | How far your head tilts to the side while peeking.                                                                                     |
 | `fov_offset_deg`             | 10.0    | How much the field of view widens while peeking. Negative = narrower.                                                                  |
 | `smoothing_time`             | 0.6     | How smooth the lean-and-return motion is.                                                                                              |
-| `toggle_mode`                | true    | On: press once to peek, press again to sit back. Off: peek while held, let go to sit back.                                             |
 | **Cabin Walk**               |         |                                                                                                                                        |
 | `require_parking_brake`      | true    | On: needs the parking brake; releasing it sends you back. Off: stopping is enough.                                                     |
 

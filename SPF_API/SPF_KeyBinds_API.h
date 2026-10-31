@@ -148,6 +148,15 @@ typedef struct SPF_KeyBinds_Handle SPF_KeyBinds_Handle;
 typedef void (*SPF_Keybind_Callback_Ex)(const char* action_id, void* user_data);
 
 /**
+ * @brief State callback type: receives the action's logical active state.
+ *
+ * @param action_id The full internal name of the action (e.g., "MyPlugin.Camera.look").
+ * @param active true when the action became active, false when it became inactive.
+ * @param user_data The pointer that was passed during registration.
+ */
+typedef void (*SPF_Keybind_State_Callback)(const char* action_id, bool active, void* user_data);
+
+/**
  * @struct SPF_KeyBinds_API
  * @brief API for registering callbacks for named actions that can be triggered by user-defined keybinds.
  *
@@ -617,6 +626,113 @@ typedef struct SPF_KeyBinds_API {
    * @param index The zero-based index of the binding to edit (see `Kbind_GetBindingCount`).
    */
   void (*Kbind_OpenBindingDetailsPopup)(SPF_KeyBinds_Handle* h, const char* actionName, int index);
+
+  /**
+   * @brief Registers a state callback: the framework reports the action's logical
+   *        active state and your plugin just follows it.
+   *
+   * @details Unlike `Kbind_Register`, which fires a bare trigger signal on every
+   *          press and release and leaves the plugin to reconstruct the state
+   *          (one missed release latches the state forever), a state callback
+   *          fires only on genuine logical transitions:
+   *          - Hold binding: `active=true` on press, `active=false` on release.
+   *            Releases are guaranteed to be delivered, including on focus loss
+   *            (alt-tab) and when the framework UI starts capturing input.
+   *          - Toggle binding: every trigger flips the state; the callback
+   *            reports each flip.
+   *          - Several bindings: the action stays active while any Hold binding
+   *            is held or a Toggle binding has latched it.
+   *          - A rebind or a behavior change that leaves no Toggle binding ends a
+   *            toggled state (one final `active=false`).
+   *
+   *          The callback runs on the thread that delivered the input, which may
+   *          be the input thread rather than the game's: keep it short and
+   *          thread-safe, or read `Kbind_IsActionActive` from your update instead.
+   *
+   *          Independent of the legacy `Kbind_Register` callback: this one is
+   *          stored and dispatched separately, and re-registering replaces the
+   *          previous state callback for this action.
+   *
+   *          The action must already exist (declared in the manifest or created
+   *          dynamically); registering for an unknown action is ignored with a
+   *          warning, same as `Kbind_Register`.
+   *
+   * @param h The context handle obtained from `Kbind_GetContext`.
+   * @param actionName The logical name of the action (e.g., "Camera.look").
+   *                   ### Smart Naming:
+   *                   The API automatically prepends your Plugin ID if it's missing.
+   * @param callback The state callback (receives action_id, active and user_data).
+   * @param user_data An arbitrary pointer that will be passed to the callback.
+   */
+  void (*Kbind_RegisterState)(SPF_KeyBinds_Handle* h, const char* actionName, SPF_Keybind_State_Callback callback, void* user_data);
+
+  /**
+   * @brief Gets the action's current logical active state (the same value the
+   *        last state callback reported).
+   *
+   * @details The state is tracked whether or not a state callback is registered,
+   *          so polling this every frame is enough. Use it to re-sync after your
+   *          own UI or camera changes, or at startup, without waiting for the next
+   *          transition.
+   *
+   * @param h The context handle obtained from `Kbind_GetContext`.
+   * @param actionName The logical name of the action.
+   *                   ### Smart Naming:
+   *                   The API automatically prepends your Plugin ID if it's missing.
+   * @return true if the action is currently active.
+   */
+  bool (*Kbind_IsActionActive)(SPF_KeyBinds_Handle* h, const char* actionName);
+
+  /**
+   * @brief Forces the action inactive.
+   *
+   * @details If the action was active, one final `active=false` state callback
+   *          is delivered and `Kbind_IsActionActive` starts returning false.
+   *          Use it when your plugin ends the state itself (e.g. the player
+   *          left the cabin and the look view must close regardless of the key).
+   *
+   * @param h The context handle obtained from `Kbind_GetContext`.
+   * @param actionName The logical name of the action.
+   *                   ### Smart Naming:
+   *                   The API automatically prepends your Plugin ID if it's missing.
+   * @return true if the action was active and got reset, false if it was already inactive.
+   */
+  bool (*Kbind_ResetActionState)(SPF_KeyBinds_Handle* h, const char* actionName);
+
+  /**
+   * @brief Sets the activation behavior (Hold/Toggle) of a specific binding.
+   *
+   * @details Writes through the same pipeline as the Hold/Toggle choice in the native
+   *          binding details popup, so the player's settings file, the runtime keybind
+   *          state and the Settings window all stay in sync. Use it to carry a plugin's
+   *          own hold/toggle setting over into the player's bindings once, or to offer the
+   *          choice from your own UI. To only change what new players get, declare the
+   *          behavior with `Defaults_AddKeybindEx` instead.
+   *
+   *          ### Applicability:
+   *          Same as `Kbind_GetBindingBehavior`: digital bindings, and axes in
+   *          `SPF_MODE_DIGITAL`. Anything else, or `SPF_BEHAVIOR_NA`, is ignored.
+   *          A behavior locked with `Defaults_LockKeybind` can't be changed.
+   *
+   *          ### IMPORTANT:
+   *          - The action's bindings are rebuilt, so binding pointers and indices read
+   *            before the call may not hold after it. Re-read `Kbind_GetBindingCount`.
+   *          - The change is saved to the player's settings file with the framework's
+   *            other unsaved changes (at the latest when the game closes), as from the
+   *            native popup.
+   *          - Added at the end of the table: a plugin calling it needs a framework that
+   *            has it, so set `Info_SetMinFrameworkVersion` accordingly.
+   *
+   * @param h The context handle obtained from `Kbind_GetContext`.
+   * @param actionName The logical name of the action (e.g., "UI.toggle").
+   *                   ### Smart Naming:
+   *                   The API automatically prepends your Plugin ID if it's missing.
+   * @param index The zero-based index of the binding (see `Kbind_GetBindingCount`).
+   * @param behavior `SPF_BEHAVIOR_HOLD` or `SPF_BEHAVIOR_TOGGLE`.
+   * @return true if the binding now has this behavior (including when it already had it),
+   *         false if it doesn't apply or the behavior is locked.
+   */
+  bool (*Kbind_SetBindingBehavior)(SPF_KeyBinds_Handle* h, const char* actionName, int index, SPF_ActivationBehavior behavior);
 
 } SPF_KeyBinds_API;
 

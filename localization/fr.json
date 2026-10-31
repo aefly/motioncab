@@ -319,10 +319,6 @@
           "title": "Lissage",
           "desc": "Douceur du mouvement aller-retour du regard."
         },
-        "toggle_mode": {
-          "title": "Mode bascule",
-          "desc": "Activé : appuyer une fois pour regarder, une seconde fois pour revenir. Désactivé : regarder tant que la touche est maintenue, relâcher pour revenir."
-        },
         "mirror_on_signal": {
           "title": "Coup d'œil au clignotant",
           "desc": "Regarde le rétroviseur du côté du clignotant tant qu'il est allumé."
@@ -380,10 +376,6 @@
         "smoothing_time": {
           "title": "Lissage",
           "desc": "Douceur du mouvement aller-retour du penché."
-        },
-        "toggle_mode": {
-          "title": "Mode bascule",
-          "desc": "Activé : appuyer une fois pour se pencher, une seconde fois pour revenir. Désactivé : se pencher tant que la touche est maintenue, relâcher pour revenir."
         }
       },
       "cabin_walk": {

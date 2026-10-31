@@ -319,10 +319,6 @@
           "title": "Vyhlazení",
           "desc": "Jak plynulý je pohyb pohledu tam a zpět."
         },
-        "toggle_mode": {
-          "title": "Režim přepínání",
-          "desc": "Zapnuto: jedním stiskem se podíváte, dalším se vrátíte. Vypnuto: díváte se, dokud klávesu držíte, uvolněním se vrátíte."
-        },
         "mirror_on_signal": {
           "title": "Pohled při blinkru",
           "desc": "Při zapnutém blinkru se podívá do zrcátka na jeho straně."
@@ -380,10 +376,6 @@
         "smoothing_time": {
           "title": "Vyhlazení",
           "desc": "Jak plynulý je pohyb náklonu tam a zpět."
-        },
-        "toggle_mode": {
-          "title": "Režim přepínání",
-          "desc": "Zapnuto: jedním stiskem se nakloníte, dalším se vrátíte. Vypnuto: nakloníte se, dokud klávesu držíte, uvolněním se vrátíte."
         }
       },
       "cabin_walk": {

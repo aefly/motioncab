@@ -52,11 +52,7 @@ private:
   // How long the whole motion takes.
   float smoothing_time_ =
       settings::Default("settings.manual.blindspot_viewer.smoothing_time");
-  bool toggle_mode_ =
-      settings::DefaultBool("settings.manual.blindspot_viewer.toggle_mode");
 
-  bool peeking_ = false; // in toggle mode
-  keybinds::PressEdge press_edge_;
   keybinds::PressEdge forward_edge_;
 
   // 0 seated, 1 fully peeking.

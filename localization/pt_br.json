@@ -319,10 +319,6 @@
           "title": "Suavização",
           "desc": "Quão suave é o movimento de ida e volta do olhar."
         },
-        "toggle_mode": {
-          "title": "Modo alternar",
-          "desc": "Ligado: pressione uma vez para olhar e de novo para voltar. Desligado: olha enquanto a tecla estiver pressionada, solte para voltar."
-        },
         "mirror_on_signal": {
           "title": "Olhar com a seta",
           "desc": "Olha para o espelho do lado da seta enquanto ela estiver ligada."
@@ -380,10 +376,6 @@
         "smoothing_time": {
           "title": "Suavização",
           "desc": "Quão suave é o movimento de ida e volta ao se inclinar."
-        },
-        "toggle_mode": {
-          "title": "Modo alternar",
-          "desc": "Ligado: pressione uma vez para se inclinar e de novo para voltar. Desligado: inclina-se enquanto a tecla estiver pressionada, solte para voltar."
         }
       },
       "cabin_walk": {

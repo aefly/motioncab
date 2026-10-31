@@ -45,9 +45,13 @@ private:
   SPF_KeyBinds_API *keybinds_api_;
   SPF_KeyBinds_Handle *keybinds_handle_;
 
-  // A combination wins over its keys alone.
-  Look HeldLook() const;
-  bool HasChord(Look look) const;
+  bool IsActive(Look look) const;
+  // The look whose key came on last.
+  // When two come on at once, the first one wins: a wide look.
+  static constexpr Look kKeyLooks[] = {Look::kLeft, Look::kRight,
+                                       Look::kGlanceLeft, Look::kGlanceRight};
+  Look KeyLook();
+  void EndKeyLooks();
   // The mirror glance the turn signal asks for, if any.
   Look SignalLook(const SPF_TruckData &truck);
 
@@ -71,8 +75,6 @@ private:
       settings::Default("settings.manual.manual_look.glance_right_fov_deg");
   float smoothing_time_ =
       settings::Default("settings.manual.manual_look.smoothing_time");
-  bool toggle_mode_ =
-      settings::DefaultBool("settings.manual.manual_look.toggle_mode");
   bool mirror_on_signal_ =
       settings::DefaultBool("settings.manual.manual_look.mirror_on_signal");
   bool require_stationary_ =
@@ -88,10 +90,7 @@ private:
   math::SpringDamper1D fov_intent_;
   math::SpringDamper1D fov_;
 
-  // Kept until every key is released, unless a combination comes on top.
-  Look pressed_ = Look::kCenter;
-  Look toggled_ = Look::kCenter;
-  Look toggled_before_press_ = Look::kCenter;
+  Look key_look_ = Look::kCenter;
   keybinds::PressEdge forward_edge_;
   // The look-forward key ends a signal's glance until the blinker is off.
   bool signal_dismissed_ = false;

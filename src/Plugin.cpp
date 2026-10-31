@@ -329,6 +329,7 @@ void OnUpdate() {
     // while we were away, and it still has to come out on the first frame
     // back. Zeroing it would pile the offset up on every view switch.
     ctx.ResetEffects();
+    ctx.camera_rig.OnInteriorEntered();
     ctx.was_interior_last_frame = true;
   }
 
@@ -346,6 +347,7 @@ void OnUpdate() {
   std::optional<CameraRig::Pose> pose = ctx.camera_rig.ReadPose(camera);
   if (!pose)
     return;
+  ctx.camera_rig.DetectRotationResetOnEntry(*pose);
   if (ctx.camera_rig.DetectNativeRecenter(camera, *pose))
     ctx.effects.Recenter();
   ctx.camera_rig.DetectExternalSeatWrite(*pose);

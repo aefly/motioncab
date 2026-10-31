@@ -148,7 +148,6 @@ inline constexpr Setting kAll[] = {
           20.0f, "%.0f deg"),
     Float("settings.manual.manual_look.smoothing_time", 0.35f, 0.0f, 0.7f,
           "%.2f s"),
-    Bool("settings.manual.manual_look.toggle_mode", false),
     Bool("settings.manual.manual_look.mirror_on_signal", false),
     Bool("settings.manual.manual_look.require_stationary", true),
     Bool("settings.manual.manual_look.ignore_after_moving_signal", true),
@@ -176,7 +175,6 @@ inline constexpr Setting kAll[] = {
           30.0f, "%.0f deg"),
     Float("settings.manual.blindspot_viewer.smoothing_time", 0.6f, 0.2f, 1.5f,
           "%.2f s"),
-    Bool("settings.manual.blindspot_viewer.toggle_mode", true),
     // manual.cabin_walk
     Bool("settings.manual.cabin_walk.enabled", true),
     Bool("settings.manual.cabin_walk.require_parking_brake", true),

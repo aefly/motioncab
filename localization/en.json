@@ -319,10 +319,6 @@
           "title": "Smoothing",
           "desc": "How smooth the look-and-return motion is."
         },
-        "toggle_mode": {
-          "title": "Toggle Mode",
-          "desc": "On: press once to look, press again to look back. Off: look while held, let go to look back."
-        },
         "mirror_on_signal": {
           "title": "Glance on Turn Signal",
           "desc": "Glance at the mirror on the side of the turn signal while it's on."
@@ -380,10 +376,6 @@
         "smoothing_time": {
           "title": "Smoothing",
           "desc": "How smooth the lean-and-return motion is."
-        },
-        "toggle_mode": {
-          "title": "Toggle Mode",
-          "desc": "On: press once to peek, press again to sit back. Off: peek while held, let go to sit back."
         }
       },
       "cabin_walk": {

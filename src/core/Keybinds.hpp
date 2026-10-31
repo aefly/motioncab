@@ -72,6 +72,18 @@ inline constexpr Action kPolledActions[] = {
     kZoom,     kBlindspotPeek, kStandSit,   kWalkForward, kWalkBack,
     kWalkLeft, kWalkRight,     kCrouch};
 
+// Side Look's looks start out as Hold in SPF's keybind settings; every other
+// action keeps SPF's default, Toggle.
+inline constexpr Action kHoldByDefault[] = {kLookLeft, kLookRight, kGlanceLeft,
+                                            kGlanceRight};
+
+inline bool IsHoldByDefault(const Action &action) {
+  for (const Action &hold : kHoldByDefault)
+    if (std::strcmp(hold.id, action.id) == 0)
+      return true;
+  return false;
+}
+
 // Keys the game drives with get the "manual" consume policy, so
 // CabinWalkEffect decides when the game stops seeing them.
 inline constexpr Action kWalkActions[] = {kWalkForward, kWalkBack, kWalkLeft,
@@ -84,23 +96,25 @@ inline bool IsWalkAction(const Action &action) {
   return false;
 }
 
-// The raw key state: the binding's own hold/toggle behavior is ignored, since
-// the effects implement their own.
+// The raw key state, the binding's Hold or Toggle ignored: for the keys an
+// effect times itself (a tap or a hold of the same key).
 inline bool IsHeld(SPF_KeyBinds_API *api, SPF_KeyBinds_Handle *handle,
                    const Action &action) {
   return api->Kbind_GetActionValue(handle, action.id) > 0.5f;
 }
 
-// Whether a combination (e.g. LB + D-pad left) is bound to the action. SPF
-// gives a combination priority over its keys bound alone only for callbacks,
-// so an effect polling several actions has to do it itself.
-inline bool HasChord(SPF_KeyBinds_API *api, SPF_KeyBinds_Handle *handle,
+// Whether the action is on, per the player's Hold or Toggle for each of its
+// bindings in SPF's keybind settings. SPF also gives a combination priority
+// over its keys bound alone.
+inline bool IsActive(SPF_KeyBinds_API *api, SPF_KeyBinds_Handle *handle,
                      const Action &action) {
-  const int count = api->Kbind_GetBindingCount(handle, action.id);
-  for (int i = 0; i < count; ++i)
-    if (api->Kbind_GetBindingType(handle, action.id, i) == SPF_BINDING_CHORD)
-      return true;
-  return false;
+  return api->Kbind_IsActionActive(handle, action.id);
+}
+
+// Turns the action off, a toggled one or a held one until pressed again.
+inline void EndActive(SPF_KeyBinds_API *api, SPF_KeyBinds_Handle *handle,
+                      const Action &action) {
+  api->Kbind_ResetActionState(handle, action.id);
 }
 
 // 0 or 1 for a key, the deflection for an analog axis.

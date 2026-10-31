@@ -35,7 +35,6 @@ void BlindspotViewerEffect::LoadSettings() {
   roll_deg_ = Float("roll_deg", roll_deg_);
   fov_offset_deg_ = Float("fov_offset_deg", fov_offset_deg_);
   smoothing_time_ = Float("smoothing_time", smoothing_time_);
-  toggle_mode_ = Bool("toggle_mode", toggle_mode_);
 
   intent_.SetTimeConstant(smoothing_time_ * kIntentFraction);
   body_.SetTimeConstant(smoothing_time_ * kBodyFraction);
@@ -44,8 +43,9 @@ void BlindspotViewerEffect::LoadSettings() {
 }
 
 void BlindspotViewerEffect::Reset() {
-  peeking_ = false;
-  press_edge_.Reset();
+  if (keybinds_api_ && keybinds_handle_)
+    keybinds::EndActive(keybinds_api_, keybinds_handle_,
+                        keybinds::kBlindspotPeek);
   forward_edge_.Reset();
   intent_.Reset();
   body_.Reset();
@@ -58,18 +58,12 @@ HeadOffset BlindspotViewerEffect::Update(float dt, const SPF_TruckData &truck,
   if (!keybinds_api_ || !keybinds_handle_)
     return {};
 
-  const bool pressed = keybinds::IsHeld(keybinds_api_, keybinds_handle_,
-                                        keybinds::kBlindspotPeek);
-  const bool press_edge = press_edge_.Update(pressed);
-  if (!toggle_mode_)
-    peeking_ = false; // no stale toggle if the mode is switched back
-  else if (press_edge)
-    peeking_ = !peeking_;
   if (forward_edge_.Update(keybinds::IsHeld(keybinds_api_, keybinds_handle_,
                                             keybinds::kLookForward)))
-    peeking_ = false;
-
-  const bool want_peek = toggle_mode_ ? peeking_ : pressed;
+    keybinds::EndActive(keybinds_api_, keybinds_handle_,
+                        keybinds::kBlindspotPeek);
+  const bool want_peek = keybinds::IsActive(keybinds_api_, keybinds_handle_,
+                                            keybinds::kBlindspotPeek);
 
   // Two critically damped springs in a row: a slow start and a soft stop
   // like a real body's, with no overshoot to bounce back from.
