@@ -41,9 +41,13 @@ constexpr float kArriveMeters = 0.04f;
 constexpr float kArriveGain = 4.0f;
 constexpr float kCrouchSlowdown = 0.5f;
 constexpr float kHeightTime = 0.3f;
+// At walking speed. Slower, the steps shorten as well as slow down, so the
+// cadence drops with the square root of the speed rather than with it.
 constexpr float kStepMeters = 0.45f;
+constexpr float kMinStepShare = 0.45f;
 constexpr float kBobSwayRatio = 0.6f; // of the dip
 constexpr float kBobRollDegPerMeter = 40.0f;
+constexpr float kStepNodDeg = 0.35f;
 constexpr float kHoldRotationSeconds = 0.25f;
 // Standing on a seat, a tap sits there whatever the look.
 constexpr float kOverSpotMeters = 0.08f;
@@ -60,11 +64,40 @@ constexpr float kUprightRollSign = -1.0f;
 constexpr float kAwayYawLimitDeg = 270.0f;
 constexpr float kAwayDownLimitDeg = -80.0f;
 
-// Standing up leans the head forward over the feet and a bit down before
-// rising, and ends straight up.
-constexpr float kRiseLeanMeters = 0.12f;
-constexpr float kRiseDipMeters = 0.04f;
-constexpr float kRiseEndLiftMeters = 0.10f;
+// Out of a seat (kSeatExit), in one flowing move: the trunk
+// folds forward and the head dips, eyes on the floor, while the hips are
+// still on the seat; the legs then push up, the head carrying on forward
+// and drifting toward the aisle; the first sidestep out to it (past the
+// wheel, from the driver's) starts before the body is fully up. Shares
+// below are of the rise.
+constexpr float kSeatRiseForwardMeters = 0.15f;
+constexpr float kSeatRiseShiftMeters = 0.10f;
+constexpr float kSeatRiseDipMeters = 0.06f;
+constexpr float kSeatRiseDipEnd = 0.6f;
+constexpr float kSeatRiseLiftStart = 0.25f; // seat-off
+constexpr float kSeatRiseForwardEnd = 0.8f;
+// Sitting down, the player first comes forward within this share of the
+// steps, then sidesteps in. With no steps (the floor right beside the
+// seat), it takes this long, overlapping the lowering.
+constexpr float kSeatSitForwardShare = 0.35f;
+constexpr float kSeatSitForwardSeconds = 0.5f;
+constexpr float kSeatRiseLookDownDeg = 12.0f;
+constexpr float kSeatRiseLookDownPeak = 0.3f;
+constexpr float kSeatRiseSlowdown = 1.5f;
+// Closer than this, standing up ends on the floor already: no steps.
+constexpr float kMinStepOutMeters = 0.1f;
+constexpr float kStepOutSteps = 2.0f;
+constexpr float kStepOutSecondsPerStep = 0.6f;
+// The steps start this long before the body is fully up.
+constexpr float kStepOutOverlapSeconds = 0.2f;
+// Each step's footfall a little before its end, so the last one isn't lost
+// as the move ends: the walking bob's footfall is where its phase crosses
+// a quarter-turn.
+constexpr float kStepOutPhaseLead = 0.4f * kPi;
+constexpr float kStepOutLookDownDeg = 3.0f;
+// The share of each step's sideways move that comes in a surge as the foot
+// lands, the rest spread evenly so it never stops dead.
+constexpr float kStepSurgeShare = 0.6f;
 // Sitting down steps over at standing height first, then lowers from a bit
 // in front of and above the seat, settling back against the backrest.
 constexpr float kSitStepShare = 0.4f;
@@ -73,19 +106,26 @@ constexpr float kSitAboveMeters = 0.10f;
 // Moving between seats arcs over, more for a longer move.
 constexpr float kArcMeters = 0.05f;
 constexpr float kArcFullMeters = 0.6f;
-// At mid-move.
-constexpr float kRiseLookDownDeg = 8.0f;
+// At their peak, late sitting down, as the trunk folds over the lowering.
 constexpr float kSitLookDownDeg = 10.0f;
 constexpr float kDirectLookDownDeg = 4.0f;
+constexpr float kSitLookDownPeak = 0.6f;
 constexpr float kLeanRollDeg = 3.0f;
 // The view finishes turning a bit before the head gets there.
 constexpr float kTurnShare = 0.85f;
+// Getting up or down, the body moves over the feet (or the seat) before the
+// legs lift or lower it: the horizontal part leads the vertical one by this
+// share of the move.
+constexpr float kVerticalLagShare = 0.12f;
 
 float Clamp01(float t) { return std::clamp(t, 0.0f, 1.0f); }
 
-// 1 at mid-move, 0 at both ends with zero slope.
-float Bell(float t) {
-  const float s = std::sin(kPi * Clamp01(t));
+// 1 at `peak`, 0 at both ends with zero slope.
+float Bell(float t, float peak = 0.5f) {
+  t = Clamp01(t);
+  const float u =
+      t < peak ? 0.5f * t / peak : 0.5f + 0.5f * (t - peak) / (1.0f - peak);
+  const float s = std::sin(kPi * u);
   return s * s;
 }
 
@@ -154,7 +194,7 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
     } else if (unsafe || !enabled_) {
       if (enabled_)
         notice_ = Notice::kBackToWheel;
-      GoToWheel(unsafe ? kHurrySeconds : TransitionDuration(base_));
+      GoToWheel(unsafe ? kHurrySeconds : TransitionDuration(base_), unsafe);
     }
   }
 
@@ -192,24 +232,36 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
   const float speed = state_ == State::kWalking
                           ? std::hypot(vel_x_.value(), vel_z_.value())
                           : 0.0f;
-  const float amount =
-      std::clamp(bob_amount_.Update(speed / kWalkSpeed, dt), 0.0f, 1.0f);
+  const bool stepping_out = state_ == State::kTransition && SeatPath() &&
+                            seat_has_steps_ && progress_ >= seat_steps_begin_ &&
+                            progress_ <= seat_steps_end_;
+  const float amount = std::clamp(
+      bob_amount_.Update(stepping_out ? 1.0f : speed / kWalkSpeed, dt), 0.0f,
+      1.0f);
   const float phase_before = bob_phase_;
-  bob_phase_ = math::WrapPhase(bob_phase_ + speed * dt / kStepMeters * kPi);
+  if (stepping_out) {
+    // Timed on the move's steps, each one landing as it ends.
+    bob_phase_ = kStepOutSteps * kPi * seat_step_u_ - kStepOutPhaseLead;
+  } else {
+    const float step_meters =
+        kStepMeters *
+        std::clamp(std::sqrt(speed / kWalkSpeed), kMinStepShare, 1.0f);
+    bob_phase_ = math::WrapPhase(bob_phase_ + speed * dt / step_meters * kPi);
+  }
   // A footstep where the head dips lowest, where the phase's cosine changes
   // sign.
   if (amount > kMinStepSoundAmount &&
       (std::cos(phase_before) > 0.0f) != (std::cos(bob_phase_) > 0.0f))
     footsteps_.push_back(kFootstepVolume * amount);
   const float sway = kHeadBob * kBobSwayRatio * amount * std::sin(bob_phase_);
-  const float dip =
-      kHeadBob * amount * 0.5f * (1.0f - std::cos(2.0f * bob_phase_));
+  const float dip_share = 0.5f * (1.0f - std::cos(2.0f * bob_phase_));
+  const float dip = kHeadBob * amount * dip_share;
 
   HeadOffset offset;
   offset.pos_x = pos_.x - base_.x + sway * CameraX() * std::cos(base_yaw_);
   offset.pos_y = pos_.y - base_.y - dip;
   offset.pos_z = pos_.z - base_.z - sway * std::sin(base_yaw_);
-  offset.pitch = motion_pitch_deg_;
+  offset.pitch = motion_pitch_deg_ - kStepNodDeg * amount * dip_share;
   offset.roll = kBobRollDegPerMeter * kHeadBob * amount * std::sin(bob_phase_) +
                 motion_roll_deg_;
 
@@ -266,8 +318,15 @@ CabinWalkEffect::SpotPose CabinWalkEffect::SpotAt(Spot spot) const {
 
 CabinWalkEffect::Vec3 CabinWalkEffect::Approach(Spot spot) const {
   const Vec3 p = SpotAt(spot).pos;
-  return {std::clamp(p.x, layout_.floor_x_min, layout_.floor_x_max),
-          layout_.stand_y,
+  const auto floor_x = [&](float x) {
+    return std::clamp(x, layout_.floor_x_min, layout_.floor_x_max);
+  };
+  float x = floor_x(p.x);
+  // In the aisle, mirroring the driver's, so getting in or out takes the
+  // same sidesteps. The passenger seat is past the centerline, at +x.
+  if (spot == Spot::kPassenger)
+    x = std::min(x, floor_x(2.0f * centerline_x_ - floor_x(base_.x)));
+  return {x, layout_.stand_y,
           std::clamp(p.z, layout_.floor_z_min, layout_.floor_z_max)};
 }
 
@@ -359,21 +418,75 @@ void CabinWalkEffect::TryStandUp(const SPF_TruckData &truck,
 }
 
 void CabinWalkEffect::StandUp() {
-  const Vec3 to = Approach(spot_);
-  StartTransition(to, Path::kRise, TransitionDuration(to), State::kWalking,
-                  Spot::kDriver, false);
+  const Vec3 out = Approach(spot_);
+  const Vec3 f = Facing(spot_);
+  const Vec3 to{std::clamp(out.x + f.x * kSeatRiseForwardMeters,
+                           layout_.floor_x_min, layout_.floor_x_max),
+                out.y,
+                std::clamp(pos_.z + f.z * kSeatRiseForwardMeters,
+                           layout_.floor_z_min, layout_.floor_z_max)};
+  const float up_x = pos_.x + std::clamp(to.x - pos_.x, -kSeatRiseShiftMeters,
+                                         kSeatRiseShiftMeters);
+  const float rise_seconds =
+      kSeatRiseSlowdown * TransitionDuration(pos_, {up_x, to.y, to.z});
+  const bool steps = std::fabs(to.x - up_x) >= kMinStepOutMeters;
+  const float step_seconds = kStepOutSteps * kStepOutSecondsPerStep;
+  const float total = steps ? rise_seconds + step_seconds -
+                                  std::min(kStepOutOverlapSeconds, rise_seconds)
+                            : rise_seconds;
+  StartTransition(to, Path::kSeatExit, total, State::kWalking, Spot::kDriver,
+                  false);
+  // Up beside the seat, then out along x only: the steps keep the forward z.
+  seat_up_ = steps ? Vec3{up_x, to.y, to.z} : to;
+  seat_has_steps_ = steps;
+  seat_dip_meters_ = SeatDip(spot_);
+  seat_rise_begin_ = 0.0f;
+  seat_rise_end_ = rise_seconds / total;
+  seat_steps_begin_ = steps ? 1.0f - step_seconds / total : 1.0f;
+  seat_steps_end_ = 1.0f;
+  seat_step_u_ = 0.0f;
 }
 
 void CabinWalkEffect::SitAt(Spot spot) {
-  const Vec3 to = SpotAt(spot).pos;
-  StartTransition(to, Path::kSit, TransitionDuration(to), State::kSeated, spot,
-                  true);
+  walk_to_.reset();
+  // Getting up played backwards.
+  const Vec3 seat = SpotAt(spot).pos;
+  const Vec3 f = Facing(spot);
+  const float forward_z = std::clamp(seat.z + f.z * kSeatRiseForwardMeters,
+                                     layout_.floor_z_min, layout_.floor_z_max);
+  const float down_x =
+      seat.x +
+      std::clamp(pos_.x - seat.x, -kSeatRiseShiftMeters, kSeatRiseShiftMeters);
+  const bool steps = std::fabs(pos_.x - down_x) >= kMinStepOutMeters;
+  const Vec3 down{steps ? down_x : pos_.x, pos_.y, forward_z};
+  const float lower_seconds =
+      kSeatRiseSlowdown * TransitionDuration(down, seat);
+  const float lead_seconds =
+      steps ? kStepOutSteps * kStepOutSecondsPerStep : kSeatSitForwardSeconds;
+  const float total = lower_seconds + lead_seconds -
+                      std::min(kStepOutOverlapSeconds, lower_seconds);
+  StartTransition(seat, Path::kSeatEnter, total, State::kSeated, spot, true);
+  seat_up_ = down;
+  seat_has_steps_ = steps;
+  seat_dip_meters_ = SeatDip(spot);
+  seat_steps_begin_ = 0.0f;
+  seat_steps_end_ = steps ? lead_seconds / total : 0.0f;
+  seat_forward_begin_ = 0.0f;
+  seat_forward_end_ =
+      steps ? seat_steps_end_ * kSeatSitForwardShare : lead_seconds / total;
+  seat_rise_begin_ = 1.0f - lower_seconds / total;
+  seat_rise_end_ = 1.0f;
+  seat_step_u_ = 0.0f;
 }
 
-void CabinWalkEffect::GoToWheel(float duration) {
+void CabinWalkEffect::GoToWheel(float duration, bool hurry) {
   walk_to_.reset();
   // From standing, it's sitting down; from another seat, moving over.
   const bool standing = state_ == State::kWalking;
+  if (standing && !hurry) {
+    SitAt(Spot::kDriver);
+    return;
+  }
   StartTransition(base_, standing ? Path::kSit : Path::kDirect, duration,
                   State::kSeated, Spot::kDriver, true);
 }
@@ -399,18 +512,16 @@ void CabinWalkEffect::StartTransition(const Vec3 &to, Path path, float duration,
   turn_ = turn;
   yaw_from_ = WrapYaw(base_yaw_);
   pitch_from_ = base_pitch_;
+  if (path == Path::kSeatExit || path == Path::kSeatEnter)
+    bob_phase_ = -kStepOutPhaseLead;
 
   auto facing = [&](Spot spot) { return Facing(spot); };
   const float dx = to.x - from_.x, dy = to.y - from_.y, dz = to.z - from_.z;
   const float horizontal = std::hypot(dx, dz);
   switch (path) {
-  case Path::kRise: {
-    const Vec3 f = facing(spot_);
-    ctrl1_ = {from_.x + f.x * kRiseLeanMeters, from_.y - kRiseDipMeters,
-              from_.z + f.z * kRiseLeanMeters};
-    ctrl2_offset_ = {0.0f, -kRiseEndLiftMeters, 0.0f};
-    break;
-  }
+  case Path::kSeatExit:
+  case Path::kSeatEnter:
+    break; // keyframed in UpdateTransition
   case Path::kSit: {
     const Vec3 f = facing(after_spot);
     ctrl1_ = {from_.x + dx * kSitStepShare, from_.y,
@@ -463,6 +574,53 @@ CabinWalkEffect::Vec3 CabinWalkEffect::Bezier(const Vec3 &p0, const Vec3 &p1,
           a * p0.z + b * p1.z + c * p2.z + d * p3.z};
 }
 
+float CabinWalkEffect::SeatDip(Spot spot) {
+  return spot == Spot::kBunkSit ? 0.0f : kSeatRiseDipMeters;
+}
+
+float CabinWalkEffect::SeatRise(float t) const {
+  const float span = seat_rise_end_ - seat_rise_begin_;
+  const float r = span > 0.0f ? Clamp01((t - seat_rise_begin_) / span) : 1.0f;
+  return path_ == Path::kSeatEnter ? 1.0f - r : r;
+}
+
+CabinWalkEffect::Vec3 CabinWalkEffect::SeatPose(float t) {
+  const bool entering = path_ == Path::kSeatEnter;
+  const Vec3 &seat = entering ? to_ : from_;
+  const Vec3 &floor = entering ? from_ : to_;
+  const Vec3 &up = seat_up_;
+  // How far from `up` toward the floor the steps have taken the body, and
+  // the forward part of it.
+  float out = 0.0f, out_z = 0.0f;
+  if (seat_has_steps_) {
+    seat_step_u_ = Clamp01((t - seat_steps_begin_) /
+                           (seat_steps_end_ - seat_steps_begin_));
+    const float steps = seat_step_u_ * kStepOutSteps;
+    const float step = std::min(std::floor(steps), kStepOutSteps - 1.0f);
+    const float surges =
+        (step + math::SmoothStep(Clamp01(steps - step))) / kStepOutSteps;
+    const float stepped =
+        Lerp(SmootherStep(seat_step_u_), surges, kStepSurgeShare);
+    out = entering ? 1.0f - stepped : stepped;
+  }
+  out_z = out;
+  if (entering) {
+    const float span = seat_forward_end_ - seat_forward_begin_;
+    out_z = span > 0.0f ? 1.0f - SmootherStep((t - seat_forward_begin_) / span)
+                        : 0.0f;
+  }
+  const float rise = SeatRise(t);
+  return {seat.x + (up.x - seat.x) * SmootherStep(rise) +
+              (floor.x - up.x) * out,
+          Lerp(seat.y, up.y,
+               SmootherStep((rise - kSeatRiseLiftStart) /
+                            (1.0f - kSeatRiseLiftStart))) -
+              seat_dip_meters_ * Bell(rise / kSeatRiseDipEnd) +
+              (floor.y - up.y) * out,
+          Lerp(seat.z, up.z, SmootherStep(rise / kSeatRiseForwardEnd)) +
+              (floor.z - up.z) * out_z};
+}
+
 void CabinWalkEffect::UpdateTransition(float dt, SPF_Camera_API *camera) {
   progress_ = std::min(1.0f, progress_ + dt / duration_);
   const float t = progress_;
@@ -472,12 +630,28 @@ void CabinWalkEffect::UpdateTransition(float dt, SPF_Camera_API *camera) {
 
   const Vec3 ctrl2{to_.x + ctrl2_offset_.x, to_.y + ctrl2_offset_.y,
                    to_.z + ctrl2_offset_.z};
-  pos_ = Bezier(from_, ctrl1_, ctrl2, to_, SmootherStep(t));
+  if (path_ == Path::kDirect) {
+    pos_ = Bezier(from_, ctrl1_, ctrl2, to_, SmootherStep(t));
+  } else if (SeatPath()) {
+    pos_ = SeatPose(t);
+  } else {
+    const float span = 1.0f - kVerticalLagShare;
+    const Vec3 lead = Bezier(from_, ctrl1_, ctrl2, to_, SmootherStep(t / span));
+    const Vec3 lag = Bezier(from_, ctrl1_, ctrl2, to_,
+                            SmootherStep((t - kVerticalLagShare) / span));
+    pos_ = {lead.x, lag.y, lead.z};
+  }
 
-  const float look_down = path_ == Path::kRise  ? kRiseLookDownDeg
-                          : path_ == Path::kSit ? kSitLookDownDeg
-                                                : kDirectLookDownDeg;
-  motion_pitch_deg_ = -look_down * Bell(t);
+  float look_down = kDirectLookDownDeg, peak = 0.5f;
+  if (path_ == Path::kSit) {
+    look_down = kSitLookDownDeg;
+    peak = kSitLookDownPeak;
+  }
+  motion_pitch_deg_ = -look_down * Bell(t, peak);
+  if (SeatPath())
+    motion_pitch_deg_ =
+        -kSeatRiseLookDownDeg * Bell(SeatRise(t), kSeatRiseLookDownPeak) -
+        (seat_has_steps_ ? kStepOutLookDownDeg * Bell(seat_step_u_) : 0.0f);
   motion_roll_deg_ = kLeanRollDeg * lean_side_ * Bell(t);
 
   if (turn_) {

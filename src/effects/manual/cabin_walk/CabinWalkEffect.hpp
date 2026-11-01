@@ -94,8 +94,10 @@ public:
 
 private:
   enum class State { kSeated, kTransition, kWalking };
-  // kDirect moves between two seated spots.
-  enum class Path { kRise, kSit, kDirect };
+  // kDirect moves between two seated spots. kSeatExit gets up from a seat
+  // (sidestepping out to the aisle from a front one), kSeatEnter plays it
+  // backwards. kSit is only for a hurried drop back into the driver's seat.
+  enum class Path { kSit, kDirect, kSeatExit, kSeatEnter };
 
   struct Vec3 {
     float x, y, z;
@@ -135,7 +137,16 @@ private:
                   SPF_Camera_API *camera);
   void StandUp();
   void SitAt(Spot spot);
-  void GoToWheel(float duration);
+  // Sent back in a hurry, it drops into the seat without the steps.
+  void GoToWheel(float duration, bool hurry = false);
+  bool SeatPath() const {
+    return path_ == Path::kSeatExit || path_ == Path::kSeatEnter;
+  }
+  // How far up from the seat at `t` along the move, 0..1.
+  float SeatRise(float t) const;
+  // The bunk sits low already: dipping below it reads as sinking too far.
+  static float SeatDip(Spot spot);
+  Vec3 SeatPose(float t);
   void StartTransition(const Vec3 &to, Path path, float duration, State after,
                        Spot after_spot, bool turn);
   float TransitionDuration(const Vec3 &to) const {
@@ -189,6 +200,15 @@ private:
   // The second control point is relative to to_, which follows a seat that
   // may move.
   Vec3 ctrl1_{}, ctrl2_offset_{};
+  // kSeatExit/kSeatEnter: standing beside the seat, between the rise and
+  // the steps, and the overlapping shares of the move each part takes.
+  Vec3 seat_up_{};
+  bool seat_has_steps_ = false;
+  float seat_dip_meters_ = 0.0f;
+  float seat_rise_begin_ = 0.0f, seat_rise_end_ = 1.0f;
+  float seat_steps_begin_ = 1.0f, seat_steps_end_ = 1.0f;
+  float seat_forward_begin_ = 0.0f, seat_forward_end_ = 0.0f;
+  float seat_step_u_ = 0.0f;
   // -1 (left) to 1 (right) relative to the view, for leaning into the move.
   float lean_side_ = 0.0f;
   // Looking down at where the body steps or sits, leaning into the move.
