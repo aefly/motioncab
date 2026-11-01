@@ -25,6 +25,7 @@
   <a href="#building">Building</a> •
   <a href="#project-structure">Project Structure</a> •
   <a href="#contributing">Contributing</a> •
+  <a href="#roadmap">Roadmap</a> •
   <a href="#license">License</a>
 </p>
 
@@ -282,6 +283,11 @@ Bug reports, feature requests, pull requests and translation fixes are
 welcome — see [CONTRIBUTING.md](./CONTRIBUTING.md) for build instructions,
 coding standards, how to improve a translation or add a language, and
 how to submit a change.
+
+## Roadmap
+
+The [roadmap](./ROADMAP.md) lists what is in development and what is
+planned next.
 
 ## License
 
