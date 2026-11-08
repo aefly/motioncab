@@ -51,11 +51,11 @@ void DrawValueRow(SPF_UI_API *ui, CabinWalkEffect &walk, const char *name,
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableNextColumn();
   if (indent)
-    ui->UI_Indent(12.0f);
+    ui->UI_Indent(Px(ui, 12.0f));
   ui->UI_AlignTextToFramePadding();
   ui->UI_Text(label.c_str());
   if (indent)
-    ui->UI_Unindent(12.0f);
+    ui->UI_Unindent(Px(ui, 12.0f));
   ui->UI_TableNextColumn();
   float shown = value * scale;
   const float shipped = walk.shipped_layout().*field.member;
@@ -95,7 +95,7 @@ void DrawGoToRow(SPF_UI_API *ui, CabinWalkEffect &walk) {
   for (const auto &[spot, group] : {std::pair{Spot::kPassenger, "passenger"},
                                     std::pair{Spot::kBunkSit, "bunk"}}) {
     if (!first)
-      ui->UI_SameLine(0.0f, 6.0f);
+      ui->UI_SameLine(0.0f, Px(ui, 6.0f));
     first = false;
     const std::string go =
         WithIcon(ICON_FA_PERSON_WALKING,
@@ -115,10 +115,10 @@ void DrawUsableRow(SPF_UI_API *ui, CabinWalkEffect &walk, Spot spot) {
       spot == Spot::kPassenger ? layout.has_passenger : layout.has_bunk;
   ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
   ui->UI_TableNextColumn();
-  ui->UI_Indent(12.0f);
+  ui->UI_Indent(Px(ui, 12.0f));
   ui->UI_AlignTextToFramePadding();
   ui->UI_Text(loc::Tr("ui.cabin_walk.layout.usable"));
-  ui->UI_Unindent(12.0f);
+  ui->UI_Unindent(Px(ui, 12.0f));
   ui->UI_TableNextColumn();
   const std::string id = std::string("###usable_") +
                          (spot == Spot::kPassenger ? "passenger" : "bunk");
@@ -137,7 +137,7 @@ void DrawTruckRow(SPF_UI_API *ui, CabinWalkEffect &walk) {
   ui->UI_TableNextColumn();
   ui->UI_AlignTextToFramePadding();
   ui->UI_Text(WithIcon(ICON_FA_TRUCK, walk.truck_name()).c_str());
-  ui->UI_SameLine(0.0f, 12.0f);
+  ui->UI_SameLine(0.0f, Px(ui, 12.0f));
   const std::string reset = WithIcon(ICON_FA_ARROW_ROTATE_LEFT,
                                      loc::Tr("ui.cabin_walk.layout.reset")) +
                             "###reset_cabin_layout";

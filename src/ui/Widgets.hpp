@@ -16,6 +16,10 @@ inline constexpr float kAccentHoverR = 0x8A / 255.0f;
 inline constexpr float kAccentHoverG = 0x10 / 255.0f;
 inline constexpr float kAccentHoverB = 0x10 / 255.0f;
 
+// `px` pixels at 1080p, scaled like the framework's own UI: with the
+// resolution and the player's UI scale setting.
+inline float Px(SPF_UI_API *ui, float px) { return px * ui->UI_GetScale(); }
+
 // Both return how many to pop.
 int PushBrandColors(SPF_UI_API *ui);
 int PushBrandRounding(SPF_UI_API *ui);

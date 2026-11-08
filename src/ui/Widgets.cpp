@@ -64,13 +64,13 @@ int PushBrandColors(SPF_UI_API *ui) {
 }
 
 int PushBrandRounding(SPF_UI_API *ui) {
-  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_WINDOW_ROUNDING, 8.0f);
-  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_CHILD_ROUNDING, 8.0f);
-  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_POPUP_ROUNDING, 8.0f);
-  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_FRAME_ROUNDING, 4.0f);
-  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_GRAB_ROUNDING, 4.0f);
-  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_TAB_ROUNDING, 6.0f);
-  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_SCROLLBAR_ROUNDING, 6.0f);
+  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_WINDOW_ROUNDING, Px(ui, 8.0f));
+  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_CHILD_ROUNDING, Px(ui, 8.0f));
+  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_POPUP_ROUNDING, Px(ui, 8.0f));
+  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_FRAME_ROUNDING, Px(ui, 4.0f));
+  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_GRAB_ROUNDING, Px(ui, 4.0f));
+  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_TAB_ROUNDING, Px(ui, 6.0f));
+  ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_SCROLLBAR_ROUNDING, Px(ui, 6.0f));
   return 7;
 }
 
@@ -80,7 +80,7 @@ StepperEdit StepperFloat(SPF_UI_API *ui, const char *id, float *value,
   StepperEdit edit = StepperEdit::kNone;
   // Square buttons at both ends.
   const float button = ui->UI_GetFrameHeight();
-  constexpr float kGap = 4.0f;
+  const float gap = Px(ui, 4.0f);
   float avail_w = 0.0f, avail_h = 0.0f;
   ui->UI_GetContentRegionAvail(&avail_w, &avail_h);
   ui->UI_PushID_Str(id);
@@ -91,8 +91,9 @@ StepperEdit StepperFloat(SPF_UI_API *ui, const char *id, float *value,
     }
   };
   step_button(ICON_FA_MINUS "###minus", -1.0f);
-  ui->UI_SameLine(0.0f, kGap);
-  ui->UI_SetNextItemWidth(std::max(avail_w - 2.0f * (button + kGap), 40.0f));
+  ui->UI_SameLine(0.0f, gap);
+  ui->UI_SetNextItemWidth(
+      std::max(avail_w - 2.0f * (button + gap), Px(ui, 40.0f)));
   const bool moved =
       drag ? ui->UI_DragFloat("###value", value, (max - min) / 500.0f, min, max,
                               format, SPF_SLIDER_FLAG_ALWAYS_CLAMP)
@@ -108,7 +109,7 @@ StepperEdit StepperFloat(SPF_UI_API *ui, const char *id, float *value,
   }
   if (tooltip)
     ui->UI_SetItemTooltip(tooltip);
-  ui->UI_SameLine(0.0f, kGap);
+  ui->UI_SameLine(0.0f, gap);
   step_button(ICON_FA_PLUS "###plus", 1.0f);
   ui->UI_PopID();
   return edit;
@@ -156,12 +157,12 @@ void DrawSectionTitle(SPF_UI_API *ui, const char *title) {
   constexpr uint32_t kRuleColor =
       (110u << 24) | (140u << 16) | (140u << 8) | 140u;
   const float y = (min_y + max_y) * 0.5f;
-  ui->UI_DrawList_AddLine(ui->UI_GetWindowDrawList(), max_x + 8.0f, y,
+  ui->UI_DrawList_AddLine(ui->UI_GetWindowDrawList(), max_x + Px(ui, 8.0f), y,
                           start_x + avail_x, y, kRuleColor, 1.0f);
 }
 
 void DrawModifiedMark(SPF_UI_API *ui, const char *tooltip) {
-  ui->UI_SameLine(0.0f, kModifiedMarkSpacing);
+  ui->UI_SameLine(0.0f, Px(ui, kModifiedMarkSpacing));
   ui->UI_TextColored(1.0f, 0.6f, 0.0f, 1.0f, "*");
   if (tooltip)
     ui->UI_SetItemTooltip(tooltip);
@@ -170,7 +171,7 @@ void DrawModifiedMark(SPF_UI_API *ui, const char *tooltip) {
 float ModifiedMarkWidth(SPF_UI_API *ui) {
   float w = 0.0f, h = 0.0f;
   ui->UI_CalcTextSize("*", &w, &h);
-  return w + kModifiedMarkSpacing;
+  return w + Px(ui, kModifiedMarkSpacing);
 }
 
 void DrawWrappedHint(SPF_UI_API *ui, const char *text) {
@@ -202,11 +203,11 @@ void DrawKeybindButtons(SPF_UI_API *ui, const char *action) {
                       0.0f))
       kb->Kbind_OpenRebindPopup(ctx.keybinds_handle, action, i);
     ui->UI_SetItemTooltip(loc::Tr("ui.keybind.rebind_tip"));
-    ui->UI_SameLine(0.0f, 4.0f);
+    ui->UI_SameLine(0.0f, Px(ui, 4.0f));
     if (ui->UI_Button(ICON_FA_GEAR, 0.0f, 0.0f))
       kb->Kbind_OpenBindingDetailsPopup(ctx.keybinds_handle, action, i);
     ui->UI_SetItemTooltip(loc::Tr("ui.keybind.options_tip"));
-    ui->UI_SameLine(0.0f, 12.0f);
+    ui->UI_SameLine(0.0f, Px(ui, 12.0f));
     ui->UI_PopID();
   }
   if (ui->UI_Button(ICON_FA_PLUS "##add", 0.0f, 0.0f))
@@ -237,7 +238,7 @@ bool ConfirmPopup(SPF_UI_API *ui, const std::string &title, const char *message,
   const bool confirmed = MutedButton(ui, confirm_label);
   if (confirmed)
     ui->UI_CloseCurrentPopup();
-  ui->UI_SameLine(0.0f, 8.0f);
+  ui->UI_SameLine(0.0f, Px(ui, 8.0f));
   if (MutedButton(ui, loc::Tr("ui.cancel")))
     ui->UI_CloseCurrentPopup();
   ui->UI_EndPopup();

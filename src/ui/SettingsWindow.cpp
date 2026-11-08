@@ -186,10 +186,13 @@ void FitWindowSize(SPF_UI_API *ui, const TabMetrics &m) {
   if (vp_h > 0.0f)
     target_h = std::min(target_h, std::floor(vp_h));
 
-  // Later launches keep whatever width the player left.
+  // Later launches keep whatever width the player left. The framework opens
+  // the window at its default width times the UI scale, which ImGui
+  // truncates to whole pixels.
+  const float default_w =
+      std::floor(static_cast<float>(kWindowWidth) * ui->UI_GetScale());
   const bool first_launch =
-      s_first_frame &&
-      std::fabs(win_w - static_cast<float>(kWindowWidth)) < 0.5f;
+      s_first_frame && std::fabs(win_w - default_w) < 0.5f;
   s_first_frame = false;
   const bool snap = LanguageSwitched(s_seen_lang) || first_launch;
 

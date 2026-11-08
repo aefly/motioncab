@@ -68,13 +68,13 @@ void DestroyLogoTexture(SPF_UI_API *ui) {
 }
 
 void DrawAboutTab(SPF_UI_API *ui) {
-  ui->UI_Dummy(0.0f, 6.0f);
+  ui->UI_Dummy(0.0f, Px(ui, 6.0f));
 
   const LogoTexture &logo = GetLogoTexture(ui);
   if (logo.id && logo.width > 0 && logo.height > 0) {
-    constexpr float kLogoBox = 64.0f; // aspect ratio kept
+    const float logo_box = Px(ui, 64.0f); // aspect ratio kept
     const float scale =
-        kLogoBox / static_cast<float>(std::max(logo.width, logo.height));
+        logo_box / static_cast<float>(std::max(logo.width, logo.height));
     const float w = static_cast<float>(logo.width) * scale;
     float avail_x = 0.0f, avail_y = 0.0f;
     ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
@@ -116,19 +116,19 @@ void DrawAboutTab(SPF_UI_API *ui) {
   ui->UI_Spacing();
 
   // Two buttons per row, filling the tab's width.
-  constexpr float kButtonGap = 8.0f;
+  const float button_gap = Px(ui, 8.0f);
   float avail_x = 0.0f, avail_y = 0.0f;
   ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
-  const float button_w = (avail_x - kButtonGap) * 0.5f;
+  const float button_w = (avail_x - button_gap) * 0.5f;
 
   LinkButton(ui, WithIcon(ICON_FA_GLOBE, loc::Tr("ui.about.website")), button_w,
              links::kWebsite, loc::Tr("ui.about.website_desc"));
-  ui->UI_SameLine(0.0f, kButtonGap);
+  ui->UI_SameLine(0.0f, button_gap);
   LinkButton(ui, WithIcon(ICON_FA_DISCORD, loc::Tr("ui.about.discord")),
              button_w, links::kDiscord, loc::Tr("ui.about.discord_desc"));
   LinkButton(ui, WithIcon(ICON_FA_GITHUB, loc::Tr("ui.about.github")), button_w,
              links::kGithub, loc::Tr("ui.about.github_desc"));
-  ui->UI_SameLine(0.0f, kButtonGap);
+  ui->UI_SameLine(0.0f, button_gap);
   LinkButton(ui, WithIcon(ICON_FA_YOUTUBE, loc::Tr("ui.about.youtube")),
              button_w, links::kYoutube, loc::Tr("ui.about.youtube_desc"));
 

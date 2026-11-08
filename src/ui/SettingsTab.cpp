@@ -49,7 +49,7 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
   ui->UI_InputTextWithHint("##profile_name", loc::Tr("ui.profiles.name_hint"),
                            profile_name_buf, sizeof(profile_name_buf),
                            SPF_INPUT_TEXT_FLAG_NONE);
-  ui->UI_SameLine(0.0f, 8.0f);
+  ui->UI_SameLine(0.0f, Px(ui, 8.0f));
   static std::chrono::steady_clock::time_point save_as_confirm_until{};
   const auto confirm_save_as = [] {
     save_as_confirm_until =
@@ -150,7 +150,7 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
 
     const std::string &selected_name = profile_names[selected_profile];
 
-    ui->UI_SameLine(0.0f, 8.0f);
+    ui->UI_SameLine(0.0f, Px(ui, 8.0f));
     static std::chrono::steady_clock::time_point save_confirm_until{};
     const bool save_confirmed =
         std::chrono::steady_clock::now() < save_confirm_until;
@@ -167,7 +167,7 @@ void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
     ui->UI_EndDisabled();
     ui->UI_SetItemTooltip(loc::Tr("ui.profiles.save_tip"));
 
-    ui->UI_SameLine(0.0f, 4.0f);
+    ui->UI_SameLine(0.0f, Px(ui, 4.0f));
     const std::string delete_label =
         WithIcon(ICON_FA_TRASH, loc::Tr("ui.profiles.delete")) + "###delete";
     static std::string pending_delete;
@@ -243,13 +243,12 @@ void DrawSettingsTab(SPF_UI_API *ui, SPF_Config_API *cfg,
   DrawSectionTitle(ui, loc::Tr("ui.keybind.section"));
   // The keybind button and the profiles' buttons line up just past the name
   // field, which widens if the translated keybind label needs the room.
-  constexpr float kGap = 8.0f;
+  const float gap = Px(ui, 8.0f);
   const char *toggle_label = loc::Tr("ui.keybind.toggle_window");
   float label_w = 0.0f, label_h = 0.0f;
   ui->UI_CalcTextSize(toggle_label, &label_w, &label_h);
-  const float field_w = std::max(180.0f, label_w);
-  DrawKeybindRowAt(ui, keybinds::kToggleWindow.id, toggle_label,
-                   field_w + kGap);
+  const float field_w = std::max(Px(ui, 180.0f), label_w);
+  DrawKeybindRowAt(ui, keybinds::kToggleWindow.id, toggle_label, field_w + gap);
 
   ui->UI_Spacing();
   DrawProfilesSection(ui, field_w);

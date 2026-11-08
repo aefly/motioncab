@@ -80,7 +80,7 @@ bool DrawEnabled(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
   bool value = cfg->Cfg_GetBool(h, setting.key, setting.default_bool());
   if (DrawToggleCell(ui, setting.key, &value, loc::Tr("settings.enabled_desc")))
     cfg->Cfg_SetBool(h, setting.key, value);
-  ui->UI_SameLine(0.0f, 8.0f);
+  ui->UI_SameLine(0.0f, Px(ui, 8.0f));
   ui->UI_Text(loc::Tr("ui.enabled"));
   return value;
 }
@@ -415,13 +415,13 @@ bool DrawSearchBar(SPF_UI_API *ui) {
 
   float avail_x = 0.0f, avail_y = 0.0f;
   ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
-  constexpr float kButtonGap = 8.0f;
+  const float button_gap = Px(ui, 8.0f);
   float clear_w = 0.0f;
   if (was_searching) {
     float pad_x = 0.0f, pad_y = 0.0f, text_w = 0.0f, text_h = 0.0f;
     ui->UI_Style_GetFramePadding(ui->UI_GetStyle(), &pad_x, &pad_y);
     ui->UI_CalcTextSize(ICON_FA_XMARK, &text_w, &text_h);
-    clear_w = text_w + pad_x * 2.0f + kButtonGap;
+    clear_w = text_w + pad_x * 2.0f + button_gap;
   }
 
   const std::string hint =
@@ -430,7 +430,7 @@ bool DrawSearchBar(SPF_UI_API *ui) {
   ui->UI_InputTextWithHint("##search", hint.c_str(), g_search, sizeof(g_search),
                            SPF_INPUT_TEXT_FLAG_NONE);
   if (was_searching) {
-    ui->UI_SameLine(0.0f, kButtonGap);
+    ui->UI_SameLine(0.0f, button_gap);
     if (MutedButton(ui, ICON_FA_XMARK "##clear_search"))
       g_search[0] = '\0';
     ui->UI_SetItemTooltip(loc::Tr("ui.search.clear_tip"));
