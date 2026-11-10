@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./.img/logo.png" alt="Logo" width="128" />
+  <img src="./.img/logo.svg" alt="Logo" width="128" />
 </p>
 
 <h1 align="center">MotionCab</h1>
