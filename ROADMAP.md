@@ -8,11 +8,6 @@ What has already shipped is in the [README][readme] and in the
 Have an idea that isn't listed? Open a [feature request][issues] or come
 talk about it on [Discord][discord].
 
-<!--
-  motioncab.com/roadmap is built from this file: keep the two section
-  headings below as they are, and one feature name per bullet.
--->
-
 ## In development
 
 - Better Cabin Walk animations

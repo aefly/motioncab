@@ -286,7 +286,7 @@ how to submit a change.
 
 ## Roadmap
 
-The [roadmap](./ROADMAP.md) lists what is in development and what is
+The [ROADMAP.md](./ROADMAP.md) lists what is in development and what is
 planned next.
 
 ## License
