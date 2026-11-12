@@ -35,6 +35,7 @@ void EffectManager::ResetAll() {
     slot.pause_reset = false;
   }
   seat_fade_ = at_wheel_ ? 1.0f : 0.0f;
+  zoom_fade_ = zoomed_ ? 0.0f : 1.0f;
   recenter_glide_ = 0.0f;
 }
 
@@ -62,6 +63,10 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
   const float step = dt / kFadeSeconds;
   seat_fade_ = at_wheel_ ? std::min(1.0f, seat_fade_ + step)
                          : std::max(0.0f, seat_fade_ - step);
+  const float zoom_step = dt / kZoomFadeSeconds;
+  zoom_fade_ = zoomed_ ? std::max(0.0f, zoom_fade_ - zoom_step)
+                       : std::min(1.0f, zoom_fade_ + zoom_step);
+  const float zoom_weight = math::SmoothStep(zoom_fade_);
   HeadOffset total;
   for (auto &slot : effects_) {
     Effect &effect = *slot.effect;
@@ -98,6 +103,10 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
     }
     slot.pause_reset = false;
     context_weight *= math::SmoothStep(slot.pause_fade);
+    // Still updated while zoomed, unlike the fades above: a zoom is brief,
+    // and the motion comes back where it would be rather than from rest.
+    if (!effect.IsPlayerTriggered())
+      context_weight *= zoom_weight;
     const HeadOffset contribution = effect.Update(dt, truck, controls);
     if (!IsFinite(contribution)) {
       // Dropped and restarted from rest, so one bad frame doesn't stick.

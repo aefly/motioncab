@@ -46,6 +46,11 @@ public:
   // player elsewhere.
   virtual bool NeedsDriverSeat() const { return false; }
 
+  // A look the player asked for (Side Look, Blindspot Viewer) rather than
+  // motion of its own: it keeps playing while zoomed in, when the others
+  // fade out, since a narrow FOV magnifies every shake.
+  virtual bool IsPlayerTriggered() const { return false; }
+
   // "settings.<group>.<effect>", as conflicts::kPauses names it.
   virtual std::string_view Id() const = 0;
 
