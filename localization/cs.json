@@ -50,7 +50,7 @@
     },
     "zoom": {
       "title": "Přiblížení",
-      "desc": "Podržením plynule přiblížíte; uvolněním se pohled postupně vrátí do normálu."
+      "desc": "Plynule přiblíží a pak se plynule vrátí do normálu."
     },
     "blindspot_viewer": {
       "title": "Pohled do mrtvého úhlu",
@@ -334,6 +334,7 @@
       },
       "manual_zoom": {
         "title": "Ruční přiblížení",
+        "hint": "Tato klávesa je nezávislá na herní klávese „Přiblížit vnitřní kameru“.",
         "zoom_fov_deg": {
           "title": "Úroveň přiblížení",
           "desc": "Jak moc se pohled přiblíží při držení klávesy přiblížení. Nižší = větší přiblížení."

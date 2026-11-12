@@ -50,7 +50,7 @@
     },
     "zoom": {
       "title": "Zoom",
-      "desc": "Segure para aproximar suavemente; solte para voltar aos poucos à visão normal."
+      "desc": "Aproxima suavemente e depois volta suavemente ao normal."
     },
     "blindspot_viewer": {
       "title": "Visão do ponto cego",
@@ -334,6 +334,7 @@
       },
       "manual_zoom": {
         "title": "Zoom manual",
+        "hint": "Esta tecla é separada da tecla nativa do jogo \"Zoom na câmera interna\".",
         "zoom_fov_deg": {
           "title": "Nível de zoom",
           "desc": "Quanto a visão se aproxima enquanto você segura a tecla de zoom. Mais baixo = mais zoom."

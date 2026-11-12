@@ -50,7 +50,7 @@
     },
     "zoom": {
       "title": "Zoom",
-      "desc": "Gedrückt halten, um sanft heranzuzoomen; loslassen, um langsam zur Normalansicht zurückzukehren."
+      "desc": "Zoomt sanft heran und kehrt danach sanft zur normalen Ansicht zurück."
     },
     "blindspot_viewer": {
       "title": "Toter-Winkel-Sicht",
@@ -334,6 +334,7 @@
       },
       "manual_zoom": {
         "title": "Manueller Zoom",
+        "hint": "Diese Taste ist unabhängig von der spieleigenen Taste „Zoom der Innenansicht“.",
         "zoom_fov_deg": {
           "title": "Zoomstufe",
           "desc": "Wie stark herangezoomt wird, solange die Zoomtaste gehalten wird. Niedriger = stärker gezoomt."

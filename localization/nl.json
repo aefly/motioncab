@@ -50,7 +50,7 @@
     },
     "zoom": {
       "title": "Zoom",
-      "desc": "Ingedrukt houden om vloeiend in te zoomen; loslaten om geleidelijk terug te keren naar normaal."
+      "desc": "Zoomt soepel in en keert daarna soepel terug naar normaal."
     },
     "blindspot_viewer": {
       "title": "Dode-hoekzicht",
@@ -334,6 +334,7 @@
       },
       "manual_zoom": {
         "title": "Handmatige zoom",
+        "hint": "Deze toets staat los van de standaardtoets 'Interieur zoom' van het spel.",
         "zoom_fov_deg": {
           "title": "Zoomniveau",
           "desc": "Hoe ver het beeld inzoomt zolang je de zoomtoets vasthoudt. Lager = verder ingezoomd."

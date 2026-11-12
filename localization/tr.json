@@ -50,7 +50,7 @@
     },
     "zoom": {
       "title": "Yakınlaştırma",
-      "desc": "Yumuşakça yakınlaştırmak için basılı tutun; yavaşça normale dönmek için bırakın."
+      "desc": "Yumuşakça yakınlaştırır, sonra yumuşakça normale döner."
     },
     "blindspot_viewer": {
       "title": "Kör nokta görüşü",
@@ -334,6 +334,7 @@
       },
       "manual_zoom": {
         "title": "Manuel yakınlaştırma",
+        "hint": "Bu tuş, oyunun \"İç Kamera Yakınlaştırma\" tuşundan bağımsızdır.",
         "zoom_fov_deg": {
           "title": "Yakınlaştırma seviyesi",
           "desc": "Yakınlaştırma tuşunu basılı tutarken görüntünün ne kadar yakınlaştığı. Düşük = daha fazla yakınlaştırma."

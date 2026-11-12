@@ -50,7 +50,7 @@
     },
     "zoom": {
       "title": "Przybliżenie",
-      "desc": "Przytrzymaj, aby płynnie przybliżyć; puść, aby stopniowo wrócić do normalnego widoku."
+      "desc": "Płynnie przybliża, a potem płynnie wraca do normy."
     },
     "blindspot_viewer": {
       "title": "Podgląd martwego pola",
@@ -334,6 +334,7 @@
       },
       "manual_zoom": {
         "title": "Ręczne przybliżenie",
+        "hint": "Ten klawisz jest niezależny od klawisza gry „Przybliżenie kamery wewnętrznej”.",
         "zoom_fov_deg": {
           "title": "Poziom przybliżenia",
           "desc": "Jak bardzo przybliża się widok, gdy trzymasz klawisz zoomu. Niżej = większe przybliżenie."

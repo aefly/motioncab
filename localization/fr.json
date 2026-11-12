@@ -50,7 +50,7 @@
     },
     "zoom": {
       "title": "Zoom",
-      "desc": "Maintenir pour zoomer en douceur ; relâcher pour revenir progressivement à la normale."
+      "desc": "Zoome en douceur, puis revient doucement à la normale."
     },
     "blindspot_viewer": {
       "title": "Vue angle mort",
@@ -334,6 +334,7 @@
       },
       "manual_zoom": {
         "title": "Zoom manuel",
+        "hint": "Cette touche est indépendante de la touche native « Zoom de la caméra intérieure » du jeu.",
         "zoom_fov_deg": {
           "title": "Niveau de zoom",
           "desc": "Niveau de zoom atteint en maintenant la touche. Plus bas = zoom plus fort."
