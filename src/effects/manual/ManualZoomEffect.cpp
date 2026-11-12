@@ -1,6 +1,7 @@
 #include "ManualZoomEffect.hpp"
 
 #include "core/Keybinds.hpp"
+#include "effects/manual/SideLookEffect.hpp"
 #include "math/Units.hpp"
 
 #include <algorithm>
@@ -36,16 +37,43 @@ void ManualZoomEffect::LoadConfig() {
   zoom_fov_deg_ = config_.Float("zoom_fov_deg", zoom_fov_deg_);
   smoothing_time_ = config_.Float("smoothing_time", smoothing_time_);
 
-  fov_spring_.SetTimeConstant(smoothing_time_);
+  // Two springs in a row, as Side Look: the first eases the zoom into motion,
+  // where a single one would start it at full speed.
+  fov_intent_.SetTimeConstant(smoothing_time_ *
+                              SideLookEffect::kIntentFraction);
+  fov_spring_.SetTimeConstant(smoothing_time_ * SideLookEffect::kHeadFraction);
 }
 
 void ManualZoomEffect::Reset() {
+  // A toggled zoom would come back on with the next frame otherwise.
+  if (keybinds_api_ && keybinds_handle_)
+    keybinds::EndActive(keybinds_api_, keybinds_handle_, keybinds::kZoom);
+  zoom_held_ = false;
   RestoreFov();
   // With a restore pending, the live FOV is still our zoomed one, not
   // something to sync from.
   if (!restore_pending_)
     has_synced_ = false;
   RestoreDynamicFov();
+}
+
+void ManualZoomEffect::ResetSprings(float fov) {
+  fov_intent_.Reset(fov);
+  fov_spring_.Reset(fov);
+}
+
+bool ManualZoomEffect::SettleRestore() {
+  if (!restore_pending_)
+    return true;
+  SetFov(base_fov_deg_);
+  float live = 0.0f;
+  if (!GetFov(&live) || std::fabs(live - base_fov_deg_) > 0.05f)
+    return false;
+  restore_pending_ = false;
+  fov_overridden_ = false;
+  ResetSprings(base_fov_deg_);
+  has_synced_ = true;
+  return true;
 }
 
 // Without this, a Reset() while zoomed (pause, view switch, alt-tab) would
@@ -128,45 +156,39 @@ void ManualZoomEffect::Update(float dt, SPF_Camera_API *camera_api) {
     return;
   camera_api_ = camera_api;
 
-  if (restore_pending_) {
-    SetFov(base_fov_deg_);
-    float live = 0.0f;
-    if (!GetFov(&live) || std::fabs(live - base_fov_deg_) > 0.05f)
-      return;
-    restore_pending_ = false;
-    fov_overridden_ = false;
-    fov_spring_.Reset(base_fov_deg_);
-    has_synced_ = true;
-  }
+  if (!SettleRestore())
+    return;
 
   if (!has_synced_) {
     // The getter can fail for a frame or two after cabin entry: retry
     // rather than keep 0 as the player's FOV.
     if (GetFov(&base_fov_deg_)) {
-      fov_spring_.Reset(base_fov_deg_);
+      ResetSprings(base_fov_deg_);
       has_synced_ = true;
     }
   }
 
   const bool zoom_held =
-      keybinds::IsHeld(keybinds_api_, keybinds_handle_, keybinds::kZoom);
+      keybinds::IsActive(keybinds_api_, keybinds_handle_, keybinds::kZoom);
+  zoom_held_ = zoom_held;
 
   // Not the live FOV: on a quick repeat press the spring hasn't settled
   // yet, and each press would ratchet the FOV to return to inward.
   const float target = zoom_held ? zoom_fov_deg_ : base_fov_deg_;
-  const float smoothed = fov_spring_.Update(target, dt);
+  const float smoothed = fov_spring_.Update(fov_intent_.Update(target, dt), dt);
 
   // Once settled, follow the live FOV instead of writing it, or we'd fight
   // any other change to it (the F4 slider).
   constexpr float kSettledEpsilonDeg = 0.05f;
-  if (!zoom_held && std::fabs(smoothed - base_fov_deg_) < kSettledEpsilonDeg) {
+  if (!zoom_held && std::fabs(smoothed - base_fov_deg_) < kSettledEpsilonDeg &&
+      std::fabs(fov_intent_.value() - base_fov_deg_) < kSettledEpsilonDeg) {
     if (fov_overridden_) {
       // Land exactly on the player's FOV before letting go: syncing from
       // the last write, a little short of it, would shift it on every zoom.
       SetFov(base_fov_deg_);
-      fov_spring_.Reset(base_fov_deg_);
+      ResetSprings(base_fov_deg_);
     } else if (GetFov(&base_fov_deg_)) {
-      fov_spring_.Reset(base_fov_deg_);
+      ResetSprings(base_fov_deg_);
     }
     UpdateDynamicFov(dt, false);
     fov_overridden_ = false;

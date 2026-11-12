@@ -9,10 +9,11 @@
 
 namespace motioncab {
 
-// Hold to zoom in, release to ease back. It has its own key: reacting to the
-// game's zoom key fought the game's own animation (doubled, or stuck
-// mid-zoom). It drives the FOV itself rather than through a HeadOffset, so
-// it isn't in the EffectManager.
+// Zooms in while its key is on (held or toggled, as set for the key in SPF),
+// then eases back. It has its own key: reacting to the game's zoom key
+// fought the game's own animation (doubled, or stuck mid-zoom). It drives the
+// FOV itself rather than through a HeadOffset, so it isn't in the
+// EffectManager.
 //
 // It works under the effects' FOV offset: otherwise a zoom started mid
 // Blindspot Viewer peek would take the peek's FOV as the player's own and
@@ -32,6 +33,12 @@ public:
 
   void RestoreDynamicFov();
   void RestoreFov();
+  // Keeps writing the player's FOV back until it takes; false meanwhile.
+  // Update() does it, but it doesn't run while the game is paused, which is
+  // when the game saves the truck's FOV (the zoom key can still be on then).
+  bool SettleRestore();
+  // The effects fade out meanwhile.
+  bool zooming() const { return enabled_ && zoom_held_; }
 
 private:
   EffectConfig config_;
@@ -45,7 +52,10 @@ private:
   float smoothing_time_ =
       settings::Default("settings.manual.manual_zoom.smoothing_time");
 
-  math::SpringDamper1D fov_spring_;
+  bool zoom_held_ = false;
+
+  math::SpringDamper1D fov_intent_, fov_spring_;
+  void ResetSprings(float fov);
   float base_fov_deg_ = 0.0f; // the player's own, to return to
   bool has_synced_ = false;
   bool restore_pending_ = false;

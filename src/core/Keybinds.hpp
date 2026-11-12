@@ -72,10 +72,10 @@ inline constexpr Action kPolledActions[] = {
     kZoom,     kBlindspotPeek, kStandSit,   kWalkForward, kWalkBack,
     kWalkLeft, kWalkRight,     kCrouch};
 
-// Side Look's looks start out as Hold in SPF's keybind settings; every other
-// action keeps SPF's default, Toggle.
+// Side Look's looks and Manual Zoom's key start out as Hold in SPF's keybind
+// settings; every other action keeps SPF's default, Toggle.
 inline constexpr Action kHoldByDefault[] = {kLookLeft, kLookRight, kGlanceLeft,
-                                            kGlanceRight};
+                                            kGlanceRight, kZoom};
 
 inline bool IsHoldByDefault(const Action &action) {
   for (const Action &hold : kHoldByDefault)

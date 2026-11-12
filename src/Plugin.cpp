@@ -133,9 +133,16 @@ void OnUnload() {
   // Before SPF's last settings.json flush, so unsaved tweaks never reach
   // disk.
   profiles::RevertUnsavedChanges(Context());
+  // While zoomed, the game would save our zoomed FOV as the truck's. There's
+  // no next frame to retry on (the pause does that when quitting through the
+  // menu), so the write is checked and tried once more here.
   if (Context().manual_zoom) {
-    Context().manual_zoom->RestoreFov();
-    Context().manual_zoom->RestoreDynamicFov();
+    ManualZoomEffect &zoom = *Context().manual_zoom;
+    zoom.RestoreFov();
+    if (!zoom.SettleRestore() && !zoom.SettleRestore())
+      Context().Log(SPF_LOG_WARN,
+                    "Couldn't restore the player's FOV before unloading");
+    zoom.RestoreDynamicFov();
   }
   // Cabin Walk's position is part of the offset removed below.
   PluginContext &ctx = Context();
@@ -296,10 +303,14 @@ void OnUpdate() {
     ctx.core->telemetry->Tel_GetGameState(ctx.telemetry_handle, &game_state,
                                           sizeof(game_state));
     if (game_state.paused) {
-      if (ctx.was_interior_last_frame && ctx.manual_zoom)
-        ctx.manual_zoom->RestoreFov();
+      if (ctx.manual_zoom) {
+        if (ctx.was_interior_last_frame)
+          ctx.manual_zoom->RestoreFov();
+        ctx.manual_zoom->SettleRestore();
+      }
       // Leaving a truck always goes through a menu, and the game saves its
-      // FOV as it is then. After RestoreFov, which puts our offset back on.
+      // FOV as it is then. After the zoom's restore, which puts our offset
+      // back on.
       ctx.camera_rig.RemoveFov(ctx.core->camera);
       // "Paused" covers every native menu, F4's seat/FOV overlay included,
       // which still reports the interior camera: the effects would keep
@@ -375,6 +386,7 @@ void OnUpdate() {
   if (at_wheel)
     ctx.camera_rig.UpdateRecenterGlide(camera, dt, *pose);
 
+  ctx.effects.SetZoomed(ctx.manual_zoom && ctx.manual_zoom->zooming());
   HeadOffset offset = ctx.effects.UpdateAndAccumulate(dt, ctx.latest_truck_data,
                                                       ctx.latest_controls_data);
   offset.pos_x += walk.pos_x;

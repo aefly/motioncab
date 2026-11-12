@@ -114,13 +114,25 @@ struct LegacyToggleMode {
   std::span<const keybinds::Action> actions;
 };
 
+constexpr keybinds::Action kSideLookActions[] = {
+    keybinds::kLookLeft, keybinds::kLookRight, keybinds::kGlanceLeft,
+    keybinds::kGlanceRight};
 constexpr keybinds::Action kBlindspotActions[] = {keybinds::kBlindspotPeek};
 
 constexpr LegacyToggleMode kLegacyToggleModes[] = {
-    {"settings.manual.manual_look.toggle_mode", false,
-     keybinds::kHoldByDefault},
+    {"settings.manual.manual_look.toggle_mode", false, kSideLookActions},
     {"settings.manual.blindspot_viewer.toggle_mode", true, kBlindspotActions},
 };
+
+// The bindings are rebuilt on each change, so the count is read again.
+void SetBehavior(PluginContext &ctx, const keybinds::Action &action,
+                 SPF_ActivationBehavior behavior) {
+  SPF_KeyBinds_API *kbind = ctx.core->keybinds;
+  for (int i = 0;
+       i < kbind->Kbind_GetBindingCount(ctx.keybinds_handle, action.id); ++i)
+    kbind->Kbind_SetBindingBehavior(ctx.keybinds_handle, action.id, i,
+                                    behavior);
+}
 
 bool MigrateToggleModes(PluginContext &ctx) {
   SPF_Config_API *cfg = ctx.core->config;
@@ -135,17 +147,28 @@ bool MigrateToggleModes(PluginContext &ctx) {
         cfg->Cfg_GetBool(ctx.config_handle, mode.key, mode.fallback)
             ? SPF_BEHAVIOR_TOGGLE
             : SPF_BEHAVIOR_HOLD;
-    for (const keybinds::Action &action : mode.actions) {
-      const int count =
-          kbind->Kbind_GetBindingCount(ctx.keybinds_handle, action.id);
-      for (int i = 0; i < count; ++i)
-        kbind->Kbind_SetBindingBehavior(ctx.keybinds_handle, action.id, i,
-                                        behavior);
-    }
+    for (const keybinds::Action &action : mode.actions)
+      SetBehavior(ctx, action, behavior);
     cfg->Cfg_RemoveKey(ctx.config_handle, mode.key);
     migrated = true;
   }
   return migrated;
+}
+
+// Up to 1.x Manual Zoom read its key raw: it zoomed while held whatever the
+// binding said, and SPF had saved Toggle for it. The bindings are set to Hold
+// once, so it keeps working the same; the marker keeps a Toggle the player
+// picks afterwards.
+constexpr const char *kZoomHoldMigratedKey = "ui.migrated_zoom_hold";
+
+bool MigrateZoomHold(PluginContext &ctx) {
+  SPF_Config_API *cfg = ctx.core->config;
+  if (!ctx.core->keybinds || !ctx.keybinds_handle ||
+      cfg->Cfg_GetBool(ctx.config_handle, kZoomHoldMigratedKey, false))
+    return false;
+  SetBehavior(ctx, keybinds::kZoom, SPF_BEHAVIOR_HOLD);
+  cfg->Cfg_SetBool(ctx.config_handle, kZoomHoldMigratedKey, true);
+  return true;
 }
 
 // Windows won't create a file named after a device ("con", "com1", ...),
@@ -224,7 +247,8 @@ void MigrateLegacySettings(PluginContext &ctx) {
   const bool keys =
       MigrateLegacyKeys(ctx.core->config, ctx.config_handle, false);
   const bool toggle_modes = MigrateToggleModes(ctx);
-  if (!keys && !toggle_modes)
+  const bool zoom_hold = MigrateZoomHold(ctx);
+  if (!keys && !toggle_modes && !zoom_hold)
     return;
   ctx.core->config->Cfg_Save(ctx.config_handle);
   ctx.Log(SPF_LOG_INFO, "Migrated settings from an older version");
