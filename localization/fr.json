@@ -87,6 +87,7 @@
     "enabled_desc": "Active ou désactive cet effet.",
     "paused_by": "Mis en pause par {effects}.",
     "pauses": "Une fois activé, cet effet met en pause le(s) effet(s) suivant(s) :",
+    "paused_in_use": "Mis en pause pendant l'utilisation de {effects}.",
     "driving": {
       "title": "Conduite",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "Lissage",
           "desc": "Douceur du mouvement aller-retour du regard."
+        },
+        "pause_steering_camera": {
+          "title": "Pause de la caméra de direction",
+          "desc": "Met la caméra de direction en pause pendant un regard, pour que la vue reste sur ce que vous regardez."
         },
         "mirror_on_signal": {
           "title": "Coup d'œil au clignotant",

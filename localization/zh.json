@@ -87,6 +87,7 @@
     "enabled_desc": "开启或关闭此效果。",
     "paused_by": "已被{effects}暂停。",
     "pauses": "启用后，将暂停以下效果：",
+    "paused_in_use": "使用 {effects} 时暂停。",
     "driving": {
       "title": "驾驶",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "平滑",
           "desc": "观察与回正动作的平滑程度。"
+        },
+        "pause_steering_camera": {
+          "title": "暂停转向镜头",
+          "desc": "查看时暂停转向镜头，让视角停留在你看的地方。"
         },
         "mirror_on_signal": {
           "title": "转向灯时看后视镜",

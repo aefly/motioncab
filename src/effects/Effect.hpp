@@ -51,6 +51,12 @@ public:
   // fade out, since a narrow FOV magnifies every shake.
   virtual bool IsPlayerTriggered() const { return false; }
 
+  // How far it's in use right now, 0..1 (Side Look: into a look), for the
+  // conflicts::kPauses entries that pause only meanwhile. Eased the way the
+  // effect's own motion is, so the paused effect gives way and comes back
+  // in step with it.
+  virtual float InUse() const { return 1.0f; }
+
   // "settings.<group>.<effect>", as conflicts::kPauses names it.
   virtual std::string_view Id() const = 0;
 

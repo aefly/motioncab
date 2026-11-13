@@ -87,6 +87,7 @@
     "enabled_desc": "Activa o desactiva este efecto.",
     "paused_by": "En pausa por {effects}.",
     "pauses": "Al activarlo, pausa el/los siguiente(s) efecto(s):",
+    "paused_in_use": "En pausa mientras se usa {effects}.",
     "driving": {
       "title": "Conducción",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "Suavizado",
           "desc": "Lo suave que es el movimiento de ida y vuelta de la mirada."
+        },
+        "pause_steering_camera": {
+          "title": "Pausar la cámara de dirección",
+          "desc": "Pausa la cámara de dirección mientras miras, para que la vista se quede en lo que miras."
         },
         "mirror_on_signal": {
           "title": "Mirar al poner el intermitente",

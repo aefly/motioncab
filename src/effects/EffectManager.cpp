@@ -15,8 +15,9 @@ void EffectManager::Register(std::unique_ptr<Effect> effect) {
   for (size_t i = 0; i < effects_.size(); ++i) {
     effects_[i].paused_by.clear();
     for (size_t j = 0; j < effects_.size(); ++j) {
-      if (conflicts::Pauses(effects_[j].effect->Id(), effects_[i].effect->Id()))
-        effects_[i].paused_by.push_back(j);
+      if (const conflicts::Pause *p = conflicts::Find(effects_[j].effect->Id(),
+                                                      effects_[i].effect->Id()))
+        effects_[i].paused_by.push_back({j, p->while_in_use});
     }
   }
 }
@@ -31,7 +32,7 @@ void EffectManager::ResetAll() {
     slot.effect->Reset();
     slot.fade = slot.effect->IsEnabled() ? 1.0f : 0.0f;
     slot.seat_reset = false;
-    slot.pause_fade = IsPaused(slot) ? 0.0f : 1.0f;
+    slot.pause_fade = PauseOf(slot).full ? 0.0f : 1.0f;
     slot.pause_reset = false;
   }
   seat_fade_ = at_wheel_ ? 1.0f : 0.0f;
@@ -48,13 +49,21 @@ void EffectManager::Recenter() {
   recenter_glide_ = 1.0f;
 }
 
-bool EffectManager::IsPaused(const Slot &slot) const {
-  // Only while the pausing effect actually plays: one that needs the
-  // driver's seat lets the others back while the player is up.
-  return std::ranges::any_of(slot.paused_by, [this](size_t i) {
-    const Effect &pauser = *effects_[i].effect;
-    return pauser.IsEnabled() && (at_wheel_ || !pauser.NeedsDriverSeat());
-  });
+EffectManager::Pause EffectManager::PauseOf(const Slot &slot) const {
+  Pause pause;
+  for (const Slot::PausedBy &p : slot.paused_by) {
+    // Only while the pausing effect actually plays: one that needs the
+    // driver's seat lets the others back while the player is up.
+    const Effect &pauser = *effects_[p.index].effect;
+    if (!pauser.IsEnabled() || (!at_wheel_ && pauser.NeedsDriverSeat()))
+      continue;
+    if (p.while_in_use)
+      pause.in_use =
+          std::max(pause.in_use, std::clamp(pauser.InUse(), 0.0f, 1.0f));
+    else
+      pause.full = true;
+  }
+  return pause;
 }
 
 HeadOffset EffectManager::UpdateAndAccumulate(float dt,
@@ -80,8 +89,9 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
       if (slot.fade <= 0.0f)
         effect.Reset();
     }
-    slot.pause_fade = IsPaused(slot) ? std::max(0.0f, slot.pause_fade - step)
-                                     : std::min(1.0f, slot.pause_fade + step);
+    const Pause pause = PauseOf(slot);
+    slot.pause_fade = pause.full ? std::max(0.0f, slot.pause_fade - step)
+                                 : std::min(1.0f, slot.pause_fade + step);
     if (slot.fade <= 0.0f)
       continue;
     float context_weight = 1.0f;
@@ -103,6 +113,13 @@ HeadOffset EffectManager::UpdateAndAccumulate(float dt,
     }
     slot.pause_reset = false;
     context_weight *= math::SmoothStep(slot.pause_fade);
+    // A pause while another effect is in use (a look) follows that effect's
+    // own easing rather than a fade of its own: the view then moves from one
+    // to the other in a single motion. A fade with its own timing ran ahead
+    // of or behind the look, the view going one way, then the other. The
+    // effect keeps updating meanwhile, so it comes back where it would be
+    // (the wheel's angle).
+    context_weight *= 1.0f - pause.in_use;
     // Still updated while zoomed, unlike the fades above: a zoom is brief,
     // and the motion comes back where it would be rather than from rest.
     if (!effect.IsPlayerTriggered())

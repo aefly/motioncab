@@ -45,12 +45,23 @@ private:
     std::unique_ptr<Effect> effect;
     float fade = 1.0f;       // the toggle's
     bool seat_reset = false; // Reset() since the driver's seat was left
-    std::vector<size_t> paused_by;
+    struct PausedBy {
+      size_t index;
+      bool while_in_use;
+    };
+    std::vector<PausedBy> paused_by;
     float pause_fade = 1.0f;
     bool pause_reset = false;
   };
 
-  bool IsPaused(const Slot &slot) const;
+  struct Pause {
+    // By an effect enabled: faded out, then Reset().
+    bool full = false;
+    // By effects in use (Effect::InUse), the most: weighs the effect down
+    // directly, without a Reset().
+    float in_use = 0.0f;
+  };
+  Pause PauseOf(const Slot &slot) const;
 
   std::vector<Slot> effects_;
   bool at_wheel_ = true;

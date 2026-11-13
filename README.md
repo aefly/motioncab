@@ -149,6 +149,7 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `glance_left_fov_deg`        | 0.0     | How much the field of view widens while glancing at the left mirror. Negative = narrower (zoom in).                                    |
 | `glance_right_fov_deg`       | 0.0     | How much the field of view widens while glancing at the right mirror. Negative = narrower (zoom in).                                   |
 | `smoothing_time`             | 0.35    | How smooth the look-and-return motion is.                                                                                              |
+| `pause_steering_camera`      | false   | Pause Steering Camera while looking, so the view stays on what you look at.                                                            |
 | `mirror_on_signal`           | false   | Glance at the mirror on the side of the turn signal while it's on.                                                                     |
 | `require_stationary`         | true    | Only glance at the mirror for a turn signal when the truck is stopped.                                                                 |
 | `ignore_after_moving_signal` | true    | Don't check the mirror for a turn signal you switched on while already driving, even after you stop.                                   |
@@ -223,7 +224,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── PluginContext.cpp / .hpp  Shared plugin state
 │   │   ├── Settings.cpp / .hpp       Every setting: key, default, slider range
 │   │   ├── TruckSettings.cpp / .hpp  Settings saved per truck model, migrations
-│   │   ├── Conflicts.hpp             Which effects pause which while enabled
+│   │   ├── Conflicts.hpp             Which effects pause which
 │   │   ├── Loc.cpp / .hpp            Translated string lookup (loc::Tr)
 │   │   ├── Keybinds.hpp              Keybind action names and key polling helpers
 │   │   ├── Strings.hpp               Case-insensitive string helpers

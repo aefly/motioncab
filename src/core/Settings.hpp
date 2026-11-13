@@ -148,6 +148,7 @@ inline constexpr Setting kAll[] = {
           20.0f, "%.0f deg"),
     Float("settings.manual.manual_look.smoothing_time", 0.35f, 0.0f, 0.7f,
           "%.2f s"),
+    Bool("settings.manual.manual_look.pause_steering_camera", false),
     Bool("settings.manual.manual_look.mirror_on_signal", false),
     Bool("settings.manual.manual_look.require_stationary", true),
     Bool("settings.manual.manual_look.ignore_after_moving_signal", true),

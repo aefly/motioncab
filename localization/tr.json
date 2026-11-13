@@ -87,6 +87,7 @@
     "enabled_desc": "Bu efekti açar veya kapatır.",
     "paused_by": "{effects} tarafından duraklatıldı.",
     "pauses": "Açıldığında şu efekt(ler)i duraklatır:",
+    "paused_in_use": "{effects} kullanılırken duraklatılır.",
     "driving": {
       "title": "Sürüş",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "Yumuşatma",
           "desc": "Bakıp geri dönme hareketinin ne kadar yumuşak olduğu."
+        },
+        "pause_steering_camera": {
+          "title": "Direksiyon kamerasını duraklat",
+          "desc": "Bakarken direksiyon kamerasını duraklatır, böylece görüş baktığınız yerde kalır."
         },
         "mirror_on_signal": {
           "title": "Sinyalde aynaya bak",

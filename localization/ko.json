@@ -87,6 +87,7 @@
     "enabled_desc": "이 효과를 켜거나 끕니다.",
     "paused_by": "{effects}에 의해 일시 정지되었습니다.",
     "pauses": "켜면 다음 효과를 일시 정지합니다:",
+    "paused_in_use": "{effects} 사용 중에는 일시 정지됩니다.",
     "driving": {
       "title": "주행",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "부드러움",
           "desc": "보고 돌아오는 움직임의 부드러운 정도입니다."
+        },
+        "pause_steering_camera": {
+          "title": "조향 카메라 일시 정지",
+          "desc": "보는 동안 조향 카메라를 일시 정지해 시선이 보고 있는 곳에 머물게 합니다."
         },
         "mirror_on_signal": {
           "title": "방향지시등 시 미러 보기",

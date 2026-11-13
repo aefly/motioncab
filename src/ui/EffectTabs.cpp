@@ -275,7 +275,9 @@ bool IsEffectEnabled(SPF_Config_API *cfg, SPF_Config_Handle *h,
 void DrawPausesHint(SPF_UI_API *ui, std::string_view prefix) {
   bool any = false;
   for (const conflicts::Pause &p : conflicts::kPauses) {
-    if (prefix != p.effect)
+    // A pause while in use has its own toggle among the effect's settings,
+    // which says it already.
+    if (prefix != p.effect || p.while_in_use)
       continue;
     if (!any) {
       DrawWrappedHint(ui, loc::Tr("settings.pauses"));
@@ -288,22 +290,34 @@ void DrawPausesHint(SPF_UI_API *ui, std::string_view prefix) {
     ui->UI_PopStyleColor(1);
 }
 
-// Returns whether it's paused.
+// Returns whether it's paused. An effect paused only while another is in use
+// isn't: it just says so.
 bool DrawPausedByHint(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
                       std::string_view prefix) {
-  std::string names;
-  for (const conflicts::Pause &p : conflicts::kPauses) {
-    if (prefix != p.paused || !IsEffectEnabled(cfg, h, p.effect))
+  bool paused = false;
+  for (const bool while_in_use : {false, true}) {
+    std::string names;
+    for (const conflicts::Pause &p : conflicts::kPauses) {
+      if (prefix != p.paused || p.while_in_use != while_in_use ||
+          !IsEffectEnabled(cfg, h, p.effect))
+        continue;
+      if (p.option &&
+          !cfg->Cfg_GetBool(h, p.option,
+                            settings::Find(p.option)->default_bool()))
+        continue;
+      if (!names.empty())
+        names += ", ";
+      names += SettingTitle(p.effect);
+    }
+    if (names.empty())
       continue;
-    if (!names.empty())
-      names += ", ";
-    names += SettingTitle(p.effect);
+    DrawWrappedHint(ui, loc::Tr(while_in_use ? "settings.paused_in_use"
+                                             : "settings.paused_by",
+                                {{"effects", names}})
+                            .c_str());
+    paused |= !while_in_use;
   }
-  if (names.empty())
-    return false;
-  DrawWrappedHint(ui,
-                  loc::Tr("settings.paused_by", {{"effects", names}}).c_str());
-  return true;
+  return paused;
 }
 
 // A search's words, folded. Empty when there's no search.

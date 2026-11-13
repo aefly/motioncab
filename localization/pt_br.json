@@ -87,6 +87,7 @@
     "enabled_desc": "Liga ou desliga este efeito.",
     "paused_by": "Pausado por {effects}.",
     "pauses": "Quando ativado, pausa o(s) seguinte(s) efeito(s):",
+    "paused_in_use": "Pausado enquanto {effects} está em uso.",
     "driving": {
       "title": "Direção",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "Suavização",
           "desc": "Quão suave é o movimento de ida e volta do olhar."
+        },
+        "pause_steering_camera": {
+          "title": "Pausar a câmera de direção",
+          "desc": "Pausa a câmera de direção enquanto você olha, para a visão ficar no que você está olhando."
         },
         "mirror_on_signal": {
           "title": "Olhar com a seta",

@@ -87,6 +87,7 @@
     "enabled_desc": "このエフェクトのオン/オフを切り替えます。",
     "paused_by": "{effects}により一時停止中です。",
     "pauses": "オンにすると、次のエフェクトを一時停止します：",
+    "paused_in_use": "{effects} の使用中は一時停止します。",
     "driving": {
       "title": "運転",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "スムージング",
           "desc": "見る・戻る動きのなめらかさ。"
+        },
+        "pause_steering_camera": {
+          "title": "ステアリングカメラを一時停止",
+          "desc": "見ている間はステアリングカメラを一時停止し、視線を見ている先に保ちます。"
         },
         "mirror_on_signal": {
           "title": "ウインカーでミラー確認",

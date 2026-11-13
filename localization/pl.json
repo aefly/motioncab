@@ -87,6 +87,7 @@
     "enabled_desc": "Włącza lub wyłącza ten efekt.",
     "paused_by": "Wstrzymane przez: {effects}.",
     "pauses": "Po włączeniu wstrzymuje następujące efekty:",
+    "paused_in_use": "Wstrzymane podczas użycia {effects}.",
     "driving": {
       "title": "Jazda",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "Wygładzanie",
           "desc": "Jak płynny jest ruch spojrzenia i powrotu."
+        },
+        "pause_steering_camera": {
+          "title": "Wstrzymaj kamerę kierownicy",
+          "desc": "Wstrzymuje kamerę kierownicy podczas patrzenia, aby widok pozostał na tym, na co patrzysz."
         },
         "mirror_on_signal": {
           "title": "Spojrzenie przy kierunkowskazie",

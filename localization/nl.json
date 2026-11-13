@@ -87,6 +87,7 @@
     "enabled_desc": "Zet dit effect aan of uit.",
     "paused_by": "Gepauzeerd door {effects}.",
     "pauses": "Als dit aan staat, pauzeert het de volgende effect(en):",
+    "paused_in_use": "Gepauzeerd terwijl {effects} wordt gebruikt.",
     "driving": {
       "title": "Rijden",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "Demping",
           "desc": "Hoe vloeiend de kijk- en terugbeweging is."
+        },
+        "pause_steering_camera": {
+          "title": "Stuurcamera pauzeren",
+          "desc": "Pauzeert de stuurcamera tijdens het kijken, zodat het beeld blijft op waar je naar kijkt."
         },
         "mirror_on_signal": {
           "title": "Kijken bij richtingaanwijzer",

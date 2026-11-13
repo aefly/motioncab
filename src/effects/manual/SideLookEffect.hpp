@@ -37,6 +37,11 @@ public:
   void Reset() override;
   bool NeedsDriverSeat() const override { return true; }
   bool IsPlayerTriggered() const override { return true; }
+  // Looking somewhere, from a key or a turn signal: through the same springs
+  // as the look, so what it pauses blends into and out of the look with it.
+  float InUse() const override {
+    return pause_steering_camera_ ? use_.value() : 0.0f;
+  }
   HeadOffset Update(float dt, const SPF_TruckData &truck,
                     const SPF_Controls &controls) override;
 
@@ -76,6 +81,8 @@ private:
       settings::Default("settings.manual.manual_look.glance_right_fov_deg");
   float smoothing_time_ =
       settings::Default("settings.manual.manual_look.smoothing_time");
+  bool pause_steering_camera_ = settings::DefaultBool(
+      "settings.manual.manual_look.pause_steering_camera");
   bool mirror_on_signal_ =
       settings::DefaultBool("settings.manual.manual_look.mirror_on_signal");
   bool require_stationary_ =
@@ -90,6 +97,8 @@ private:
   math::SpringDamper1D pitch_;
   math::SpringDamper1D fov_intent_;
   math::SpringDamper1D fov_;
+  math::SpringDamper1D use_intent_;
+  math::SpringDamper1D use_;
 
   Look key_look_ = Look::kCenter;
   keybinds::PressEdge forward_edge_;

@@ -42,6 +42,8 @@ void SideLookEffect::LoadSettings() {
   glance_left_fov_deg_ = Float("glance_left_fov_deg", glance_left_fov_deg_);
   glance_right_fov_deg_ = Float("glance_right_fov_deg", glance_right_fov_deg_);
   smoothing_time_ = Float("smoothing_time", smoothing_time_);
+  pause_steering_camera_ =
+      Bool("pause_steering_camera", pause_steering_camera_);
   mirror_on_signal_ = Bool("mirror_on_signal", mirror_on_signal_);
   require_stationary_ = Bool("require_stationary", require_stationary_);
   ignore_after_moving_signal_ =
@@ -53,6 +55,8 @@ void SideLookEffect::LoadSettings() {
   pitch_.SetTimeConstant(smoothing_time_ * kHeadFraction);
   fov_intent_.SetTimeConstant(smoothing_time_ * kIntentFraction);
   fov_.SetTimeConstant(smoothing_time_ * kHeadFraction);
+  use_intent_.SetTimeConstant(smoothing_time_ * kIntentFraction);
+  use_.SetTimeConstant(smoothing_time_ * kHeadFraction);
 }
 
 void SideLookEffect::Reset() {
@@ -62,6 +66,8 @@ void SideLookEffect::Reset() {
   pitch_.Reset();
   fov_intent_.Reset();
   fov_.Reset();
+  use_intent_.Reset();
+  use_.Reset();
   EndKeyLooks();
   forward_edge_.Reset();
   // The blinker state is kept: this runs on every cabin re-entry, and a
@@ -141,6 +147,7 @@ HeadOffset SideLookEffect::Update(float dt, const SPF_TruckData &truck,
   const Look look = key_look != Look::kCenter ? key_look
                     : signal_dismissed_       ? Look::kCenter
                                               : signal;
+  use_.Update(use_intent_.Update(look != Look::kCenter ? 1.0f : 0.0f, dt), dt);
 
   float target_yaw_deg = 0.0f;
   float target_pitch_deg = 0.0f;

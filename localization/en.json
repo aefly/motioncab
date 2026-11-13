@@ -87,6 +87,7 @@
     "enabled_desc": "Turn this effect on or off.",
     "paused_by": "Paused by {effects}.",
     "pauses": "When enabled, this pauses the following effect(s):",
+    "paused_in_use": "Paused while {effects} is in use.",
     "driving": {
       "title": "Driving",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "Smoothing",
           "desc": "How smooth the look-and-return motion is."
+        },
+        "pause_steering_camera": {
+          "title": "Pause Steering Camera",
+          "desc": "Pause Steering Camera while looking, so the view stays on what you look at."
         },
         "mirror_on_signal": {
           "title": "Glance on Turn Signal",

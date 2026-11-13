@@ -87,6 +87,7 @@
     "enabled_desc": "Zapne nebo vypne tento efekt.",
     "paused_by": "Pozastaveno efektem: {effects}.",
     "pauses": "Po zapnutí pozastaví následující efekt(y):",
+    "paused_in_use": "Pozastaveno během použití {effects}.",
     "driving": {
       "title": "Jízda",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "Vyhlazení",
           "desc": "Jak plynulý je pohyb pohledu tam a zpět."
+        },
+        "pause_steering_camera": {
+          "title": "Pozastavit kameru řízení",
+          "desc": "Během pohledu pozastaví kameru řízení, aby pohled zůstal na tom, kam se díváte."
         },
         "mirror_on_signal": {
           "title": "Pohled při blinkru",

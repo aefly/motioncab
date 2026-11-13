@@ -87,6 +87,7 @@
     "enabled_desc": "Schaltet diesen Effekt ein oder aus.",
     "paused_by": "Pausiert durch {effects}.",
     "pauses": "Wenn aktiviert, pausiert dies folgende(n) Effekt(e):",
+    "paused_in_use": "Pausiert, während {effects} genutzt wird.",
     "driving": {
       "title": "Fahren",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "Glättung",
           "desc": "Wie weich die Hin- und Rückbewegung des Blicks ist."
+        },
+        "pause_steering_camera": {
+          "title": "Lenkkamera pausieren",
+          "desc": "Pausiert die Lenkkamera während eines Blicks, damit die Ansicht auf dem bleibt, was du ansiehst."
         },
         "mirror_on_signal": {
           "title": "Blick beim Blinken",

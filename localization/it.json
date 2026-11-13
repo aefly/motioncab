@@ -87,6 +87,7 @@
     "enabled_desc": "Attiva o disattiva questo effetto.",
     "paused_by": "In pausa a causa di {effects}.",
     "pauses": "Se attivo, mette in pausa i seguenti effetti:",
+    "paused_in_use": "In pausa durante l'uso di {effects}.",
     "driving": {
       "title": "Guida",
       "head_motion": {
@@ -318,6 +319,10 @@
         "smoothing_time": {
           "title": "Smorzamento",
           "desc": "Quanto è morbido il movimento di andata e ritorno dello sguardo."
+        },
+        "pause_steering_camera": {
+          "title": "Metti in pausa la telecamera di sterzata",
+          "desc": "Mette in pausa la telecamera di sterzata mentre guardi, così la visuale resta su ciò che stai guardando."
         },
         "mirror_on_signal": {
           "title": "Sguardo con la freccia",
