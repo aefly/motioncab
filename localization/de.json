@@ -393,8 +393,17 @@
     "enabled": "Aktiviert",
     "cancel": "Abbrechen",
     "slider_reset_hint": "Rechtsklick auf einen Regler setzt ihn auf den Standardwert zurück.",
-    "profile_badge": "Profil: {name}",
-    "unsaved_changes": "(Ungespeicherte Änderungen)",
+    "truck_badge": "Einstellungen: {name}",
+    "no_truck": "Kein LKW geladen",
+    "no_truck_hint": "Steig in einen LKW, um seine Einstellungen zu ändern.",
+    "paused": "Spiel pausiert",
+    "paused_hint": "Setze das Spiel fort, um die Einstellungen zu ändern.",
+    "trucks": {
+      "section": "Eingestellte LKW ({count})",
+      "changed": "{count} Einstellungen geändert",
+      "none": "Noch kein LKW hat eigene Einstellungen.",
+      "reset_tip": "Einstellungen dieses LKW auf die Standardwerte zurücksetzen."
+    },
     "search": {
       "hint": "Einstellungen durchsuchen...",
       "no_results": "Keine Einstellung passt zu „{query}“.",
@@ -412,39 +421,13 @@
       "options_tip": "Belegungsoptionen (Halten/Umschalten, Totzone, ...).",
       "add_tip": "Weitere Belegung hinzufügen."
     },
-    "profiles": {
-      "section": "Profile",
-      "name_hint": "Profilname...",
-      "save_as": "Als Profil speichern",
-      "save_as_tip": "Speichert alle aktuellen Effekteinstellungen unter diesem Profilnamen.",
-      "saved_toast": "Profil „{name}“ gespeichert.",
-      "save_failed": "Profil konnte nicht gespeichert werden, siehe MotionCab.log.",
-      "overwrite_title": "Überschreiben bestätigen",
-      "overwrite_message": "Ein Profil namens „{name}“ existiert bereits. Überschreiben?",
-      "overwrite_confirm": "Ja, überschreiben",
-      "none": "Noch keine gespeicherten Profile.",
-      "select_tip": "Ein ausgewähltes Profil wird sofort geladen.",
-      "load_failed": "Profil „{name}“ konnte nicht geladen werden, siehe MotionCab.log.",
-      "no_match": "Kein Profil entspricht den aktuellen Einstellungen. Wähle eines zum Laden aus oder speichere sie oben als neues Profil.",
-      "save": "Speichern",
-      "saved": "Gespeichert",
-      "save_tip": "Überschreibt das ausgewählte Profil mit den aktuellen Einstellungen.",
-      "delete": "Löschen",
-      "delete_tip": "Das ausgewählte Profil löschen.",
-      "delete_title": "Löschen bestätigen",
-      "delete_message": "Profil „{name}“ löschen? Dies kann nicht rückgängig gemacht werden.",
-      "delete_confirm": "Ja, löschen",
-      "delete_failed": "Profil „{name}“ konnte nicht gelöscht werden, siehe MotionCab.log.",
-      "deleted_toast": "Profil „{name}“ gelöscht.",
-      "fallback_failed": "Gelöscht, aber „{name}“ konnte nicht geladen werden, siehe MotionCab.log."
-    },
     "reset": {
       "section": "Gefahrenzone",
-      "button": "Alle Einstellungen zurücksetzen",
+      "button": "Diesen LKW zurücksetzen",
       "title": "Zurücksetzen bestätigen",
-      "message": "Alle MotionCab-Einstellungen auf ihre Standardwerte zurücksetzen?",
-      "confirm": "Ja, alles zurücksetzen",
-      "done_toast": "Alle MotionCab-Einstellungen wurden auf ihre Standardwerte zurückgesetzt."
+      "message": "Alle Einstellungen von {truck} zurücksetzen?",
+      "confirm": "Ja, zurücksetzen",
+      "done_toast": "Einstellungen von {truck} zurückgesetzt."
     },
     "about": {
       "details": "Details",
@@ -465,7 +448,7 @@
       "donate_desc": "MotionCab auf PayPal unterstützen",
       "tips": "Tipps",
       "tip_reset": "Rechtsklick auf einen Regler setzt ihn auf seinen Standardwert zurück.",
-      "tip_profiles": "Speichere deine Einstellungen als Profil im Tab {settings_tab}.",
+      "tip_per_truck": "Einstellungen werden pro LKW gespeichert: Eine Änderung gilt nur für den LKW, den du gerade fährst.",
       "tip_interior": "Alle Effekte funktionieren nur in der Innenkamera.",
       "credits": "Danksagungen",
       "credits_text": "SPF Framework und Mitwirkende."

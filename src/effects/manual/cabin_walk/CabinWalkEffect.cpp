@@ -791,7 +791,7 @@ void CabinWalkEffect::UpdateWalking(float dt) {
 
 void CabinWalkEffect::OnTruckConstantsChanged(
     const SPF_TruckConstants &constants) {
-  const std::string key = TruckLayoutKey(constants);
+  const std::string key = telemetry::TruckKey(constants);
   const bool right_hand_drive = telemetry::IsRightHandDrive(constants);
   // Another cabin on the same model can move the driver's seat.
   const float centerline_x = CabinCenterlineX(constants);

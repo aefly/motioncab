@@ -393,8 +393,17 @@
     "enabled": "Ativado",
     "cancel": "Cancelar",
     "slider_reset_hint": "Clique com o botão direito em um controle deslizante para redefini-lo.",
-    "profile_badge": "Perfil: {name}",
-    "unsaved_changes": "(Alterações não salvas)",
+    "truck_badge": "Configurações de {name}",
+    "no_truck": "Nenhum caminhão carregado",
+    "no_truck_hint": "Entre em um caminhão para alterar as configurações dele.",
+    "paused": "Jogo pausado",
+    "paused_hint": "Retome o jogo para alterar as configurações.",
+    "trucks": {
+      "section": "Caminhões ajustados ({count})",
+      "changed": "{count} configurações alteradas",
+      "none": "Nenhum caminhão tem configurações próprias ainda.",
+      "reset_tip": "Redefinir as configurações deste caminhão para os valores padrão."
+    },
     "search": {
       "hint": "Pesquisar configurações...",
       "no_results": "Nenhuma configuração corresponde a \"{query}\".",
@@ -412,39 +421,13 @@
       "options_tip": "Opções do atalho (segurar/alternar, zona morta, ...).",
       "add_tip": "Adicionar outro atalho."
     },
-    "profiles": {
-      "section": "Perfis",
-      "name_hint": "Nome do perfil...",
-      "save_as": "Salvar como perfil",
-      "save_as_tip": "Salva todas as configurações atuais dos efeitos com este nome de perfil.",
-      "saved_toast": "Perfil \"{name}\" salvo.",
-      "save_failed": "Falha ao salvar o perfil, verifique o MotionCab.log.",
-      "overwrite_title": "Confirmar substituição",
-      "overwrite_message": "Já existe um perfil chamado \"{name}\". Substituí-lo?",
-      "overwrite_confirm": "Sim, substituir",
-      "none": "Nenhum perfil salvo ainda.",
-      "select_tip": "Selecionar um perfil o carrega imediatamente.",
-      "load_failed": "Falha ao carregar o perfil \"{name}\", verifique o MotionCab.log.",
-      "no_match": "Nenhum perfil corresponde às configurações atuais. Escolha um para carregar ou salve-as como um novo perfil acima.",
-      "save": "Salvar",
-      "saved": "Salvo",
-      "save_tip": "Substitui o perfil selecionado pelas configurações atuais.",
-      "delete": "Excluir",
-      "delete_tip": "Excluir o perfil selecionado.",
-      "delete_title": "Confirmar exclusão",
-      "delete_message": "Excluir o perfil \"{name}\"? Isso não pode ser desfeito.",
-      "delete_confirm": "Sim, excluir",
-      "delete_failed": "Falha ao excluir o perfil \"{name}\", verifique o MotionCab.log.",
-      "deleted_toast": "Perfil \"{name}\" excluído.",
-      "fallback_failed": "Excluído, mas falha ao carregar \"{name}\", verifique o MotionCab.log."
-    },
     "reset": {
       "section": "Zona de perigo",
-      "button": "Redefinir todas as configurações",
+      "button": "Redefinir este caminhão",
       "title": "Confirmar redefinição",
-      "message": "Redefinir todas as configurações do MotionCab para os valores padrão?",
-      "confirm": "Sim, redefinir tudo",
-      "done_toast": "Todas as configurações do MotionCab foram redefinidas para os valores padrão."
+      "message": "Redefinir todas as configurações de {truck}?",
+      "confirm": "Sim, redefinir",
+      "done_toast": "Configurações de {truck} redefinidas."
     },
     "about": {
       "details": "Detalhes",
@@ -465,7 +448,7 @@
       "donate_desc": "Apoiar o MotionCab no PayPal",
       "tips": "Dicas",
       "tip_reset": "Clique com o botão direito em qualquer controle deslizante para voltar ao valor padrão.",
-      "tip_profiles": "Salve seus ajustes como perfil na aba {settings_tab}.",
+      "tip_per_truck": "As configurações são salvas por caminhão: uma mudança vale só para o caminhão que você está dirigindo.",
       "tip_interior": "Todos os efeitos funcionam apenas na câmera interna.",
       "credits": "Créditos",
       "credits_text": "SPF Framework e colaboradores."

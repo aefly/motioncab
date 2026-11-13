@@ -393,8 +393,17 @@
     "enabled": "Włączone",
     "cancel": "Anuluj",
     "slider_reset_hint": "Kliknij prawym przyciskiem suwak, aby go zresetować.",
-    "profile_badge": "Profil: {name}",
-    "unsaved_changes": "(Niezapisane zmiany)",
+    "truck_badge": "Ustawienia: {name}",
+    "no_truck": "Nie wczytano ciężarówki",
+    "no_truck_hint": "Wsiądź do ciężarówki, aby zmienić jej ustawienia.",
+    "paused": "Gra wstrzymana",
+    "paused_hint": "Wznów grę, aby zmienić ustawienia.",
+    "trucks": {
+      "section": "Ustawione ciężarówki ({count})",
+      "changed": "Zmienione ustawienia: {count}",
+      "none": "Żadna ciężarówka nie ma jeszcze własnych ustawień.",
+      "reset_tip": "Zresetuj ustawienia tej ciężarówki do wartości domyślnych."
+    },
     "search": {
       "hint": "Szukaj ustawień...",
       "no_results": "Żadne ustawienie nie pasuje do „{query}”.",
@@ -412,39 +421,13 @@
       "options_tip": "Opcje przypisania (przytrzymanie/przełączanie, martwa strefa, ...).",
       "add_tip": "Dodaj kolejne przypisanie."
     },
-    "profiles": {
-      "section": "Profile",
-      "name_hint": "Nazwa profilu...",
-      "save_as": "Zapisz jako profil",
-      "save_as_tip": "Zapisuje wszystkie bieżące ustawienia efektów pod tą nazwą profilu.",
-      "saved_toast": "Zapisano profil „{name}”.",
-      "save_failed": "Nie udało się zapisać profilu, sprawdź MotionCab.log.",
-      "overwrite_title": "Potwierdź nadpisanie",
-      "overwrite_message": "Profil o nazwie „{name}” już istnieje. Nadpisać go?",
-      "overwrite_confirm": "Tak, nadpisz",
-      "none": "Brak zapisanych profili.",
-      "select_tip": "Wybranie profilu natychmiast go wczytuje.",
-      "load_failed": "Nie udało się wczytać profilu „{name}”, sprawdź MotionCab.log.",
-      "no_match": "Żaden profil nie odpowiada bieżącym ustawieniom. Wybierz profil do wczytania lub zapisz je powyżej jako nowy profil.",
-      "save": "Zapisz",
-      "saved": "Zapisano",
-      "save_tip": "Nadpisuje wybrany profil bieżącymi ustawieniami.",
-      "delete": "Usuń",
-      "delete_tip": "Usuń wybrany profil.",
-      "delete_title": "Potwierdź usunięcie",
-      "delete_message": "Usunąć profil „{name}”? Tej operacji nie można cofnąć.",
-      "delete_confirm": "Tak, usuń",
-      "delete_failed": "Nie udało się usunąć profilu „{name}”, sprawdź MotionCab.log.",
-      "deleted_toast": "Usunięto profil „{name}”.",
-      "fallback_failed": "Usunięto, ale nie udało się wczytać „{name}”, sprawdź MotionCab.log."
-    },
     "reset": {
       "section": "Strefa zagrożenia",
-      "button": "Zresetuj wszystkie ustawienia",
+      "button": "Zresetuj tę ciężarówkę",
       "title": "Potwierdź reset",
-      "message": "Przywrócić wszystkie ustawienia MotionCab do wartości domyślnych?",
-      "confirm": "Tak, zresetuj wszystko",
-      "done_toast": "Przywrócono wszystkie ustawienia MotionCab do wartości domyślnych."
+      "message": "Zresetować wszystkie ustawienia dla {truck}?",
+      "confirm": "Tak, zresetuj",
+      "done_toast": "Zresetowano ustawienia dla {truck}."
     },
     "about": {
       "details": "Szczegóły",
@@ -465,7 +448,7 @@
       "donate_desc": "Wesprzyj MotionCab w serwisie PayPal",
       "tips": "Wskazówki",
       "tip_reset": "Kliknij prawym przyciskiem dowolny suwak, aby przywrócić jego wartość domyślną.",
-      "tip_profiles": "Zapisz swoje ustawienia jako profil na karcie {settings_tab}.",
+      "tip_per_truck": "Ustawienia są zapisywane dla każdej ciężarówki: zmiana dotyczy tylko ciężarówki, którą prowadzisz.",
       "tip_interior": "Wszystkie efekty działają tylko w kamerze wewnętrznej.",
       "credits": "Podziękowania",
       "credits_text": "SPF Framework i współtwórcy."

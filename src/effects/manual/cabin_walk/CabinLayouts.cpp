@@ -2,7 +2,6 @@
 
 #include "effects/manual/cabin_walk/CabinPresets.hpp"
 
-#include <cctype>
 #include <cmath>
 #include <filesystem>
 #include <string>
@@ -84,20 +83,6 @@ void NormalizeCabinLayout(CabinLayout &layout) {
     std::swap(layout.floor_x_min, layout.floor_x_max);
   if (layout.floor_z_min > layout.floor_z_max)
     std::swap(layout.floor_z_min, layout.floor_z_max);
-}
-
-std::string TruckLayoutKey(const SPF_TruckConstants &constants) {
-  auto clean = [](const char *s) {
-    std::string out;
-    for (; *s; ++s)
-      out += std::isalnum(static_cast<unsigned char>(*s)) ? *s : '_';
-    return out;
-  };
-  const std::string brand = clean(constants.brand_id);
-  const std::string model = clean(constants.id);
-  if (brand.empty() && model.empty())
-    return {};
-  return brand + "_" + model;
 }
 
 SPF_Config_Handle *CabinLayoutStore::Handle(bool create) {

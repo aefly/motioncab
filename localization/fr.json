@@ -393,8 +393,17 @@
     "enabled": "Activé",
     "cancel": "Annuler",
     "slider_reset_hint": "Clic droit sur un curseur pour le réinitialiser.",
-    "profile_badge": "Profil : {name}",
-    "unsaved_changes": "(Modifications non enregistrées)",
+    "truck_badge": "Réglages du {name}",
+    "no_truck": "Aucun camion chargé",
+    "no_truck_hint": "Montez dans un camion pour changer ses réglages.",
+    "paused": "Jeu en pause",
+    "paused_hint": "Reprenez la partie pour modifier les réglages.",
+    "trucks": {
+      "section": "Camions réglés ({count})",
+      "changed": "{count} réglages modifiés",
+      "none": "Aucun camion n'a encore ses propres réglages.",
+      "reset_tip": "Réinitialiser les réglages de ce camion aux valeurs par défaut."
+    },
     "search": {
       "hint": "Rechercher un réglage...",
       "no_results": "Aucun réglage ne correspond à « {query} ».",
@@ -412,39 +421,13 @@
       "options_tip": "Options de l'assignation (maintien/bascule, zone morte, ...).",
       "add_tip": "Ajouter une autre assignation."
     },
-    "profiles": {
-      "section": "Profils",
-      "name_hint": "Nom du profil...",
-      "save_as": "Enregistrer le profil",
-      "save_as_tip": "Enregistre tous les réglages actuels des effets sous ce nom de profil.",
-      "saved_toast": "Profil « {name} » enregistré.",
-      "save_failed": "Échec de l'enregistrement du profil, consultez MotionCab.log.",
-      "overwrite_title": "Confirmer l'écrasement",
-      "overwrite_message": "Un profil nommé « {name} » existe déjà. L'écraser ?",
-      "overwrite_confirm": "Oui, écraser",
-      "none": "Aucun profil enregistré.",
-      "select_tip": "Sélectionner un profil le charge immédiatement.",
-      "load_failed": "Échec du chargement du profil « {name} », consultez MotionCab.log.",
-      "no_match": "Aucun profil ne correspond aux réglages actuels. Choisissez-en un à charger, ou enregistrez-les comme nouveau profil ci-dessus.",
-      "save": "Enregistrer",
-      "saved": "Enregistré",
-      "save_tip": "Écrase le profil sélectionné avec les réglages actuels.",
-      "delete": "Supprimer",
-      "delete_tip": "Supprimer le profil sélectionné.",
-      "delete_title": "Confirmer la suppression",
-      "delete_message": "Supprimer le profil « {name} » ? Cette action est irréversible.",
-      "delete_confirm": "Oui, supprimer",
-      "delete_failed": "Échec de la suppression du profil « {name} », consultez MotionCab.log.",
-      "deleted_toast": "Profil « {name} » supprimé.",
-      "fallback_failed": "Supprimé, mais échec du chargement de « {name} », consultez MotionCab.log."
-    },
     "reset": {
       "section": "Zone de danger",
-      "button": "Tout réinitialiser",
+      "button": "Réinitialiser ce camion",
       "title": "Confirmer la réinitialisation",
-      "message": "Remettre tous les réglages de MotionCab à leur valeur par défaut ?",
-      "confirm": "Oui, tout réinitialiser",
-      "done_toast": "Tous les réglages de MotionCab ont été remis à leur valeur par défaut."
+      "message": "Réinitialiser tous les réglages du {truck} ?",
+      "confirm": "Oui, réinitialiser",
+      "done_toast": "Réglages de {truck} réinitialisés."
     },
     "about": {
       "details": "Détails",
@@ -465,7 +448,7 @@
       "donate_desc": "Soutenir MotionCab sur PayPal",
       "tips": "Astuces",
       "tip_reset": "Clic droit sur un curseur pour le remettre à sa valeur par défaut.",
-      "tip_profiles": "Enregistrez vos réglages dans un profil depuis l'onglet {settings_tab}.",
+      "tip_per_truck": "Les réglages sont enregistrés par camion : un changement ne s'applique qu'au camion que vous conduisez.",
       "tip_interior": "Tous les effets ne fonctionnent qu'en caméra intérieure.",
       "credits": "Crédits",
       "credits_text": "SPF Framework et ses contributeurs."

@@ -163,7 +163,7 @@ void DrawSlider(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
                    setting.max * display_scale, FormatStep(format), format,
                    setting.default_value * display_scale,
                    SettingDesc(key)) != StepperEdit::kNone)
-    cfg->Cfg_SetFloat(h, key, value / display_scale);
+    cfg->Cfg_SetFloat(h, key, settings::Stored(value / display_scale));
 }
 
 // In the language's unit: English is "imperial", since British and American

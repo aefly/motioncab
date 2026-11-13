@@ -3,6 +3,7 @@
 #include "SPF_Icons.h"
 #include "core/Loc.hpp"
 #include "core/PluginContext.hpp"
+#include "core/TruckSettings.hpp"
 
 #include <algorithm>
 #include <cctype>
@@ -172,6 +173,14 @@ float ModifiedMarkWidth(SPF_UI_API *ui) {
   float w = 0.0f, h = 0.0f;
   ui->UI_CalcTextSize("*", &w, &h);
   return w + Px(ui, kModifiedMarkSpacing);
+}
+
+EditBlock SettingsEditBlock() {
+  if (!truck_settings::HasTruck())
+    return EditBlock::kNoTruck;
+  if (Context().game_paused)
+    return EditBlock::kPaused;
+  return EditBlock::kNone;
 }
 
 void DrawWrappedHint(SPF_UI_API *ui, const char *text) {

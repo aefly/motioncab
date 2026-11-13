@@ -255,10 +255,13 @@ consteval bool DefaultBool(std::string_view key) {
 
 const Setting *Find(std::string_view key);
 
+// A float as the double to write in a config file: its shortest decimal.
+double Stored(float value);
+
 // Without the "settings." root, which SPF adds.
 std::string DefaultsJson();
 
-// Into the live config for "Reset to Defaults", or into a new profile file.
+// Into the live config, when a truck reset has nowhere to keep it per truck.
 void WriteDefaults(SPF_Config_API *cfg, SPF_Config_Handle *handle);
 
 } // namespace motioncab::settings

@@ -55,6 +55,9 @@ struct PluginContext {
   // truck.
   std::string truck_identity;
   bool was_interior_last_frame = false;
+  // Any native menu, the pause menu included: the Quick Settings window
+  // doesn't take changes then.
+  bool game_paused = false;
 
   std::chrono::steady_clock::time_point last_update_time{};
   bool has_last_update_time = false;

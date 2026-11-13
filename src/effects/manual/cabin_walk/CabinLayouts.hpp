@@ -68,10 +68,6 @@ void NormalizeCabinLayout(CabinLayout &layout);
 // Fits a left-hand drive layout to a right-hand drive truck and back.
 CabinLayout WithMirroredYaws(const CabinLayout &layout);
 
-// "<brand_id>_<id>", reduced to [A-Za-z0-9_] to hold as one config key
-// segment. Empty while the truck isn't known.
-std::string TruckLayoutKey(const SPF_TruckConstants &constants);
-
 // The player's own layouts get a file of their own, since SPF only gives a
 // plugin one settings.json. It's only created on the first save.
 class CabinLayoutStore {

@@ -1,17 +1,20 @@
 #include "SPF_Camera_API.h"
 #include "SPF_Config_API.h"
+#include "SPF_GameWorld_API.h"
 #include "SPF_KeyBinds_API.h"
 #include "SPF_Logger_API.h"
 #include "SPF_Manifest_API.h"
 #include "SPF_Plugin.h"
 #include "SPF_Telemetry_API.h"
 #include "SPF_UI_API.h"
+#include "SPF_Vehicle_API.h"
 
 #include "core/Keybinds.hpp"
 #include "core/Loc.hpp"
 #include "core/Manifest.hpp"
 #include "core/PluginContext.hpp"
-#include "core/Profiles.hpp"
+#include "core/TruckSettings.hpp"
+#include "effects/Telemetry.hpp"
 #include "effects/cabin/EngineStartStopEffect.hpp"
 #include "effects/cabin/EngineVibrationEffect.hpp"
 #include "effects/cabin/IdleBreathingEffect.hpp"
@@ -53,6 +56,50 @@ void OnControlsUpdate(const SPF_Controls *data, void * /*user_data*/) {
   ctx.has_controls_data.store(true, std::memory_order_release);
 }
 
+void SwitchSettingsTo(PluginContext &ctx, const SPF_TruckConstants &truck) {
+  truck_settings::SwitchTo(ctx, telemetry::TruckKey(truck),
+                           std::string(truck.brand) + " " + truck.name);
+}
+
+// Telemetry says nothing on the way back to the main menu: the last truck's
+// constants stay. The player's vehicle going away is what tells. Coming back
+// to the same truck sends no constants either, so its settings come back
+// from here too.
+void TrackPlayerVehicle(PluginContext &ctx) {
+  SPF_Vehicle_API *vehicle = ctx.core->vehicle;
+  if (!vehicle || !vehicle->Veh_IsReady || !vehicle->Veh_GetPlayerVehicle)
+    return;
+  const bool ready = vehicle->Veh_IsReady();
+  const bool in_vehicle = ready && vehicle->Veh_GetPlayerVehicle() != nullptr;
+  // Without the service (offsets not found after a game update) there's no
+  // telling: the truck stays as telemetry last said.
+  if (!ready)
+    return;
+  if (!in_vehicle) {
+    if (truck_settings::HasTruck())
+      truck_settings::SwitchTo(ctx, "", "");
+    return;
+  }
+  if (!truck_settings::HasTruck() && ctx.core->telemetry &&
+      ctx.telemetry_handle) {
+    SPF_TruckConstants truck{};
+    ctx.core->telemetry->Tel_GetTruckConstants(ctx.telemetry_handle, &truck,
+                                               sizeof(truck));
+    SwitchSettingsTo(ctx, truck);
+  }
+}
+
+// Telemetry's paused flag misses the pause menu a save loads into (it only
+// turns on with the first pause in game): SPF's game world sees it. Its
+// simulation timestamp kept going in that menu, so it's no help.
+bool IsGamePaused(PluginContext &ctx, const SPF_GameState &game_state) {
+  if (game_state.paused)
+    return true;
+  const SPF_GameWorld_API *world = ctx.core->gameworld;
+  return world && world->GW_IsReady && world->GW_IsGamePaused &&
+         world->GW_IsReady() && world->GW_IsGamePaused();
+}
+
 void OnTruckConstantsUpdate(const SPF_TruckConstants *data,
                             void * /*user_data*/) {
   PluginContext &ctx = Context();
@@ -61,6 +108,9 @@ void OnTruckConstantsUpdate(const SPF_TruckConstants *data,
   const std::string truck = std::string(data->brand_id) + "/" + data->id;
   if (truck != ctx.truck_identity) {
     ctx.truck_identity = truck;
+    // Before the reset, so no effect runs a frame on the last truck's
+    // settings.
+    SwitchSettingsTo(ctx, *data);
     ctx.camera_rig.ForgetAppliedPose();
     ctx.ResetEffects();
   }
@@ -130,9 +180,7 @@ void OnLoad(const SPF_Load_API *load_api) {
 }
 
 void OnUnload() {
-  // Before SPF's last settings.json flush, so unsaved tweaks never reach
-  // disk.
-  profiles::RevertUnsavedChanges(Context());
+  truck_settings::Shutdown(Context());
   // While zoomed, the game would save our zoomed FOV as the truck's. There's
   // no next frame to retry on (the pause does that when quitting through the
   // menu), so the write is checked and tried once more here.
@@ -202,9 +250,10 @@ void OnActivated(const SPF_Core_API *core_api) {
       core_api->environment->Env_GetContext(PluginContext::kPluginName);
   ctx.localization_handle =
       core_api->localization->Loc_GetContext(PluginContext::kPluginName);
-  profiles::MigrateLegacySettings(ctx);
-  profiles::EnsureDefaultExists(ctx);
-  profiles::ResolveUnknownActiveProfile(ctx);
+  truck_settings::MigrateLegacySettings(ctx);
+  // Before any truck's settings go live, which would overwrite the ones the
+  // base is taken from.
+  truck_settings::EnsureBase(ctx);
 
   ctx.effects.Register(
       std::make_unique<HeadMotionEffect>(core_api->config, ctx.config_handle));
@@ -262,6 +311,7 @@ void OnActivated(const SPF_Core_API *core_api) {
     // forget the offset still in the pose.
     ctx.truck_identity =
         std::string(initial_constants.brand_id) + "/" + initial_constants.id;
+    SwitchSettingsTo(ctx, initial_constants);
     ctx.effects.NotifyTruckConstants(initial_constants);
     ctx.cabin_walk->OnTruckConstantsChanged(initial_constants);
     core_api->telemetry->Tel_RegisterForCommonData(ctx.telemetry_handle,
@@ -288,8 +338,10 @@ void OnSettingChanged(SPF_Config_Handle * /*config_handle*/,
   static constexpr char kSettingsPrefix[] = "settings.";
   if (std::strncmp(keyPath, kSettingsPrefix, sizeof(kSettingsPrefix) - 1) ==
       0) {
+    if (truck_settings::IsApplying())
+      return;
+    truck_settings::OnLiveSettingChanged(ctx, keyPath);
     ctx.ReloadEffectsConfig();
-    profiles::InvalidateMatchCache();
   }
 }
 
@@ -297,11 +349,14 @@ void OnUpdate() {
   PluginContext &ctx = Context();
   if (!ctx.core || !ctx.core->camera)
     return;
+  truck_settings::SaveIfIdle(ctx);
+  TrackPlayerVehicle(ctx);
 
   if (ctx.core->telemetry && ctx.telemetry_handle) {
     SPF_GameState game_state{};
     ctx.core->telemetry->Tel_GetGameState(ctx.telemetry_handle, &game_state,
                                           sizeof(game_state));
+    ctx.game_paused = IsGamePaused(ctx, game_state);
     if (game_state.paused) {
       if (ctx.manual_zoom) {
         if (ctx.was_interior_last_frame)

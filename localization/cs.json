@@ -393,8 +393,17 @@
     "enabled": "Zapnuto",
     "cancel": "Zrušit",
     "slider_reset_hint": "Pravým kliknutím na posuvník jej obnovíte.",
-    "profile_badge": "Profil: {name}",
-    "unsaved_changes": "(Neuložené změny)",
+    "truck_badge": "Nastavení: {name}",
+    "no_truck": "Není načten žádný tahač",
+    "no_truck_hint": "Nastup do tahače, abys mohl změnit jeho nastavení.",
+    "paused": "Hra pozastavena",
+    "paused_hint": "Pro změnu nastavení pokračuj ve hře.",
+    "trucks": {
+      "section": "Nastavené tahače ({count})",
+      "changed": "Změněná nastavení: {count}",
+      "none": "Žádný tahač zatím nemá vlastní nastavení.",
+      "reset_tip": "Obnovit nastavení tohoto tahače na výchozí hodnoty."
+    },
     "search": {
       "hint": "Hledat nastavení...",
       "no_results": "Žádné nastavení neodpovídá „{query}“.",
@@ -412,39 +421,13 @@
       "options_tip": "Možnosti přiřazení (držení/přepínání, mrtvá zóna, ...).",
       "add_tip": "Přidat další přiřazení."
     },
-    "profiles": {
-      "section": "Profily",
-      "name_hint": "Název profilu...",
-      "save_as": "Uložit jako profil",
-      "save_as_tip": "Uloží všechna aktuální nastavení efektů pod tímto názvem profilu.",
-      "saved_toast": "Profil „{name}“ uložen.",
-      "save_failed": "Profil se nepodařilo uložit, zkontrolujte MotionCab.log.",
-      "overwrite_title": "Potvrdit přepsání",
-      "overwrite_message": "Profil s názvem „{name}“ již existuje. Přepsat?",
-      "overwrite_confirm": "Ano, přepsat",
-      "none": "Zatím žádné uložené profily.",
-      "select_tip": "Vybraný profil se okamžitě načte.",
-      "load_failed": "Profil „{name}“ se nepodařilo načíst, zkontrolujte MotionCab.log.",
-      "no_match": "Aktuálnímu nastavení neodpovídá žádný profil. Vyberte profil k načtení, nebo nastavení uložte výše jako nový profil.",
-      "save": "Uložit",
-      "saved": "Uloženo",
-      "save_tip": "Přepíše vybraný profil aktuálním nastavením.",
-      "delete": "Smazat",
-      "delete_tip": "Smazat vybraný profil.",
-      "delete_title": "Potvrdit smazání",
-      "delete_message": "Smazat profil „{name}“? Tuto akci nelze vrátit.",
-      "delete_confirm": "Ano, smazat",
-      "delete_failed": "Profil „{name}“ se nepodařilo smazat, zkontrolujte MotionCab.log.",
-      "deleted_toast": "Profil „{name}“ smazán.",
-      "fallback_failed": "Smazáno, ale „{name}“ se nepodařilo načíst, zkontrolujte MotionCab.log."
-    },
     "reset": {
       "section": "Nebezpečná zóna",
-      "button": "Obnovit všechna nastavení",
+      "button": "Obnovit tento tahač",
       "title": "Potvrdit obnovení",
-      "message": "Obnovit všechna nastavení MotionCab na výchozí hodnoty?",
-      "confirm": "Ano, obnovit vše",
-      "done_toast": "Všechna nastavení MotionCab byla obnovena na výchozí hodnoty."
+      "message": "Obnovit všechna nastavení pro {truck}?",
+      "confirm": "Ano, obnovit",
+      "done_toast": "Nastavení pro {truck} byla obnovena."
     },
     "about": {
       "details": "Podrobnosti",
@@ -465,7 +448,7 @@
       "donate_desc": "Podpořit MotionCab přes PayPal",
       "tips": "Tipy",
       "tip_reset": "Pravým kliknutím na libovolný posuvník obnovíte jeho výchozí hodnotu.",
-      "tip_profiles": "Uložte své nastavení jako profil na záložce {settings_tab}.",
+      "tip_per_truck": "Nastavení se ukládají pro každý tahač zvlášť: změna platí jen pro tahač, který právě řídíte.",
       "tip_interior": "Všechny efekty fungují pouze ve vnitřní kameře.",
       "credits": "Poděkování",
       "credits_text": "SPF Framework a přispěvatelé."

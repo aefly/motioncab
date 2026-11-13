@@ -145,12 +145,9 @@ void DrawAboutTab(SPF_UI_API *ui) {
   ui->UI_Spacing();
   DrawSectionTitle(ui, loc::Tr("ui.about.tips"));
   ui->UI_Spacing();
-  const std::string settings_tab = WithIcon(
-      ICON_FA_GEAR, "**" + std::string(loc::Tr("ui.tabs.settings")) + "**");
-  const std::string tips =
-      "- " + std::string(loc::Tr("ui.about.tip_reset")) + "\n- " +
-      loc::Tr("ui.about.tip_profiles", {{"settings_tab", settings_tab}}) +
-      "\n- " + loc::Tr("ui.about.tip_interior");
+  const std::string tips = "- " + std::string(loc::Tr("ui.about.tip_reset")) +
+                           "\n- " + loc::Tr("ui.about.tip_per_truck") + "\n- " +
+                           loc::Tr("ui.about.tip_interior");
   ui->UI_RenderMarkdown(tips.c_str(), nullptr);
 
   ui->UI_Spacing();

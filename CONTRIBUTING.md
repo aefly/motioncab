@@ -35,8 +35,8 @@ game's `plugins/spfPlugins/MotionCab/`.
   - Active in the interior (cabin) camera view only.
   - Shown in MotionCab's own Quick Settings window. Declare each setting
     once in `settings::kAll` (`src/core/Settings.hpp`): the
-    manifest, the Quick Settings window and the profiles are all generated
-    from it. A new effect also needs its entry in `kEffects`
+    manifest, the Quick Settings window and the per-truck settings are all
+    generated from it. A new effect also needs its entry in `kEffects`
     (`src/ui/EffectTabs.cpp`).
 - Read the SPF SDK headers in `SPF_API/` before implementing or modifying
   any SDK interaction.
@@ -73,10 +73,11 @@ game's `plugins/spfPlugins/MotionCab/`.
   of `#include "..."` lines sorted.
 - Namespaces: classes and structs live in `motioncab`. A module of free
   functions or constants gets its own `motioncab::<module>`, named after
-  its file (`Profiles.*` is `profiles`, `Loc.*` is `loc`). Everything in
-  `src/ui/` is in `motioncab::ui`, everything in `src/math/` in
-  `motioncab::math`. Write the nested form (`namespace motioncab::ui {`)
-  and close it with `} // namespace motioncab::ui`.
+  its file (`TruckSettings.*` is `truck_settings`, `Loc.*` is `loc`).
+  Everything in `src/ui/` is in `motioncab::ui`, everything in
+  `src/math/` in `motioncab::math`. Write the nested form
+  (`namespace motioncab::ui {`) and close it with
+  `} // namespace motioncab::ui`.
 - Sources aren't globbed: add a new `.cpp` to `PLUGIN_SOURCES` in
   `CMakeLists.txt`, under its folder's group, in alphabetical order
   (`src/Plugin.cpp` stays first).

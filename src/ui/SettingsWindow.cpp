@@ -3,7 +3,7 @@
 #include "SPF_Icons.h"
 #include "core/Loc.hpp"
 #include "core/PluginContext.hpp"
-#include "core/Profiles.hpp"
+#include "core/TruckSettings.hpp"
 #include "ui/AboutTab.hpp"
 #include "ui/EffectTabs.hpp"
 #include "ui/SettingsTab.hpp"
@@ -202,6 +202,21 @@ void FitWindowSize(SPF_UI_API *ui, const TabMetrics &m) {
   ui->UI_SetWindowSize(target_w, target_h, SPF_COND_ALWAYS);
 }
 
+// Settings are per truck, so with none being driven there's nowhere for a
+// change to go: the effects are shown greyed out.
+template <typename Draw>
+float DrawEditableWithTruck(SPF_UI_API *ui, Draw draw) {
+  const EditBlock block = SettingsEditBlock();
+  if (block == EditBlock::kNoTruck)
+    DrawWrappedHint(ui, loc::Tr("ui.no_truck_hint"));
+  else if (block == EditBlock::kPaused)
+    DrawWrappedHint(ui, loc::Tr("ui.paused_hint"));
+  ui->UI_BeginDisabled(block != EditBlock::kNone);
+  const float folded_h = draw();
+  ui->UI_EndDisabled();
+  return folded_h;
+}
+
 // Returns whether an effect tab is open, which has the footer hint.
 bool DrawTabs(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
               const TabMetrics &tab_metrics) {
@@ -215,7 +230,8 @@ bool DrawTabs(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
       continue;
     const float region_top = ui->UI_GetCursorPosY();
     BeginTabContent(ui, kTabs[i].id, true);
-    const float folded_h = DrawEffectTab(ui, cfg, h, kTabs[i].id);
+    const float folded_h = DrawEditableWithTruck(
+        ui, [&] { return DrawEffectTab(ui, cfg, h, kTabs[i].id); });
     g_tab_min_h = FitHeight(ui, region_top, folded_h, true);
     ui->UI_EndChild();
     ui->UI_EndTabItem();
@@ -251,7 +267,8 @@ bool DrawTabs(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h,
 void DrawSearch(SPF_UI_API *ui, SPF_Config_API *cfg, SPF_Config_Handle *h) {
   const float region_top = ui->UI_GetCursorPosY();
   BeginTabContent(ui, "search", true);
-  const float folded_h = DrawSearchResults(ui, cfg, h);
+  const float folded_h =
+      DrawEditableWithTruck(ui, [&] { return DrawSearchResults(ui, cfg, h); });
   g_tab_min_h = FitHeight(ui, region_top, folded_h, true);
   ui->UI_EndChild();
 }
@@ -271,18 +288,6 @@ void DrawSettingsWindow(SPF_UI_API *ui, void * /*user_data*/) {
 
   const int pushed_colors = PushBrandColors(ui);
   const int pushed_vars = PushBrandRounding(ui);
-
-  const std::string active_profile = profiles::LastUsedName(ctx);
-  const std::string badge = WithIcon(
-      ICON_FA_USER,
-      loc::Tr("ui.profile_badge",
-              {{"name", active_profile.empty() ? loc::Tr("ui.unsaved_changes")
-                                               : active_profile}}));
-  ui->UI_TextDisabled(badge.c_str());
-  if (!active_profile.empty()) {
-    if (!profiles::Matches(ctx, active_profile))
-      DrawModifiedMark(ui);
-  }
 
   const bool searching = DrawSearchBar(ui);
   ui->UI_Spacing();

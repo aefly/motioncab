@@ -393,8 +393,17 @@
     "enabled": "有効",
     "cancel": "キャンセル",
     "slider_reset_hint": "スライダーを右クリックするとデフォルトに戻ります。",
-    "profile_badge": "プロファイル：{name}",
-    "unsaved_changes": "（未保存の変更）",
+    "truck_badge": "{name} の設定",
+    "no_truck": "トラックが読み込まれていません",
+    "no_truck_hint": "設定を変更するにはトラックに乗ってください。",
+    "paused": "ゲーム一時停止中",
+    "paused_hint": "設定を変更するにはゲームを再開してください。",
+    "trucks": {
+      "section": "設定済みのトラック ({count})",
+      "changed": "{count} 件の設定を変更",
+      "none": "独自の設定を持つトラックはまだありません。",
+      "reset_tip": "このトラックの設定を既定値に戻します。"
+    },
     "search": {
       "hint": "設定を検索...",
       "no_results": "「{query}」に一致する設定はありません。",
@@ -412,39 +421,13 @@
       "options_tip": "割り当てのオプション（長押し/トグル、デッドゾーンなど）。",
       "add_tip": "別の割り当てを追加します。"
     },
-    "profiles": {
-      "section": "プロファイル",
-      "name_hint": "プロファイル名...",
-      "save_as": "プロファイルとして保存",
-      "save_as_tip": "現在のすべてのエフェクト設定をこのプロファイル名で保存します。",
-      "saved_toast": "プロファイル「{name}」を保存しました。",
-      "save_failed": "プロファイルを保存できませんでした。MotionCab.log を確認してください。",
-      "overwrite_title": "上書きの確認",
-      "overwrite_message": "「{name}」という名前のプロファイルはすでに存在します。上書きしますか？",
-      "overwrite_confirm": "はい、上書きする",
-      "none": "保存されたプロファイルはまだありません。",
-      "select_tip": "プロファイルを選択するとすぐに読み込まれます。",
-      "load_failed": "プロファイル「{name}」を読み込めませんでした。MotionCab.log を確認してください。",
-      "no_match": "現在の設定に一致するプロファイルはありません。読み込むものを選ぶか、上で新しいプロファイルとして保存してください。",
-      "save": "保存",
-      "saved": "保存しました",
-      "save_tip": "選択中のプロファイルを現在の設定で上書きします。",
-      "delete": "削除",
-      "delete_tip": "選択中のプロファイルを削除します。",
-      "delete_title": "削除の確認",
-      "delete_message": "プロファイル「{name}」を削除しますか？ この操作は元に戻せません。",
-      "delete_confirm": "はい、削除する",
-      "delete_failed": "プロファイル「{name}」を削除できませんでした。MotionCab.log を確認してください。",
-      "deleted_toast": "プロファイル「{name}」を削除しました。",
-      "fallback_failed": "削除しましたが、「{name}」を読み込めませんでした。MotionCab.log を確認してください。"
-    },
     "reset": {
       "section": "危険な操作",
-      "button": "すべての設定をリセット",
+      "button": "このトラックをリセット",
       "title": "リセットの確認",
-      "message": "MotionCab のすべての設定をデフォルト値に戻しますか？",
-      "confirm": "はい、すべてリセット",
-      "done_toast": "MotionCab のすべての設定をデフォルト値に戻しました。"
+      "message": "{truck} の設定をすべてリセットしますか？",
+      "confirm": "はい、リセット",
+      "done_toast": "{truck} の設定をリセットしました。"
     },
     "about": {
       "details": "詳細",
@@ -465,7 +448,7 @@
       "donate_desc": "PayPal で MotionCab を支援",
       "tips": "ヒント",
       "tip_reset": "スライダーを右クリックするとデフォルト値に戻ります。",
-      "tip_profiles": "{settings_tab} タブで設定をプロファイルとして保存できます。",
+      "tip_per_truck": "設定はトラックごとに保存されます：変更は運転中のトラックにのみ適用されます。",
       "tip_interior": "すべてのエフェクトは車内カメラでのみ動作します。",
       "credits": "クレジット",
       "credits_text": "SPF Framework と貢献者の皆さま。"

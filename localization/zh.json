@@ -393,8 +393,17 @@
     "enabled": "已启用",
     "cancel": "取消",
     "slider_reset_hint": "右键单击滑块可将其重置为默认值。",
-    "profile_badge": "配置：{name}",
-    "unsaved_changes": "（未保存的更改）",
+    "truck_badge": "{name} 的设置",
+    "no_truck": "未加载卡车",
+    "no_truck_hint": "进入一辆卡车以更改它的设置。",
+    "paused": "游戏已暂停",
+    "paused_hint": "继续游戏以更改设置。",
+    "trucks": {
+      "section": "已设置的卡车 ({count})",
+      "changed": "已更改 {count} 项设置",
+      "none": "还没有卡车拥有自己的设置。",
+      "reset_tip": "将此卡车的设置重置为默认值。"
+    },
     "search": {
       "hint": "搜索设置...",
       "no_results": "没有与“{query}”匹配的设置。",
@@ -412,39 +421,13 @@
       "options_tip": "绑定选项（按住/切换、死区等）。",
       "add_tip": "添加另一个绑定。"
     },
-    "profiles": {
-      "section": "配置",
-      "name_hint": "配置名称...",
-      "save_as": "另存为配置",
-      "save_as_tip": "将当前所有效果设置保存到此配置名称下。",
-      "saved_toast": "已保存配置“{name}”。",
-      "save_failed": "保存配置失败，请查看 MotionCab.log。",
-      "overwrite_title": "确认覆盖",
-      "overwrite_message": "名为“{name}”的配置已存在。要覆盖吗？",
-      "overwrite_confirm": "是，覆盖",
-      "none": "暂无已保存的配置。",
-      "select_tip": "选择配置后会立即加载。",
-      "load_failed": "加载配置“{name}”失败，请查看 MotionCab.log。",
-      "no_match": "没有与当前设置匹配的配置。请选择一个进行加载，或在上方将其另存为新配置。",
-      "save": "保存",
-      "saved": "已保存",
-      "save_tip": "用当前设置覆盖所选配置。",
-      "delete": "删除",
-      "delete_tip": "删除所选配置。",
-      "delete_title": "确认删除",
-      "delete_message": "删除配置“{name}”？此操作无法撤销。",
-      "delete_confirm": "是，删除",
-      "delete_failed": "删除配置“{name}”失败，请查看 MotionCab.log。",
-      "deleted_toast": "已删除配置“{name}”。",
-      "fallback_failed": "已删除，但加载“{name}”失败，请查看 MotionCab.log。"
-    },
     "reset": {
       "section": "危险区域",
-      "button": "重置所有设置",
+      "button": "重置此卡车",
       "title": "确认重置",
-      "message": "将 MotionCab 的所有设置重置为默认值？",
-      "confirm": "是，全部重置",
-      "done_toast": "已将 MotionCab 的所有设置重置为默认值。"
+      "message": "将 {truck} 的设置全部重置？",
+      "confirm": "是，重置",
+      "done_toast": "已重置 {truck} 的设置。"
     },
     "about": {
       "details": "详情",
@@ -465,7 +448,7 @@
       "donate_desc": "在 PayPal 上支持 MotionCab",
       "tips": "提示",
       "tip_reset": "右键单击任意滑块可将其恢复为默认值。",
-      "tip_profiles": "在 {settings_tab} 选项卡中将你的调校保存为配置。",
+      "tip_per_truck": "设置按卡车保存：更改只对你正在驾驶的卡车生效。",
       "tip_interior": "所有效果仅在车内视角下生效。",
       "credits": "致谢",
       "credits_text": "SPF Framework 及其贡献者。"

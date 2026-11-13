@@ -393,8 +393,17 @@
     "enabled": "Activado",
     "cancel": "Cancelar",
     "slider_reset_hint": "Haz clic derecho en un control deslizante para restablecerlo.",
-    "profile_badge": "Perfil: {name}",
-    "unsaved_changes": "(Cambios sin guardar)",
+    "truck_badge": "Ajustes de {name}",
+    "no_truck": "Ningún camión cargado",
+    "no_truck_hint": "Sube a un camión para cambiar sus ajustes.",
+    "paused": "Juego en pausa",
+    "paused_hint": "Reanuda la partida para cambiar los ajustes.",
+    "trucks": {
+      "section": "Camiones ajustados ({count})",
+      "changed": "{count} ajustes cambiados",
+      "none": "Ningún camión tiene todavía ajustes propios.",
+      "reset_tip": "Restablecer los ajustes de este camión a los valores predeterminados."
+    },
     "search": {
       "hint": "Buscar ajustes...",
       "no_results": "Ningún ajuste coincide con «{query}».",
@@ -412,39 +421,13 @@
       "options_tip": "Opciones de asignación (mantener/alternar, zona muerta, ...).",
       "add_tip": "Añadir otra asignación."
     },
-    "profiles": {
-      "section": "Perfiles",
-      "name_hint": "Nombre del perfil...",
-      "save_as": "Guardar como perfil",
-      "save_as_tip": "Guarda todos los ajustes actuales de los efectos con este nombre de perfil.",
-      "saved_toast": "Perfil «{name}» guardado.",
-      "save_failed": "No se pudo guardar el perfil, revisa MotionCab.log.",
-      "overwrite_title": "Confirmar sobrescritura",
-      "overwrite_message": "Ya existe un perfil llamado «{name}». ¿Sobrescribirlo?",
-      "overwrite_confirm": "Sí, sobrescribir",
-      "none": "Aún no hay perfiles guardados.",
-      "select_tip": "Al seleccionar un perfil se carga inmediatamente.",
-      "load_failed": "No se pudo cargar el perfil «{name}», revisa MotionCab.log.",
-      "no_match": "Ningún perfil coincide con los ajustes actuales. Elige uno para cargarlo o guárdalos como nuevo perfil arriba.",
-      "save": "Guardar",
-      "saved": "Guardado",
-      "save_tip": "Sobrescribe el perfil seleccionado con los ajustes actuales.",
-      "delete": "Eliminar",
-      "delete_tip": "Eliminar el perfil seleccionado.",
-      "delete_title": "Confirmar eliminación",
-      "delete_message": "¿Eliminar el perfil «{name}»? Esta acción no se puede deshacer.",
-      "delete_confirm": "Sí, eliminar",
-      "delete_failed": "No se pudo eliminar el perfil «{name}», revisa MotionCab.log.",
-      "deleted_toast": "Perfil «{name}» eliminado.",
-      "fallback_failed": "Eliminado, pero no se pudo cargar «{name}», revisa MotionCab.log."
-    },
     "reset": {
       "section": "Zona de peligro",
-      "button": "Restablecer todos los ajustes",
+      "button": "Restablecer este camión",
       "title": "Confirmar restablecimiento",
-      "message": "¿Restablecer todos los ajustes de MotionCab a sus valores predeterminados?",
-      "confirm": "Sí, restablecer todo",
-      "done_toast": "Todos los ajustes de MotionCab se han restablecido a sus valores predeterminados."
+      "message": "¿Restablecer todos los ajustes de {truck}?",
+      "confirm": "Sí, restablecer",
+      "done_toast": "Ajustes de {truck} restablecidos."
     },
     "about": {
       "details": "Detalles",
@@ -465,7 +448,7 @@
       "donate_desc": "Apoyar MotionCab en PayPal",
       "tips": "Consejos",
       "tip_reset": "Haz clic derecho en cualquier control deslizante para restablecer su valor predeterminado.",
-      "tip_profiles": "Guarda tus ajustes como perfil en la pestaña {settings_tab}.",
+      "tip_per_truck": "Los ajustes se guardan por camión: un cambio solo se aplica al camión que conduces.",
       "tip_interior": "Todos los efectos funcionan solo con la cámara interior.",
       "credits": "Créditos",
       "credits_text": "SPF Framework y sus colaboradores."

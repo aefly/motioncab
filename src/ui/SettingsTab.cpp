@@ -4,245 +4,189 @@
 #include "core/Keybinds.hpp"
 #include "core/Loc.hpp"
 #include "core/PluginContext.hpp"
-#include "core/Profiles.hpp"
-#include "core/Settings.hpp"
+#include "core/TruckSettings.hpp"
 #include "ui/Widgets.hpp"
 
 #include <algorithm>
-#include <chrono>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace motioncab::ui {
 
 namespace {
 
-// The popups' titles are translated, so they go by "###" IDs.
-constexpr const char *kOverwritePopupId = "###confirm_overwrite_profile";
-constexpr const char *kDeletePopupId = "###confirm_delete_profile";
+// The popup's title is translated, so it goes by a "###" ID.
 constexpr const char *kResetPopupId = "###confirm_reset_all";
 
-// `field_w` is the width of the name field and the dropdown, which the
-// buttons follow.
-void DrawProfilesSection(SPF_UI_API *ui, float field_w) {
-  PluginContext &ctx = Context();
+// The truck the settings belong to, in the brand color: every change goes to
+// it alone. Dimmed while they can't be changed.
+void DrawTruckBanner(SPF_UI_API *ui) {
+  const EditBlock block = SettingsEditBlock();
+  const bool has_truck = block == EditBlock::kNone;
+  const std::string text =
+      WithIcon(ICON_FA_TRUCK,
+               block == EditBlock::kNoTruck ? loc::Tr("ui.no_truck")
+               : block == EditBlock::kPaused
+                   ? loc::Tr("ui.paused")
+                   : loc::Tr("ui.truck_badge",
+                             {{"name", truck_settings::CurrentTruckName()}}));
 
-  DrawSectionTitle(ui, loc::Tr("ui.profiles.section"));
+  float x = 0.0f, y = 0.0f, avail_x = 0.0f, avail_y = 0.0f;
+  ui->UI_GetCursorScreenPos(&x, &y);
+  ui->UI_GetContentRegionAvail(&avail_x, &avail_y);
+  const float pad = Px(ui, 6.0f);
+  const float bar_w = Px(ui, 3.0f);
+  const float h = ui->UI_GetTextLineHeight() + pad * 2.0f;
 
-  static char profile_name_buf[64] = "";
-  static std::string pending_select;
-  static std::string pending_overwrite;
+  const SPF_DrawList_Handle dl = ui->UI_GetWindowDrawList();
+  ui->UI_DrawList_AddRectFilled(
+      dl, x, y, x + avail_x, y + h,
+      ui->UI_ColorConvertFloat4ToU32(kAccentR, kAccentG, kAccentB,
+                                     has_truck ? 0.18f : 0.06f),
+      Px(ui, 4.0f), SPF_DRAW_FLAG_NONE);
+  ui->UI_DrawList_AddRectFilled(
+      dl, x, y, x + bar_w, y + h,
+      ui->UI_ColorConvertFloat4ToU32(kAccentR, kAccentG, kAccentB,
+                                     has_truck ? 1.0f : 0.35f),
+      Px(ui, 4.0f), SPF_DRAW_FLAG_ROUND_CORNERS_LEFT);
 
-  auto do_save = [&](const std::string &saved_name) {
-    if (profiles::Save(ctx, saved_name)) {
-      profile_name_buf[0] = '\0';
-      pending_select = saved_name;
-      ShowToast(ui, SPF_NOTIFICATION_SUCCESS,
-                loc::Tr("ui.profiles.saved_toast", {{"name", saved_name}}));
-      return true;
-    }
-    ShowToast(ui, SPF_NOTIFICATION_ERROR, loc::Tr("ui.profiles.save_failed"));
-    return false;
-  };
-
-  ui->UI_SetNextItemWidth(field_w);
-  ui->UI_InputTextWithHint("##profile_name", loc::Tr("ui.profiles.name_hint"),
-                           profile_name_buf, sizeof(profile_name_buf),
-                           SPF_INPUT_TEXT_FLAG_NONE);
-  ui->UI_SameLine(0.0f, Px(ui, 8.0f));
-  static std::chrono::steady_clock::time_point save_as_confirm_until{};
-  const auto confirm_save_as = [] {
-    save_as_confirm_until =
-        std::chrono::steady_clock::now() + std::chrono::seconds(2);
-  };
-  const std::string save_label =
-      (std::chrono::steady_clock::now() < save_as_confirm_until
-           ? WithIcon(ICON_FA_CHECK, loc::Tr("ui.profiles.saved"))
-           : WithIcon(ICON_FA_FLOPPY_DISK, loc::Tr("ui.profiles.save_as"))) +
-      "###save_as";
-  // Greyed out until the name holds something valid to save under.
-  const std::string sanitized = profiles::Sanitize(profile_name_buf);
-  ui->UI_BeginDisabled(sanitized.empty());
-  if (MutedButton(ui, save_label.c_str())) {
-    const std::vector<std::string> existing = profiles::List(ctx);
-    // On Windows "default" is the same file as "Default": the stored
-    // spelling is kept so the active name still matches the dropdown.
-    const std::string *match = profiles::FindIgnoreCase(existing, sanitized);
-    if (match) {
-      pending_overwrite = *match;
-      ui->UI_OpenPopup(kOverwritePopupId, SPF_POPUP_FLAG_NONE);
-    } else if (do_save(sanitized)) {
-      confirm_save_as();
-    }
-  }
-  ui->UI_EndDisabled();
-  ui->UI_SetItemTooltip(loc::Tr("ui.profiles.save_as_tip"));
-
-  const std::string overwrite_title =
-      loc::Tr("ui.profiles.overwrite_title") + std::string(kOverwritePopupId);
-  const std::string overwrite_message =
-      loc::Tr("ui.profiles.overwrite_message", {{"name", pending_overwrite}});
-  if (ConfirmPopup(ui, overwrite_title, overwrite_message.c_str(),
-                   loc::Tr("ui.profiles.overwrite_confirm")) &&
-      do_save(pending_overwrite))
-    confirm_save_as();
-
-  ui->UI_Spacing();
-  const std::vector<std::string> profile_names = profiles::List(ctx);
-  if (profile_names.empty()) {
-    ui->UI_TextDisabled(loc::Tr("ui.profiles.none"));
-  } else {
-    // -1 when no profile matches the live settings, shown as such rather
-    // than as whichever profile sorts first. -2 until synced.
-    static int selected_profile = -2;
-    static bool selection_initialized = false;
-    if (!selection_initialized) {
-      selection_initialized = true;
-      const std::string last_used = profiles::LastUsedName(ctx);
-      const auto it =
-          std::find(profile_names.begin(), profile_names.end(), last_used);
-      selected_profile = (!last_used.empty() && it != profile_names.end())
-                             ? static_cast<int>(it - profile_names.begin())
-                             : -1;
-    }
-    if (!pending_select.empty()) {
-      // No Load(): the save just wrote these same values.
-      const auto it =
-          std::find(profile_names.begin(), profile_names.end(), pending_select);
-      selected_profile = it != profile_names.end()
-                             ? static_cast<int>(it - profile_names.begin())
-                             : -1;
-      pending_select.clear();
-    }
-    if (selected_profile >= static_cast<int>(profile_names.size()))
-      selected_profile = static_cast<int>(profile_names.size()) - 1;
-
-    const char *preview = selected_profile >= 0
-                              ? profile_names[selected_profile].c_str()
-                              : loc::Tr("ui.unsaved_changes");
-    ui->UI_SetNextItemWidth(field_w);
-    ui->UI_PushStyleVarFloat(SPF_STYLE_VAR_POPUP_BORDERSIZE, 1.0f);
-    const bool combo_open =
-        ui->UI_BeginCombo("##profile_select", preview, SPF_COMBO_FLAG_NONE);
-    if (combo_open) {
-      for (size_t i = 0; i < profile_names.size(); ++i) {
-        const bool is_selected = static_cast<int>(i) == selected_profile;
-        if (ui->UI_Selectable(profile_names[i].c_str(), is_selected,
-                              SPF_SELECTABLE_FLAG_NONE, 0.0f, 0.0f)) {
-          if (profiles::Load(ctx, profile_names[i])) {
-            selected_profile = static_cast<int>(i);
-          } else {
-            ShowToast(ui, SPF_NOTIFICATION_ERROR,
-                      loc::Tr("ui.profiles.load_failed",
-                              {{"name", profile_names[i]}}));
-          }
-        }
-      }
-      ui->UI_EndCombo();
-    }
-    ui->UI_PopStyleVar(1);
-    ui->UI_SetItemTooltip(loc::Tr("ui.profiles.select_tip"));
-
-    if (selected_profile < 0) {
-      ui->UI_TextDisabled(loc::Tr("ui.profiles.no_match"));
-      return;
-    }
-
-    const std::string &selected_name = profile_names[selected_profile];
-
-    ui->UI_SameLine(0.0f, Px(ui, 8.0f));
-    static std::chrono::steady_clock::time_point save_confirm_until{};
-    const bool save_confirmed =
-        std::chrono::steady_clock::now() < save_confirm_until;
-    const std::string update_label =
-        (save_confirmed
-             ? WithIcon(ICON_FA_CHECK, loc::Tr("ui.profiles.saved"))
-             : WithIcon(ICON_FA_FLOPPY_DISK, loc::Tr("ui.profiles.save"))) +
-        "###save";
-    // Nothing to save while the settings match the profile.
-    ui->UI_BeginDisabled(profiles::Matches(ctx, selected_name));
-    if (MutedButton(ui, update_label.c_str()) && do_save(selected_name))
-      save_confirm_until =
-          std::chrono::steady_clock::now() + std::chrono::seconds(2);
-    ui->UI_EndDisabled();
-    ui->UI_SetItemTooltip(loc::Tr("ui.profiles.save_tip"));
-
-    ui->UI_SameLine(0.0f, Px(ui, 4.0f));
-    const std::string delete_label =
-        WithIcon(ICON_FA_TRASH, loc::Tr("ui.profiles.delete")) + "###delete";
-    static std::string pending_delete;
-    if (MutedButton(ui, delete_label.c_str())) {
-      pending_delete = selected_name;
-      ui->UI_OpenPopup(kDeletePopupId, SPF_POPUP_FLAG_NONE);
-    }
-    ui->UI_SetItemTooltip(loc::Tr("ui.profiles.delete_tip"));
-
-    const std::string delete_title =
-        loc::Tr("ui.profiles.delete_title") + std::string(kDeletePopupId);
-    const std::string delete_message =
-        loc::Tr("ui.profiles.delete_message", {{"name", pending_delete}});
-    if (ConfirmPopup(ui, delete_title, delete_message.c_str(),
-                     loc::Tr("ui.profiles.delete_confirm"))) {
-      if (!profiles::Delete(ctx, pending_delete)) {
-        ShowToast(
-            ui, SPF_NOTIFICATION_ERROR,
-            loc::Tr("ui.profiles.delete_failed", {{"name", pending_delete}}));
-      } else {
-        ShowToast(
-            ui, SPF_NOTIFICATION_SUCCESS,
-            loc::Tr("ui.profiles.deleted_toast", {{"name", pending_delete}}));
-        // The deleted profile's values shouldn't stay loaded. "Default" is
-        // recreated first in case it's the one that got deleted.
-        profiles::EnsureDefaultExists(ctx);
-        if (profiles::Load(ctx, profiles::kDefaultProfileName)) {
-          const std::vector<std::string> refreshed = profiles::List(ctx);
-          const auto it = std::find(refreshed.begin(), refreshed.end(),
-                                    profiles::kDefaultProfileName);
-          selected_profile = it != refreshed.end()
-                                 ? static_cast<int>(it - refreshed.begin())
-                                 : -1;
-        } else {
-          ShowToast(ui, SPF_NOTIFICATION_ERROR,
-                    loc::Tr("ui.profiles.fallback_failed",
-                            {{"name", profiles::kDefaultProfileName}}));
-        }
-      }
-    }
-  }
+  ui->UI_SetCursorScreenPos(x + bar_w + pad * 1.5f, y + pad);
+  if (has_truck)
+    ui->UI_Text(text.c_str());
+  else
+    ui->UI_TextDisabled(text.c_str());
+  // Takes the banner's whole height in the layout.
+  ui->UI_SetCursorScreenPos(x, y);
+  ui->UI_Dummy(avail_x, h);
 }
 
-// Last in the tab and away from the effect tabs, so it isn't clicked by
-// accident.
-void DrawResetSection(SPF_UI_API *ui, SPF_Config_API *cfg,
-                      SPF_Config_Handle *h) {
-  PluginContext &ctx = Context();
+// The truck the reset popup is about: the current one, or one of the list.
+struct PendingReset {
+  std::string key;
+  std::string name;
+};
+PendingReset g_pending_reset;
 
+void AskReset(SPF_UI_API *ui, std::string key, std::string name) {
+  g_pending_reset = {std::move(key), std::move(name)};
+  ui->UI_OpenPopup(kResetPopupId, SPF_POPUP_FLAG_NONE);
+}
+
+// Every truck with settings of its own, the one being driven on top. Past
+// kVisibleRows the list scrolls on its own, so a long one doesn't push the
+// rest of the page away.
+void DrawTunedTrucks(SPF_UI_API *ui) {
+  PluginContext &ctx = Context();
+  const std::vector<truck_settings::TunedTruck> &trucks =
+      truck_settings::TunedTrucks(ctx);
+  DrawSectionTitle(ui, loc::Tr("ui.trucks.section",
+                               {{"count", std::to_string(trucks.size())}})
+                           .c_str());
+  if (trucks.empty()) {
+    ui->UI_TextDisabled(loc::Tr("ui.trucks.none"));
+    return;
+  }
+
+  constexpr size_t kVisibleRows = 6;
+  const bool scrolls = trucks.size() > kVisibleRows;
+  // Plain rows: no background (the brand colors turn every other row bright
+  // red) and no borders.
+  int flags = SPF_TABLE_FLAG_NONE;
+  if (scrolls)
+    flags |= SPF_TABLE_FLAG_SCROLL_Y;
+  const float height =
+      scrolls ? ui->UI_GetTextLineHeightWithSpacing() * kVisibleRows : 0.0f;
+  if (!ui->UI_BeginTable("##tuned_trucks", 3,
+                         static_cast<SPF_TableFlags>(flags), 0.0f, height,
+                         0.0f))
+    return;
+  ui->UI_TableSetupColumn("Truck", SPF_TABLE_COLUMN_FLAG_WIDTH_STRETCH, 0.0f,
+                          0);
+  ui->UI_TableSetupColumn("Changed", SPF_TABLE_COLUMN_FLAG_WIDTH_FIXED, 0.0f,
+                          0);
+  ui->UI_TableSetupColumn("Reset", SPF_TABLE_COLUMN_FLAG_WIDTH_FIXED, 0.0f, 0);
+
+  // Opened after the table: a popup opened inside it would get the table's
+  // ID and never match the one drawn below.
+  const truck_settings::TunedTruck *to_reset = nullptr;
+  const bool blocked = SettingsEditBlock() != EditBlock::kNone;
+  for (size_t i = 0; i < trucks.size(); ++i) {
+    const truck_settings::TunedTruck &truck = trucks[i];
+    const bool current = truck.key == truck_settings::CurrentTruckKey();
+    ui->UI_TableNextRow(SPF_TABLE_ROW_FLAG_NONE, 0.0f);
+    ui->UI_TableSetColumnIndex(0);
+    // The truck being driven stands out: its icon, and brighter.
+    if (current)
+      ui->UI_TextUnformatted(WithIcon(ICON_FA_TRUCK, truck.name).c_str());
+    else
+      ui->UI_TextDisabled(truck.name.c_str());
+    ui->UI_TableSetColumnIndex(1);
+    ui->UI_TextDisabled(std::to_string(truck.changed).c_str());
+    ui->UI_SetItemTooltip(
+        loc::Tr("ui.trucks.changed", {{"count", std::to_string(truck.changed)}})
+            .c_str());
+    ui->UI_TableSetColumnIndex(2);
+    ui->UI_PushID_Int(static_cast<int>(i));
+    // Like the reset below, not for the truck being driven while its
+    // settings can't be changed.
+    ui->UI_BeginDisabled(current && blocked);
+    // Only an icon until hovered, so the list reads as plain text.
+    ui->UI_PushStyleColor(SPF_COLOR_BUTTON, 0.0f, 0.0f, 0.0f, 0.0f);
+    ui->UI_PushStyleColor(SPF_COLOR_BUTTON_HOVERED, kAccentR, kAccentG,
+                          kAccentB, 0.35f);
+    ui->UI_PushStyleColor(SPF_COLOR_BUTTON_ACTIVE, kAccentHoverR, kAccentHoverG,
+                          kAccentHoverB, 0.55f);
+    ui->UI_PushStyleColor(SPF_COLOR_TEXT, 0.6f, 0.6f, 0.6f, 1.0f);
+    if (ui->UI_SmallButton(ICON_FA_ARROW_ROTATE_LEFT))
+      to_reset = &truck;
+    ui->UI_PopStyleColor(4);
+    ui->UI_EndDisabled();
+    ui->UI_SetItemTooltip(loc::Tr("ui.trucks.reset_tip"));
+    ui->UI_PopID();
+  }
+  ui->UI_EndTable();
+  if (to_reset)
+    AskReset(ui, to_reset->key, to_reset->name);
+}
+
+// Greyed out with the effect pages, when there's no truck to reset.
+void DrawResetSection(SPF_UI_API *ui) {
   DrawSectionTitle(ui, loc::Tr("ui.reset.section"));
+  ui->UI_BeginDisabled(SettingsEditBlock() != EditBlock::kNone);
   const std::string reset_label =
       WithIcon(ICON_FA_ARROW_ROTATE_LEFT, loc::Tr("ui.reset.button")) +
       "###reset_all";
   if (MutedButton(ui, reset_label.c_str()))
-    ui->UI_OpenPopup(kResetPopupId, SPF_POPUP_FLAG_NONE);
+    AskReset(ui, truck_settings::CurrentTruckKey(),
+             truck_settings::CurrentTruckName());
+  ui->UI_EndDisabled();
+}
 
+void DrawResetPopup(SPF_UI_API *ui) {
   const std::string title =
       loc::Tr("ui.reset.title") + std::string(kResetPopupId);
-  if (ConfirmPopup(ui, title, loc::Tr("ui.reset.message"),
-                   loc::Tr("ui.reset.confirm"))) {
-    const std::string active_profile = profiles::LastUsedName(ctx);
-    settings::WriteDefaults(cfg, h);
-    if (!active_profile.empty())
-      profiles::Save(ctx, active_profile);
-    ShowToast(ui, SPF_NOTIFICATION_SUCCESS, loc::Tr("ui.reset.done_toast"));
+  const std::string message =
+      loc::Tr("ui.reset.message", {{"truck", g_pending_reset.name}});
+  // The truck may have been left while the popup was open.
+  if (ConfirmPopup(ui, title, message.c_str(), loc::Tr("ui.reset.confirm")) &&
+      truck_settings::ResetToDefaults(Context(), g_pending_reset.key)) {
+    ShowToast(
+        ui, SPF_NOTIFICATION_SUCCESS,
+        loc::Tr("ui.reset.done_toast", {{"truck", g_pending_reset.name}}));
   }
 }
 
 } // namespace
 
-void DrawSettingsTab(SPF_UI_API *ui, SPF_Config_API *cfg,
-                     SPF_Config_Handle *h) {
+void DrawSettingsTab(SPF_UI_API *ui, SPF_Config_API * /*cfg*/,
+                     SPF_Config_Handle * /*h*/) {
+  DrawTruckBanner(ui);
+  ui->UI_Spacing();
+
   DrawSectionTitle(ui, loc::Tr("ui.keybind.section"));
-  // The keybind button and the profiles' buttons line up just past the name
-  // field, which widens if the translated keybind label needs the room.
+  // The keybind button lines up just past the label, with room for the
+  // translated label if it needs more.
   const float gap = Px(ui, 8.0f);
   const char *toggle_label = loc::Tr("ui.keybind.toggle_window");
   float label_w = 0.0f, label_h = 0.0f;
@@ -251,10 +195,10 @@ void DrawSettingsTab(SPF_UI_API *ui, SPF_Config_API *cfg,
   DrawKeybindRowAt(ui, keybinds::kToggleWindow.id, toggle_label, field_w + gap);
 
   ui->UI_Spacing();
-  DrawProfilesSection(ui, field_w);
-
+  DrawTunedTrucks(ui);
   ui->UI_Spacing();
-  DrawResetSection(ui, cfg, h);
+  DrawResetSection(ui);
+  DrawResetPopup(ui);
 }
 
 } // namespace motioncab::ui

@@ -1,6 +1,8 @@
 #include "Settings.hpp"
 
+#include <charconv>
 #include <format>
+#include <system_error>
 
 namespace motioncab::settings {
 
@@ -15,6 +17,15 @@ std::string JsonNumber(float value) {
 }
 
 } // namespace
+
+double Stored(float value) {
+  char buf[32];
+  double out = value;
+  const auto [end, ec] = std::to_chars(buf, buf + sizeof(buf), value);
+  if (ec == std::errc{})
+    std::from_chars(buf, end, out);
+  return out;
+}
 
 const Setting *Find(std::string_view key) {
   for (const Setting &s : kAll) {
@@ -60,7 +71,7 @@ void WriteDefaults(SPF_Config_API *cfg, SPF_Config_Handle *handle) {
     if (s.type == Type::kBool)
       cfg->Cfg_SetBool(handle, s.key, s.default_bool());
     else
-      cfg->Cfg_SetFloat(handle, s.key, s.default_value);
+      cfg->Cfg_SetFloat(handle, s.key, Stored(s.default_value));
   }
 }
 

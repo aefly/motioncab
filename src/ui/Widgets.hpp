@@ -50,15 +50,20 @@ std::string WithIcon(const char *icon, std::string_view text);
 void ShowToast(SPF_UI_API *ui, SPF_NotificationType type,
                const std::string &message);
 
-// "Profiles ─────────", lighter than UI_SeparatorText's full-width bar.
+// "Reset ─────────", lighter than UI_SeparatorText's full-width bar.
 void DrawSectionTitle(SPF_UI_API *ui, const char *title);
 
 // Muted, with an info icon, and wrapped at the window's edge rather than
 // running off it.
 void DrawWrappedHint(SPF_UI_API *ui, const char *text);
 
-// The orange "*" after the item before it: the profile's unsaved changes, a
-// setting changed from its default.
+// Why the settings can't be changed right now: they belong to the truck being
+// driven, so not in the main menu, nor behind the pause menu.
+enum class EditBlock { kNone, kNoTruck, kPaused };
+EditBlock SettingsEditBlock();
+
+// The orange "*" after the item before it: a setting changed from its
+// default.
 void DrawModifiedMark(SPF_UI_API *ui, const char *tooltip = nullptr);
 // Its width, spacing included, for a column that has to fit it.
 float ModifiedMarkWidth(SPF_UI_API *ui);

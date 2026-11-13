@@ -3,8 +3,10 @@
 #include "SPF_TelemetryData.h"
 #include "math/Units.hpp"
 
+#include <cctype>
 #include <cmath>
 #include <cstdint>
+#include <string>
 
 // Readings shared by several effects, so each heuristic lives in one place.
 namespace motioncab::telemetry {
@@ -30,6 +32,22 @@ inline bool IsElectric(const SPF_TruckConstants &constants) {
 // The head position is relative to the cabin's centerline.
 inline bool IsRightHandDrive(const SPF_TruckConstants &constants) {
   return constants.head_position.x > 0.0f;
+}
+
+// The truck model, "<brand_id>_<id>", reduced to [A-Za-z0-9_] to hold as one
+// config key segment. Empty while the truck isn't known.
+inline std::string TruckKey(const SPF_TruckConstants &constants) {
+  auto clean = [](const char *s) {
+    std::string out;
+    for (; *s; ++s)
+      out += std::isalnum(static_cast<unsigned char>(*s)) ? *s : '_';
+    return out;
+  };
+  const std::string brand = clean(constants.brand_id);
+  const std::string model = clean(constants.id);
+  if (brand.empty() && model.empty())
+    return {};
+  return brand + "_" + model;
 }
 
 // With the Simple Automatic gearbox, gear only goes negative in short bursts

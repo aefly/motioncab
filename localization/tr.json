@@ -393,8 +393,17 @@
     "enabled": "Etkin",
     "cancel": "İptal",
     "slider_reset_hint": "Sıfırlamak için bir kaydırıcıya sağ tıklayın.",
-    "profile_badge": "Profil: {name}",
-    "unsaved_changes": "(Kaydedilmemiş değişiklikler)",
+    "truck_badge": "{name} ayarları",
+    "no_truck": "Yüklü tır yok",
+    "no_truck_hint": "Ayarlarını değiştirmek için bir tıra bin.",
+    "paused": "Oyun duraklatıldı",
+    "paused_hint": "Ayarları değiştirmek için oyuna devam et.",
+    "trucks": {
+      "section": "Ayarlanmış tırlar ({count})",
+      "changed": "{count} ayar değiştirildi",
+      "none": "Henüz kendi ayarları olan bir tır yok.",
+      "reset_tip": "Bu tırın ayarlarını varsayılan değerlere sıfırla."
+    },
     "search": {
       "hint": "Ayarlarda ara...",
       "no_results": "\"{query}\" ile eşleşen ayar yok.",
@@ -412,39 +421,13 @@
       "options_tip": "Atama seçenekleri (basılı tut/geçiş, ölü bölge, ...).",
       "add_tip": "Başka bir atama ekle."
     },
-    "profiles": {
-      "section": "Profiller",
-      "name_hint": "Profil adı...",
-      "save_as": "Profil olarak kaydet",
-      "save_as_tip": "Tüm mevcut efekt ayarlarını bu profil adıyla kaydeder.",
-      "saved_toast": "\"{name}\" profili kaydedildi.",
-      "save_failed": "Profil kaydedilemedi, MotionCab.log dosyasını kontrol edin.",
-      "overwrite_title": "Üzerine yazmayı onayla",
-      "overwrite_message": "\"{name}\" adında bir profil zaten var. Üzerine yazılsın mı?",
-      "overwrite_confirm": "Evet, üzerine yaz",
-      "none": "Henüz kayıtlı profil yok.",
-      "select_tip": "Bir profil seçmek onu hemen yükler.",
-      "load_failed": "\"{name}\" profili yüklenemedi, MotionCab.log dosyasını kontrol edin.",
-      "no_match": "Mevcut ayarlarla eşleşen profil yok. Yüklemek için birini seçin veya bunları yukarıda yeni bir profil olarak kaydedin.",
-      "save": "Kaydet",
-      "saved": "Kaydedildi",
-      "save_tip": "Seçili profilin üzerine mevcut ayarları yazar.",
-      "delete": "Sil",
-      "delete_tip": "Seçili profili sil.",
-      "delete_title": "Silmeyi onayla",
-      "delete_message": "\"{name}\" profili silinsin mi? Bu işlem geri alınamaz.",
-      "delete_confirm": "Evet, sil",
-      "delete_failed": "\"{name}\" profili silinemedi, MotionCab.log dosyasını kontrol edin.",
-      "deleted_toast": "\"{name}\" profili silindi.",
-      "fallback_failed": "Silindi, ancak \"{name}\" yüklenemedi, MotionCab.log dosyasını kontrol edin."
-    },
     "reset": {
       "section": "Tehlikeli bölge",
-      "button": "Tüm ayarları sıfırla",
+      "button": "Bu tırı sıfırla",
       "title": "Sıfırlamayı onayla",
-      "message": "Tüm MotionCab ayarları varsayılan değerlerine sıfırlansın mı?",
-      "confirm": "Evet, her şeyi sıfırla",
-      "done_toast": "Tüm MotionCab ayarları varsayılan değerlerine sıfırlandı."
+      "message": "{truck} için tüm ayarlar sıfırlansın mı?",
+      "confirm": "Evet, sıfırla",
+      "done_toast": "{truck} ayarları sıfırlandı."
     },
     "about": {
       "details": "Ayrıntılar",
@@ -465,7 +448,7 @@
       "donate_desc": "MotionCab'i PayPal üzerinden destekle",
       "tips": "İpuçları",
       "tip_reset": "Varsayılan değerine sıfırlamak için herhangi bir kaydırıcıya sağ tıklayın.",
-      "tip_profiles": "Ayarlarınızı {settings_tab} sekmesinde profil olarak kaydedin.",
+      "tip_per_truck": "Ayarlar tır başına kaydedilir: bir değişiklik yalnızca sürdüğünüz tıra uygulanır.",
       "tip_interior": "Tüm efektler yalnızca iç kamerada çalışır.",
       "credits": "Emeği geçenler",
       "credits_text": "SPF Framework ve katkıda bulunanlar."

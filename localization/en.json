@@ -393,8 +393,17 @@
     "enabled": "Enabled",
     "cancel": "Cancel",
     "slider_reset_hint": "Right-click a slider to reset it to default.",
-    "profile_badge": "Profile: {name}",
-    "unsaved_changes": "(Unsaved changes)",
+    "truck_badge": "{name} settings",
+    "no_truck": "No truck loaded",
+    "no_truck_hint": "Get in a truck to change its settings.",
+    "paused": "Game paused",
+    "paused_hint": "Resume the game to change the settings.",
+    "trucks": {
+      "section": "Tuned trucks ({count})",
+      "changed": "{count} settings changed",
+      "none": "No truck has settings of its own yet.",
+      "reset_tip": "Reset this truck's settings to their defaults."
+    },
     "search": {
       "hint": "Search settings...",
       "no_results": "No setting matches \"{query}\".",
@@ -412,39 +421,13 @@
       "options_tip": "Binding options (hold/toggle, deadzone, ...).",
       "add_tip": "Add another binding."
     },
-    "profiles": {
-      "section": "Profiles",
-      "name_hint": "Profile name...",
-      "save_as": "Save as Profile",
-      "save_as_tip": "Saves every current effect setting under this profile name.",
-      "saved_toast": "Saved profile \"{name}\".",
-      "save_failed": "Failed to save profile, check MotionCab.log.",
-      "overwrite_title": "Confirm Overwrite",
-      "overwrite_message": "A profile named \"{name}\" already exists. Overwrite it?",
-      "overwrite_confirm": "Yes, Overwrite",
-      "none": "No saved profiles yet.",
-      "select_tip": "Selecting a profile loads it immediately.",
-      "load_failed": "Failed to load profile \"{name}\", check MotionCab.log.",
-      "no_match": "No profile matches the current settings. Pick one to load, or save these as a new profile above.",
-      "save": "Save",
-      "saved": "Saved",
-      "save_tip": "Overwrites the selected profile with the current settings.",
-      "delete": "Delete",
-      "delete_tip": "Delete the selected profile.",
-      "delete_title": "Confirm Delete",
-      "delete_message": "Delete profile \"{name}\"? This cannot be undone.",
-      "delete_confirm": "Yes, Delete",
-      "delete_failed": "Failed to delete profile \"{name}\", check MotionCab.log.",
-      "deleted_toast": "Deleted profile \"{name}\".",
-      "fallback_failed": "Deleted, but failed to load \"{name}\", check MotionCab.log."
-    },
     "reset": {
       "section": "Danger Zone",
-      "button": "Reset All Settings",
+      "button": "Reset This Truck",
       "title": "Confirm Reset",
-      "message": "Reset every MotionCab setting to its default value?",
-      "confirm": "Yes, Reset Everything",
-      "done_toast": "Reset every MotionCab setting to its default value."
+      "message": "Reset every setting of the {truck}?",
+      "confirm": "Yes, Reset",
+      "done_toast": "Reset the settings of {truck}."
     },
     "about": {
       "details": "Details",
@@ -465,7 +448,7 @@
       "donate_desc": "Support MotionCab on PayPal",
       "tips": "Tips",
       "tip_reset": "Right-click any slider to reset it to its default value.",
-      "tip_profiles": "Save your tuning as a profile in the {settings_tab} tab.",
+      "tip_per_truck": "Settings are saved per truck: a change applies only to the truck you're driving.",
       "tip_interior": "Every effect works in the interior camera only.",
       "credits": "Credits",
       "credits_text": "SPF Framework and contributors."

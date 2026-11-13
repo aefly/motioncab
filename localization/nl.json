@@ -393,8 +393,17 @@
     "enabled": "Ingeschakeld",
     "cancel": "Annuleren",
     "slider_reset_hint": "Klik met rechts op een schuifregelaar om hem te resetten.",
-    "profile_badge": "Profiel: {name}",
-    "unsaved_changes": "(Niet-opgeslagen wijzigingen)",
+    "truck_badge": "Instellingen van {name}",
+    "no_truck": "Geen truck geladen",
+    "no_truck_hint": "Stap in een truck om de instellingen ervan te wijzigen.",
+    "paused": "Spel gepauzeerd",
+    "paused_hint": "Hervat het spel om de instellingen te wijzigen.",
+    "trucks": {
+      "section": "Ingestelde trucks ({count})",
+      "changed": "{count} instellingen gewijzigd",
+      "none": "Nog geen enkele truck heeft eigen instellingen.",
+      "reset_tip": "De instellingen van deze truck terugzetten naar de standaardwaarden."
+    },
     "search": {
       "hint": "Instellingen zoeken...",
       "no_results": "Geen instelling komt overeen met \"{query}\".",
@@ -412,39 +421,13 @@
       "options_tip": "Toewijzingsopties (vasthouden/schakelen, dode zone, ...).",
       "add_tip": "Nog een toewijzing toevoegen."
     },
-    "profiles": {
-      "section": "Profielen",
-      "name_hint": "Profielnaam...",
-      "save_as": "Opslaan als profiel",
-      "save_as_tip": "Slaat alle huidige effectinstellingen op onder deze profielnaam.",
-      "saved_toast": "Profiel '{name}' opgeslagen.",
-      "save_failed": "Profiel opslaan mislukt, zie MotionCab.log.",
-      "overwrite_title": "Overschrijven bevestigen",
-      "overwrite_message": "Er bestaat al een profiel met de naam '{name}'. Overschrijven?",
-      "overwrite_confirm": "Ja, overschrijven",
-      "none": "Nog geen opgeslagen profielen.",
-      "select_tip": "Een profiel selecteren laadt het meteen.",
-      "load_failed": "Profiel '{name}' laden mislukt, zie MotionCab.log.",
-      "no_match": "Geen enkel profiel komt overeen met de huidige instellingen. Kies er een om te laden, of sla ze hierboven op als nieuw profiel.",
-      "save": "Opslaan",
-      "saved": "Opgeslagen",
-      "save_tip": "Overschrijft het geselecteerde profiel met de huidige instellingen.",
-      "delete": "Verwijderen",
-      "delete_tip": "Het geselecteerde profiel verwijderen.",
-      "delete_title": "Verwijderen bevestigen",
-      "delete_message": "Profiel '{name}' verwijderen? Dit kan niet ongedaan worden gemaakt.",
-      "delete_confirm": "Ja, verwijderen",
-      "delete_failed": "Profiel '{name}' verwijderen mislukt, zie MotionCab.log.",
-      "deleted_toast": "Profiel '{name}' verwijderd.",
-      "fallback_failed": "Verwijderd, maar '{name}' laden mislukt, zie MotionCab.log."
-    },
     "reset": {
       "section": "Gevarenzone",
-      "button": "Alle instellingen resetten",
+      "button": "Deze truck resetten",
       "title": "Resetten bevestigen",
-      "message": "Alle MotionCab-instellingen terugzetten naar hun standaardwaarde?",
-      "confirm": "Ja, alles resetten",
-      "done_toast": "Alle MotionCab-instellingen zijn teruggezet naar hun standaardwaarde."
+      "message": "Alle instellingen van {truck} resetten?",
+      "confirm": "Ja, resetten",
+      "done_toast": "Instellingen van {truck} gereset."
     },
     "about": {
       "details": "Details",
@@ -465,7 +448,7 @@
       "donate_desc": "MotionCab steunen via PayPal",
       "tips": "Tips",
       "tip_reset": "Klik met rechts op een schuifregelaar om hem terug te zetten naar de standaardwaarde.",
-      "tip_profiles": "Sla je instellingen op als profiel in het tabblad {settings_tab}.",
+      "tip_per_truck": "Instellingen worden per truck opgeslagen: een wijziging geldt alleen voor de truck waarin je rijdt.",
       "tip_interior": "Alle effecten werken alleen in de binnencamera.",
       "credits": "Credits",
       "credits_text": "SPF Framework en bijdragers."

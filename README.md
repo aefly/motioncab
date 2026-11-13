@@ -59,7 +59,8 @@ camera control, keybind rebinding, and the in-game settings UI.
 - **Blindspot Viewer** — leans forward to see traffic lights hidden by the cab
 - **Cabin Walk** — walks around the parked cabin and sits in the passenger
   seat or on the bunk
-- **Profiles** — create, save, and switch between named presets
+- **Per-truck settings** — every truck model keeps its own settings, saved
+  automatically
 - **Localized** — available in 15 languages
 
 Every effect above is independently customizable and toggleable, and only
@@ -220,8 +221,8 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── Manifest.cpp / .hpp       Plugin identity, settings defaults, keybinds, window
 │   │   ├── CameraRig.cpp / .hpp      Writes the effects' offset into the interior camera
 │   │   ├── PluginContext.cpp / .hpp  Shared plugin state
-│   │   ├── Profiles.cpp / .hpp       Create/save/switch named presets
 │   │   ├── Settings.cpp / .hpp       Every setting: key, default, slider range
+│   │   ├── TruckSettings.cpp / .hpp  Settings saved per truck model, migrations
 │   │   ├── Conflicts.hpp             Which effects pause which while enabled
 │   │   ├── Loc.cpp / .hpp            Translated string lookup (loc::Tr)
 │   │   ├── Keybinds.hpp              Keybind action names and key polling helpers
@@ -253,7 +254,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │       ├── SettingsWindow.cpp / .hpp MotionCab Quick Settings window
 │       ├── EffectTabs.cpp / .hpp     Driving/Road/Cabin/Manual tabs
 │       ├── CabinLayoutPanel.cpp/.hpp Cabin Walk's layout panel (Advanced)
-│       ├── SettingsTab.cpp / .hpp    Settings tab: keybind, profiles, reset
+│       ├── SettingsTab.cpp / .hpp    Settings tab: keybind, truck reset
 │       ├── AboutTab.cpp / .hpp       About tab
 │       ├── Widgets.cpp / .hpp        Shared look and widgets
 │       └── OpenUrl.cpp / .hpp        Opens a URL in the system browser
