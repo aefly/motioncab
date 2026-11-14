@@ -60,9 +60,12 @@ public:
   // is gone.
   void OnTruckConstantsChanged(const SPF_TruckConstants &constants);
 
-  // Gives the walking keys back to the game, which may be driven from
-  // another camera meanwhile.
+  // Gives the walking keys and the mouse back to the game, which may be
+  // driven from another camera meanwhile.
   void OnLeftInterior();
+  // The same for a native menu: Update() doesn't run there to let go of a
+  // mouse blocked mid move, and takes both back once the game resumes.
+  void OnPaused();
 
   // Leaves the camera's values alone: after a world reload they belong to a
   // camera that no longer exists.

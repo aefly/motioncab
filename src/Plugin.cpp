@@ -367,6 +367,8 @@ void OnUpdate() {
       // FOV as it is then. After the zoom's restore, which puts our offset
       // back on.
       ctx.camera_rig.RemoveFov(ctx.core->camera);
+      if (ctx.cabin_walk)
+        ctx.cabin_walk->OnPaused();
       // "Paused" covers every native menu, F4's seat/FOV overlay included,
       // which still reports the interior camera: the effects would keep
       // moving behind it otherwise.

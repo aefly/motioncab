@@ -809,8 +809,13 @@ void CabinWalkEffect::OnTruckConstantsChanged(
 }
 
 void CabinWalkEffect::OnLeftInterior() {
-  SetWalkKeysBlocked(false);
+  OnPaused();
   left_interior_ = true;
+}
+
+void CabinWalkEffect::OnPaused() {
+  SetMouseBlocked(false);
+  SetWalkKeysBlocked(false);
 }
 
 void CabinWalkEffect::SnapToWheel() {
@@ -837,6 +842,14 @@ CabinWalkEffect::Notice CabinWalkEffect::TakeNotice() {
   return std::exchange(notice_, Notice::kNone);
 }
 
+// SPF keeps one block request per return address, so this must stay a
+// single call site: inlined into each caller, the unblock from one was a
+// request of its own, leaving the block from Update() in place.
+#if defined(_MSC_VER)
+__declspec(noinline)
+#else
+[[gnu::noinline]]
+#endif
 void CabinWalkEffect::SetMouseBlocked(bool blocked) {
   if (blocked == mouse_blocked_ || !ui_api_)
     return;
