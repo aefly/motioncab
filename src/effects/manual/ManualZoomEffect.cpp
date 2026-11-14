@@ -33,6 +33,11 @@ void ManualZoomEffect::LoadConfig() {
   if (enabled_ && !was_enabled) {
     // The FOV may have changed while disabled.
     has_synced_ = false;
+    // SPF keeps toggling the key while we're off: a toggle left on (before
+    // disabling, or pressed meanwhile) would zoom in right away.
+    if (keybinds_api_ && keybinds_handle_)
+      keybinds::EndActive(keybinds_api_, keybinds_handle_, keybinds::kZoom);
+    zoom_held_ = false;
   }
   zoom_fov_deg_ = config_.Float("zoom_fov_deg", zoom_fov_deg_);
   smoothing_time_ = config_.Float("smoothing_time", smoothing_time_);
