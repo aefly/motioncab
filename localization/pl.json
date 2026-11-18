@@ -486,13 +486,18 @@
           "yaw": "Gdzie patrzysz po usadowieniu się.",
           "pitch": "Jak bardzo patrzysz w górę lub w dół po usadowieniu się.",
           "has_passenger": "Odznacz, jeśli fotel pasażera się składa lub go nie ma.",
-          "has_bunk": "Odznacz dla krótkiej kabiny bez koi."
+          "has_bunk": "Odznacz dla krótkiej kabiny bez koi.",
+          "has_aisle": "Zaznacz, jeśli podłoga ma stopnie, jak przejście w autobusie.",
+          "aisle_step_count": "Ile razy zmienia się wysokość podłogi wzdłuż przejścia.",
+          "aisle_step_z": "Jak daleko z tyłu jest krawędź stopnia.",
+          "aisle_step_height": "O ile podłoga za nim się podnosi (ujemnie: opada)."
         },
         "group": {
           "walkway": "Obszar chodzenia",
           "heights": "Wysokość na stojąco",
           "passenger": "Fotel pasażera",
-          "bunk": "Koja"
+          "bunk": "Koja",
+          "steps": "Stopnie"
         },
         "go": "Przejdź tam",
         "usable": "Dostępne",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "Wysokość",
         "bunk_sit_z": "Głębokość",
         "bunk_sit_yaw": "Obrót",
-        "bunk_sit_pitch": "Pochylenie"
+        "bunk_sit_pitch": "Pochylenie",
+        "aisle_step_count": "Liczba",
+        "aisle_step_z": "Głębokość stopnia {n}",
+        "aisle_step_height": "Wysokość stopnia {n}"
       }
     },
     "modified": "Zmienione względem domyślnej wartości."

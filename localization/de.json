@@ -486,13 +486,18 @@
           "yaw": "Wohin du im Sitzen schaust.",
           "pitch": "Wie weit du im Sitzen nach oben oder unten schaust.",
           "has_passenger": "Abwählen, wenn der Beifahrersitz hochgeklappt ist oder fehlt.",
-          "has_bunk": "Abwählen für ein Fahrerhaus ohne Liege."
+          "has_bunk": "Abwählen für ein Fahrerhaus ohne Liege.",
+          "has_aisle": "Ankreuzen, wenn der Boden Stufen hat, wie der Gang eines Busses.",
+          "aisle_step_count": "Wie oft sich die Bodenhöhe entlang des Gangs ändert.",
+          "aisle_step_z": "Wie weit hinten die Kante der Stufe liegt.",
+          "aisle_step_height": "Wie weit der Boden danach ansteigt (negativ: abfällt)."
         },
         "group": {
           "walkway": "Laufbereich",
           "heights": "Stehhöhe",
           "passenger": "Beifahrersitz",
-          "bunk": "Liege"
+          "bunk": "Liege",
+          "steps": "Stufen"
         },
         "go": "Hingehen",
         "usable": "Nutzbar",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "Höhe",
         "bunk_sit_z": "Tiefe",
         "bunk_sit_yaw": "Drehung",
-        "bunk_sit_pitch": "Neigung"
+        "bunk_sit_pitch": "Neigung",
+        "aisle_step_count": "Anzahl",
+        "aisle_step_z": "Stufe {n} Tiefe",
+        "aisle_step_height": "Stufe {n} Höhe"
       }
     },
     "modified": "Vom Standardwert geändert."

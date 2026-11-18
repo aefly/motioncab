@@ -165,6 +165,18 @@ private:
   void UpdateWalking(float dt);
   float ClampToFloor(float value, float min, float max, float &velocity,
                      math::SpringDamper1D &spring) const;
+  // Moves the head onto each step of the aisle as it reaches its edge.
+  void UpdateStairs(float dt, float vx, float vz);
+  // On the step stood on, with no move under way.
+  void SettleStairs();
+  int StairsPassed(float foot_z) const;
+  float StairRise(int passed) const;
+  // A forced walk (sent back to the wheel) ignores the walking keys.
+  void WalkTo(Spot spot, bool forced = false, bool hurry = false) {
+    walk_to_ = spot;
+    walk_forced_ = forced;
+    walk_hurry_ = hurry;
+  }
 
   void SetMouseBlocked(bool blocked);
   void SetWalkKeysBlocked(bool blocked);
@@ -221,6 +233,13 @@ private:
 
   math::SpringDamper1D vel_x_, vel_z_, height_;
   std::optional<Spot> walk_to_; // walking there by itself to sit down
+  // Sent back to the wheel from down a bus's aisle; faster in a hurry.
+  bool walk_forced_ = false, walk_hurry_ = false;
+  // The aisle's steps behind the feet, and the head's rise over the
+  // walkway's front, eased from one step to the next.
+  int stair_passed_ = 0;
+  float stair_rise_ = 0.0f, stair_from_ = 0.0f, stair_to_ = 0.0f;
+  float stair_time_ = 0.0f, stair_duration_ = 0.0f;
   std::optional<Spot> go_to_request_;
   math::SpringDamper1D bob_amount_; // 1 at walking speed
   // 0 tilts with the cabin, 1 stays upright.

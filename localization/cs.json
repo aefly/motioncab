@@ -486,13 +486,18 @@
           "yaw": "Kam se díváte vsedě.",
           "pitch": "Jak moc se vsedě díváte nahoru nebo dolů.",
           "has_passenger": "Zrušte, pokud se sedadlo spolujezdce sklápí nebo chybí.",
-          "has_bunk": "Zrušte u krátké kabiny bez lůžka."
+          "has_bunk": "Zrušte u krátké kabiny bez lůžka.",
+          "has_aisle": "Zaškrtněte, pokud má podlaha schody, jako ulička autobusu.",
+          "aisle_step_count": "Kolikrát se podél uličky mění výška podlahy.",
+          "aisle_step_z": "Jak daleko vzadu je hrana schodu.",
+          "aisle_step_height": "O kolik podlaha za ním stoupá (záporně: klesá)."
         },
         "group": {
           "walkway": "Prostor pro chůzi",
           "heights": "Výška vestoje",
           "passenger": "Sedadlo spolujezdce",
-          "bunk": "Lůžko"
+          "bunk": "Lůžko",
+          "steps": "Schody"
         },
         "go": "Přejít tam",
         "usable": "Použitelné",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "Výška",
         "bunk_sit_z": "Hloubka",
         "bunk_sit_yaw": "Otočení",
-        "bunk_sit_pitch": "Náklon"
+        "bunk_sit_pitch": "Náklon",
+        "aisle_step_count": "Počet",
+        "aisle_step_z": "Hloubka schodu {n}",
+        "aisle_step_height": "Výška schodu {n}"
       }
     },
     "modified": "Změněno oproti výchozí hodnotě."

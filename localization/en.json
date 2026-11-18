@@ -486,13 +486,18 @@
           "yaw": "Where you look once seated.",
           "pitch": "How far up or down you look once seated.",
           "has_passenger": "Untick if the passenger seat folds up or is missing.",
-          "has_bunk": "Untick for a day cab without a bunk."
+          "has_bunk": "Untick for a day cab without a bunk.",
+          "has_aisle": "Tick if the floor has steps, like a bus's aisle.",
+          "aisle_step_count": "How many times the floor changes height along the aisle.",
+          "aisle_step_z": "How far back the step's edge is.",
+          "aisle_step_height": "How far the floor goes up past it (negative: down)."
         },
         "group": {
           "walkway": "Walkway",
           "heights": "Standing Height",
           "passenger": "Passenger Seat",
-          "bunk": "Bunk"
+          "bunk": "Bunk",
+          "steps": "Steps"
         },
         "go": "Go There",
         "usable": "Usable",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "Height",
         "bunk_sit_z": "Depth",
         "bunk_sit_yaw": "Turn",
-        "bunk_sit_pitch": "Tilt"
+        "bunk_sit_pitch": "Tilt",
+        "aisle_step_count": "Count",
+        "aisle_step_z": "Step {n} Depth",
+        "aisle_step_height": "Step {n} Height"
       }
     },
     "modified": "Changed from its default."

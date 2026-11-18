@@ -486,13 +486,18 @@
           "yaw": "Hacia dónde miras una vez sentado.",
           "pitch": "Cuánto miras arriba o abajo una vez sentado.",
           "has_passenger": "Desmárcalo si el asiento del acompañante se pliega o no existe.",
-          "has_bunk": "Desmárcalo para una cabina corta sin litera."
+          "has_bunk": "Desmárcalo para una cabina corta sin litera.",
+          "has_aisle": "Márcalo si el suelo tiene escalones, como el pasillo de un autobús.",
+          "aisle_step_count": "Cuántas veces cambia la altura del suelo a lo largo del pasillo.",
+          "aisle_step_z": "A qué distancia hacia atrás está el borde del escalón.",
+          "aisle_step_height": "Cuánto sube el suelo tras él (negativo: baja)."
         },
         "group": {
           "walkway": "Zona de paso",
           "heights": "Altura de pie",
           "passenger": "Asiento del acompañante",
-          "bunk": "Litera"
+          "bunk": "Litera",
+          "steps": "Escalones"
         },
         "go": "Ir allí",
         "usable": "Utilizable",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "Altura",
         "bunk_sit_z": "Profundidad",
         "bunk_sit_yaw": "Giro",
-        "bunk_sit_pitch": "Inclinación"
+        "bunk_sit_pitch": "Inclinación",
+        "aisle_step_count": "Cantidad",
+        "aisle_step_z": "Profundidad escalón {n}",
+        "aisle_step_height": "Altura escalón {n}"
       }
     },
     "modified": "Cambiado respecto al valor predeterminado."

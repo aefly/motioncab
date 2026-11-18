@@ -486,13 +486,18 @@
           "yaw": "Oturunca nereye baktığın.",
           "pitch": "Oturunca ne kadar yukarı veya aşağı baktığın.",
           "has_passenger": "Yolcu koltuğu katlanıyorsa veya yoksa işareti kaldır.",
-          "has_bunk": "Yataksız kısa kabin için işareti kaldır."
+          "has_bunk": "Yataksız kısa kabin için işareti kaldır.",
+          "has_aisle": "Zeminde basamaklar varsa işaretle, otobüs koridoru gibi.",
+          "aisle_step_count": "Zemin yüksekliğinin koridor boyunca kaç kez değiştiği.",
+          "aisle_step_z": "Basamağın kenarının ne kadar geride olduğu.",
+          "aisle_step_height": "Zeminin ondan sonra ne kadar yükseldiği (negatif: alçaldığı)."
         },
         "group": {
           "walkway": "Yürüme Alanı",
           "heights": "Ayakta Yükseklik",
           "passenger": "Yolcu Koltuğu",
-          "bunk": "Yatak"
+          "bunk": "Yatak",
+          "steps": "Basamaklar"
         },
         "go": "Oraya git",
         "usable": "Kullanılabilir",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "Yükseklik",
         "bunk_sit_z": "Derinlik",
         "bunk_sit_yaw": "Dönüş",
-        "bunk_sit_pitch": "Eğim"
+        "bunk_sit_pitch": "Eğim",
+        "aisle_step_count": "Sayı",
+        "aisle_step_z": "Basamak {n} derinliği",
+        "aisle_step_height": "Basamak {n} yüksekliği"
       }
     },
     "modified": "Varsayılan değerden değiştirildi."

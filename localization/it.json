@@ -486,13 +486,18 @@
           "yaw": "Dove guardi una volta seduto.",
           "pitch": "Quanto guardi in alto o in basso una volta seduto.",
           "has_passenger": "Deseleziona se il sedile del passeggero si ripiega o manca.",
-          "has_bunk": "Deseleziona per una cabina corta senza cuccetta."
+          "has_bunk": "Deseleziona per una cabina corta senza cuccetta.",
+          "has_aisle": "Spunta se il pavimento ha gradini, come il corridoio di un autobus.",
+          "aisle_step_count": "Quante volte cambia l'altezza del pavimento lungo il corridoio.",
+          "aisle_step_z": "Quanto indietro si trova il bordo del gradino.",
+          "aisle_step_height": "Di quanto sale il pavimento dopo di esso (negativo: scende)."
         },
         "group": {
           "walkway": "Area calpestabile",
           "heights": "Altezza in piedi",
           "passenger": "Sedile passeggero",
-          "bunk": "Cuccetta"
+          "bunk": "Cuccetta",
+          "steps": "Gradini"
         },
         "go": "Vai lì",
         "usable": "Utilizzabile",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "Altezza",
         "bunk_sit_z": "Profondità",
         "bunk_sit_yaw": "Rotazione",
-        "bunk_sit_pitch": "Inclinazione"
+        "bunk_sit_pitch": "Inclinazione",
+        "aisle_step_count": "Numero",
+        "aisle_step_z": "Profondità gradino {n}",
+        "aisle_step_height": "Altezza gradino {n}"
       }
     },
     "modified": "Modificato rispetto al valore predefinito."

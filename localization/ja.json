@@ -486,13 +486,18 @@
           "yaw": "座ったときに見る方向。",
           "pitch": "座ったときに上下どれだけ見るか。",
           "has_passenger": "助手席が折りたためる、または無い場合はチェックを外します。",
-          "has_bunk": "寝台の無いデイキャブではチェックを外します。"
+          "has_bunk": "寝台の無いデイキャブではチェックを外します。",
+          "has_aisle": "床に段差がある場合はチェック（バスの通路など）。",
+          "aisle_step_count": "通路に沿って床の高さが変わる回数。",
+          "aisle_step_z": "段差の縁がどれだけ後ろにあるか。",
+          "aisle_step_height": "その先で床がどれだけ上がるか（マイナスで下がる）。"
         },
         "group": {
           "walkway": "歩行エリア",
           "heights": "立ったときの高さ",
           "passenger": "助手席",
-          "bunk": "寝台"
+          "bunk": "寝台",
+          "steps": "段差"
         },
         "go": "そこへ移動",
         "usable": "使用可能",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "高さ",
         "bunk_sit_z": "前後",
         "bunk_sit_yaw": "回転",
-        "bunk_sit_pitch": "傾き"
+        "bunk_sit_pitch": "傾き",
+        "aisle_step_count": "数",
+        "aisle_step_z": "段差{n}の奥行き",
+        "aisle_step_height": "段差{n}の高さ"
       }
     },
     "modified": "デフォルトから変更されています。"

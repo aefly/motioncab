@@ -36,6 +36,10 @@ constexpr float kTransitionScaleMin = 0.7f;
 constexpr float kTransitionScaleMax = 1.6f;
 // Sent back to the wheel (parking brake released, truck rolling).
 constexpr float kHurrySeconds = 0.8f;
+// Farther than this from the wheel (down a bus's aisle), going back walks
+// there first, this much faster when sent back in a hurry.
+constexpr float kMaxGlideMeters = 1.5f;
+constexpr float kHurryWalkShare = 2.0f;
 // Walking there by itself, it slows down as it nears the spot.
 constexpr float kArriveMeters = 0.04f;
 constexpr float kArriveGain = 4.0f;
@@ -111,6 +115,20 @@ constexpr float kSitLookDownDeg = 10.0f;
 constexpr float kDirectLookDownDeg = 4.0f;
 constexpr float kSitLookDownPeak = 0.6f;
 constexpr float kLeanRollDeg = 3.0f;
+// A step of the aisle is taken by where the head is, not on a footfall: a
+// footfall can land anywhere up to a stride from the edge, so timing the
+// step on one put it well before or after the player was on it. The head
+// starts moving `kStairLeadMeters` short of a point `kStairEdgeMeters` past
+// the edge (a margin, so standing on the edge doesn't flicker) and takes as
+// long as walking `kStairMoveMeters` at its speed.
+constexpr float kStairEdgeMeters = 0.04f;
+constexpr float kStairLeadMeters = 0.10f;
+constexpr float kStairMoveMeters = 0.18f;
+constexpr float kStairMinSpeed = 0.05f; // m/s
+constexpr float kMinStairSeconds = 0.12f;
+constexpr float kMaxStairSeconds = 0.6f;
+// Going down, the head stays up for this share of the move, then drops.
+constexpr float kStairDropDelayShare = 0.45f;
 // The view finishes turning a bit before the head gets there.
 constexpr float kTurnShare = 0.85f;
 // Getting up or down, the body moves over the feet (or the seat) before the
@@ -127,6 +145,12 @@ float Bell(float t, float peak = 0.5f) {
       t < peak ? 0.5f * t / peak : 0.5f + 0.5f * (t - peak) / (1.0f - peak);
   const float s = std::sin(kPi * u);
   return s * s;
+}
+
+// Slower, the steps shorten as well as slow down.
+float StepMeters(float speed) {
+  return kStepMeters *
+         std::clamp(std::sqrt(speed / kWalkSpeed), kMinStepShare, 1.0f);
 }
 
 // So a turn never goes across the back, where it would jump the yaw limits.
@@ -180,9 +204,10 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
     base_rotation_ = {base_yaw_, base_pitch_};
   }
 
-  const bool heading_to_wheel = state_ == State::kTransition &&
-                                after_ == State::kSeated &&
-                                after_spot_ == Spot::kDriver;
+  const bool heading_to_wheel =
+      (state_ == State::kTransition && after_ == State::kSeated &&
+       after_spot_ == Spot::kDriver) ||
+      (state_ == State::kWalking && walk_to_ == Spot::kDriver && walk_forced_);
   if (!AtWheel() && !heading_to_wheel) {
     const bool unsafe = telemetry::SpeedKmh(truck) > kMaxAwayKmh ||
                         (require_parking_brake_ && !truck.parking_brake);
@@ -243,10 +268,8 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
     // Timed on the move's steps, each one landing as it ends.
     bob_phase_ = kStepOutSteps * kPi * seat_step_u_ - kStepOutPhaseLead;
   } else {
-    const float step_meters =
-        kStepMeters *
-        std::clamp(std::sqrt(speed / kWalkSpeed), kMinStepShare, 1.0f);
-    bob_phase_ = math::WrapPhase(bob_phase_ + speed * dt / step_meters * kPi);
+    bob_phase_ =
+        math::WrapPhase(bob_phase_ + speed * dt / StepMeters(speed) * kPi);
   }
   // A footstep where the head dips lowest, where the phase's cosine changes
   // sign.
@@ -326,8 +349,8 @@ CabinWalkEffect::Vec3 CabinWalkEffect::Approach(Spot spot) const {
   // same sidesteps. The passenger seat is past the centerline, at +x.
   if (spot == Spot::kPassenger)
     x = std::min(x, floor_x(2.0f * centerline_x_ - floor_x(base_.x)));
-  return {x, layout_.stand_y,
-          std::clamp(p.z, layout_.floor_z_min, layout_.floor_z_max)};
+  const float z = std::clamp(p.z, layout_.floor_z_min, layout_.floor_z_max);
+  return {x, layout_.stand_y + AisleRiseAt(layout_, z), z};
 }
 
 CabinWalkEffect::Spot CabinWalkEffect::LookedAtSpot() const {
@@ -381,16 +404,16 @@ void CabinWalkEffect::HandleStandSitKey(float dt, const SPF_TruckData &truck,
         TryStandUp(truck, camera);
     } else if (long_press) {
       StandUp();
-      walk_to_ = Spot::kDriver;
+      WalkTo(Spot::kDriver);
     } else if (tap) {
       StandUp();
     }
     break;
   case State::kWalking:
     if (long_press)
-      walk_to_ = Spot::kDriver;
+      WalkTo(Spot::kDriver);
     else if (tap)
-      walk_to_ = LookedAtSpot();
+      WalkTo(LookedAtSpot());
     break;
   case State::kTransition:
     break;
@@ -483,6 +506,13 @@ void CabinWalkEffect::GoToWheel(float duration, bool hurry) {
   walk_to_.reset();
   // From standing, it's sitting down; from another seat, moving over.
   const bool standing = state_ == State::kWalking;
+  // Down a bus's aisle, the seat is too far to glide to.
+  const Vec3 wheel = Approach(Spot::kDriver);
+  if (standing &&
+      std::hypot(pos_.x - wheel.x, pos_.z - wheel.z) > kMaxGlideMeters) {
+    WalkTo(Spot::kDriver, true, hurry);
+    return;
+  }
   if (standing && !hurry) {
     SitAt(Spot::kDriver);
     return;
@@ -672,7 +702,8 @@ void CabinWalkEffect::OnArrived(SPF_Camera_API *camera) {
   motion_roll_deg_ = 0.0f;
   vel_x_.Reset();
   vel_z_.Reset();
-  height_.Reset(pos_.y);
+  SettleStairs();
+  height_.Reset(pos_.y - stair_rise_);
   const InteriorCameraOverride::Limits &own =
       camera_override_.original_limits();
   const InteriorCameraOverride::Limits away{kAwayYawLimitDeg, -kAwayYawLimitDeg,
@@ -742,7 +773,7 @@ void CabinWalkEffect::UpdateWalking(float dt) {
     forward /= length;
     side /= length;
   }
-  if (length > 0.05f)
+  if (length > 0.05f && !(walk_to_ && walk_forced_))
     walk_to_.reset(); // the player takes over
   if (forward < 0.0f)
     forward *= kBackwardShare;
@@ -762,11 +793,17 @@ void CabinWalkEffect::UpdateWalking(float dt) {
     const float distance = std::hypot(dx, dz);
     if (distance < kArriveMeters) {
       const Spot spot = *walk_to_;
+      const bool hurry = walk_hurry_;
       walk_to_.reset();
-      SitAt(spot);
+      if (hurry)
+        GoToWheel(kHurrySeconds, true);
+      else
+        SitAt(spot);
       return;
     }
-    const float approach = std::min(kWalkSpeed, distance * kArriveGain);
+    const float walk_speed =
+        kWalkSpeed * (walk_hurry_ ? kHurryWalkShare : 1.0f);
+    const float approach = std::min(walk_speed, distance * kArriveGain);
     want_x = dx / distance * approach;
     want_z = dz / distance * approach;
   }
@@ -783,8 +820,80 @@ void CabinWalkEffect::UpdateWalking(float dt) {
                         layout_.floor_x_max, vx, vel_x_);
   pos_.z = ClampToFloor(pos_.z + vz * dt, layout_.floor_z_min,
                         layout_.floor_z_max, vz, vel_z_);
+  UpdateStairs(dt, vel_x_.value(), vel_z_.value());
 
-  pos_.y = height_.Update(layout_.stand_y - crouch * layout_.crouch_depth, dt);
+  pos_.y = height_.Update(layout_.stand_y - crouch * layout_.crouch_depth, dt) +
+           stair_rise_;
+}
+
+// --- Aisle steps ---
+
+int CabinWalkEffect::StairsPassed(float foot_z) const {
+  if (!layout_.has_aisle)
+    return 0;
+  int count = 0;
+  const auto steps = AisleStepsFrontToBack(layout_, count);
+  int surely = 0, maybe = 0;
+  for (int i = 0; i < count; ++i) {
+    if (steps[i].z + kStairEdgeMeters < foot_z)
+      ++surely;
+    if (steps[i].z - kStairEdgeMeters < foot_z)
+      ++maybe;
+  }
+  // Within a step's margin, the one stood on stays.
+  return std::clamp(stair_passed_, surely, maybe);
+}
+
+float CabinWalkEffect::StairRise(int passed) const {
+  int count = 0;
+  const auto steps = AisleStepsFrontToBack(layout_, count);
+  float rise = 0.0f;
+  for (int i = 0; i < std::min(passed, count); ++i)
+    rise += steps[i].height;
+  return rise;
+}
+
+void CabinWalkEffect::SettleStairs() {
+  int passed = 0;
+  if (layout_.has_aisle) {
+    int count = 0;
+    const auto steps = AisleStepsFrontToBack(layout_, count);
+    while (passed < count && steps[passed].z < pos_.z)
+      ++passed;
+  }
+  stair_passed_ = passed;
+  stair_rise_ = stair_from_ = stair_to_ = StairRise(passed);
+  stair_time_ = stair_duration_ = 0.0f;
+}
+
+void CabinWalkEffect::UpdateStairs(float dt, float vx, float vz) {
+  const float speed = std::hypot(vx, vz);
+  // Standing still never changes step.
+  if (speed > kStairMinSpeed) {
+    // Clamped like the head: walking into a wall, the foot lands at it.
+    const float foot_z = std::clamp(pos_.z + vz / speed * kStairLeadMeters,
+                                    layout_.floor_z_min, layout_.floor_z_max);
+    const int passed = StairsPassed(foot_z);
+    // One step at a time: steps close together would otherwise be climbed
+    // as one tall one. The next waits for this one to land.
+    if (passed != stair_passed_ && stair_time_ >= stair_duration_) {
+      stair_passed_ += passed > stair_passed_ ? 1 : -1;
+      stair_from_ = stair_rise_;
+      stair_to_ = StairRise(stair_passed_);
+      stair_time_ = 0.0f;
+      stair_duration_ = std::clamp(kStairMoveMeters / speed, kMinStairSeconds,
+                                   kMaxStairSeconds);
+    }
+  }
+  if (stair_time_ >= stair_duration_) {
+    stair_rise_ = stair_to_;
+    return;
+  }
+  stair_time_ += dt;
+  const float u = Clamp01(stair_time_ / stair_duration_);
+  const float delay = stair_to_ >= stair_from_ ? 0.0f : kStairDropDelayShare;
+  const float e = SmootherStep((u - delay) / (1.0f - delay));
+  stair_rise_ = Lerp(stair_from_, stair_to_, e);
 }
 
 // --- Lifecycle ---
@@ -883,11 +992,13 @@ void CabinWalkEffect::HandleGoTo(Spot spot, const SPF_TruckData &truck,
       return;
     StandUp();
   }
-  walk_to_ = spot;
+  WalkTo(spot);
 }
 
 void CabinWalkEffect::SetLayout(const CabinLayout &layout, bool save) {
   layout_ = layout;
+  if (state_ == State::kWalking)
+    SettleStairs();
   if (state_ == State::kSeated && !CanSitAt(spot_))
     StandUp();
   if (walk_to_ && !CanSitAt(*walk_to_))

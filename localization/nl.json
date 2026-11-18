@@ -486,13 +486,18 @@
           "yaw": "Waar je kijkt als je zit.",
           "pitch": "Hoe ver je omhoog of omlaag kijkt als je zit.",
           "has_passenger": "Uitvinken als de bijrijdersstoel inklapt of ontbreekt.",
-          "has_bunk": "Uitvinken voor een dagcabine zonder slaapbank."
+          "has_bunk": "Uitvinken voor een dagcabine zonder slaapbank.",
+          "has_aisle": "Aanvinken als de vloer treden heeft, zoals het gangpad van een bus.",
+          "aisle_step_count": "Hoe vaak de vloerhoogte verandert langs het gangpad.",
+          "aisle_step_z": "Hoe ver naar achteren de rand van de trede ligt.",
+          "aisle_step_height": "Hoeveel de vloer erna stijgt (negatief: daalt)."
         },
         "group": {
           "walkway": "Loopruimte",
           "heights": "Stahoogte",
           "passenger": "Bijrijdersstoel",
-          "bunk": "Slaapbank"
+          "bunk": "Slaapbank",
+          "steps": "Treden"
         },
         "go": "Ga erheen",
         "usable": "Bruikbaar",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "Hoogte",
         "bunk_sit_z": "Diepte",
         "bunk_sit_yaw": "Draaiing",
-        "bunk_sit_pitch": "Kanteling"
+        "bunk_sit_pitch": "Kanteling",
+        "aisle_step_count": "Aantal",
+        "aisle_step_z": "Trede {n} diepte",
+        "aisle_step_height": "Trede {n} hoogte"
       }
     },
     "modified": "Gewijzigd ten opzichte van de standaard."

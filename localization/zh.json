@@ -486,13 +486,18 @@
           "yaw": "坐下后看向的方向。",
           "pitch": "坐下后向上或向下看的程度。",
           "has_passenger": "如果副驾驶座可折叠或不存在，请取消勾选。",
-          "has_bunk": "对于没有卧铺的短驾驶室，请取消勾选。"
+          "has_bunk": "对于没有卧铺的短驾驶室，请取消勾选。",
+          "has_aisle": "如果地板有台阶（如大巴过道），请勾选。",
+          "aisle_step_count": "沿过道地板高度变化的次数。",
+          "aisle_step_z": "台阶边缘向后有多远。",
+          "aisle_step_height": "越过台阶后地板升高多少（负值为降低）。"
         },
         "group": {
           "walkway": "行走区域",
           "heights": "站立高度",
           "passenger": "副驾驶座",
-          "bunk": "卧铺"
+          "bunk": "卧铺",
+          "steps": "台阶"
         },
         "go": "前往",
         "usable": "可用",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "高度",
         "bunk_sit_z": "前后",
         "bunk_sit_yaw": "转向",
-        "bunk_sit_pitch": "倾斜"
+        "bunk_sit_pitch": "倾斜",
+        "aisle_step_count": "数量",
+        "aisle_step_z": "台阶 {n} 深度",
+        "aisle_step_height": "台阶 {n} 高度"
       }
     },
     "modified": "已更改默认值。"

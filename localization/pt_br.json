@@ -486,13 +486,18 @@
           "yaw": "Para onde você olha depois de sentado.",
           "pitch": "Quanto você olha para cima ou para baixo depois de sentado.",
           "has_passenger": "Desmarque se o banco do passageiro dobra ou não existe.",
-          "has_bunk": "Desmarque para uma cabine curta sem cama."
+          "has_bunk": "Desmarque para uma cabine curta sem cama.",
+          "has_aisle": "Marque se o piso tem degraus, como o corredor de um ônibus.",
+          "aisle_step_count": "Quantas vezes a altura do piso muda ao longo do corredor.",
+          "aisle_step_z": "A que distância para trás fica a borda do degrau.",
+          "aisle_step_height": "Quanto o piso sobe depois dele (negativo: desce)."
         },
         "group": {
           "walkway": "Área de circulação",
           "heights": "Altura em pé",
           "passenger": "Banco do passageiro",
-          "bunk": "Cama"
+          "bunk": "Cama",
+          "steps": "Degraus"
         },
         "go": "Ir até lá",
         "usable": "Utilizável",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "Altura",
         "bunk_sit_z": "Profundidade",
         "bunk_sit_yaw": "Giro",
-        "bunk_sit_pitch": "Inclinação"
+        "bunk_sit_pitch": "Inclinação",
+        "aisle_step_count": "Quantidade",
+        "aisle_step_z": "Profundidade degrau {n}",
+        "aisle_step_height": "Altura degrau {n}"
       }
     },
     "modified": "Alterado em relação ao padrão."

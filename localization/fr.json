@@ -486,13 +486,18 @@
           "yaw": "Où vous regardez une fois assis.",
           "pitch": "Vers le haut ou le bas une fois assis.",
           "has_passenger": "Décochez si le siège passager se replie ou n'existe pas.",
-          "has_bunk": "Décochez pour une cabine courte sans couchette."
+          "has_bunk": "Décochez pour une cabine courte sans couchette.",
+          "has_aisle": "Cochez si le plancher a des marches, comme le couloir d'un bus.",
+          "aisle_step_count": "Combien de fois le plancher change de hauteur le long du couloir.",
+          "aisle_step_z": "À quelle distance vers l'arrière se trouve le bord de la marche.",
+          "aisle_step_height": "De combien le plancher monte après elle (négatif : descend)."
         },
         "group": {
           "walkway": "Zone de marche",
           "heights": "Hauteur debout",
           "passenger": "Siège passager",
-          "bunk": "Couchette"
+          "bunk": "Couchette",
+          "steps": "Marches"
         },
         "go": "Y aller",
         "usable": "Utilisable",
@@ -516,7 +521,10 @@
         "bunk_sit_y": "Hauteur",
         "bunk_sit_z": "Profondeur",
         "bunk_sit_yaw": "Rotation",
-        "bunk_sit_pitch": "Inclinaison"
+        "bunk_sit_pitch": "Inclinaison",
+        "aisle_step_count": "Nombre",
+        "aisle_step_z": "Profondeur marche {n}",
+        "aisle_step_height": "Hauteur marche {n}"
       }
     },
     "modified": "Modifié par rapport à la valeur par défaut."

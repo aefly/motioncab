@@ -3,12 +3,22 @@
 #include "SPF_Config_API.h"
 #include "SPF_TelemetryData.h"
 
+#include <array>
 #include <optional>
 #include <span>
 #include <string>
+#include <string_view>
 #include <utility>
 
 namespace motioncab {
+
+inline constexpr int kMaxAisleSteps = 6;
+
+// A change of floor height along a bus's aisle, at a depth.
+struct CabinStep {
+  float z;      // its edge's depth
+  float height; // up past it going back, negative going down
+};
 
 // Where Cabin Walk can take the player in one truck model's cabin. There's
 // no cabin geometry to read from the game, so it's calibrated by hand in
@@ -35,7 +45,23 @@ struct CabinLayout {
   // are the sliders' floats.
   bool has_passenger = true;
   bool has_bunk = true;
+  // A bus's floor has steps along its aisle (the walkway, running back),
+  // counting wherever they are. Off on every truck, so their presets leave
+  // these out.
+  bool has_aisle = false;
+  // A float, to sit among the sliders' values. Steps past it are unused.
+  float aisle_step_count = 0.0f;
+  std::array<CabinStep, kMaxAisleSteps> aisle_steps{};
 };
+
+int AisleStepCount(const CabinLayout &layout);
+// The steps in use, in their order along the aisle: the player sets them in
+// any order.
+std::array<CabinStep, kMaxAisleSteps>
+AisleStepsFrontToBack(const CabinLayout &layout, int &count);
+// The floor's height at depth `z` over the walkway's front: the steps in
+// front of it.
+float AisleRiseAt(const CabinLayout &layout, float z);
 
 // The frame's origin is the driver's head. SPF_CabinWalk's passenger seat at
 // x = 0.95 puts the centerline about half that far on the trucks it was
@@ -54,13 +80,26 @@ float CabinCenterlineX(const SPF_TruckConstants &constants);
 CabinLayout DefaultCabinLayout(float centerline_x = kTypicalCenterlineX);
 
 struct CabinLayoutField {
+  enum class Unit { kMeters, kDegrees, kCount };
+
   const char *name; // the storage key, and "ui.cabin_walk.layout.<name>"
-  float CabinLayout::*member;
+  // A function rather than a member pointer, which can't reach into the
+  // steps' array.
+  float &(*ref)(CabinLayout &);
   float min, max;
-  bool angle; // degrees, else meters
+  Unit unit;
+
+  float &Of(CabinLayout &layout) const { return ref(layout); }
+  float Of(const CabinLayout &layout) const {
+    return ref(const_cast<CabinLayout &>(layout));
+  }
 };
 
 std::span<const CabinLayoutField> CabinLayoutFields();
+
+// Null for a name no field has. A step's are "aisle_step_<n>_z" and
+// "aisle_step_<n>_height", n from 1.
+const CabinLayoutField *FindCabinLayoutField(std::string_view name);
 
 // Swaps a min/max pair entered backwards.
 void NormalizeCabinLayout(CabinLayout &layout);
