@@ -21,9 +21,11 @@ namespace {
 constexpr float kWalkSpeed = 1.0f; // m/s
 constexpr float kBackwardShare = 0.6f;
 constexpr float kSidewaysShare = 0.75f;
-constexpr float kAccelerationSeconds = 0.15f;
-constexpr float kDecelerationSeconds = 0.1f;
-constexpr float kHeadBob = 0.012f; // meters
+// About a step to get going, a little less to stop: snappier reads as
+// gliding on rails.
+constexpr float kAccelerationSeconds = 0.3f;
+constexpr float kDecelerationSeconds = 0.22f;
+constexpr float kHeadBob = 0.007f; // meters
 constexpr float kFootstepVolume = 0.3f;
 // More margin once up: a parked truck still creeps a little on a slope.
 constexpr float kMaxStandKmh = 1.0f;
@@ -50,8 +52,11 @@ constexpr float kHeightTime = 0.3f;
 constexpr float kStepMeters = 0.45f;
 constexpr float kMinStepShare = 0.45f;
 constexpr float kBobSwayRatio = 0.6f; // of the dip
-constexpr float kBobRollDegPerMeter = 40.0f;
-constexpr float kStepNodDeg = 0.35f;
+constexpr float kBobRollDegPerMeter = 25.0f;
+constexpr float kStepNodDeg = 0.15f;
+// Each step pushes the body on: a touch ahead of the mean pace into the
+// footfall, behind it in between, so the walk doesn't glide.
+constexpr float kStepSurgeMeters = 0.004f;
 constexpr float kHoldRotationSeconds = 0.25f;
 // Standing on a seat, a tap sits there whatever the look.
 constexpr float kOverSpotMeters = 0.08f;
@@ -279,11 +284,18 @@ HeadOffset CabinWalkEffect::Update(float dt, const SPF_TruckData &truck,
   const float sway = kHeadBob * kBobSwayRatio * amount * std::sin(bob_phase_);
   const float dip_share = 0.5f * (1.0f - std::cos(2.0f * bob_phase_));
   const float dip = kHeadBob * amount * dip_share;
+  const float surge = -kStepSurgeMeters * amount * std::sin(2.0f * bob_phase_);
+  float surge_x = 0.0f, surge_z = 0.0f;
+  if (speed > 1e-3f) {
+    surge_x = surge * vel_x_.value() / speed;
+    surge_z = surge * vel_z_.value() / speed;
+  }
 
   HeadOffset offset;
-  offset.pos_x = pos_.x - base_.x + sway * CameraX() * std::cos(base_yaw_);
+  offset.pos_x =
+      pos_.x - base_.x + sway * CameraX() * std::cos(base_yaw_) + surge_x;
   offset.pos_y = pos_.y - base_.y - dip;
-  offset.pos_z = pos_.z - base_.z - sway * std::sin(base_yaw_);
+  offset.pos_z = pos_.z - base_.z - sway * std::sin(base_yaw_) + surge_z;
   offset.pitch = motion_pitch_deg_ - kStepNodDeg * amount * dip_share;
   offset.roll = kBobRollDegPerMeter * kHeadBob * amount * std::sin(bob_phase_) +
                 motion_roll_deg_;
