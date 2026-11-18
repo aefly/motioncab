@@ -24,7 +24,7 @@ constexpr float kSidewaysShare = 0.75f;
 constexpr float kAccelerationSeconds = 0.15f;
 constexpr float kDecelerationSeconds = 0.1f;
 constexpr float kHeadBob = 0.012f; // meters
-constexpr float kFootstepVolume = 0.8f;
+constexpr float kFootstepVolume = 0.3f;
 // More margin once up: a parked truck still creeps a little on a slope.
 constexpr float kMaxStandKmh = 1.0f;
 constexpr float kMaxAwayKmh = 3.0f;
