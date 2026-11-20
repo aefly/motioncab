@@ -59,8 +59,7 @@ camera control, keybind rebinding, and the in-game settings UI.
   the cabin's speakers
 - **Manual Zoom** — smooth zoom effect
 - **Blindspot Viewer** — leans forward to see traffic lights hidden by the cab
-- **Cabin Walk** — walks around the parked cabin and sits in the passenger
-  seat or on the bunk, or walks down a bus's aisle and its steps
+- **Cabin Walk** — get up and walk around the parked cabin
 - **Per-truck settings** — every truck model keeps its own settings, saved
   automatically
 - **Localized** — available in 15 languages
