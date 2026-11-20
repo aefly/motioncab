@@ -55,8 +55,8 @@ camera control, keybind rebinding, and the in-game settings UI.
   dies
 - **Natural Head Movement** — TrackIR-like head movement, without a
   tracker
-- **Cabin Audio** — the game's radio played through the cabin's door speakers,
-  following your head, with the GPS voice
+- **Cabin Audio** — 3D spatial audio for the radio and GPS voice, heard from
+  the cabin's speakers
 - **Manual Zoom** — smooth zoom effect
 - **Blindspot Viewer** — leans forward to see traffic lights hidden by the cab
 - **Cabin Walk** — walks around the parked cabin and sits in the passenger
