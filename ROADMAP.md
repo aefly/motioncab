@@ -12,6 +12,8 @@ talk about it on [Discord][discord].
 
 ## Planned
 
+- Update effects for Road Trip: Ford DLC (ATS)
+
 [readme]: README.md
 [releases]: https://github.com/aefly/motioncab/releases
 [issues]: https://github.com/aefly/motioncab/issues
