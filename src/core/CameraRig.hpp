@@ -87,6 +87,11 @@ public:
   // For a world reload, which rebuilds SPF's camera too, roll included.
   void ForgetApplied();
 
+  // Puts back the camera's own rotation limits, which Apply() makes room in
+  // for our offset. Before Cabin Walk's update, so it never takes ours for
+  // the truck's own when it saves them; Apply() makes room again after.
+  void RestoreRotationLimits(SPF_Camera_API *camera);
+
   const HeadOffset &applied() const { return applied_; }
 
 private:
@@ -98,6 +103,17 @@ private:
                     const HeadOffset &offset);
   void WriteRoll(SPF_Camera_API *camera, const HeadOffset &offset);
   void WriteFov(SPF_Camera_API *camera, const HeadOffset &offset);
+  // The game clamps the head rotation to the camera's limits, little room
+  // under a low roof: a peek was cut short there, and the differential write
+  // then took the clamped part for the player's own look, which ended up
+  // looking down. While our offset is on, the limits make room for it, then are
+  // put back.
+  void FitRotationLimits(SPF_Camera_API *camera, const HeadOffset &offset);
+
+  // Degrees, left and up positive, as the game has them.
+  struct Limits {
+    float left, right, up, down;
+  };
 
   struct RecenterRun {
     bool active = false;
@@ -126,6 +142,10 @@ private:
   bool has_last_written_seat_ = false;
   float last_written_fov_ = 0.0f;
   bool has_last_written_fov_ = false;
+  // The camera's own limits while ours are on, and what we wrote, to notice
+  // another writer (Cabin Walk getting up) taking them over.
+  std::optional<Limits> own_limits_;
+  Limits written_limits_{};
 };
 
 } // namespace motioncab

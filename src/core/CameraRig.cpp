@@ -194,6 +194,7 @@ void CameraRig::ForgetAppliedPose() {
 
 void CameraRig::ForgetApplied() {
   applied_ = {};
+  own_limits_.reset();
   has_last_written_rot_ = false;
   has_last_written_seat_ = false;
   has_last_written_fov_ = false;
@@ -234,6 +235,7 @@ void CameraRig::Remove(SPF_Camera_API *camera) {
   WriteRoll(camera, none);
   DetectExternalFovWrite(camera);
   WriteFov(camera, none);
+  RestoreRotationLimits(camera);
   applied_ = {};
 }
 
@@ -276,12 +278,61 @@ void CameraRig::WriteHeadRot(SPF_Camera_API *camera, float yaw_rad,
   const float base_pitch_rad = pitch_rad - applied_.pitch * kDegToRad;
   const float new_yaw_rad = base_yaw_rad + offset.yaw * kDegToRad;
   const float new_pitch_rad = base_pitch_rad + offset.pitch * kDegToRad;
+  FitRotationLimits(camera, offset);
   camera->Cam_SetInteriorHeadRot(new_yaw_rad, new_pitch_rad);
   last_written_yaw_deg_ = new_yaw_rad / kDegToRad;
   last_written_pitch_deg_ = new_pitch_rad / kDegToRad;
   has_last_written_rot_ = true;
   applied_.yaw = offset.yaw;
   applied_.pitch = offset.pitch;
+}
+
+void CameraRig::FitRotationLimits(SPF_Camera_API *camera,
+                                  const HeadOffset &offset) {
+  Limits live{};
+  if (!camera->Cam_GetInteriorRotationLimits(&live.left, &live.right, &live.up,
+                                             &live.down))
+    return;
+  constexpr float kEpsilonDeg = 0.01f;
+  auto same = [&](const Limits &a, const Limits &b) {
+    return std::fabs(a.left - b.left) <= kEpsilonDeg &&
+           std::fabs(a.right - b.right) <= kEpsilonDeg &&
+           std::fabs(a.up - b.up) <= kEpsilonDeg &&
+           std::fabs(a.down - b.down) <= kEpsilonDeg;
+  };
+  // Someone else set them since: theirs are the ones to keep now.
+  if (own_limits_ && !same(live, written_limits_))
+    own_limits_.reset();
+
+  // The game keeps the edge of the view within the limits, not its center, so
+  // the room our offset takes is its turn plus half the FOV it adds. Shifting
+  // the limits by as much leaves the player's own range as it was.
+  const float spread = std::max(offset.fov, 0.0f) * 0.5f;
+  const float up = std::max(offset.pitch, 0.0f) + spread;
+  const float down = std::max(-offset.pitch, 0.0f) + spread;
+  const float left = std::max(offset.yaw, 0.0f) + spread;
+  const float right = std::max(-offset.yaw, 0.0f) + spread;
+  constexpr float kNeededDeg = 0.05f;
+  if (std::max({up, down, left, right}) < kNeededDeg) {
+    RestoreRotationLimits(camera);
+    return;
+  }
+  const Limits own = own_limits_.value_or(live);
+  const Limits fit{own.left + left, own.right - right, own.up + up,
+                   own.down - down};
+  own_limits_ = own;
+  if (same(fit, live))
+    return;
+  camera->Cam_SetInteriorRotationLimits(fit.left, fit.right, fit.up, fit.down);
+  written_limits_ = fit;
+}
+
+void CameraRig::RestoreRotationLimits(SPF_Camera_API *camera) {
+  if (!own_limits_)
+    return;
+  const Limits own = *own_limits_;
+  own_limits_.reset();
+  camera->Cam_SetInteriorRotationLimits(own.left, own.right, own.up, own.down);
 }
 
 void CameraRig::WriteRoll(SPF_Camera_API *camera, const HeadOffset &offset) {

@@ -13,6 +13,7 @@ talk about it on [Discord][discord].
 ## Planned
 
 - Update effects for Road Trip: Ford DLC (ATS)
+- Auto disable effects when using head/eye tracker
 
 [readme]: README.md
 [releases]: https://github.com/aefly/motioncab/releases

@@ -445,6 +445,7 @@ void OnUpdate() {
   // effects play, and sitting down turns the player's own view.
   HeadOffset walk{};
   if (ctx.cabin_walk) {
+    ctx.camera_rig.RestoreRotationLimits(camera);
     walk = ctx.cabin_walk->Update(dt, ctx.latest_truck_data, camera,
                                   ctx.camera_rig.Base(*pose));
     if (const auto &rotation = ctx.cabin_walk->base_rotation())
