@@ -277,6 +277,81 @@
           "title": "Przechył przy skręcie",
           "desc": "Jak bardzo głowa przechyla się do wnętrza zakrętu: im szybciej go pokonujesz, tym bardziej."
         }
+      },
+      "cabin_audio": {
+        "title": "Dźwięk w kabinie",
+        "width": {
+          "title": "Szerokość",
+          "desc": "O ile głośniej słyszy głośnik ucho zwrócone w jego stronę niż drugie ucho."
+        },
+        "head_shadow": {
+          "title": "Kierunkowość",
+          "desc": "Jak głucho brzmi głośnik dla ucha odwróconego od niego, zasłoniętego głową."
+        },
+        "muffle": {
+          "title": "Tłumienie",
+          "desc": "Jak bardzo radio staje się głuche i ciche, gdy jest za tobą."
+        },
+        "bass": {
+          "title": "Basy",
+          "desc": "Jak mocno głośniki kabiny przycinają bas, jak małe głośniki w drzwiach."
+        },
+        "mid": {
+          "title": "Średnie tony",
+          "desc": "Jak bardzo wyróżniają się głosy i instrumenty."
+        },
+        "treble": {
+          "title": "Soprany",
+          "desc": "Jak jasno brzmią głośniki kabiny."
+        },
+        "blend": {
+          "title": "Mieszanie głośników",
+          "desc": "Jak bardzo każdy głośnik w drzwiach gra też drugi kanał."
+        },
+        "reverb": {
+          "title": "Echo kabiny",
+          "desc": "Jak bardzo ściany i przednia szyba kabiny odbijają radio."
+        },
+        "room_size": {
+          "title": "Wielkość kabiny",
+          "desc": "Jak długo trwają odbicia w kabinie."
+        },
+        "radio_volume": {
+          "title": "Głośność radia",
+          "desc": "Jak głośne jest radio, ponad głośność gry."
+        },
+        "gps": {
+          "title": "Głos GPS",
+          "desc": "Odtwarza głos GPS z głośników kabiny jak radio, również podążając za twoją głową."
+        },
+        "gps_low_cut": {
+          "title": "Odcięcie basów głosu",
+          "desc": "Ile basów traci głos GPS: wyżej brzmi cieniej, jak mały głośnik."
+        },
+        "gps_high_cut": {
+          "title": "Odcięcie sopranów głosu",
+          "desc": "Gdzie kończą się wysokie tony głosu GPS: niżej brzmi bardziej głucho."
+        },
+        "gps_tone": {
+          "title": "Barwa głosu",
+          "desc": "Którą część głosu GPS wydobywa podbicie: niżej brzmi pudełkowo, wyżej nosowo."
+        },
+        "gps_tone_boost": {
+          "title": "Podbicie barwy",
+          "desc": "Jak bardzo ta część głosu GPS się wyróżnia: poniżej zera ją łagodzi."
+        },
+        "gps_volume": {
+          "title": "Głośność głosu",
+          "desc": "Jak głośny jest głos GPS, ponad głośność gry."
+        },
+        "duck": {
+          "title": "Ściszanie",
+          "desc": "Jak bardzo radio cichnie, gdy mówi głos GPS, jak w aplikacji nawigacyjnej."
+        },
+        "outside": {
+          "title": "Na zewnątrz",
+          "desc": "Jak bardzo stłumione jest radio z zewnątrz kabiny, w widokach zewnętrznych."
+        }
       }
     },
     "manual": {
@@ -527,6 +602,11 @@
         "aisle_step_height": "Wysokość stopnia {n}"
       }
     },
-    "modified": "Zmienione względem domyślnej wartości."
+    "modified": "Zmienione względem domyślnej wartości.",
+    "cabin_audio": {
+      "test_voice": "Odtwórz komunikat GPS",
+      "test_voice_hint": "Odtwarza jeden z komunikatów GPS z gry, za każdym razem inny, aby dostroić głos bez jazdy.",
+      "test_voice_missing": "Nie znaleziono głosu GPS w dźwiękach gry."
+    }
   }
 }

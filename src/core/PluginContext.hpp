@@ -12,6 +12,7 @@
 #include "core/CameraRig.hpp"
 #include "core/Keybinds.hpp"
 #include "effects/EffectManager.hpp"
+#include "effects/cabin/cabin_audio/CabinAudioEffect.hpp"
 #include "effects/manual/ManualZoomEffect.hpp"
 #include "effects/manual/cabin_walk/CabinLayouts.hpp"
 #include "effects/manual/cabin_walk/CabinWalkEffect.hpp"
@@ -41,6 +42,7 @@ struct PluginContext {
   std::unique_ptr<CabinLayoutStore> cabin_layouts;
   std::unique_ptr<CabinWalkEffect> cabin_walk;
   CabinWalkSounds cabin_walk_sounds;
+  std::unique_ptr<CabinAudioEffect> cabin_audio;
 
   SPF_TruckData latest_truck_data{};
   std::atomic<bool> has_truck_data{false};

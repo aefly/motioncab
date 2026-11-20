@@ -55,6 +55,8 @@ camera control, keybind rebinding, and the in-game settings UI.
   dies
 - **Natural Head Movement** — TrackIR-like head movement, without a
   tracker
+- **Cabin Audio** — the game's radio played through the cabin's door speakers,
+  following your head, with the GPS voice
 - **Manual Zoom** — smooth zoom effect
 - **Blindspot Viewer** — leans forward to see traffic lights hidden by the cab
 - **Cabin Walk** — walks around the parked cabin and sits in the passenger
@@ -64,7 +66,8 @@ camera control, keybind rebinding, and the in-game settings UI.
 - **Localized** — available in 15 languages
 
 Every effect above is independently customizable and toggleable, and only
-active while in the interior (cabin) camera view.
+active while in the interior (cabin) camera view, except Cabin Audio, which
+also muffles the radio in the exterior views (`outside`).
 
 ## Installation
 
@@ -110,8 +113,10 @@ Disabling these settings ensures that MotionCab has full control over the camera
 
 All parameters are tuned live in MotionCab's own **Quick Settings** window:
 right-click any slider to reset it to default, and the **Settings** tab has a
-button to reset every effect at once.
-Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/settings.json`.
+button to reset every setting of the truck you're driving.
+Settings are kept per truck model, in
+`plugins/spfPlugins/MotionCab/data/truck_settings.json`: a change applies
+only to the truck you're driving.
 
 | Setting                      | Default | Description                                                                                                                            |
 | ---------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
@@ -177,6 +182,25 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `posture_interval`           | 25.0    | How long your head holds a position before settling into a new one.                                                                    |
 | `roll_scale`                 | 1.2     | How much your head tilts to the side, for every movement except the tilt into turns.                                                   |
 | `steering_tilt`              | 1.5     | How much your head tilts into a turn: the faster you take it, the more it tilts.                                                       |
+| **Cabin Audio**              |         |                                                                                                                                        |
+| `radio_volume`               | 0       | How loud the radio is, on top of the game's own volume.                                                                                |
+| `bass`                       | -10     | How much the cabin's speakers cut the bass, like small door speakers.                                                                  |
+| `mid`                        | 2       | How much voices and instruments stand out.                                                                                             |
+| `treble`                     | -6      | How bright the cabin's speakers sound.                                                                                                 |
+| `blend`                      | 30      | How much each door speaker also plays the other channel.                                                                               |
+| `reverb`                     | 50      | How much the cabin's walls and windshield reflect the radio.                                                                           |
+| `room_size`                  | 350     | How long the cabin's reflections last.                                                                                                 |
+| `duck`                       | 70      | How much the radio quiets while the GPS voice speaks, as in a navigation app.                                                          |
+| `outside`                    | 70      | How muffled the radio sounds from outside the cabin, in the exterior views.                                                            |
+| `width`                      | 60      | How much louder the ear facing a speaker hears it than the other ear.                                                                  |
+| `head_shadow`                | 60      | How dull a speaker sounds to the ear turned away from it, as your head shades it.                                                      |
+| `muffle`                     | 50      | How dull and quiet the radio gets once it's behind you.                                                                                |
+| `gps`                        | true    | Plays the GPS voice through the cabin's speakers like the radio, following your head too.                                              |
+| `gps_volume`                 | 0       | How loud the GPS voice is, on top of the game's own volume.                                                                            |
+| `gps_low_cut`                | 550     | How much of the GPS voice's lows go: higher sounds thinner, like a small speaker.                                                      |
+| `gps_tone`                   | 4000    | Which part of the GPS voice the tone boost brings out: lower sounds boxy, higher nasal.                                                |
+| `gps_tone_boost`             | 8       | How much that part of the GPS voice stands out: below zero softens it.                                                                 |
+| `gps_high_cut`               | 12000   | Where the GPS voice's highs stop: lower sounds duller.                                                                                 |
 | **Manual Zoom**              |         |                                                                                                                                        |
 | `zoom_fov_deg`               | 40.0    | How zoomed in the view gets while holding the zoom key. Lower = more zoomed in.                                                        |
 | `smoothing_time`             | 0.25    | How smooth the zoom in/out feels.                                                                                                      |
@@ -191,8 +215,6 @@ Values are persisted by the framework to `plugins/spfPlugins/MotionCab/config/se
 | `smoothing_time`             | 0.6     | How smooth the lean-and-return motion is.                                                                                              |
 | **Cabin Walk**               |         |                                                                                                                                        |
 | `require_parking_brake`      | true    | On: needs the parking brake; releasing it sends you back. Off: stopping is enough.                                                     |
-
-Every effect also has its own `enabled` toggle, defaulting to on.
 
 ## Building
 
@@ -233,6 +255,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── SpringDamper.hpp          Critically-damped spring, the core smoothing primitive
 │   │   ├── Noise.hpp                 Deterministic gradient noise
 │   │   ├── Oscillator.hpp            Damped spring that can overshoot and ring
+│   │   ├── DelayLine.hpp             Plays a signal back a set time late
 │   │   └── Units.hpp                 Unit conversions, easing, Lerp, phase wrapping
 │   ├── effects/
 │   │   ├── Effect.hpp                Base effect interface + HeadOffset struct
@@ -243,7 +266,11 @@ game's `plugins/spfPlugins/MotionCab/`.
 │   │   ├── road/                     Suspension, RoadIrregularity, SpeedShake,
 │   │   │                             Surface (ground classification)
 │   │   ├── cabin/                    IdleBreathing, EngineVibration, EngineStartStop,
-│   │   │                             NaturalHeadMovement
+│   │   │   │                         NaturalHeadMovement
+│   │   │   └── cabin_audio/
+│   │   │       ├── CabinAudioEffect.*    The effect: radio and GPS voice heard from the cabin
+│   │   │       ├── FmodLibrary.*         The game's own FMOD, and the hook on its update
+│   │   │       └── SpatialDsp.*          Our DSP: speakers to each ear
 │   │   └── manual/                   SideLook, ManualZoom, BlindspotViewer
 │   │       └── cabin_walk/
 │   │           ├── CabinWalkEffect.*     The effect: standing up, walking, sitting down

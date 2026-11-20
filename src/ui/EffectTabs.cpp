@@ -4,6 +4,7 @@
 #include "core/Conflicts.hpp"
 #include "core/Keybinds.hpp"
 #include "core/Loc.hpp"
+#include "core/PluginContext.hpp"
 #include "core/Settings.hpp"
 #include "core/Strings.hpp"
 #include "ui/CabinLayoutPanel.hpp"
@@ -219,6 +220,22 @@ constexpr keybinds::Action kCabinWalkKeybinds[] = {
     keybinds::kStandSit, keybinds::kWalkForward, keybinds::kWalkBack,
     keybinds::kWalkLeft, keybinds::kWalkRight,   keybinds::kCrouch};
 
+// Plays a GPS line, to tune the voice without driving to a turn.
+void DrawCabinAudioTest(SPF_UI_API *ui) {
+  CabinAudioEffect *radio = Context().cabin_audio.get();
+  if (!radio)
+    return;
+  const std::string label =
+      WithIcon(ICON_FA_PLAY, loc::Tr("ui.cabin_audio.test_voice")) +
+      "###cabin_audio_test_voice";
+  if (MutedButton(ui, label.c_str()))
+    radio->RequestTestVoice();
+  if (ui->UI_IsItemHovered(SPF_HOVERED_FLAG_NONE))
+    ui->UI_SetTooltip(loc::Tr("ui.cabin_audio.test_voice_hint"));
+  if (radio->test_voice_missing())
+    ui->UI_TextDisabled(loc::Tr("ui.cabin_audio.test_voice_missing"));
+}
+
 // In display order.
 constexpr EffectUi kEffects[] = {
     {ICON_FA_ARROWS_UP_DOWN_LEFT_RIGHT,
@@ -234,6 +251,11 @@ constexpr EffectUi kEffects[] = {
     {ICON_FA_WAVE_SQUARE, "settings.cabin.engine_vibration", false, {}},
     {ICON_FA_POWER_OFF, "settings.cabin.engine_start_stop", false, {}},
     {ICON_FA_PERSON_RAYS, "settings.cabin.natural_head_movement", false, {}},
+    {ICON_FA_RADIO,
+     "settings.cabin.cabin_audio",
+     false,
+     {},
+     &DrawCabinAudioTest},
     {ICON_FA_ARROWS_LEFT_RIGHT, "settings.manual.manual_look", true,
      kManualLookKeybinds},
     {ICON_FA_MAGNIFYING_GLASS_PLUS,

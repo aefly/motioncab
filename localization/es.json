@@ -277,6 +277,81 @@
           "title": "Inclinación al girar",
           "desc": "Cuánto se inclina tu cabeza hacia el interior de la curva: cuanto más rápido la tomas, más se inclina."
         }
+      },
+      "cabin_audio": {
+        "title": "Audio de cabina",
+        "width": {
+          "title": "Amplitud",
+          "desc": "Cuánto más fuerte oye un altavoz el oído orientado hacia él que el otro oído."
+        },
+        "head_shadow": {
+          "title": "Direccionalidad",
+          "desc": "Cuánto se apaga un altavoz para el oído que le da la espalda, tapado por tu cabeza."
+        },
+        "muffle": {
+          "title": "Amortiguación",
+          "desc": "Cuánto se apaga y baja la radio cuando queda detrás de ti."
+        },
+        "bass": {
+          "title": "Graves",
+          "desc": "Cuánto recortan los graves los altavoces de la cabina, como altavoces pequeños de puerta."
+        },
+        "mid": {
+          "title": "Medios",
+          "desc": "Cuánto destacan las voces y los instrumentos."
+        },
+        "treble": {
+          "title": "Agudos",
+          "desc": "Qué tan brillantes suenan los altavoces de la cabina."
+        },
+        "blend": {
+          "title": "Mezcla de altavoces",
+          "desc": "Cuánto reproduce cada altavoz de puerta también el otro canal."
+        },
+        "reverb": {
+          "title": "Eco de la cabina",
+          "desc": "Cuánto reflejan la radio las paredes y el parabrisas de la cabina."
+        },
+        "room_size": {
+          "title": "Tamaño de la cabina",
+          "desc": "Cuánto duran los reflejos en la cabina."
+        },
+        "radio_volume": {
+          "title": "Volumen de la radio",
+          "desc": "El volumen de la radio, además del volumen del juego."
+        },
+        "gps": {
+          "title": "Voz del GPS",
+          "desc": "Reproduce la voz del GPS por los altavoces de la cabina como la radio, siguiendo también tu cabeza."
+        },
+        "gps_low_cut": {
+          "title": "Corte de graves de la voz",
+          "desc": "Cuántos graves pierde la voz del GPS: más alto suena más fina, como un altavoz pequeño."
+        },
+        "gps_high_cut": {
+          "title": "Corte de agudos de la voz",
+          "desc": "Dónde terminan los agudos de la voz del GPS: más bajo suena más apagada."
+        },
+        "gps_tone": {
+          "title": "Timbre de la voz",
+          "desc": "Qué parte de la voz del GPS resalta el realce: más bajo suena a caja, más alto nasal."
+        },
+        "gps_tone_boost": {
+          "title": "Realce del timbre",
+          "desc": "Cuánto destaca esa parte de la voz del GPS: bajo cero la suaviza."
+        },
+        "gps_volume": {
+          "title": "Volumen de la voz",
+          "desc": "El volumen de la voz del GPS, además del volumen del juego."
+        },
+        "duck": {
+          "title": "Atenuación",
+          "desc": "Cuánto baja la radio mientras habla la voz del GPS, como en una app de navegación."
+        },
+        "outside": {
+          "title": "Exterior",
+          "desc": "Cuánto se amortigua la radio desde fuera de la cabina, en las vistas exteriores."
+        }
       }
     },
     "manual": {
@@ -527,6 +602,11 @@
         "aisle_step_height": "Altura escalón {n}"
       }
     },
-    "modified": "Cambiado respecto al valor predeterminado."
+    "modified": "Cambiado respecto al valor predeterminado.",
+    "cabin_audio": {
+      "test_voice": "Reproducir una frase del GPS",
+      "test_voice_hint": "Reproduce una de las frases del GPS del juego, una distinta cada vez, para ajustar la voz sin conducir.",
+      "test_voice_missing": "No se encontró ninguna voz del GPS en los sonidos del juego."
+    }
   }
 }

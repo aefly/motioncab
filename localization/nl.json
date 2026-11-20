@@ -277,6 +277,81 @@
           "title": "Kanteling bij sturen",
           "desc": "Hoeveel je hoofd de bocht in kantelt: hoe sneller je de bocht neemt, hoe meer."
         }
+      },
+      "cabin_audio": {
+        "title": "Cabine-audio",
+        "width": {
+          "title": "Breedte",
+          "desc": "Hoeveel harder het oor dat naar een speaker gericht is hem hoort dan het andere oor."
+        },
+        "head_shadow": {
+          "title": "Richtingsgevoel",
+          "desc": "Hoe dof een speaker klinkt voor het oor dat ervan afgekeerd is, afgeschermd door je hoofd."
+        },
+        "muffle": {
+          "title": "Demping",
+          "desc": "Hoe dof en zacht de radio wordt zodra hij achter je is."
+        },
+        "bass": {
+          "title": "Bas",
+          "desc": "Hoeveel de cabineluidsprekers de bas verminderen, zoals kleine deurluidsprekers."
+        },
+        "mid": {
+          "title": "Middentonen",
+          "desc": "Hoeveel stemmen en instrumenten opvallen."
+        },
+        "treble": {
+          "title": "Hoge tonen",
+          "desc": "Hoe helder de cabineluidsprekers klinken."
+        },
+        "blend": {
+          "title": "Luidsprekermenging",
+          "desc": "Hoeveel elke deurspeaker ook het andere kanaal afspeelt."
+        },
+        "reverb": {
+          "title": "Cabine-echo",
+          "desc": "Hoeveel de wanden en de voorruit van de cabine de radio weerkaatsen."
+        },
+        "room_size": {
+          "title": "Cabinegrootte",
+          "desc": "Hoe lang de weerkaatsingen in de cabine duren."
+        },
+        "radio_volume": {
+          "title": "Volume van de radio",
+          "desc": "Hoe luid de radio is, bovenop het volume van het spel."
+        },
+        "gps": {
+          "title": "GPS-stem",
+          "desc": "Speelt de GPS-stem via de speakers van de cabine af zoals de radio, ook je hoofd volgend."
+        },
+        "gps_low_cut": {
+          "title": "Laag afsnijden van de stem",
+          "desc": "Hoeveel lage tonen de GPS-stem verliest: hoger klinkt dunner, als een kleine speaker."
+        },
+        "gps_high_cut": {
+          "title": "Hoog afsnijden van de stem",
+          "desc": "Waar de hoge tonen van de GPS-stem stoppen: lager klinkt doffer."
+        },
+        "gps_tone": {
+          "title": "Klank van de stem",
+          "desc": "Welk deel van de GPS-stem de klankversterking naar voren haalt: lager klinkt hol, hoger nasaal."
+        },
+        "gps_tone_boost": {
+          "title": "Klankversterking",
+          "desc": "Hoeveel dat deel van de GPS-stem eruit springt: onder nul maakt het zachter."
+        },
+        "gps_volume": {
+          "title": "Volume van de stem",
+          "desc": "Hoe luid de GPS-stem is, bovenop het volume van het spel."
+        },
+        "duck": {
+          "title": "Dempen",
+          "desc": "Hoeveel zachter de radio wordt terwijl de GPS-stem spreekt, zoals in een navigatie-app."
+        },
+        "outside": {
+          "title": "Buiten",
+          "desc": "Hoe gedempt de radio klinkt van buiten de cabine, in de buitenaanzichten."
+        }
       }
     },
     "manual": {
@@ -527,6 +602,11 @@
         "aisle_step_height": "Trede {n} hoogte"
       }
     },
-    "modified": "Gewijzigd ten opzichte van de standaard."
+    "modified": "Gewijzigd ten opzichte van de standaard.",
+    "cabin_audio": {
+      "test_voice": "GPS-zin afspelen",
+      "test_voice_hint": "Speelt een van de GPS-zinnen van het spel af, elke keer een andere, om de stem af te stellen zonder te rijden.",
+      "test_voice_missing": "Geen GPS-stem gevonden in de geluiden van het spel."
+    }
   }
 }

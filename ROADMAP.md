@@ -12,6 +12,7 @@ talk about it on [Discord][discord].
 
 - Better Cabin Walk animations
 - Look Forward key
+- Cabin Audio
 
 ## Planned
 

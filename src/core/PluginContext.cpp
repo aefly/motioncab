@@ -18,6 +18,8 @@ void PluginContext::ReloadEffectsConfig() {
     manual_zoom->LoadConfig();
   if (cabin_walk)
     cabin_walk->LoadConfig();
+  if (cabin_audio)
+    cabin_audio->LoadConfig();
   const EffectConfig side_look(core ? core->config : nullptr, config_handle,
                                "manual", "manual_look");
   if (side_look.IsAvailable()) {

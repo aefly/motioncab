@@ -277,6 +277,81 @@
           "title": "Náklon při zatáčení",
           "desc": "Jak moc se hlava nakloní do zatáčky: čím rychleji ji projíždíte, tím víc."
         }
+      },
+      "cabin_audio": {
+        "title": "Zvuk v kabině",
+        "width": {
+          "title": "Šířka",
+          "desc": "O kolik hlasitěji slyší reproduktor ucho k němu otočené než druhé ucho."
+        },
+        "head_shadow": {
+          "title": "Směrovost",
+          "desc": "Jak dutě zní reproduktor uchu odvrácenému od něj, zakrytému tvou hlavou."
+        },
+        "muffle": {
+          "title": "Tlumení",
+          "desc": "Jak moc rádio zní dutě a tiše, když je za vámi."
+        },
+        "bass": {
+          "title": "Basy",
+          "desc": "Jak moc reproduktory kabiny potlačují basy, jako malé reproduktory ve dveřích."
+        },
+        "mid": {
+          "title": "Středy",
+          "desc": "Jak moc vyniknou hlasy a nástroje."
+        },
+        "treble": {
+          "title": "Výšky",
+          "desc": "Jak jasně znějí reproduktory kabiny."
+        },
+        "blend": {
+          "title": "Mísení reproduktorů",
+          "desc": "Jak moc každý reproduktor ve dveřích hraje i druhý kanál."
+        },
+        "reverb": {
+          "title": "Ozvěna kabiny",
+          "desc": "Jak moc stěny a čelní sklo kabiny odrážejí rádio."
+        },
+        "room_size": {
+          "title": "Velikost kabiny",
+          "desc": "Jak dlouho trvají odrazy v kabině."
+        },
+        "radio_volume": {
+          "title": "Hlasitost rádia",
+          "desc": "Jak hlasité je rádio, navíc k hlasitosti hry."
+        },
+        "gps": {
+          "title": "Hlas GPS",
+          "desc": "Přehrává hlas GPS z reproduktorů kabiny jako rádio, také podle tvé hlavy."
+        },
+        "gps_low_cut": {
+          "title": "Oříznutí basů hlasu",
+          "desc": "Kolik basů hlas GPS ztratí: výš zní tenčeji, jako malý reproduktor."
+        },
+        "gps_high_cut": {
+          "title": "Oříznutí výšek hlasu",
+          "desc": "Kde končí výšky hlasu GPS: níž zní dutěji."
+        },
+        "gps_tone": {
+          "title": "Barva hlasu",
+          "desc": "Kterou část hlasu GPS zdůraznění vytáhne: níž zní krabicově, výš nosově."
+        },
+        "gps_tone_boost": {
+          "title": "Zdůraznění barvy",
+          "desc": "Jak moc tato část hlasu GPS vynikne: pod nulou ji zjemní."
+        },
+        "gps_volume": {
+          "title": "Hlasitost hlasu",
+          "desc": "Jak hlasitý je hlas GPS, navíc k hlasitosti hry."
+        },
+        "duck": {
+          "title": "Ztlumení",
+          "desc": "Jak moc rádio ztichne, když mluví hlas GPS, jako v navigační aplikaci."
+        },
+        "outside": {
+          "title": "Venku",
+          "desc": "Jak moc je rádio utlumené zvenku kabiny, ve vnějších pohledech."
+        }
       }
     },
     "manual": {
@@ -527,6 +602,11 @@
         "aisle_step_height": "Výška schodu {n}"
       }
     },
-    "modified": "Změněno oproti výchozí hodnotě."
+    "modified": "Změněno oproti výchozí hodnotě.",
+    "cabin_audio": {
+      "test_voice": "Přehrát hlášku GPS",
+      "test_voice_hint": "Přehraje jednu z hlášek GPS ze hry, pokaždé jinou, abys mohl hlas doladit bez jízdy.",
+      "test_voice_missing": "Ve zvucích hry nebyl nalezen žádný hlas GPS."
+    }
   }
 }

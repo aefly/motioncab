@@ -277,6 +277,81 @@
           "title": "Neigung beim Lenken",
           "desc": "Wie stark sich dein Kopf in die Kurve neigt: je schneller du sie nimmst, desto mehr."
         }
+      },
+      "cabin_audio": {
+        "title": "Kabinenklang",
+        "width": {
+          "title": "Breite",
+          "desc": "Wie viel lauter das Ohr, das einem Lautsprecher zugewandt ist, ihn hört als das andere Ohr."
+        },
+        "head_shadow": {
+          "title": "Richtwirkung",
+          "desc": "Wie dumpf ein Lautsprecher für das abgewandte Ohr klingt, das dein Kopf abschirmt."
+        },
+        "muffle": {
+          "title": "Dämpfung",
+          "desc": "Wie dumpf und leise das Radio wird, sobald es hinter dir ist."
+        },
+        "bass": {
+          "title": "Bass",
+          "desc": "Wie stark die Kabinenlautsprecher den Bass absenken, wie kleine Türlautsprecher."
+        },
+        "mid": {
+          "title": "Mitten",
+          "desc": "Wie sehr Stimmen und Instrumente hervortreten."
+        },
+        "treble": {
+          "title": "Höhen",
+          "desc": "Wie hell die Kabinenlautsprecher klingen."
+        },
+        "blend": {
+          "title": "Lautsprechermischung",
+          "desc": "Wie viel jeder Türlautsprecher auch vom anderen Kanal spielt."
+        },
+        "reverb": {
+          "title": "Kabinenhall",
+          "desc": "Wie stark Wände und Windschutzscheibe der Kabine das Radio reflektieren."
+        },
+        "room_size": {
+          "title": "Kabinengröße",
+          "desc": "Wie lange die Reflexionen in der Kabine anhalten."
+        },
+        "radio_volume": {
+          "title": "Radiolautstärke",
+          "desc": "Wie laut das Radio ist, zusätzlich zur Lautstärke des Spiels."
+        },
+        "gps": {
+          "title": "GPS-Stimme",
+          "desc": "Spielt die GPS-Stimme wie das Radio über die Lautsprecher der Kabine, ebenfalls deinem Kopf folgend."
+        },
+        "gps_low_cut": {
+          "title": "Tiefenschnitt der Stimme",
+          "desc": "Wie viele Tiefen die GPS-Stimme verliert: höher klingt dünner, wie ein kleiner Lautsprecher."
+        },
+        "gps_high_cut": {
+          "title": "Höhenschnitt der Stimme",
+          "desc": "Wo die Höhen der GPS-Stimme enden: tiefer klingt dumpfer."
+        },
+        "gps_tone": {
+          "title": "Klang der Stimme",
+          "desc": "Welchen Teil der GPS-Stimme die Klanganhebung hervorhebt: tiefer klingt hohl, höher nasal."
+        },
+        "gps_tone_boost": {
+          "title": "Klanganhebung",
+          "desc": "Wie sehr dieser Teil der GPS-Stimme hervortritt: unter null mildert ihn."
+        },
+        "gps_volume": {
+          "title": "Lautstärke der Stimme",
+          "desc": "Wie laut die GPS-Stimme ist, zusätzlich zur Lautstärke des Spiels."
+        },
+        "duck": {
+          "title": "Absenkung",
+          "desc": "Wie stark das Radio leiser wird, während die GPS-Stimme spricht, wie in einer Navi-App."
+        },
+        "outside": {
+          "title": "Außen",
+          "desc": "Wie gedämpft das Radio von außerhalb der Kabine klingt, in den Außenansichten."
+        }
       }
     },
     "manual": {
@@ -527,6 +602,11 @@
         "aisle_step_height": "Stufe {n} Höhe"
       }
     },
-    "modified": "Vom Standardwert geändert."
+    "modified": "Vom Standardwert geändert.",
+    "cabin_audio": {
+      "test_voice": "GPS-Ansage abspielen",
+      "test_voice_hint": "Spielt eine der GPS-Ansagen des Spiels ab, jedes Mal eine andere, um die Stimme ohne Fahren einzustellen.",
+      "test_voice_missing": "Keine GPS-Stimme in den Sounds des Spiels gefunden."
+    }
   }
 }

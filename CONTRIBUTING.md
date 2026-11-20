@@ -32,7 +32,8 @@ game's `plugins/spfPlugins/MotionCab/`.
 - C++23.
 - Every effect must be:
   - Independently toggleable and customizable.
-  - Active in the interior (cabin) camera view only.
+  - Active in the interior (cabin) camera view only (Cabin Audio's
+    `outside` setting is the one exception, by the player's choice).
   - Shown in MotionCab's own Quick Settings window. Declare each setting
     once in `settings::kAll` (`src/core/Settings.hpp`): the
     manifest, the Quick Settings window and the per-truck settings are all

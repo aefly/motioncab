@@ -277,6 +277,81 @@
           "title": "Viraj Eğimi",
           "desc": "Başınızın virajın içine ne kadar eğildiği: virajı ne kadar hızlı alırsanız o kadar çok eğilir."
         }
+      },
+      "cabin_audio": {
+        "title": "Kabin Sesi",
+        "width": {
+          "title": "Genişlik",
+          "desc": "Bir hoparlöre dönük kulağın onu diğer kulağa göre ne kadar yüksek duyduğu."
+        },
+        "head_shadow": {
+          "title": "Yönlülük",
+          "desc": "Bir hoparlörün, başınızın gölgelediği ve ondan uzağa dönük kulağa ne kadar boğuk geldiği."
+        },
+        "muffle": {
+          "title": "Boğukluk",
+          "desc": "Radyo arkanızda kaldığında ne kadar boğuk ve kısık duyulduğu."
+        },
+        "bass": {
+          "title": "Bas",
+          "desc": "Kabin hoparlörlerinin bası ne kadar kıstığı, küçük kapı hoparlörleri gibi."
+        },
+        "mid": {
+          "title": "Orta",
+          "desc": "Seslerin ve enstrümanların ne kadar öne çıktığı."
+        },
+        "treble": {
+          "title": "Tiz",
+          "desc": "Kabin hoparlörlerinin ne kadar parlak duyulduğu."
+        },
+        "blend": {
+          "title": "Hoparlör karışımı",
+          "desc": "Her kapı hoparlörünün diğer kanalı da ne kadar çaldığı."
+        },
+        "reverb": {
+          "title": "Kabin yankısı",
+          "desc": "Kabinin duvarlarının ve ön camının radyoyu ne kadar yansıttığı."
+        },
+        "room_size": {
+          "title": "Kabin boyutu",
+          "desc": "Kabindeki yansımaların ne kadar sürdüğü."
+        },
+        "radio_volume": {
+          "title": "Radyo ses seviyesi",
+          "desc": "Radyonun, oyunun kendi ses seviyesinin üstüne ne kadar yüksek olduğu."
+        },
+        "gps": {
+          "title": "GPS sesi",
+          "desc": "GPS sesini radyo gibi kabin hoparlörlerinden çalar, o da başınızı takip eder."
+        },
+        "gps_low_cut": {
+          "title": "Ses bas kesimi",
+          "desc": "GPS sesinin ne kadar bas kaybettiği: daha yüksek, küçük bir hoparlör gibi daha ince duyulur."
+        },
+        "gps_high_cut": {
+          "title": "Ses tiz kesimi",
+          "desc": "GPS sesinin tizlerinin nerede bittiği: daha düşük daha boğuk duyulur."
+        },
+        "gps_tone": {
+          "title": "Ses tınısı",
+          "desc": "Tını yükseltmenin GPS sesinin hangi kısmını öne çıkardığı: daha düşük kutu gibi, daha yüksek genizden duyulur."
+        },
+        "gps_tone_boost": {
+          "title": "Tını yükseltme",
+          "desc": "GPS sesinin o kısmının ne kadar öne çıktığı: sıfırın altı onu yumuşatır."
+        },
+        "gps_volume": {
+          "title": "Ses seviyesi",
+          "desc": "GPS sesinin, oyunun kendi ses seviyesinin üstüne ne kadar yüksek olduğu."
+        },
+        "duck": {
+          "title": "Kısma",
+          "desc": "GPS sesi konuşurken radyonun ne kadar kısıldığı, bir navigasyon uygulamasındaki gibi."
+        },
+        "outside": {
+          "title": "Dışarıda",
+          "desc": "Dış görünümlerde radyonun kabinin dışından ne kadar boğuk duyulduğu."
+        }
       }
     },
     "manual": {
@@ -527,6 +602,11 @@
         "aisle_step_height": "Basamak {n} yüksekliği"
       }
     },
-    "modified": "Varsayılan değerden değiştirildi."
+    "modified": "Varsayılan değerden değiştirildi.",
+    "cabin_audio": {
+      "test_voice": "GPS cümlesi çal",
+      "test_voice_hint": "Sesi sürmeden ayarlamak için oyunun GPS cümlelerinden birini, her seferinde farklı birini çalar.",
+      "test_voice_missing": "Oyunun seslerinde GPS sesi bulunamadı."
+    }
   }
 }

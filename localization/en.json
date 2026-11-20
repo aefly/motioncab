@@ -277,6 +277,81 @@
           "title": "Steering Tilt",
           "desc": "How much your head tilts into a turn: the faster you take it, the more it tilts."
         }
+      },
+      "cabin_audio": {
+        "title": "Cabin Audio",
+        "width": {
+          "title": "Width",
+          "desc": "How much louder the ear facing a speaker hears it than the other ear."
+        },
+        "head_shadow": {
+          "title": "Directionality",
+          "desc": "How dull a speaker sounds to the ear turned away from it, as your head shades it."
+        },
+        "muffle": {
+          "title": "Muffle",
+          "desc": "How dull and quiet the radio gets once it's behind you."
+        },
+        "bass": {
+          "title": "Bass",
+          "desc": "How much the cabin's speakers cut the bass, like small door speakers."
+        },
+        "mid": {
+          "title": "Midrange",
+          "desc": "How much voices and instruments stand out."
+        },
+        "treble": {
+          "title": "Treble",
+          "desc": "How bright the cabin's speakers sound."
+        },
+        "blend": {
+          "title": "Speaker blend",
+          "desc": "How much each door speaker also plays the other channel."
+        },
+        "reverb": {
+          "title": "Cabin echo",
+          "desc": "How much the cabin's walls and windshield reflect the radio."
+        },
+        "room_size": {
+          "title": "Cabin size",
+          "desc": "How long the cabin's reflections last."
+        },
+        "radio_volume": {
+          "title": "Radio volume",
+          "desc": "How loud the radio is, on top of the game's own volume."
+        },
+        "gps": {
+          "title": "GPS voice",
+          "desc": "Plays the GPS voice through the cabin's speakers like the radio, following your head too."
+        },
+        "gps_low_cut": {
+          "title": "Voice low cut",
+          "desc": "How much of the GPS voice's lows go: higher sounds thinner, like a small speaker."
+        },
+        "gps_high_cut": {
+          "title": "Voice high cut",
+          "desc": "Where the GPS voice's highs stop: lower sounds duller."
+        },
+        "gps_tone": {
+          "title": "Voice tone",
+          "desc": "Which part of the GPS voice the tone boost brings out: lower sounds boxy, higher nasal."
+        },
+        "gps_tone_boost": {
+          "title": "Voice tone boost",
+          "desc": "How much that part of the GPS voice stands out: below zero softens it."
+        },
+        "gps_volume": {
+          "title": "Voice volume",
+          "desc": "How loud the GPS voice is, on top of the game's own volume."
+        },
+        "duck": {
+          "title": "Ducking",
+          "desc": "How much the radio quiets while the GPS voice speaks, as in a navigation app."
+        },
+        "outside": {
+          "title": "Outside",
+          "desc": "How muffled the radio sounds from outside the cabin, in the exterior views."
+        }
       }
     },
     "manual": {
@@ -527,6 +602,11 @@
         "aisle_step_height": "Step {n} Height"
       }
     },
-    "modified": "Changed from its default."
+    "modified": "Changed from its default.",
+    "cabin_audio": {
+      "test_voice": "Play a GPS line",
+      "test_voice_hint": "Plays one of the game's GPS lines, to tune the voice without driving.",
+      "test_voice_missing": "No GPS voice found in the game's sounds."
+    }
   }
 }

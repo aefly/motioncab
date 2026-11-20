@@ -19,6 +19,7 @@
 #include "effects/cabin/EngineVibrationEffect.hpp"
 #include "effects/cabin/IdleBreathingEffect.hpp"
 #include "effects/cabin/NaturalHeadMovementEffect.hpp"
+#include "effects/cabin/cabin_audio/CabinAudioEffect.hpp"
 #include "effects/driving/BodyDynamicsEffect.hpp"
 #include "effects/driving/HeadMotionEffect.hpp"
 #include "effects/driving/SteeringCameraEffect.hpp"
@@ -29,6 +30,7 @@
 #include "effects/road/RoadIrregularityEffect.hpp"
 #include "effects/road/SpeedShakeEffect.hpp"
 #include "effects/road/SuspensionEffect.hpp"
+#include "math/Units.hpp"
 #include "ui/SettingsWindow.hpp"
 #include "ui/Widgets.hpp"
 
@@ -118,6 +120,8 @@ void OnTruckConstantsUpdate(const SPF_TruckConstants *data,
   if (ctx.cabin_walk) {
     ctx.cabin_walk->OnTruckConstantsChanged(*data);
   }
+  if (ctx.cabin_audio)
+    ctx.cabin_audio->OnTruckConstantsChanged(*data);
 
   // No Cam_SwitchTo here to get SPF onto the new camera, even deferred: it
   // can crash during slow Quick Job reloads (750 ms and more), so no delay is
@@ -197,6 +201,8 @@ void OnUnload() {
   if (ctx.cabin_walk)
     ctx.cabin_walk->Shutdown(ctx.core ? ctx.core->camera : nullptr);
   ctx.cabin_walk_sounds.Shutdown(ctx.core ? ctx.core->sound : nullptr);
+  if (ctx.cabin_audio)
+    ctx.cabin_audio->Unload();
   // The engine would keep our offset after we're gone. This has to follow
   // RestoreFov, which puts the applied FOV offset back on.
   if (ctx.core && ctx.core->camera)
@@ -291,6 +297,8 @@ void OnActivated(const SPF_Core_API *core_api) {
   ctx.cabin_walk = std::make_unique<CabinWalkEffect>(
       core_api->config, ctx.config_handle, core_api->keybinds,
       ctx.keybinds_handle, core_api->ui, ctx.cabin_layouts.get());
+  ctx.cabin_audio =
+      std::make_unique<CabinAudioEffect>(core_api->config, ctx.config_handle);
   ctx.ReloadEffectsConfig();
 
   ctx.telemetry_handle =
@@ -314,6 +322,7 @@ void OnActivated(const SPF_Core_API *core_api) {
     SwitchSettingsTo(ctx, initial_constants);
     ctx.effects.NotifyTruckConstants(initial_constants);
     ctx.cabin_walk->OnTruckConstantsChanged(initial_constants);
+    ctx.cabin_audio->OnTruckConstantsChanged(initial_constants);
     core_api->telemetry->Tel_RegisterForCommonData(ctx.telemetry_handle,
                                                    OnCommonDataUpdate, nullptr);
     core_api->telemetry->Tel_RegisterForTrailers(ctx.telemetry_handle,
@@ -369,6 +378,8 @@ void OnUpdate() {
       ctx.camera_rig.RemoveFov(ctx.core->camera);
       if (ctx.cabin_walk)
         ctx.cabin_walk->OnPaused();
+      if (ctx.cabin_audio)
+        ctx.cabin_audio->UpdatePaused();
       // "Paused" covers every native menu, F4's seat/FOV overlay included,
       // which still reports the interior camera: the effects would keep
       // moving behind it otherwise.
@@ -377,6 +388,9 @@ void OnUpdate() {
       return;
     }
   }
+
+  if (ctx.cabin_audio)
+    ctx.cabin_audio->PlayTestVoice(ctx.core->sound);
 
   SPF_CameraType camera_type;
   const bool have_camera = ctx.core->camera->Cam_GetCurrentCamera(&camera_type);
@@ -387,6 +401,13 @@ void OnUpdate() {
       ctx.manual_zoom->RestoreFov();
     if (ctx.cabin_walk)
       ctx.cabin_walk->OnLeftInterior();
+    // Without a truck there's no cabin to hear it from.
+    if (ctx.cabin_audio) {
+      if (truck_settings::HasTruck() && !ctx.game_paused)
+        ctx.cabin_audio->UpdateOutside();
+      else
+        ctx.cabin_audio->UpdatePaused();
+    }
     ctx.was_interior_last_frame = false;
     ctx.has_last_update_time = false;
     return;
@@ -453,6 +474,16 @@ void OnUpdate() {
   offset.pitch += walk.pitch;
   offset.roll += walk.roll;
   offset.fov += walk.fov;
+  // The menu a save loads into (its truck, its jobs) isn't paused for
+  // telemetry and shows the interior camera: the radio played there isn't
+  // heard from the cabin.
+  if (ctx.cabin_audio && ctx.game_paused)
+    ctx.cabin_audio->UpdatePaused();
+  // Before Apply, while Base() still takes out last frame's offset.
+  else if (ctx.cabin_audio)
+    ctx.cabin_audio->Update(ctx.camera_rig.Base(*pose).yaw_rad +
+                                offset.yaw * math::kDegToRad,
+                            offset);
   ctx.camera_rig.Apply(camera, *pose, offset);
 }
 
@@ -476,6 +507,9 @@ void OnWorldUnloaded() {
   // The bank dies with this world's sound system, and nothing else would
   // notice in time: unload it now so the next world loads it again.
   ctx.cabin_walk_sounds.Shutdown(ctx.core ? ctx.core->sound : nullptr);
+  // The radio's group and our DSP go with this world's sound system too.
+  if (ctx.cabin_audio)
+    ctx.cabin_audio->Shutdown();
 }
 
 } // namespace
