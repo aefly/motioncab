@@ -66,8 +66,7 @@ camera control, keybind rebinding, and the in-game settings UI.
 - **Localized** — available in 15 languages
 
 Every effect above is independently customizable and toggleable, and only
-active while in the interior (cabin) camera view, except Cabin Audio, which
-also muffles the radio in the exterior views (`outside`).
+active while in the interior (cabin) camera view.
 
 ## Installation
 
