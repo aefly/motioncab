@@ -10,15 +10,7 @@ talk about it on [Discord][discord].
 
 ## In development
 
-- Better Cabin Walk animations
-- Look Forward key
-- Cabin Audio
-
 ## Planned
-
-- Enhance Road Intensity effect
-- Enhance Suspension effect
-- Community Settings
 
 [readme]: README.md
 [releases]: https://github.com/aefly/motioncab/releases
