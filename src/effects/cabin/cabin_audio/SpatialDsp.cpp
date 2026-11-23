@@ -143,9 +143,10 @@ bool SpatialDsp::Create(const FmodLibrary &fmod, void *core) {
   const int result = fmod.System_CreateDSP(core, &kDescription, &dsp);
   creating = nullptr;
   if (result != FmodLibrary::kOk || !dsp) {
-    Context().LogFmt(SPF_LOG_WARN,
-                     "(CabinAudio) Couldn't create the spatial DSP (%d)",
-                     result);
+    // Tried again on every frame the bus plays.
+    Context().LogThrottledFmt(
+        SPF_LOG_WARN, "cabin_audio_spatial_create", 10000,
+        "(CabinAudio) Couldn't create the spatial DSP (%d)", result);
     return false;
   }
   handle_ = dsp;

@@ -236,9 +236,14 @@ bool CabinAudioEffect::Attach(Link &link, void *group) {
   }
   if (fmod_.ChannelGroup_AddDSP(group, kDspTail, link.spatial.handle()) !=
       FmodLibrary::kOk) {
-    Context().LogFmt(SPF_LOG_WARN,
-                     "(CabinAudio) Couldn't add the spatial DSP to \"%s\"",
-                     link.name);
+    // Tried again on every frame the bus plays. A key per bus, so one
+    // doesn't hide the other.
+    Context().LogThrottledFmt(
+        SPF_LOG_WARN,
+        &link == &gps_link_ ? "cabin_audio_spatial_add_gps"
+                            : "cabin_audio_spatial_add_radio",
+        10000, "(CabinAudio) Couldn't add the spatial DSP to \"%s\"",
+        link.name);
     for (const Dsp &dsp : link.dsps)
       if (dsp.handle)
         fmod_.ChannelGroup_RemoveDSP(group, dsp.handle);
