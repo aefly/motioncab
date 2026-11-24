@@ -318,7 +318,7 @@ planned next.
 
 ## License
 
-This project is licensed under the [GPL-3.0](./LICENSE).
+This project is licensed under the [GPL-3.0](./LICENSE) license.
 
 [spf-framework]: https://github.com/TrackAndTruckDevs/SPF-Framework/
 [spf-framework-download]: https://github.com/TrackAndTruckDevs/SPF-Framework/releases/latest
