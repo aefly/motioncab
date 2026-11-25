@@ -48,6 +48,11 @@ bool IsApplying();
 // current one's live. False when there's nothing to reset (no truck key).
 bool ResetToDefaults(PluginContext &ctx, const std::string &truck_key);
 
+// Gives the truck being driven another truck's settings, live, to start a new
+// truck from one already tuned. False when there's no truck being driven, the
+// source is that truck, or the store can't be opened.
+bool CopyFrom(PluginContext &ctx, const std::string &source_key);
+
 struct TunedTruck {
   std::string key;
   std::string name;

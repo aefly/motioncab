@@ -482,7 +482,8 @@
       "section": "已设置的卡车 ({count})",
       "changed": "已更改 {count} 项设置",
       "none": "还没有卡车拥有自己的设置。",
-      "reset_tip": "将此卡车的设置重置为默认值。"
+      "reset_tip": "将此卡车的设置重置为默认值。",
+      "copy_tip": "将此卡车的设置复制到您正在驾驶的卡车。"
     },
     "search": {
       "hint": "搜索设置...",
@@ -508,6 +509,12 @@
       "message": "将 {truck} 的设置全部重置？",
       "confirm": "是，重置",
       "done_toast": "已重置 {truck} 的设置。"
+    },
+    "copy": {
+      "title": "确认复制",
+      "message": "要用 {source} 的设置替换 {truck} 的所有设置吗？",
+      "confirm": "是，复制",
+      "done_toast": "已将 {source} 的设置复制到 {truck}。"
     },
     "about": {
       "details": "详情",

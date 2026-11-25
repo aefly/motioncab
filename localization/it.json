@@ -482,7 +482,8 @@
       "section": "Camion regolati ({count})",
       "changed": "{count} impostazioni modificate",
       "none": "Nessun camion ha ancora impostazioni proprie.",
-      "reset_tip": "Ripristina le impostazioni di questo camion ai valori predefiniti."
+      "reset_tip": "Ripristina le impostazioni di questo camion ai valori predefiniti.",
+      "copy_tip": "Copia le impostazioni di questo camion in quello che stai guidando."
     },
     "search": {
       "hint": "Cerca impostazioni...",
@@ -508,6 +509,12 @@
       "message": "Ripristinare tutte le impostazioni di {truck}?",
       "confirm": "Sì, ripristina",
       "done_toast": "Impostazioni di {truck} ripristinate."
+    },
+    "copy": {
+      "title": "Conferma copia",
+      "message": "Sostituire tutte le impostazioni del {truck} con quelle del {source}?",
+      "confirm": "Sì, copia",
+      "done_toast": "Impostazioni di {source} copiate su {truck}."
     },
     "about": {
       "details": "Dettagli",

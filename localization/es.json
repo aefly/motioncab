@@ -482,7 +482,8 @@
       "section": "Camiones ajustados ({count})",
       "changed": "{count} ajustes cambiados",
       "none": "Ningún camión tiene todavía ajustes propios.",
-      "reset_tip": "Restablecer los ajustes de este camión a los valores predeterminados."
+      "reset_tip": "Restablecer los ajustes de este camión a los valores predeterminados.",
+      "copy_tip": "Copiar los ajustes de este camión al que estás conduciendo."
     },
     "search": {
       "hint": "Buscar ajustes...",
@@ -508,6 +509,12 @@
       "message": "¿Restablecer todos los ajustes de {truck}?",
       "confirm": "Sí, restablecer",
       "done_toast": "Ajustes de {truck} restablecidos."
+    },
+    "copy": {
+      "title": "Confirmar copia",
+      "message": "¿Reemplazar todos los ajustes del {truck} por los del {source}?",
+      "confirm": "Sí, copiar",
+      "done_toast": "Ajustes de {source} copiados a {truck}."
     },
     "about": {
       "details": "Detalles",

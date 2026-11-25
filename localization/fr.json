@@ -482,7 +482,8 @@
       "section": "Camions réglés ({count})",
       "changed": "{count} réglages modifiés",
       "none": "Aucun camion n'a encore ses propres réglages.",
-      "reset_tip": "Réinitialiser les réglages de ce camion aux valeurs par défaut."
+      "reset_tip": "Réinitialiser les réglages de ce camion aux valeurs par défaut.",
+      "copy_tip": "Copier les réglages de ce camion dans celui que vous conduisez."
     },
     "search": {
       "hint": "Rechercher un réglage...",
@@ -508,6 +509,12 @@
       "message": "Réinitialiser tous les réglages du {truck} ?",
       "confirm": "Oui, réinitialiser",
       "done_toast": "Réglages de {truck} réinitialisés."
+    },
+    "copy": {
+      "title": "Confirmer la copie",
+      "message": "Remplacer tous les réglages du {truck} par ceux du {source} ?",
+      "confirm": "Oui, copier",
+      "done_toast": "Réglages de {source} copiés dans {truck}."
     },
     "about": {
       "details": "Détails",

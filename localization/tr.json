@@ -482,7 +482,8 @@
       "section": "Ayarlanmış tırlar ({count})",
       "changed": "{count} ayar değiştirildi",
       "none": "Henüz kendi ayarları olan bir tır yok.",
-      "reset_tip": "Bu tırın ayarlarını varsayılan değerlere sıfırla."
+      "reset_tip": "Bu tırın ayarlarını varsayılan değerlere sıfırla.",
+      "copy_tip": "Bu tırın ayarlarını sürdüğün tıra kopyala."
     },
     "search": {
       "hint": "Ayarlarda ara...",
@@ -508,6 +509,12 @@
       "message": "{truck} için tüm ayarlar sıfırlansın mı?",
       "confirm": "Evet, sıfırla",
       "done_toast": "{truck} ayarları sıfırlandı."
+    },
+    "copy": {
+      "title": "Kopyalamayı Onayla",
+      "message": "{truck} aracının tüm ayarları {source} aracınınkilerle değiştirilsin mi?",
+      "confirm": "Evet, Kopyala",
+      "done_toast": "{source} ayarları {truck} aracına kopyalandı."
     },
     "about": {
       "details": "Ayrıntılar",

@@ -482,7 +482,8 @@
       "section": "Eingestellte LKW ({count})",
       "changed": "{count} Einstellungen geändert",
       "none": "Noch kein LKW hat eigene Einstellungen.",
-      "reset_tip": "Einstellungen dieses LKW auf die Standardwerte zurücksetzen."
+      "reset_tip": "Einstellungen dieses LKW auf die Standardwerte zurücksetzen.",
+      "copy_tip": "Die Einstellungen dieses LKW auf den LKW übertragen, den du fährst."
     },
     "search": {
       "hint": "Einstellungen durchsuchen...",
@@ -508,6 +509,12 @@
       "message": "Alle Einstellungen von {truck} zurücksetzen?",
       "confirm": "Ja, zurücksetzen",
       "done_toast": "Einstellungen von {truck} zurückgesetzt."
+    },
+    "copy": {
+      "title": "Kopieren bestätigen",
+      "message": "Alle Einstellungen des {truck} durch die des {source} ersetzen?",
+      "confirm": "Ja, kopieren",
+      "done_toast": "Einstellungen von {source} auf {truck} übertragen."
     },
     "about": {
       "details": "Details",

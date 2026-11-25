@@ -482,7 +482,8 @@
       "section": "Ustawione ciężarówki ({count})",
       "changed": "Zmienione ustawienia: {count}",
       "none": "Żadna ciężarówka nie ma jeszcze własnych ustawień.",
-      "reset_tip": "Zresetuj ustawienia tej ciężarówki do wartości domyślnych."
+      "reset_tip": "Zresetuj ustawienia tej ciężarówki do wartości domyślnych.",
+      "copy_tip": "Skopiuj ustawienia tej ciężarówki do tej, którą prowadzisz."
     },
     "search": {
       "hint": "Szukaj ustawień...",
@@ -508,6 +509,12 @@
       "message": "Zresetować wszystkie ustawienia dla {truck}?",
       "confirm": "Tak, zresetuj",
       "done_toast": "Zresetowano ustawienia dla {truck}."
+    },
+    "copy": {
+      "title": "Potwierdź kopiowanie",
+      "message": "Zastąpić wszystkie ustawienia {truck} ustawieniami {source}?",
+      "confirm": "Tak, kopiuj",
+      "done_toast": "Skopiowano ustawienia {source} do {truck}."
     },
     "about": {
       "details": "Szczegóły",

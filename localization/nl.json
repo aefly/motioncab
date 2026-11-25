@@ -482,7 +482,8 @@
       "section": "Ingestelde trucks ({count})",
       "changed": "{count} instellingen gewijzigd",
       "none": "Nog geen enkele truck heeft eigen instellingen.",
-      "reset_tip": "De instellingen van deze truck terugzetten naar de standaardwaarden."
+      "reset_tip": "De instellingen van deze truck terugzetten naar de standaardwaarden.",
+      "copy_tip": "Kopieer de instellingen van deze truck naar de truck waarin je rijdt."
     },
     "search": {
       "hint": "Instellingen zoeken...",
@@ -508,6 +509,12 @@
       "message": "Alle instellingen van {truck} resetten?",
       "confirm": "Ja, resetten",
       "done_toast": "Instellingen van {truck} gereset."
+    },
+    "copy": {
+      "title": "Kopiëren bevestigen",
+      "message": "Alle instellingen van de {truck} vervangen door die van de {source}?",
+      "confirm": "Ja, kopiëren",
+      "done_toast": "Instellingen van {source} gekopieerd naar {truck}."
     },
     "about": {
       "details": "Details",

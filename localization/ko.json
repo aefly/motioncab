@@ -482,7 +482,8 @@
       "section": "설정된 트럭 ({count})",
       "changed": "설정 {count}개 변경됨",
       "none": "아직 자체 설정이 있는 트럭이 없습니다.",
-      "reset_tip": "이 트럭의 설정을 기본값으로 초기화합니다."
+      "reset_tip": "이 트럭의 설정을 기본값으로 초기화합니다.",
+      "copy_tip": "이 트럭의 설정을 운전 중인 트럭으로 복사합니다."
     },
     "search": {
       "hint": "설정 검색...",
@@ -508,6 +509,12 @@
       "message": "{truck}의 설정을 모두 초기화할까요?",
       "confirm": "예, 초기화",
       "done_toast": "{truck}의 설정을 초기화했습니다."
+    },
+    "copy": {
+      "title": "복사 확인",
+      "message": "{truck}의 모든 설정을 {source}의 설정으로 바꾸시겠습니까?",
+      "confirm": "예, 복사",
+      "done_toast": "{source}의 설정을 {truck}(으)로 복사했습니다."
     },
     "about": {
       "details": "세부 정보",

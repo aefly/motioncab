@@ -114,7 +114,8 @@ right-click any slider to reset it to default, and the **Settings** tab has a
 button to reset every setting of the truck you're driving.
 Settings are kept per truck model, in
 `plugins/spfPlugins/MotionCab/data/truck_settings.json`: a change applies
-only to the truck you're driving.
+only to the truck you're driving. To start a new truck from one already
+tuned, copy that truck's settings from the **Settings** tab's list.
 
 | Setting                      | Default | Description                                                                                                                            |
 | ---------------------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
@@ -280,7 +281,7 @@ game's `plugins/spfPlugins/MotionCab/`.
 │       ├── SettingsWindow.cpp / .hpp MotionCab Quick Settings window
 │       ├── EffectTabs.cpp / .hpp     Driving/Road/Cabin/Manual tabs
 │       ├── CabinLayoutPanel.cpp/.hpp Cabin Walk's layout panel (Advanced)
-│       ├── SettingsTab.cpp / .hpp    Settings tab: keybind, truck reset
+│       ├── SettingsTab.cpp / .hpp    Settings tab: keybind, truck copy/reset
 │       ├── AboutTab.cpp / .hpp       About tab
 │       ├── Widgets.cpp / .hpp        Shared look and widgets
 │       └── OpenUrl.cpp / .hpp        Opens a URL in the system browser

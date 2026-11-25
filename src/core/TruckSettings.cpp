@@ -423,6 +423,38 @@ bool ResetToDefaults(PluginContext &ctx, const std::string &truck_key) {
   return true;
 }
 
+bool CopyFrom(PluginContext &ctx, const std::string &source_key) {
+  if (g_store.truck_key.empty() || source_key.empty() ||
+      source_key == g_store.truck_key || !ctx.core || !ctx.core->config ||
+      !ctx.config_handle)
+    return false;
+  SPF_Config_API *cfg = ctx.core->config;
+  SPF_Config_Handle *store = Handle(ctx, false);
+  if (!store || !cfg->Cfg_HasKey(store, kBaseCompleteKey))
+    return false;
+  const std::string target = "trucks." + g_store.truck_key;
+  // Emptied rather than removed: Cfg_RemoveKey doesn't work on a custom
+  // context file.
+  cfg->Cfg_SetJsonString(store, target.c_str(), "{}");
+  // Only the source's own keys: the rest reads the base, as it does there.
+  const std::string from_prefix = TruckPrefix(source_key);
+  const std::string to_prefix = target + ".";
+  for (const settings::Setting &s : settings::kAll) {
+    const std::string from = from_prefix + s.key;
+    if (cfg->Cfg_HasKey(store, from.c_str()))
+      CopyValue(cfg, store, from, store, to_prefix + s.key, s);
+  }
+  WriteName(cfg, store, g_store.truck_key, g_store.truck_name);
+  cfg->Cfg_Save(store);
+  g_store.dirty = false;
+  ++g_store.revision;
+  ApplyCurrent(ctx);
+  // Springs and timers carried over into the new targets would snap or
+  // overshoot.
+  ctx.ResetEffects();
+  return true;
+}
+
 const std::vector<TunedTruck> &TunedTrucks(PluginContext &ctx) {
   static std::vector<TunedTruck> s_trucks;
   static unsigned s_revision = ~0u;

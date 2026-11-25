@@ -482,7 +482,8 @@
       "section": "設定済みのトラック ({count})",
       "changed": "{count} 件の設定を変更",
       "none": "独自の設定を持つトラックはまだありません。",
-      "reset_tip": "このトラックの設定を既定値に戻します。"
+      "reset_tip": "このトラックの設定を既定値に戻します。",
+      "copy_tip": "このトラックの設定を運転中のトラックにコピーします。"
     },
     "search": {
       "hint": "設定を検索...",
@@ -508,6 +509,12 @@
       "message": "{truck} の設定をすべてリセットしますか？",
       "confirm": "はい、リセット",
       "done_toast": "{truck} の設定をリセットしました。"
+    },
+    "copy": {
+      "title": "コピーの確認",
+      "message": "{truck} のすべての設定を {source} の設定に置き換えますか？",
+      "confirm": "はい、コピー",
+      "done_toast": "{source} の設定を {truck} にコピーしました。"
     },
     "about": {
       "details": "詳細",

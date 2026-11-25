@@ -482,7 +482,8 @@
       "section": "Caminhões ajustados ({count})",
       "changed": "{count} configurações alteradas",
       "none": "Nenhum caminhão tem configurações próprias ainda.",
-      "reset_tip": "Redefinir as configurações deste caminhão para os valores padrão."
+      "reset_tip": "Redefinir as configurações deste caminhão para os valores padrão.",
+      "copy_tip": "Copiar as configurações deste caminhão para o que você está dirigindo."
     },
     "search": {
       "hint": "Pesquisar configurações...",
@@ -508,6 +509,12 @@
       "message": "Redefinir todas as configurações de {truck}?",
       "confirm": "Sim, redefinir",
       "done_toast": "Configurações de {truck} redefinidas."
+    },
+    "copy": {
+      "title": "Confirmar cópia",
+      "message": "Substituir todas as configurações do {truck} pelas do {source}?",
+      "confirm": "Sim, copiar",
+      "done_toast": "Configurações de {source} copiadas para {truck}."
     },
     "about": {
       "details": "Detalhes",

@@ -482,7 +482,8 @@
       "section": "Nastavené tahače ({count})",
       "changed": "Změněná nastavení: {count}",
       "none": "Žádný tahač zatím nemá vlastní nastavení.",
-      "reset_tip": "Obnovit nastavení tohoto tahače na výchozí hodnoty."
+      "reset_tip": "Obnovit nastavení tohoto tahače na výchozí hodnoty.",
+      "copy_tip": "Zkopírovat nastavení tohoto tahače do toho, který řídíš."
     },
     "search": {
       "hint": "Hledat nastavení...",
@@ -508,6 +509,12 @@
       "message": "Obnovit všechna nastavení pro {truck}?",
       "confirm": "Ano, obnovit",
       "done_toast": "Nastavení pro {truck} byla obnovena."
+    },
+    "copy": {
+      "title": "Potvrdit kopírování",
+      "message": "Nahradit všechna nastavení {truck} nastaveními {source}?",
+      "confirm": "Ano, kopírovat",
+      "done_toast": "Nastavení {source} zkopírováno do {truck}."
     },
     "about": {
       "details": "Podrobnosti",

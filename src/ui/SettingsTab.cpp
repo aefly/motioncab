@@ -18,6 +18,7 @@ namespace {
 
 // The popup's title is translated, so it goes by a "###" ID.
 constexpr const char *kResetPopupId = "###confirm_reset_all";
+constexpr const char *kCopyPopupId = "###confirm_copy_truck";
 
 // The truck the settings belong to, in the brand color: every change goes to
 // it alone. Dimmed while they can't be changed.
@@ -73,6 +74,28 @@ void AskReset(SPF_UI_API *ui, std::string key, std::string name) {
   ui->UI_OpenPopup(kResetPopupId, SPF_POPUP_FLAG_NONE);
 }
 
+// The truck the copy popup takes the settings from.
+struct PendingCopy {
+  std::string key;
+  std::string name;
+};
+PendingCopy g_pending_copy;
+
+void AskCopy(SPF_UI_API *ui, std::string key, std::string name) {
+  g_pending_copy = {std::move(key), std::move(name)};
+  ui->UI_OpenPopup(kCopyPopupId, SPF_POPUP_FLAG_NONE);
+}
+
+// An icon until hovered, so the list reads as plain text.
+void PushRowButtonStyle(SPF_UI_API *ui) {
+  ui->UI_PushStyleColor(SPF_COLOR_BUTTON, 0.0f, 0.0f, 0.0f, 0.0f);
+  ui->UI_PushStyleColor(SPF_COLOR_BUTTON_HOVERED, kAccentR, kAccentG, kAccentB,
+                        0.35f);
+  ui->UI_PushStyleColor(SPF_COLOR_BUTTON_ACTIVE, kAccentHoverR, kAccentHoverG,
+                        kAccentHoverB, 0.55f);
+  ui->UI_PushStyleColor(SPF_COLOR_TEXT, 0.6f, 0.6f, 0.6f, 1.0f);
+}
+
 // Every truck with settings of its own, the one being driven on top. Past
 // kVisibleRows the list scrolls on its own, so a long one doesn't push the
 // rest of the page away.
@@ -97,7 +120,7 @@ void DrawTunedTrucks(SPF_UI_API *ui) {
     flags |= SPF_TABLE_FLAG_SCROLL_Y;
   const float height =
       scrolls ? ui->UI_GetTextLineHeightWithSpacing() * kVisibleRows : 0.0f;
-  if (!ui->UI_BeginTable("##tuned_trucks", 3,
+  if (!ui->UI_BeginTable("##tuned_trucks", 4,
                          static_cast<SPF_TableFlags>(flags), 0.0f, height,
                          0.0f))
     return;
@@ -105,11 +128,13 @@ void DrawTunedTrucks(SPF_UI_API *ui) {
                           0);
   ui->UI_TableSetupColumn("Changed", SPF_TABLE_COLUMN_FLAG_WIDTH_FIXED, 0.0f,
                           0);
+  ui->UI_TableSetupColumn("Copy", SPF_TABLE_COLUMN_FLAG_WIDTH_FIXED, 0.0f, 0);
   ui->UI_TableSetupColumn("Reset", SPF_TABLE_COLUMN_FLAG_WIDTH_FIXED, 0.0f, 0);
 
   // Opened after the table: a popup opened inside it would get the table's
   // ID and never match the one drawn below.
   const truck_settings::TunedTruck *to_reset = nullptr;
+  const truck_settings::TunedTruck *to_copy = nullptr;
   const bool blocked = SettingsEditBlock() != EditBlock::kNone;
   for (size_t i = 0; i < trucks.size(); ++i) {
     const truck_settings::TunedTruck &truck = trucks[i];
@@ -126,18 +151,24 @@ void DrawTunedTrucks(SPF_UI_API *ui) {
     ui->UI_SetItemTooltip(
         loc::Tr("ui.trucks.changed", {{"count", std::to_string(truck.changed)}})
             .c_str());
-    ui->UI_TableSetColumnIndex(2);
     ui->UI_PushID_Int(static_cast<int>(i));
+    // Copies into the truck being driven, so not from itself, nor while its
+    // settings can't be changed.
+    ui->UI_TableSetColumnIndex(2);
+    if (!current) {
+      ui->UI_BeginDisabled(blocked);
+      PushRowButtonStyle(ui);
+      if (ui->UI_SmallButton(ICON_FA_COPY))
+        to_copy = &truck;
+      ui->UI_PopStyleColor(4);
+      ui->UI_EndDisabled();
+      ui->UI_SetItemTooltip(loc::Tr("ui.trucks.copy_tip"));
+    }
+    ui->UI_TableSetColumnIndex(3);
     // Like the reset below, not for the truck being driven while its
     // settings can't be changed.
     ui->UI_BeginDisabled(current && blocked);
-    // Only an icon until hovered, so the list reads as plain text.
-    ui->UI_PushStyleColor(SPF_COLOR_BUTTON, 0.0f, 0.0f, 0.0f, 0.0f);
-    ui->UI_PushStyleColor(SPF_COLOR_BUTTON_HOVERED, kAccentR, kAccentG,
-                          kAccentB, 0.35f);
-    ui->UI_PushStyleColor(SPF_COLOR_BUTTON_ACTIVE, kAccentHoverR, kAccentHoverG,
-                          kAccentHoverB, 0.55f);
-    ui->UI_PushStyleColor(SPF_COLOR_TEXT, 0.6f, 0.6f, 0.6f, 1.0f);
+    PushRowButtonStyle(ui);
     if (ui->UI_SmallButton(ICON_FA_ARROW_ROTATE_LEFT))
       to_reset = &truck;
     ui->UI_PopStyleColor(4);
@@ -148,6 +179,8 @@ void DrawTunedTrucks(SPF_UI_API *ui) {
   ui->UI_EndTable();
   if (to_reset)
     AskReset(ui, to_reset->key, to_reset->name);
+  if (to_copy)
+    AskCopy(ui, to_copy->key, to_copy->name);
 }
 
 // Greyed out with the effect pages, when there's no truck to reset.
@@ -177,6 +210,22 @@ void DrawResetPopup(SPF_UI_API *ui) {
   }
 }
 
+void DrawCopyPopup(SPF_UI_API *ui) {
+  const std::string title =
+      loc::Tr("ui.copy.title") + std::string(kCopyPopupId);
+  const std::string message = loc::Tr(
+      "ui.copy.message", {{"source", g_pending_copy.name},
+                          {"truck", truck_settings::CurrentTruckName()}});
+  // The truck may have been left while the popup was open.
+  if (ConfirmPopup(ui, title, message.c_str(), loc::Tr("ui.copy.confirm")) &&
+      truck_settings::CopyFrom(Context(), g_pending_copy.key)) {
+    ShowToast(ui, SPF_NOTIFICATION_SUCCESS,
+              loc::Tr("ui.copy.done_toast",
+                      {{"source", g_pending_copy.name},
+                       {"truck", truck_settings::CurrentTruckName()}}));
+  }
+}
+
 } // namespace
 
 void DrawSettingsTab(SPF_UI_API *ui, SPF_Config_API * /*cfg*/,
@@ -199,6 +248,7 @@ void DrawSettingsTab(SPF_UI_API *ui, SPF_Config_API * /*cfg*/,
   ui->UI_Spacing();
   DrawResetSection(ui);
   DrawResetPopup(ui);
+  DrawCopyPopup(ui);
 }
 
 } // namespace motioncab::ui

@@ -482,7 +482,8 @@
       "section": "Tuned trucks ({count})",
       "changed": "{count} settings changed",
       "none": "No truck has settings of its own yet.",
-      "reset_tip": "Reset this truck's settings to their defaults."
+      "reset_tip": "Reset this truck's settings to their defaults.",
+      "copy_tip": "Copy this truck's settings to the one you're driving."
     },
     "search": {
       "hint": "Search settings...",
@@ -508,6 +509,12 @@
       "message": "Reset every setting of the {truck}?",
       "confirm": "Yes, Reset",
       "done_toast": "Reset the settings of {truck}."
+    },
+    "copy": {
+      "title": "Confirm Copy",
+      "message": "Replace every setting of the {truck} with those of the {source}?",
+      "confirm": "Yes, Copy",
+      "done_toast": "Copied the settings of {source} to {truck}."
     },
     "about": {
       "details": "Details",
