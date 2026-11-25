@@ -165,9 +165,9 @@ void DrawTunedTrucks(SPF_UI_API *ui) {
       ui->UI_SetItemTooltip(loc::Tr("ui.trucks.copy_tip"));
     }
     ui->UI_TableSetColumnIndex(3);
-    // Like the reset below, not for the truck being driven while its
-    // settings can't be changed.
-    ui->UI_BeginDisabled(current && blocked);
+    // Like the reset below, not while the settings can't be changed: the
+    // main menu has no truck, so none of the rows is the current one.
+    ui->UI_BeginDisabled(blocked);
     PushRowButtonStyle(ui);
     if (ui->UI_SmallButton(ICON_FA_ARROW_ROTATE_LEFT))
       to_reset = &truck;
